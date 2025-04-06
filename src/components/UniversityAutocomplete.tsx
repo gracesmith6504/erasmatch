@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,6 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
   const [isLoading, setIsLoading] = useState(false);
   const [useManualEntry, setUseManualEntry] = useState(false);
   const [manualValue, setManualValue] = useState("");
-  const popoverRef = useRef<HTMLDivElement>(null);
 
   // Load initial value
   useEffect(() => {
@@ -149,7 +148,8 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
                   </div>
                 )}
               </CommandEmpty>
-              {suggestions.length > 0 && (
+              {/* Only render CommandGroup when there are suggestions */}
+              {Array.isArray(suggestions) && suggestions.length > 0 && (
                 <CommandGroup>
                   {suggestions.map((university) => (
                     <CommandItem
@@ -159,7 +159,7 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
                       className="py-3"
                     >
                       {university.name}
-                      {inputValue === university.name && (
+                      {value === university.name && (
                         <Check className="ml-auto h-4 w-4" />
                       )}
                     </CommandItem>
