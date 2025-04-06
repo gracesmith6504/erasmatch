@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { Profile as ProfileType } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
+import { UniversityAutocomplete } from "@/components/UniversityAutocomplete";
 
 const SEMESTERS = ["Fall 2024", "Spring 2025", "Fall 2025", "Spring 2026"];
 
@@ -119,16 +120,11 @@ const Profile = ({ profile, onProfileUpdate }: ProfileProps) => {
 
             <div>
               <Label htmlFor="university" className="block text-sm font-medium text-gray-700">
-                University
+                Destination University
               </Label>
-              <Input
-                id="university"
-                name="university"
-                value={form.university || ""}
-                onChange={handleChange}
-                placeholder="Your host university"
-                required
-                className="mt-1"
+              <UniversityAutocomplete 
+                value={form.university}
+                onChange={(value) => handleSelectChange("university", value)}
               />
             </div>
 
