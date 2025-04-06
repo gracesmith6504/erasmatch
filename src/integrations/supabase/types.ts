@@ -72,6 +72,27 @@ export type Database = {
         }
         Relationships: []
       }
+      universities: {
+        Row: {
+          city: string | null
+          country: string | null
+          id: number
+          name: string
+        }
+        Insert: {
+          city?: string | null
+          country?: string | null
+          id?: number
+          name: string
+        }
+        Update: {
+          city?: string | null
+          country?: string | null
+          id?: number
+          name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
