@@ -21,6 +21,7 @@ interface University {
 const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState(value || "");
+  // Initialize with empty array to avoid undefined errors
   const [suggestions, setSuggestions] = useState<University[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [useManualEntry, setUseManualEntry] = useState(false);
@@ -34,7 +35,7 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
   // Search for universities as user types
   const searchUniversities = async (query: string) => {
     if (!query || query.trim().length < 2) {
-      setSuggestions([]);
+      setSuggestions([]);  // Always set to empty array, not undefined
       return;
     }
 
@@ -49,7 +50,7 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
 
       if (error) {
         console.error('Error searching universities:', error);
-        setSuggestions([]);
+        setSuggestions([]);  // Always set to empty array on error
         return;
       }
 
@@ -57,7 +58,7 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
       setSuggestions(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching universities:', error);
-      setSuggestions([]);
+      setSuggestions([]);  // Always set to empty array on exception
     } finally {
       setIsLoading(false);
     }
@@ -129,31 +130,17 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
                 value={inputValue}
                 onValueChange={(value) => {
                   setInputValue(value);
-                  // Clear suggestions if input is empty
+                  // Clear suggestions if input is empty or too short
                   if (!value || value.trim().length < 2) {
                     setSuggestions([]);
                   }
                 }}
                 className="h-9"
               />
-              <CommandEmpty>
-                {isLoading ? (
-                  <p className="py-6 text-center text-sm">Loading...</p>
-                ) : (
-                  <div className="py-6 text-center">
-                    <p className="text-sm mb-2">University not listed?</p>
-                    <Button 
-                      variant="outline" 
-                      onClick={handleManualEntry}
-                      className="text-sm"
-                    >
-                      Tap here to enter manually
-                    </Button>
-                  </div>
-                )}
-              </CommandEmpty>
-              {/* Only render CommandGroup when there are suggestions */}
-              {suggestions && Array.isArray(suggestions) && suggestions.length > 0 && (
+              
+              {isLoading ? (
+                <div className="py-6 text-center text-sm">Loading...</div>
+              ) : suggestions.length > 0 ? (
                 <CommandGroup>
                   {suggestions.map((university) => (
                     <CommandItem
@@ -169,6 +156,19 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
                     </CommandItem>
                   ))}
                 </CommandGroup>
+              ) : (
+                <CommandEmpty>
+                  <div className="py-6 text-center">
+                    <p className="text-sm mb-2">University not listed?</p>
+                    <Button 
+                      variant="outline" 
+                      onClick={handleManualEntry}
+                      className="text-sm"
+                    >
+                      Tap here to enter manually
+                    </Button>
+                  </div>
+                </CommandEmpty>
               )}
             </Command>
           </PopoverContent>
