@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,7 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
   const [isSending, setIsSending] = useState(false);
 
   // Process messages into threads
-  const threads = React.useMemo(() => {
+  const threads = useMemo(() => {
     if (!currentUserId) return [];
     
     // Get all unique conversation partners
@@ -70,7 +70,7 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
   }, [threads, selectedThread, isMobile]);
 
   // Get messages for selected thread
-  const threadMessages = React.useMemo(() => {
+  const threadMessages = useMemo(() => {
     if (!selectedThread) return [];
     
     return messages
