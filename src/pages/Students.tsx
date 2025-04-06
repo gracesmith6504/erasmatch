@@ -32,7 +32,7 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
   const [semesterFilter, setSemesterFilter] = useState("");
 
   const [uniqueUniversities, setUniqueUniversities] = useState<string[]>([]);
-  const [uniqueCities, setUniqueUniversities] = useState<string[]>([]);
+  const [uniqueCities, setUniqueCities] = useState<string[]>([]);
   const [uniqueSemesters, setUniqueSemesters] = useState<string[]>([]);
 
   useEffect(() => {
@@ -43,7 +43,7 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
       const semesters = [...new Set(profiles.map(p => p.semester).filter(Boolean))] as string[];
       
       setUniqueUniversities(universities);
-      setUniqueUniversities(cities);
+      setUniqueCities(cities);
       setUniqueSemesters(semesters);
     }
   }, [profiles]);
