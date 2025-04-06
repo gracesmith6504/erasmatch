@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -29,16 +28,7 @@ const ProfileView = ({ profiles, currentUserId, onSendMessage }: ProfileViewProp
     
     setIsSending(true);
     try {
-      // Send message using Supabase
-      const { error } = await supabase.from('messages').insert({
-        sender_id: currentUserId,
-        receiver_id: id,
-        content: messageContent
-      });
-      
-      if (error) throw error;
-      
-      onSendMessage(id, messageContent);
+      await onSendMessage(id, messageContent);
       setMessageContent("");
       setIsMessageDialogOpen(false);
       toast.success("Message sent successfully");

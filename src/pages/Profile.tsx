@@ -1,5 +1,5 @@
 
-import { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,7 +51,7 @@ const Profile = ({ profile, onProfileUpdate }: ProfileProps) => {
       }
 
       const { error } = await supabase
-        .from("profiles")
+        .from('profiles')
         .update({
           name: form.name,
           university: form.university,
@@ -60,7 +60,7 @@ const Profile = ({ profile, onProfileUpdate }: ProfileProps) => {
           bio: form.bio,
           avatar_url: form.avatar_url,
         })
-        .eq("id", user.user.id);
+        .eq('id', user.user.id);
 
       if (error) throw error;
       

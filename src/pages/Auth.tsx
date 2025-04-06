@@ -1,5 +1,5 @@
 
-import { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -63,10 +63,14 @@ const Auth = ({ onLogin }: AuthProps) => {
         
         if (data.user) {
           // Update the profile with name
-          await supabase
-            .from("profiles")
+          const { error: updateError } = await supabase
+            .from('profiles')
             .update({ name })
-            .eq("id", data.user.id);
+            .eq('id', data.user.id);
+            
+          if (updateError) {
+            console.error("Error updating profile:", updateError);
+          }
           
           toast.success("Account created successfully!");
           onLogin(email);
