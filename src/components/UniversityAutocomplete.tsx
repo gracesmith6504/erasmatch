@@ -53,7 +53,7 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
         return;
       }
 
-      // Make sure data is always an array before setting state
+      // Always ensure data is an array before setting state
       setSuggestions(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching universities:', error);
@@ -129,6 +129,10 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
                 value={inputValue}
                 onValueChange={(value) => {
                   setInputValue(value);
+                  // Clear suggestions if input is empty
+                  if (!value || value.trim().length < 2) {
+                    setSuggestions([]);
+                  }
                 }}
                 className="h-9"
               />
@@ -149,7 +153,7 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
                 )}
               </CommandEmpty>
               {/* Only render CommandGroup when there are suggestions */}
-              {Array.isArray(suggestions) && suggestions.length > 0 && (
+              {suggestions && Array.isArray(suggestions) && suggestions.length > 0 && (
                 <CommandGroup>
                   {suggestions.map((university) => (
                     <CommandItem
