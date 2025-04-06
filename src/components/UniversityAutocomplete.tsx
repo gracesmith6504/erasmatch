@@ -13,10 +13,15 @@ interface UniversityAutocompleteProps {
   onChange: (value: string) => void;
 }
 
+interface University {
+  id: number;
+  name: string;
+}
+
 const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState(value);
-  const [suggestions, setSuggestions] = useState<{ id: number; name: string }[]>([]);
+  const [suggestions, setSuggestions] = useState<University[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [useManualEntry, setUseManualEntry] = useState(false);
   const [manualValue, setManualValue] = useState("");
@@ -36,6 +41,7 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
 
     setIsLoading(true);
     try {
+      // Here we're correctly typing the response from Supabase
       const { data, error } = await supabase
         .from('universities')
         .select('id, name')
@@ -45,12 +51,15 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
 
       if (error) {
         console.error('Error searching universities:', error);
+        setSuggestions([]);
         return;
       }
 
-      setSuggestions(data || []);
+      // Make sure data is always an array before setting state
+      setSuggestions(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching universities:', error);
+      setSuggestions([]);
     } finally {
       setIsLoading(false);
     }
@@ -140,21 +149,23 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
                   </div>
                 )}
               </CommandEmpty>
-              <CommandGroup>
-                {suggestions.map((university) => (
-                  <CommandItem
-                    key={university.id}
-                    value={university.name}
-                    onSelect={() => handleSelect(university.name)}
-                    className="py-3"
-                  >
-                    {university.name}
-                    {inputValue === university.name && (
-                      <Check className="ml-auto h-4 w-4" />
-                    )}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
+              {suggestions.length > 0 && (
+                <CommandGroup>
+                  {suggestions.map((university) => (
+                    <CommandItem
+                      key={university.id}
+                      value={university.name}
+                      onSelect={() => handleSelect(university.name)}
+                      className="py-3"
+                    >
+                      {university.name}
+                      {inputValue === university.name && (
+                        <Check className="ml-auto h-4 w-4" />
+                      )}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              )}
             </Command>
           </PopoverContent>
         </Popover>
