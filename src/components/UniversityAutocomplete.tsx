@@ -20,7 +20,7 @@ interface University {
 
 const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps) => {
   const [open, setOpen] = useState(false);
-  const [inputValue, setInputValue] = useState(value);
+  const [inputValue, setInputValue] = useState(value || "");
   const [suggestions, setSuggestions] = useState<University[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [useManualEntry, setUseManualEntry] = useState(false);
@@ -29,19 +29,18 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
 
   // Load initial value
   useEffect(() => {
-    setInputValue(value);
+    setInputValue(value || "");
   }, [value]);
 
   // Search for universities as user types
   const searchUniversities = async (query: string) => {
-    if (query.trim().length < 2) {
+    if (!query || query.trim().length < 2) {
       setSuggestions([]);
       return;
     }
 
     setIsLoading(true);
     try {
-      // Here we're correctly typing the response from Supabase
       const { data, error } = await supabase
         .from('universities')
         .select('id, name')
@@ -68,7 +67,7 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
   // Debounce function to limit API calls while typing
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (!useManualEntry) {
+      if (!useManualEntry && inputValue) {
         searchUniversities(inputValue);
       }
     }, 300);
@@ -90,7 +89,7 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
   };
 
   const submitManualEntry = () => {
-    if (manualValue.trim()) {
+    if (manualValue && manualValue.trim()) {
       onChange(manualValue.trim());
       setInputValue(manualValue.trim());
       setUseManualEntry(false);
@@ -130,7 +129,9 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
               <CommandInput 
                 placeholder="Search universities..." 
                 value={inputValue}
-                onValueChange={setInputValue}
+                onValueChange={(value) => {
+                  setInputValue(value);
+                }}
                 className="h-9"
               />
               <CommandEmpty>
