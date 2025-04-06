@@ -100,7 +100,7 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
                 <SelectValue placeholder="University" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Universities</SelectItem>
+                <SelectItem value="all-universities">All Universities</SelectItem>
                 {uniqueUniversities.map((uni) => (
                   <SelectItem key={uni} value={uni}>{uni}</SelectItem>
                 ))}
@@ -114,7 +114,7 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
                 <SelectValue placeholder="City" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Cities</SelectItem>
+                <SelectItem value="all-cities">All Cities</SelectItem>
                 {uniqueCities.map((city) => (
                   <SelectItem key={city} value={city}>{city}</SelectItem>
                 ))}
@@ -128,7 +128,7 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
                 <SelectValue placeholder="Semester" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Semesters</SelectItem>
+                <SelectItem value="all-semesters">All Semesters</SelectItem>
                 {uniqueSemesters.map((semester) => (
                   <SelectItem key={semester} value={semester}>{semester}</SelectItem>
                 ))}
