@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/layout/Layout";
+import { supabase } from "@/integrations/supabase/client";
 
 // Pages
 import Index from "./pages/Index";
@@ -19,212 +20,205 @@ import NotFound from "./pages/NotFound";
 // Types
 import { Profile as ProfileType, Message } from "@/types";
 
-// Sample data for demo purposes
-const sampleProfiles: ProfileType[] = [
-  {
-    id: "1",
-    name: "Maria Garcia",
-    email: "maria@example.com",
-    university: "Universidad de Barcelona",
-    city: "Barcelona",
-    semester: "Fall 2024",
-    bio: "Psychology student from Italy. Love photography and exploring new places!",
-    avatar_url: null,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "2",
-    name: "Thomas Müller",
-    email: "thomas@example.com",
-    university: "Technical University of Munich",
-    city: "Munich",
-    semester: "Spring 2025",
-    bio: "Engineering student from France. Big fan of football and outdoor activities.",
-    avatar_url: null,
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "3",
-    name: "Sophie Johnson",
-    email: "sophie@example.com",
-    university: "University of Amsterdam",
-    city: "Amsterdam",
-    semester: "Fall 2024",
-    bio: "Business student from Sweden. Interested in startups and innovation.",
-    avatar_url: null,
-    created_at: new Date().toISOString(),
-  },
-];
-
-const sampleMessages: Message[] = [
-  {
-    id: "1",
-    sender_id: "1",
-    receiver_id: "current-user",
-    content: "Hi there! Are you also going to Barcelona next semester?",
-    created_at: new Date(Date.now() - 600000).toISOString(), // 10 minutes ago
-  },
-  {
-    id: "2",
-    sender_id: "current-user",
-    receiver_id: "1",
-    content: "Yes I am! Just got my acceptance letter last week. So excited!",
-    created_at: new Date(Date.now() - 540000).toISOString(), // 9 minutes ago
-  },
-  {
-    id: "3",
-    sender_id: "1",
-    receiver_id: "current-user",
-    content: "That's awesome! Have you found accommodation yet?",
-    created_at: new Date(Date.now() - 480000).toISOString(), // 8 minutes ago
-  },
-  {
-    id: "4",
-    sender_id: "current-user",
-    receiver_id: "1",
-    content: "Not yet, I'm still looking. Do you have any recommendations?",
-    created_at: new Date(Date.now() - 420000).toISOString(), // 7 minutes ago
-  },
-  {
-    id: "5",
-    sender_id: "2",
-    receiver_id: "current-user",
-    content: "Hey! I saw you're going to Munich. I'm studying there too!",
-    created_at: new Date(Date.now() - 300000).toISOString(), // 5 minutes ago
-  },
-];
-
 const queryClient = new QueryClient();
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
-  const [profiles, setProfiles] = useState<ProfileType[]>(sampleProfiles);
-  const [messages, setMessages] = useState<Message[]>(sampleMessages);
+  const [profiles, setProfiles] = useState<ProfileType[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // For demo, create profile for currently logged-in user
+  // For currently logged-in user profile
   const [currentUserProfile, setCurrentUserProfile] = useState<ProfileType | null>(null);
 
-  // Check if user is authenticated on app load
+  // Initialize and listen for auth changes
   useEffect(() => {
-    const userId = localStorage.getItem("userId");
-    const userEmail = localStorage.getItem("userEmail");
-
-    if (userId && userEmail) {
-      setIsAuthenticated(true);
-      setCurrentUserId(userId);
-      setCurrentUserEmail(userEmail);
-
-      // Load or create user profile
-      const existingProfile = profiles.find(p => p.id === userId);
-      if (existingProfile) {
-        setCurrentUserProfile(existingProfile);
-      } else {
-        // Create a new profile for the user
-        const newProfile: ProfileType = {
-          id: userId,
-          name: null,
-          email: userEmail,
-          university: null,
-          city: null,
-          semester: null,
-          bio: null,
-          avatar_url: null,
-          created_at: new Date().toISOString(),
-        };
-        setCurrentUserProfile(newProfile);
-        setProfiles(prev => [...prev, newProfile]);
+    // Fetch current session
+    const fetchSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        handleAuthChange(session);
+      } catch (error) {
+        console.error("Error fetching session:", error);
+      } finally {
+        setLoading(false);
       }
-    }
-  }, []);
-
-  const handleLogin = (email: string) => {
-    // For demo purposes, create a user ID
-    const userId = "current-user"; // In a real app, this would be the Supabase auth.user.id
-    
-    setIsAuthenticated(true);
-    setCurrentUserId(userId);
-    setCurrentUserEmail(email);
-    
-    // Store in local storage
-    localStorage.setItem("userId", userId);
-    localStorage.setItem("userEmail", email);
-    
-    // Create a profile if it doesn't exist
-    const existingProfile = profiles.find(p => p.id === userId);
-    if (!existingProfile) {
-      const newProfile: ProfileType = {
-        id: userId,
-        name: null,
-        email: email,
-        university: null,
-        city: null,
-        semester: null,
-        bio: null,
-        avatar_url: null,
-        created_at: new Date().toISOString(),
-      };
-      setCurrentUserProfile(newProfile);
-      setProfiles(prev => [...prev, newProfile]);
-    } else {
-      setCurrentUserProfile(existingProfile);
-    }
-  };
-
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    setCurrentUserId(null);
-    setCurrentUserEmail(null);
-    setCurrentUserProfile(null);
-    
-    // Clear local storage
-    localStorage.removeItem("userId");
-    localStorage.removeItem("userEmail");
-  };
-
-  const handleProfileUpdate = (updatedProfile: Partial<ProfileType>) => {
-    if (!currentUserId) return;
-
-    // Update the current user's profile
-    const updated = {
-      ...currentUserProfile!,
-      ...updatedProfile,
     };
 
-    // Update profiles list
-    setProfiles(prev =>
-      prev.map(profile => 
-        profile.id === currentUserId ? updated : profile
-      )
+    fetchSession();
+
+    // Set up auth listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        handleAuthChange(session);
+      }
     );
 
-    // Update current profile
-    setCurrentUserProfile(updated as ProfileType);
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  // Function to fetch messages for the current user
+  const fetchUserMessages = async (userId: string) => {
+    try {
+      const { data: userMessages, error } = await supabase
+        .from('messages')
+        .select('*')
+        .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      
+      if (userMessages) {
+        setMessages(userMessages as Message[]);
+      }
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    }
   };
 
-  const handleSendMessage = (receiverId: string, content: string) => {
+  // Function to fetch all profiles
+  const fetchProfiles = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*');
+      
+      if (error) throw error;
+      
+      if (data) {
+        setProfiles(data as ProfileType[]);
+      }
+    } catch (error) {
+      console.error('Error fetching profiles:', error);
+    }
+  };
+
+  // Function to handle auth state changes
+  const handleAuthChange = async (session: any) => {
+    if (session?.user) {
+      setIsAuthenticated(true);
+      setCurrentUserId(session.user.id);
+      setCurrentUserEmail(session.user.email);
+
+      // Fetch user profile
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+
+        if (error && error.code !== 'PGRST116') {
+          throw error;
+        }
+
+        if (data) {
+          setCurrentUserProfile(data as ProfileType);
+        }
+
+        // Fetch all profiles and messages
+        await Promise.all([
+          fetchProfiles(),
+          fetchUserMessages(session.user.id)
+        ]);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    } else {
+      setIsAuthenticated(false);
+      setCurrentUserId(null);
+      setCurrentUserEmail(null);
+      setCurrentUserProfile(null);
+    }
+  };
+
+  const handleLogin = (email: string) => {
+    // The actual login happens in the Auth component
+    // This is just for additional state management if needed
+    setCurrentUserEmail(email);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      // Auth listener will handle the state changes
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
+  const handleProfileUpdate = async (updatedProfile: Partial<ProfileType>) => {
     if (!currentUserId) return;
 
-    const newMessage: Message = {
-      id: `msg-${Date.now()}`,
-      sender_id: currentUserId,
-      receiver_id: receiverId,
-      content,
-      created_at: new Date().toISOString(),
-    };
+    // The actual profile update happens in the Profile component
+    // This is just to update the local state
+    if (currentUserProfile) {
+      const updated = {
+        ...currentUserProfile,
+        ...updatedProfile,
+      };
+      setCurrentUserProfile(updated);
 
-    setMessages(prev => [...prev, newMessage]);
-    return newMessage;
+      // Update profiles list
+      setProfiles(prev =>
+        prev.map(profile => 
+          profile.id === currentUserId ? updated : profile
+        )
+      );
+    }
+
+    // Refresh profiles
+    await fetchProfiles();
+  };
+
+  const handleSendMessage = async (receiverId: string, content: string) => {
+    if (!currentUserId) return;
+
+    try {
+      // Send message via Supabase
+      const { data, error } = await supabase
+        .from('messages')
+        .insert({
+          sender_id: currentUserId,
+          receiver_id: receiverId,
+          content
+        })
+        .select()
+        .single();
+      
+      if (error) throw error;
+
+      if (data) {
+        // Update local messages state
+        setMessages(prev => [data as Message, ...prev]);
+        return data;
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      throw error;
+    }
   };
 
   // Protected route component
   const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+    if (loading) {
+      return <div className="flex items-center justify-center h-screen">Loading...</div>;
+    }
+    
     if (!isAuthenticated) {
       return <Navigate to="/auth?mode=login" />;
     }
+    
     return children;
   };
+
+  if (loading) {
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+  }
 
   return (
     <QueryClientProvider client={queryClient}>

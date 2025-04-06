@@ -1,5 +1,5 @@
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Profile as ProfileType } from "@/types";
+import { supabase } from "@/integrations/supabase/client";
 
 const SEMESTERS = ["Fall 2024", "Spring 2025", "Fall 2025", "Spring 2026"];
 
@@ -43,13 +44,32 @@ const Profile = ({ profile, onProfileUpdate }: ProfileProps) => {
     setLoading(true);
 
     try {
-      // This is a placeholder - the actual Supabase update will be implemented later
+      const { data: user } = await supabase.auth.getUser();
+      
+      if (!user.user) {
+        throw new Error("No user found");
+      }
+
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          name: form.name,
+          university: form.university,
+          city: form.city,
+          semester: form.semester,
+          bio: form.bio,
+          avatar_url: form.avatar_url,
+        })
+        .eq("id", user.user.id);
+
+      if (error) throw error;
+      
       onProfileUpdate(form);
       toast.success("Profile updated successfully");
       navigate("/students");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Profile update error:", error);
-      toast.error("Failed to update profile");
+      toast.error("Failed to update profile: " + error.message);
     } finally {
       setLoading(false);
     }

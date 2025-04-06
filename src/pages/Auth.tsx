@@ -1,11 +1,12 @@
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 type AuthProps = {
   onLogin: (email: string) => void;
@@ -47,13 +48,48 @@ const Auth = ({ onLogin }: AuthProps) => {
     }
 
     try {
-      // This is a placeholder - the actual Supabase authentication will be implemented later
-      toast.success(isSignUp ? "Account created successfully!" : "Welcome back!");
-      onLogin(email);
-      navigate(isSignUp ? "/profile" : "/");
-    } catch (error) {
+      if (isSignUp) {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              name
+            }
+          }
+        });
+
+        if (error) throw error;
+        
+        if (data.user) {
+          // Update the profile with name
+          await supabase
+            .from("profiles")
+            .update({ name })
+            .eq("id", data.user.id);
+          
+          toast.success("Account created successfully!");
+          onLogin(email);
+          navigate("/profile");
+        } else {
+          toast.info("Please check your email to confirm your registration");
+        }
+      } else {
+        // Login
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+
+        if (error) throw error;
+        
+        toast.success("Welcome back!");
+        onLogin(email);
+        navigate("/");
+      }
+    } catch (error: any) {
       console.error("Auth error:", error);
-      toast.error(isSignUp ? "Failed to create account" : "Login failed");
+      toast.error(error.message || (isSignUp ? "Failed to create account" : "Login failed"));
     } finally {
       setLoading(false);
     }

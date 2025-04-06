@@ -19,6 +19,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { School, MapPin, CalendarClock, Search } from "lucide-react";
 import { Profile } from "@/types";
+import { supabase } from "@/integrations/supabase/client";
 
 type StudentsProps = {
   profiles: Profile[];
@@ -34,29 +35,56 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
   const [uniqueUniversities, setUniqueUniversities] = useState<string[]>([]);
   const [uniqueCities, setUniqueCities] = useState<string[]>([]);
   const [uniqueSemesters, setUniqueSemesters] = useState<string[]>([]);
+  const [loadedProfiles, setLoadedProfiles] = useState<Profile[]>(profiles);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch profiles from Supabase
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*');
+        
+        if (error) {
+          throw error;
+        }
+
+        if (data) {
+          setLoadedProfiles(data as Profile[]);
+        }
+      } catch (error) {
+        console.error('Error fetching profiles:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfiles();
+  }, []);
 
   useEffect(() => {
     // Extract unique filter options
-    if (profiles.length > 0) {
-      const universities = [...new Set(profiles.map(p => p.university).filter(Boolean))] as string[];
-      const cities = [...new Set(profiles.map(p => p.city).filter(Boolean))] as string[];
-      const semesters = [...new Set(profiles.map(p => p.semester).filter(Boolean))] as string[];
+    if (loadedProfiles.length > 0) {
+      const universities = [...new Set(loadedProfiles.map(p => p.university).filter(Boolean))] as string[];
+      const cities = [...new Set(loadedProfiles.map(p => p.city).filter(Boolean))] as string[];
+      const semesters = [...new Set(loadedProfiles.map(p => p.semester).filter(Boolean))] as string[];
       
       setUniqueUniversities(universities);
       setUniqueCities(cities);
       setUniqueSemesters(semesters);
     }
-  }, [profiles]);
+  }, [loadedProfiles]);
 
   // Filter profiles based on search and filters
-  const filteredProfiles = profiles.filter(profile => {
+  const filteredProfiles = loadedProfiles.filter(profile => {
     // Skip current user
     if (profile.id === currentUserId) return false;
 
     const nameMatch = profile.name?.toLowerCase().includes(searchTerm.toLowerCase()) || !searchTerm;
-    const uniMatch = !universityFilter || profile.university === universityFilter;
-    const cityMatch = !cityFilter || profile.city === cityFilter;
-    const semesterMatch = !semesterFilter || profile.semester === semesterFilter;
+    const uniMatch = !universityFilter || universityFilter === "all-universities" || profile.university === universityFilter;
+    const cityMatch = !cityFilter || cityFilter === "all-cities" || profile.city === cityFilter;
+    const semesterMatch = !semesterFilter || semesterFilter === "all-semesters" || profile.semester === semesterFilter;
 
     return nameMatch && uniMatch && cityMatch && semesterMatch;
   });
@@ -77,6 +105,16 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
     setCityFilter("");
     setSemesterFilter("");
   };
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div className="text-center py-12">
+          <h2 className="text-xl font-medium text-gray-900 mb-2">Loading students...</h2>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">

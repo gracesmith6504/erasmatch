@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogC
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Profile } from "@/types";
+import { supabase } from "@/integrations/supabase/client";
 
 type ProfileViewProps = {
   profiles: Profile[];
@@ -23,17 +24,26 @@ const ProfileView = ({ profiles, currentUserId, onSendMessage }: ProfileViewProp
   const [messageContent, setMessageContent] = useState("");
   const [isSending, setIsSending] = useState(false);
 
-  const handleSendMessage = () => {
-    if (!messageContent.trim() || !id) return;
+  const handleSendMessage = async () => {
+    if (!messageContent.trim() || !id || !currentUserId) return;
     
     setIsSending(true);
     try {
+      // Send message using Supabase
+      const { error } = await supabase.from('messages').insert({
+        sender_id: currentUserId,
+        receiver_id: id,
+        content: messageContent
+      });
+      
+      if (error) throw error;
+      
       onSendMessage(id, messageContent);
       setMessageContent("");
       setIsMessageDialogOpen(false);
       toast.success("Message sent successfully");
-    } catch (error) {
-      toast.error("Failed to send message");
+    } catch (error: any) {
+      toast.error("Failed to send message: " + error.message);
       console.error("Message sending error:", error);
     } finally {
       setIsSending(false);
