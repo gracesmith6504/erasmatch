@@ -94,6 +94,31 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
     }
   };
 
+  // Render content to display based on loading/results state
+  const renderContent = () => {
+    if (isLoading) {
+      return <div className="py-6 text-center text-sm">Loading...</div>;
+    }
+    
+    if (suggestions.length > 0) {
+      return suggestions.map((university) => (
+        <CommandItem
+          key={university.id}
+          value={university.name}
+          onSelect={() => handleSelect(university.name)}
+          className="py-3"
+        >
+          {university.name}
+          {value === university.name && (
+            <Check className="ml-auto h-4 w-4" />
+          )}
+        </CommandItem>
+      ));
+    }
+    
+    return null;
+  };
+
   return (
     <div className="flex flex-col space-y-2">
       {!useManualEntry ? (
@@ -137,37 +162,21 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
               />
               
               <CommandGroup>
-                {isLoading ? (
-                  <div className="py-6 text-center text-sm">Loading...</div>
-                ) : suggestions.length > 0 ? (
-                  suggestions.map((university) => (
-                    <CommandItem
-                      key={university.id}
-                      value={university.name}
-                      onSelect={() => handleSelect(university.name)}
-                      className="py-3"
-                    >
-                      {university.name}
-                      {value === university.name && (
-                        <Check className="ml-auto h-4 w-4" />
-                      )}
-                    </CommandItem>
-                  ))
-                ) : (
-                  <CommandEmpty>
-                    <div className="py-6 text-center">
-                      <p className="text-sm mb-2">University not listed?</p>
-                      <Button 
-                        variant="outline" 
-                        onClick={handleManualEntry}
-                        className="text-sm"
-                      >
-                        Tap here to enter manually
-                      </Button>
-                    </div>
-                  </CommandEmpty>
-                )}
+                {renderContent()}
               </CommandGroup>
+
+              <CommandEmpty>
+                <div className="py-6 text-center">
+                  <p className="text-sm mb-2">University not listed?</p>
+                  <Button 
+                    variant="outline" 
+                    onClick={handleManualEntry}
+                    className="text-sm"
+                  >
+                    Tap here to enter manually
+                  </Button>
+                </div>
+              </CommandEmpty>
             </Command>
           </PopoverContent>
         </Popover>
