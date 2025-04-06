@@ -123,7 +123,6 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
           <PopoverContent 
             className="w-[--radix-popover-trigger-width] p-0" 
             align="start"
-            ref={popoverRef}
           >
             <Command>
               <CommandInput 
