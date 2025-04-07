@@ -1,27 +1,9 @@
 
-import { useState, useEffect, useRef } from "react";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import { Input } from "@/components/ui/input";
+import { useState, useRef } from "react";
 import { Label } from "@/components/ui/label";
-
-type University = {
-  id: number;
-  name: string;
-  city: string | null;
-  country: string | null;
-};
+import { UniversityDropdown } from "./university/UniversityDropdown";
+import { ManualUniversityEntry } from "./university/ManualUniversityEntry";
+import { useUniversitySearch } from "./university/useUniversitySearch";
 
 type UniversityAutocompleteProps = {
   value: string;
@@ -29,99 +11,17 @@ type UniversityAutocompleteProps = {
 };
 
 const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps) => {
-  const [open, setOpen] = useState(false);
-  const [universities, setUniversities] = useState<University[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [manualEntry, setManualEntry] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const popoverRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (open) {
-      setSearchQuery("");
-      fetchUniversities();
-    }
-  }, [open]);
-
-  const fetchUniversities = async (query = "") => {
-    try {
-      setIsLoading(true);
-      
-      // Use a more generic approach that doesn't rely on the type system
-      const { data, error } = await supabase
-        .from('universities')
-        .select('id, name, city, country');
-      
-      if (error) {
-        console.error("Error fetching universities:", error);
-        setUniversities([]);
-        return;
-      }
-      
-      // Type assertion to ensure TypeScript knows this is University[]
-      setUniversities(data as University[] || []);
-    } catch (error) {
-      console.error("Error in fetch operation:", error);
-      setUniversities([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    
-    // Modify to use a more dynamic approach
-    const fetchWithQuery = async () => {
-      try {
-        setIsLoading(true);
-        
-        const { data, error } = await supabase
-          .from('universities')
-          .select('id, name, city, country')
-          .ilike('name', `%${query}%`)
-          .limit(10);
-          
-        if (error) {
-          console.error("Error searching universities:", error);
-          setUniversities([]);
-          return;
-        }
-        
-        setUniversities(data as University[] || []);
-      } catch (error) {
-        console.error("Error in search operation:", error);
-        setUniversities([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchWithQuery();
-  };
-
-  const handleSelect = (universityName: string) => {
-    onChange(universityName);
-    setOpen(false);
-    setManualEntry(false);
-  };
+  const { universities, isLoading, searchQuery, handleSearch } = useUniversitySearch();
 
   const handleManualEntry = () => {
     setManualEntry(true);
-    setOpen(false);
   };
 
   const handleManualInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value);
   };
-
-  // Position the popover properly on mobile
-  useEffect(() => {
-    if (open && popoverRef.current) {
-      const popoverElement = popoverRef.current;
-      popoverElement.style.width = `${popoverElement.offsetWidth}px`;
-    }
-  }, [open]);
 
   return (
     <div className="space-y-2">
@@ -130,93 +30,22 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
       </Label>
       
       {!manualEntry ? (
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              role="combobox"
-              aria-expanded={open}
-              className="w-full justify-between"
-            >
-              {value || "Select university..."}
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent 
-            className="w-full p-0" 
-            ref={popoverRef}
-            align="start"
-          >
-            <Command>
-              <CommandInput 
-                placeholder="Search university..." 
-                onValueChange={handleSearch}
-                value={searchQuery}
-              />
-              <CommandList>
-                <CommandEmpty>
-                  {isLoading ? (
-                    <p className="py-6 text-center text-sm">Loading...</p>
-                  ) : (
-                    <div className="py-6 text-center text-sm">
-                      <p>No university found</p>
-                      <Button 
-                        variant="link" 
-                        onClick={handleManualEntry}
-                        className="mt-2"
-                      >
-                        University not listed? Tap here to enter manually
-                      </Button>
-                    </div>
-                  )}
-                </CommandEmpty>
-                <CommandGroup>
-                  {universities.map((university) => (
-                    <CommandItem
-                      key={university.id}
-                      value={university.name}
-                      onSelect={handleSelect}
-                      className="py-3"
-                    >
-                      <Check
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          value === university.name ? "opacity-100" : "opacity-0"
-                        )}
-                      />
-                      <div>
-                        <p>{university.name}</p>
-                        {university.city && university.country && (
-                          <p className="text-xs text-muted-foreground">
-                            {university.city}, {university.country}
-                          </p>
-                        )}
-                      </div>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </CommandList>
-            </Command>
-          </PopoverContent>
-        </Popover>
+        <UniversityDropdown
+          value={value}
+          onChange={onChange}
+          onManualEntry={handleManualEntry}
+          universities={universities}
+          isLoading={isLoading}
+          searchQuery={searchQuery}
+          onSearchChange={handleSearch}
+          popoverRef={popoverRef}
+        />
       ) : (
-        <div className="space-y-2">
-          <Input
-            id="university"
-            name="university"
-            value={value}
-            onChange={handleManualInputChange}
-            placeholder="Enter your university name"
-            className="w-full"
-          />
-          <Button 
-            variant="link" 
-            onClick={() => setManualEntry(false)}
-            className="px-0 text-sm"
-          >
-            Return to university list
-          </Button>
-        </div>
+        <ManualUniversityEntry
+          value={value}
+          onChange={handleManualInputChange}
+          onReturn={() => setManualEntry(false)}
+        />
       )}
     </div>
   );
