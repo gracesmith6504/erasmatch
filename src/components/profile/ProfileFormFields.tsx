@@ -4,25 +4,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import UniversityAutocomplete from "@/components/UniversityAutocomplete";
+import { useProfileForm } from "./useProfileForm";
 
 const SEMESTERS = ["Fall 2024", "Spring 2025", "Fall 2025", "Spring 2026"];
 
-type ProfileFormFieldsProps = {
-  form: {
-    name: string;
-    email: string;
-    university: string;
-    city: string;
-    semester: string;
-    bio: string;
-    avatar_url: string;
-  };
-  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  handleSelectChange: (name: string, value: string) => void;
-  handleUniversityChange: (university: string) => void;
-};
+export function ProfileFormFields() {
+  const { form, handleChange, handleSelectChange, handleUniversityChange } = useProfileForm();
 
-export function ProfileFormFields({ form, handleChange, handleSelectChange, handleUniversityChange }: ProfileFormFieldsProps) {
   return (
     <>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">

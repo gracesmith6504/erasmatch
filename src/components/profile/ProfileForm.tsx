@@ -1,40 +1,14 @@
 
 import { Button } from "@/components/ui/button";
 import { ProfileFormFields } from "./ProfileFormFields";
+import { useProfileForm } from "./useProfileForm";
 
-type ProfileFormProps = {
-  form: {
-    name: string;
-    email: string;
-    university: string;
-    city: string;
-    semester: string;
-    bio: string;
-    avatar_url: string;
-  };
-  loading: boolean;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  handleSelectChange: (name: string, value: string) => void;
-  handleUniversityChange: (university: string) => void;
-  handleSubmit: (e: React.FormEvent) => Promise<void>;
-};
+export function ProfileForm() {
+  const { loading, handleSubmit } = useProfileForm();
 
-export function ProfileForm({
-  form,
-  loading,
-  handleChange,
-  handleSelectChange,
-  handleUniversityChange,
-  handleSubmit
-}: ProfileFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <ProfileFormFields
-        form={form}
-        handleChange={handleChange}
-        handleSelectChange={handleSelectChange}
-        handleUniversityChange={handleUniversityChange}
-      />
+      <ProfileFormFields />
 
       <div className="flex justify-end">
         <Button type="submit" disabled={loading}>

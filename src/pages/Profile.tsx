@@ -1,7 +1,7 @@
 
 import { Profile as ProfileType } from "@/types";
-import { useProfileForm } from "@/components/profile/useProfileForm";
 import { ProfileForm } from "@/components/profile/ProfileForm";
+import { ProfileProvider } from "@/components/profile/ProfileContext";
 
 type ProfileProps = {
   profile: ProfileType | null;
@@ -9,15 +9,6 @@ type ProfileProps = {
 };
 
 const Profile = ({ profile, onProfileUpdate }: ProfileProps) => {
-  const {
-    form,
-    loading,
-    handleChange,
-    handleSelectChange,
-    handleUniversityChange,
-    handleSubmit
-  } = useProfileForm(profile, onProfileUpdate);
-
   return (
     <div className="max-w-3xl mx-auto py-8 px-4 sm:px-6">
       <div className="bg-white shadow rounded-lg p-6">
@@ -25,14 +16,9 @@ const Profile = ({ profile, onProfileUpdate }: ProfileProps) => {
           {profile?.name ? "Edit Your Profile" : "Complete Your Profile"}
         </h1>
         
-        <ProfileForm
-          form={form}
-          loading={loading}
-          handleChange={handleChange}
-          handleSelectChange={handleSelectChange}
-          handleUniversityChange={handleUniversityChange}
-          handleSubmit={handleSubmit}
-        />
+        <ProfileProvider profile={profile} onProfileUpdate={onProfileUpdate}>
+          <ProfileForm />
+        </ProfileProvider>
       </div>
     </div>
   );
