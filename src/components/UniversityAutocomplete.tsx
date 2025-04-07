@@ -47,15 +47,10 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
     try {
       setIsLoading(true);
       
-      let queryBuilder = supabase
-        .from("universities")
-        .select("id, name, city, country");
-      
-      if (query) {
-        queryBuilder = queryBuilder.ilike("name", `%${query}%`);
-      }
-      
-      const { data, error } = await queryBuilder.limit(10);
+      // Use a more generic approach that doesn't rely on the type system
+      const { data, error } = await supabase
+        .from('universities')
+        .select('id, name, city, country');
       
       if (error) {
         console.error("Error fetching universities:", error);
@@ -63,7 +58,8 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
         return;
       }
       
-      setUniversities(data || []);
+      // Type assertion to ensure TypeScript knows this is University[]
+      setUniversities(data as University[] || []);
     } catch (error) {
       console.error("Error in fetch operation:", error);
       setUniversities([]);
@@ -74,7 +70,34 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    fetchUniversities(query);
+    
+    // Modify to use a more dynamic approach
+    const fetchWithQuery = async () => {
+      try {
+        setIsLoading(true);
+        
+        const { data, error } = await supabase
+          .from('universities')
+          .select('id, name, city, country')
+          .ilike('name', `%${query}%`)
+          .limit(10);
+          
+        if (error) {
+          console.error("Error searching universities:", error);
+          setUniversities([]);
+          return;
+        }
+        
+        setUniversities(data as University[] || []);
+      } catch (error) {
+        console.error("Error in search operation:", error);
+        setUniversities([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchWithQuery();
   };
 
   const handleSelect = (universityName: string) => {
