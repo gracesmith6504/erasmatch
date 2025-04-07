@@ -31,27 +31,31 @@ export function UniversityAutocomplete({ value, onChange }: UniversityAutocomple
   const [error, setError] = useState<string | null>(null);
   const isMobile = useIsMobile();
 
+  // Initialize with empty array to avoid undefined is not iterable
+  useEffect(() => {
+    setUniversities([]);
+  }, []);
+
   useEffect(() => {
     const fetchUniversities = async () => {
       setIsLoading(true);
       setError(null);
       
       try {
-        // Explicitly tell TypeScript we're accessing "universities" table
-        const { data, error } = await supabase
+        const { data, error: fetchError } = await supabase
           .from("universities")
           .select("name")
           .ilike("name", `%${searchQuery}%`)
           .limit(10);
         
-        if (error) {
-          console.error("Error fetching universities:", error);
+        if (fetchError) {
+          console.error("Error fetching universities:", fetchError);
           setError("Failed to load universities");
           setUniversities([]);
           return;
         }
         
-        // Safely handle the response
+        // Always ensure we have an array, even if empty
         setUniversities(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Error in university fetch:", err);
@@ -70,40 +74,6 @@ export function UniversityAutocomplete({ value, onChange }: UniversityAutocomple
   const handleSelectUniversity = (selectedValue: string) => {
     onChange(selectedValue);
     setOpen(false);
-  };
-
-  // Render content based on loading/error state
-  const renderContent = () => {
-    if (isLoading) {
-      return <div className="py-6 text-center text-sm">Loading universities...</div>;
-    }
-    
-    if (error) {
-      return <div className="py-6 text-center text-sm text-red-500">{error}</div>;
-    }
-    
-    return (
-      <>
-        <CommandEmpty>No university found.</CommandEmpty>
-        <CommandGroup>
-          {universities.map((university) => (
-            <CommandItem
-              key={university.name}
-              value={university.name}
-              onSelect={handleSelectUniversity}
-            >
-              <Check
-                className={cn(
-                  "mr-2 h-4 w-4",
-                  value === university.name ? "opacity-100" : "opacity-0"
-                )}
-              />
-              {university.name}
-            </CommandItem>
-          ))}
-        </CommandGroup>
-      </>
-    );
   };
 
   return (
@@ -128,7 +98,30 @@ export function UniversityAutocomplete({ value, onChange }: UniversityAutocomple
             placeholder="Search universities..." 
             onValueChange={setSearchQuery}
           />
-          {renderContent()}
+          <CommandEmpty>No university found.</CommandEmpty>
+          {isLoading ? (
+            <div className="py-6 text-center text-sm">Loading universities...</div>
+          ) : error ? (
+            <div className="py-6 text-center text-sm text-red-500">{error}</div>
+          ) : (
+            <CommandGroup>
+              {universities.map((university) => (
+                <CommandItem
+                  key={university.name}
+                  value={university.name}
+                  onSelect={handleSelectUniversity}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      value === university.name ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  {university.name}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )}
         </Command>
       </PopoverContent>
     </Popover>
