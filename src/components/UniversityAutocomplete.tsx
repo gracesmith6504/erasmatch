@@ -18,6 +18,10 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useIsMobile } from "@/hooks/use-mobile";
 
+interface University {
+  name: string;
+}
+
 interface UniversityAutocompleteProps {
   value: string;
   onChange: (value: string) => void;
@@ -25,19 +29,16 @@ interface UniversityAutocompleteProps {
 
 export function UniversityAutocomplete({ value, onChange }: UniversityAutocompleteProps) {
   const [open, setOpen] = useState(false);
-  const [universities, setUniversities] = useState<{ name: string }[]>([]);
+  const [universities, setUniversities] = useState<University[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const isMobile = useIsMobile();
 
-  // Initialize with empty array to avoid undefined is not iterable
-  useEffect(() => {
-    setUniversities([]);
-  }, []);
-
   useEffect(() => {
     const fetchUniversities = async () => {
+      if (!open) return; // Only fetch when dropdown is open
+      
       setIsLoading(true);
       setError(null);
       
@@ -56,7 +57,7 @@ export function UniversityAutocomplete({ value, onChange }: UniversityAutocomple
         }
         
         // Always ensure we have an array, even if empty
-        setUniversities(Array.isArray(data) ? data : []);
+        setUniversities(data ? data : []);
       } catch (err) {
         console.error("Error in university fetch:", err);
         setError("An unexpected error occurred");
@@ -67,7 +68,7 @@ export function UniversityAutocomplete({ value, onChange }: UniversityAutocomple
     };
 
     fetchUniversities();
-  }, [searchQuery]);
+  }, [searchQuery, open]);
 
   const displayValue = value || "Select university";
 
@@ -76,8 +77,17 @@ export function UniversityAutocomplete({ value, onChange }: UniversityAutocomple
     setOpen(false);
   };
 
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    
+    // Reset search when opening
+    if (newOpen) {
+      setSearchQuery("");
+    }
+  };
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -97,12 +107,14 @@ export function UniversityAutocomplete({ value, onChange }: UniversityAutocomple
           <CommandInput 
             placeholder="Search universities..." 
             onValueChange={setSearchQuery}
+            value={searchQuery}
           />
-          <CommandEmpty>No university found.</CommandEmpty>
           {isLoading ? (
             <div className="py-6 text-center text-sm">Loading universities...</div>
           ) : error ? (
             <div className="py-6 text-center text-sm text-red-500">{error}</div>
+          ) : universities.length === 0 ? (
+            <div className="py-6 text-center text-sm">No universities found</div>
           ) : (
             <CommandGroup>
               {universities.map((university) => (
