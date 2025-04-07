@@ -12,14 +12,14 @@ type ProfileFormState = {
   city: string;
   semester: string;
   bio: string;
-  avatar_url: string;
+  avatar_url: string | null;
 };
 
 type ProfileContextType = {
   form: ProfileFormState;
   loading: boolean;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  handleSelectChange: (name: string, value: string) => void;
+  handleSelectChange: (name: string, value: string | null) => void;
   handleUniversityChange: (university: string) => void;
   handleSubmit: (e: FormEvent) => Promise<void>;
 };
@@ -49,7 +49,7 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
     city: profile?.city || "",
     semester: profile?.semester || "",
     bio: profile?.bio || "",
-    avatar_url: profile?.avatar_url || "",
+    avatar_url: profile?.avatar_url || null,
   });
   const [loading, setLoading] = useState(false);
 
@@ -58,7 +58,7 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSelectChange = (name: string, value: string) => {
+  const handleSelectChange = (name: string, value: string | null) => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 

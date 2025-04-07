@@ -5,11 +5,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import UniversityAutocomplete from "@/components/UniversityAutocomplete";
 import { useProfileForm } from "./useProfileForm";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Upload, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const SEMESTERS = ["Fall 2024", "Spring 2025", "Fall 2025", "Spring 2026"];
 
 export function ProfileFormFields() {
-  const { form, handleChange, handleSelectChange, handleUniversityChange } = useProfileForm();
+  const { form, handleChange, handleSelectChange, handleUniversityChange, handleFileUpload, uploadStatus, avatarUrl, handleRemoveAvatar } = useProfileForm();
 
   return (
     <>
@@ -91,17 +94,57 @@ export function ProfileFormFields() {
         </div>
 
         <div>
-          <Label htmlFor="avatar_url" className="block text-sm font-medium text-gray-700">
-            Profile Picture URL
+          <Label className="block text-sm font-medium text-gray-700 mb-2">
+            Profile Picture
           </Label>
-          <Input
-            id="avatar_url"
-            name="avatar_url"
-            value={form.avatar_url || ""}
-            onChange={handleChange}
-            placeholder="https://example.com/avatar.jpg"
-            className="mt-1"
-          />
+          <div className="flex items-center gap-4">
+            <Avatar className="h-16 w-16 border">
+              <AvatarImage src={avatarUrl || undefined} />
+              <AvatarFallback className="bg-gray-100">
+                {form.name ? form.name.charAt(0).toUpperCase() : "?"}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col gap-2">
+              {!uploadStatus.uploading ? (
+                <>
+                  <label htmlFor="avatar-upload">
+                    <Button type="button" variant="outline" size="sm" className="cursor-pointer" asChild>
+                      <div className="flex items-center gap-2">
+                        <Upload size={16} />
+                        {avatarUrl ? "Change Photo" : "Upload Photo"}
+                      </div>
+                    </Button>
+                  </label>
+                  <Input 
+                    id="avatar-upload" 
+                    type="file" 
+                    accept="image/*"
+                    className="hidden" 
+                    onChange={handleFileUpload}
+                  />
+                  {avatarUrl && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleRemoveAvatar}
+                      className="text-red-500 hover:text-red-600 flex items-center gap-2"
+                    >
+                      <X size={16} />
+                      Remove
+                    </Button>
+                  )}
+                </>
+              ) : (
+                <Button disabled size="sm" variant="outline">
+                  Uploading...
+                </Button>
+              )}
+              {uploadStatus.error && (
+                <p className="text-xs text-red-500 mt-1">{uploadStatus.error}</p>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
