@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Command,
-  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
@@ -29,6 +28,7 @@ interface UniversityAutocompleteProps {
 
 export function UniversityAutocomplete({ value, onChange }: UniversityAutocompleteProps) {
   const [open, setOpen] = useState(false);
+  // Important: Always initialize with an empty array to avoid "undefined is not iterable" errors
   const [universities, setUniversities] = useState<University[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -56,18 +56,22 @@ export function UniversityAutocomplete({ value, onChange }: UniversityAutocomple
           return;
         }
         
-        // Always ensure we have an array, even if empty
-        setUniversities(data ? data : []);
+        // Always ensure we have a valid array, even if data is null/undefined
+        setUniversities(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Error in university fetch:", err);
         setError("An unexpected error occurred");
+        // Important: Set to empty array, not undefined or null
         setUniversities([]);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchUniversities();
+    // Fetch immediately when dropdown opens or search changes
+    if (open) {
+      fetchUniversities();
+    }
   }, [searchQuery, open]);
 
   const displayValue = value || "Select university";
