@@ -32,7 +32,7 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
   const [semesterFilter, setSemesterFilter] = useState("");
 
   const [uniqueUniversities, setUniqueUniversities] = useState<string[]>([]);
-  const [uniqueCities, setUniqueUniversities] = useState<string[]>([]);
+  const [uniqueCities, setUniqueCities] = useState<string[]>([]); // Fixed: changed from setUniqueUniversities to setUniqueCities
   const [uniqueSemesters, setUniqueSemesters] = useState<string[]>([]);
   const [loadedProfiles, setLoadedProfiles] = useState<Profile[]>(profiles);
   const [loading, setLoading] = useState(true);
@@ -70,7 +70,7 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
       const semesters = [...new Set(loadedProfiles.map(p => p.semester).filter(Boolean))] as string[];
       
       setUniqueUniversities(universities);
-      setUniqueUniversities(cities);
+      setUniqueCities(cities); // Fixed: changed from setUniqueUniversities to setUniqueCities
       setUniqueSemesters(semesters);
     }
   }, [loadedProfiles]);

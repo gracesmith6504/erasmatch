@@ -21,7 +21,7 @@ const Layout = ({ children, isAuthenticated, onLogout }: LayoutProps) => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogout} />
       <div className="container mx-auto mt-20 px-4 animate-fade-in">
         <DemoModeBanner />
