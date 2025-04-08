@@ -1,9 +1,8 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { 
   Card, 
-  CardHeader, 
   CardContent, 
   CardFooter 
 } from "@/components/ui/card";
@@ -69,54 +68,66 @@ const UniversityCard = ({ university }: UniversityCardProps) => {
   const universityImage = `https://source.unsplash.com/400x200/?university,${university.name.replace(/\s/g, '+')}`;
 
   return (
-    <Card className="overflow-hidden h-full flex flex-col">
+    <Card className="overflow-hidden h-full flex flex-col card-hover bg-white border border-gray-100">
       <div className="relative h-48 w-full overflow-hidden">
         <img 
           src={universityImage} 
           alt={university.name} 
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+          loading="lazy"
         />
-      </div>
-      <CardHeader>
-        <h2 className="text-xl font-semibold">{university.name}</h2>
-        <div className="flex items-center text-sm text-gray-600 mt-1">
-          <MapPin className="h-4 w-4 mr-1" />
-          <span>{university.city || "City not specified"}{university.country ? `, ${university.country}` : ""}</span>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+        <div className="absolute bottom-0 left-0 p-4 w-full">
+          <h2 className="text-xl font-semibold text-white">{university.name}</h2>
+          <div className="flex items-center text-sm text-white/90 mt-1">
+            <MapPin className="h-4 w-4 mr-1" />
+            <span>{university.city || "City not specified"}{university.country ? `, ${university.country}` : ""}</span>
+          </div>
         </div>
-      </CardHeader>
-      <CardContent className="flex-grow">
+      </div>
+      <CardContent className="flex-grow pt-4">
         <div className="mb-4">
-          <div className="text-sm font-medium mb-2">Available Programs:</div>
+          <div className="flex items-center text-sm font-medium mb-2 text-gray-700">
+            <School className="h-4 w-4 mr-1.5 text-erasmatch-blue" />
+            <span>Available Programs:</span>
+          </div>
           <div className="flex flex-wrap gap-2">
             {programs.map((program) => (
-              <Badge key={program} variant="outline" className="bg-erasmatch-blue/10">
+              <Badge key={program} variant="outline" className="bg-gradient-to-r from-blue-50 to-purple-50 border-erasmatch-lightblue/30 text-erasmatch-blue">
                 {program}
               </Badge>
             ))}
           </div>
         </div>
+
+        <p className="text-gray-600 text-sm">
+          {university.description || "Explore this university to learn more about their programs and connect with other students heading there."}
+        </p>
       </CardContent>
-      <CardFooter className="flex flex-col space-y-2">
+      <CardFooter className="pt-0 flex flex-col space-y-2">
         <Button 
           onClick={toggleStudents} 
           variant="outline" 
-          className="w-full flex items-center justify-center"
+          className="w-full flex items-center justify-center transition-all button-hover"
           disabled={loading}
         >
           {loading ? "Loading..." : (
             <>
-              {showStudents ? <ChevronUp className="mr-1" /> : <ChevronDown className="mr-1" />}
+              {showStudents ? <ChevronUp className="mr-1.5" /> : <ChevronDown className="mr-1.5" />}
               {showStudents ? "Hide Students" : "View Students"}
+              <Users className="ml-1.5 h-4 w-4" />
             </>
           )}
         </Button>
         <Link to="/profile" className="w-full">
-          <Button className="w-full">Update Your Profile</Button>
+          <Button className="w-full bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple border-0 hover:opacity-90 transition-all">
+            Update Your Profile
+          </Button>
         </Link>
       </CardFooter>
       
       {showStudents && (
-        <div className="px-6 pb-6">
+        <div className="px-6 pb-6 animate-fade-in">
           <StudentList students={students} />
         </div>
       )}

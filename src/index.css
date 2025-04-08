@@ -1,4 +1,6 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,7 +16,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 217 91.2% 59.8%;
+    --primary: 244.8 58.1% 58.4%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 160 84.1% 39.2%;
@@ -31,9 +33,9 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 244.8 58.1% 58.4%;
 
-    --radius: 0.5rem;
+    --radius: 1rem;
   }
 
   .dark {
@@ -46,7 +48,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 217.2 91.2% 59.8%;
+    --primary: 244.8 58.1% 58.4%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 160 84.1% 39.2%;
@@ -73,7 +75,45 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-gray-50 text-foreground font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+
+  h1 {
+    @apply text-3xl lg:text-4xl;
+  }
+
+  h2 {
+    @apply text-2xl lg:text-3xl;
+  }
+
+  h3 {
+    @apply text-xl lg:text-2xl;
+  }
+}
+
+@layer components {
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-card hover:-translate-y-1;
+  }
+
+  .button-hover {
+    @apply transition-all duration-200 hover:shadow-button active:translate-y-0.5;
+  }
+
+  .gradient-bg-primary {
+    @apply bg-gradient-to-br from-erasmatch-blue to-erasmatch-purple;
+  }
+
+  .gradient-bg-secondary {
+    @apply bg-gradient-to-br from-erasmatch-green to-erasmatch-teal;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple bg-clip-text text-transparent;
   }
 }
 
@@ -82,5 +122,9 @@
 }
 
 .auth-card {
-  @apply w-full max-w-md space-y-8 p-8 bg-white rounded-lg shadow-md;
+  @apply w-full max-w-md space-y-8 p-8 bg-white rounded-lg shadow-card;
+}
+
+.skeleton {
+  @apply animate-pulse-soft bg-gray-200 rounded;
 }

@@ -13,11 +13,10 @@ import {
 import { 
   Card, 
   CardContent, 
-  CardFooter, 
-  CardHeader 
+  CardFooter
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { School, MapPin, CalendarClock, Search } from "lucide-react";
+import { School, MapPin, CalendarClock, Search, Filter, X } from "lucide-react";
 import { Profile } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -33,7 +32,7 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
   const [semesterFilter, setSemesterFilter] = useState("");
 
   const [uniqueUniversities, setUniqueUniversities] = useState<string[]>([]);
-  const [uniqueCities, setUniqueCities] = useState<string[]>([]);
+  const [uniqueCities, setUniqueUniversities] = useState<string[]>([]);
   const [uniqueSemesters, setUniqueSemesters] = useState<string[]>([]);
   const [loadedProfiles, setLoadedProfiles] = useState<Profile[]>(profiles);
   const [loading, setLoading] = useState(true);
@@ -71,7 +70,7 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
       const semesters = [...new Set(loadedProfiles.map(p => p.semester).filter(Boolean))] as string[];
       
       setUniqueUniversities(universities);
-      setUniqueCities(cities);
+      setUniqueUniversities(cities);
       setUniqueSemesters(semesters);
     }
   }, [loadedProfiles]);
@@ -106,38 +105,65 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
     setSemesterFilter("");
   };
 
+  // Rendering skeleton loaders during loading state
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div className="text-center py-12">
-          <h2 className="text-xl font-medium text-gray-900 mb-2">Loading students...</h2>
+      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 animate-fade-in">
+        <div className="h-10 w-60 skeleton rounded-xl mb-6"></div>
+        
+        <div className="mb-8 p-6 border border-gray-200 rounded-xl bg-white shadow-sm">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
+            <div className="h-12 w-full skeleton rounded-lg lg:col-span-2"></div>
+            <div className="h-12 w-full skeleton rounded-lg"></div>
+            <div className="h-12 w-full skeleton rounded-lg"></div>
+            <div className="h-12 w-full skeleton rounded-lg"></div>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3, 4, 5, 6].map((item) => (
+            <div key={item} className="h-80 w-full skeleton rounded-xl"></div>
+          ))}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Find Erasmus Students</h1>
+    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 animate-fade-in">
+      <h1 className="text-2xl font-bold gradient-text mb-6">Find Erasmus Students</h1>
 
-      <div className="bg-white shadow rounded-lg p-4 mb-8">
+      <div className="bg-white shadow-sm rounded-xl p-6 mb-8 border border-gray-100">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
           <div className="relative lg:col-span-2">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+              <Search className="h-5 w-5" />
+            </div>
             <Input
               placeholder="Search by name..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 h-12 border-gray-200 focus:border-erasmatch-blue"
             />
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            {searchTerm && (
+              <button 
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                onClick={() => setSearchTerm("")}
+              >
+                <X className="h-5 w-5" />
+              </button>
+            )}
           </div>
           
           <div>
             <Select value={universityFilter} onValueChange={setUniversityFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="University" />
+              <SelectTrigger className="h-12 border-gray-200 focus:border-erasmatch-blue">
+                <div className="flex items-center">
+                  <School className="mr-2 h-4 w-4 text-gray-400" />
+                  <SelectValue placeholder="University" />
+                </div>
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-80">
                 <SelectItem value="all-universities">All Universities</SelectItem>
                 {uniqueUniversities.map((uni) => (
                   <SelectItem key={uni} value={uni}>{uni}</SelectItem>
@@ -148,10 +174,13 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
           
           <div>
             <Select value={cityFilter} onValueChange={setCityFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="City" />
+              <SelectTrigger className="h-12 border-gray-200 focus:border-erasmatch-blue">
+                <div className="flex items-center">
+                  <MapPin className="mr-2 h-4 w-4 text-gray-400" />
+                  <SelectValue placeholder="City" />
+                </div>
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-80">
                 <SelectItem value="all-cities">All Cities</SelectItem>
                 {uniqueCities.map((city) => (
                   <SelectItem key={city} value={city}>{city}</SelectItem>
@@ -162,10 +191,13 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
           
           <div>
             <Select value={semesterFilter} onValueChange={setSemesterFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Semester" />
+              <SelectTrigger className="h-12 border-gray-200 focus:border-erasmatch-blue">
+                <div className="flex items-center">
+                  <CalendarClock className="mr-2 h-4 w-4 text-gray-400" />
+                  <SelectValue placeholder="Semester" />
+                </div>
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-80">
                 <SelectItem value="all-semesters">All Semesters</SelectItem>
                 {uniqueSemesters.map((semester) => (
                   <SelectItem key={semester} value={semester}>{semester}</SelectItem>
@@ -175,52 +207,101 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
           </div>
         </div>
         
+        {/* Tag display for active filters */}
+        {(searchTerm || universityFilter || cityFilter || semesterFilter) && (
+          <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t">
+            <div className="text-sm text-gray-500 mr-1">Active filters:</div>
+            {searchTerm && (
+              <div className="inline-flex items-center text-xs bg-blue-50 text-blue-700 py-1 px-2 rounded-full">
+                Search: {searchTerm}
+                <button className="ml-1" onClick={() => setSearchTerm("")}>
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            )}
+            {universityFilter && universityFilter !== "all-universities" && (
+              <div className="inline-flex items-center text-xs bg-purple-50 text-purple-700 py-1 px-2 rounded-full">
+                University: {universityFilter}
+                <button className="ml-1" onClick={() => setUniversityFilter("")}>
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            )}
+            {cityFilter && cityFilter !== "all-cities" && (
+              <div className="inline-flex items-center text-xs bg-green-50 text-green-700 py-1 px-2 rounded-full">
+                City: {cityFilter}
+                <button className="ml-1" onClick={() => setCityFilter("")}>
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            )}
+            {semesterFilter && semesterFilter !== "all-semesters" && (
+              <div className="inline-flex items-center text-xs bg-orange-50 text-orange-700 py-1 px-2 rounded-full">
+                Semester: {semesterFilter}
+                <button className="ml-1" onClick={() => setSemesterFilter("")}>
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+        
         <div className="mt-4 flex justify-end">
-          <Button variant="outline" onClick={resetFilters}>
-            Reset Filters
+          <Button variant="outline" onClick={resetFilters} className="button-hover">
+            Reset All Filters
           </Button>
         </div>
       </div>
 
+      {/* Results count */}
+      <div className="mb-6 text-sm text-gray-600">
+        Showing <span className="font-medium text-gray-900">{filteredProfiles.length}</span> students
+      </div>
+
       {filteredProfiles.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-lg shadow">
+        <div className="text-center py-16 bg-white rounded-xl shadow-sm border border-gray-100">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 text-gray-500 mb-4">
+            <Search className="h-8 w-8" />
+          </div>
           <h2 className="text-xl font-medium text-gray-900 mb-2">No students found</h2>
-          <p className="text-gray-600">Try adjusting your filters or search term</p>
+          <p className="text-gray-600 mb-6">Try adjusting your filters or search term</p>
+          <Button className="button-hover" onClick={resetFilters}>
+            Reset Filters
+          </Button>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filteredProfiles.map((profile) => (
-            <Card key={profile.id} className="overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-erasmatch-blue/10 to-erasmatch-green/10 pb-0">
-                <div className="flex justify-center">
-                  <Avatar className="h-24 w-24 border-4 border-white">
-                    <AvatarImage src={profile.avatar_url || undefined} />
-                    <AvatarFallback className="text-lg bg-erasmatch-light-accent">
-                      {getInitials(profile.name)}
-                    </AvatarFallback>
-                  </Avatar>
-                </div>
-              </CardHeader>
+            <Card key={profile.id} className="overflow-hidden card-hover border-gray-100">
+              <div className="h-24 bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple"></div>
+              <div className="-mt-12 flex justify-center">
+                <Avatar className="h-24 w-24 border-4 border-white shadow-md">
+                  <AvatarImage src={profile.avatar_url || undefined} />
+                  <AvatarFallback className="text-lg bg-gradient-to-br from-blue-100 to-purple-100 text-erasmatch-blue">
+                    {getInitials(profile.name)}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
               <CardContent className="pt-4 text-center">
-                <h3 className="font-semibold text-lg text-gray-900">{profile.name}</h3>
-                <div className="mt-4 space-y-2">
+                <h3 className="font-semibold text-lg text-gray-900 mt-4">{profile.name || "Anonymous Student"}</h3>
+                <div className="mt-4 space-y-3">
                   <div className="flex items-center justify-center text-sm text-gray-600">
-                    <School className="h-4 w-4 mr-1 text-erasmatch-blue" />
+                    <School className="h-4 w-4 mr-2 text-erasmatch-blue opacity-70" />
                     <span>{profile.university || "University not specified"}</span>
                   </div>
                   <div className="flex items-center justify-center text-sm text-gray-600">
-                    <MapPin className="h-4 w-4 mr-1 text-erasmatch-blue" />
+                    <MapPin className="h-4 w-4 mr-2 text-erasmatch-green opacity-70" />
                     <span>{profile.city || "City not specified"}</span>
                   </div>
                   <div className="flex items-center justify-center text-sm text-gray-600">
-                    <CalendarClock className="h-4 w-4 mr-1 text-erasmatch-blue" />
+                    <CalendarClock className="h-4 w-4 mr-2 text-erasmatch-purple opacity-70" />
                     <span>{profile.semester || "Semester not specified"}</span>
                   </div>
                 </div>
               </CardContent>
-              <CardFooter className="pt-0 flex justify-center">
+              <CardFooter className="pt-1 flex justify-center">
                 <Link to={`/profile/${profile.id}`}>
-                  <Button variant="outline">View Profile</Button>
+                  <Button variant="outline" className="button-hover">View Profile</Button>
                 </Link>
               </CardFooter>
             </Card>
