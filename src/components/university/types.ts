@@ -6,4 +6,13 @@ export type University = {
   country: string | null;
   description?: string | null;
   student_count?: number;
+  overview?: string | null;
+  erasmus_tips?: string | null;
+  accommodation_info?: string | null;
+  popular_courses?: string | null;
+  links?: {
+    housing?: string;
+    transport?: string;
+    student_groups?: string;
+  } | null;
 };

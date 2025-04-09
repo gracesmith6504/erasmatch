@@ -1,0 +1,62 @@
+
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { University } from "@/components/university/types";
+import { Profile } from "@/types";
+
+export function useUniversityDetails(universityId: string | undefined) {
+  const [university, setUniversity] = useState<University | null>(null);
+  const [students, setStudents] = useState<Profile[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUniversityData = async () => {
+      if (!universityId) return;
+      
+      try {
+        setLoading(true);
+        
+        // Fetch university details
+        const { data: universityData, error: universityError } = await supabase
+          .from('universities')
+          .select('*')
+          .eq('id', universityId)
+          .single();
+        
+        if (universityError) {
+          throw universityError;
+        }
+        
+        setUniversity(universityData);
+        
+        // Fetch students for this university
+        const { data: studentsData, error: studentsError } = await supabase
+          .from('profiles')
+          .select('*')
+          .ilike('university', universityData.name);
+        
+        if (studentsError) {
+          throw studentsError;
+        }
+        
+        setStudents(studentsData || []);
+        
+      } catch (err: any) {
+        console.error("Error fetching university details:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchUniversityData();
+  }, [universityId]);
+  
+  return {
+    university,
+    students,
+    loading,
+    error
+  };
+}

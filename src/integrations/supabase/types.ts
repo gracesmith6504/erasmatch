@@ -74,22 +74,37 @@ export type Database = {
       }
       universities: {
         Row: {
+          accommodation_info: string | null
           city: string | null
           country: string | null
+          erasmus_tips: string | null
           id: number
+          links: Json | null
           name: string
+          overview: string | null
+          popular_courses: string | null
         }
         Insert: {
+          accommodation_info?: string | null
           city?: string | null
           country?: string | null
+          erasmus_tips?: string | null
           id?: number
+          links?: Json | null
           name: string
+          overview?: string | null
+          popular_courses?: string | null
         }
         Update: {
+          accommodation_info?: string | null
           city?: string | null
           country?: string | null
+          erasmus_tips?: string | null
           id?: number
+          links?: Json | null
           name?: string
+          overview?: string | null
+          popular_courses?: string | null
         }
         Relationships: []
       }

@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { School, MapPin, Users, ChevronDown, ChevronUp } from "lucide-react";
+import { School, MapPin, Users, ChevronDown, ChevronUp, BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { University } from "./types";
 import { Profile } from "@/types";
@@ -127,9 +127,9 @@ const UniversityCard = ({ university }: UniversityCardProps) => {
             </>
           )}
         </Button>
-        <Link to="/profile" className="w-full">
+        <Link to={`/university-hub/${university.id}`} className="w-full">
           <Button className="w-full bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple border-0 hover:opacity-90 transition-all">
-            Update Your Profile
+            <BookOpen className="mr-2 h-4 w-4" /> Discover University
           </Button>
         </Link>
       </CardFooter>

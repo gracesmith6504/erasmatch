@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -14,6 +15,7 @@ import Profile from "./pages/Profile";
 import ProfileView from "./pages/ProfileView";
 import Students from "./pages/Students";
 import Universities from "./pages/Universities";
+import UniversityHub from "./pages/UniversityHub";
 import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
 
@@ -270,6 +272,10 @@ const App = () => {
               <Route 
                 path="/universities" 
                 element={<Universities />} 
+              />
+              <Route 
+                path="/university-hub/:id" 
+                element={<UniversityHub />} 
               />
               <Route 
                 path="/messages" 
