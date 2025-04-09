@@ -19,42 +19,51 @@ export function useUniversitiesData() {
       try {
         setLoading(true);
         
-        // Create a query that joins universities with profiles to get student counts
-        const { data: universitiesWithStudentCounts, error } = await supabase
+        // First, fetch all universities
+        const { data: universitiesData, error: universitiesError } = await supabase
           .from('universities')
-          .select(`
-            *,
-            student_count:profiles(count)
-          `)
-          .order('student_count', { ascending: false });
+          .select('*');
 
-        if (error) {
-          throw error;
+        if (universitiesError) {
+          throw universitiesError;
         }
 
-        // Format the data to include the student_count
-        // The count is returned as an array with a single object that has a count property
-        const universities = universitiesWithStudentCounts.map(uni => {
-          // Check if student_count exists and has the expected structure
-          let studentCount = 0;
-          if (uni.student_count && Array.isArray(uni.student_count) && uni.student_count.length > 0) {
-            // Extract the count value correctly based on the returned structure
-            const countObj = uni.student_count[0];
-            studentCount = typeof countObj === 'object' && countObj !== null ? 
-              (countObj.count as number || 0) : 0;
+        // Then, fetch all profiles to count students per university
+        const { data: profilesData, error: profilesError } = await supabase
+          .from('profiles')
+          .select('university');
+
+        if (profilesError) {
+          throw profilesError;
+        }
+
+        // Count students per university
+        const studentCountMap = new Map<string, number>();
+        profilesData.forEach(profile => {
+          if (profile.university) {
+            const count = studentCountMap.get(profile.university) || 0;
+            studentCountMap.set(profile.university, count + 1);
           }
-          
+        });
+
+        // Combine university data with student counts
+        const universitiesWithCounts = universitiesData.map(uni => {
           return {
             ...uni,
-            student_count: studentCount
+            student_count: studentCountMap.get(uni.name) || 0
           };
         });
+
+        // Sort by student count (descending)
+        const sortedUniversities = universitiesWithCounts.sort(
+          (a, b) => (b.student_count || 0) - (a.student_count || 0)
+        );
         
-        setUniversities(universities);
-        setFilteredUniversities(universities);
+        setUniversities(sortedUniversities);
+        setFilteredUniversities(sortedUniversities);
         
         // Extract unique countries
-        const countries = universities
+        const countries = sortedUniversities
           .map(uni => uni.country)
           .filter(Boolean) // Remove null/undefined values
           .filter((country, index, self) => self.indexOf(country) === index)

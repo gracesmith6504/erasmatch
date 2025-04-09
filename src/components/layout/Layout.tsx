@@ -3,7 +3,6 @@ import { ReactNode } from "react";
 import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { DemoModeBanner } from "@/components/ui/demo-mode-banner";
 
 type LayoutProps = {
   children: ReactNode;
@@ -23,9 +22,6 @@ const Layout = ({ children, isAuthenticated, onLogout }: LayoutProps) => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogout} />
-      <div className="container mx-auto mt-20 px-4 animate-fade-in">
-        <DemoModeBanner />
-      </div>
       <main className="flex-1 pt-4">{children}</main>
       <footer className="bg-white border-t py-8 mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
