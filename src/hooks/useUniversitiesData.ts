@@ -33,10 +33,22 @@ export function useUniversitiesData() {
         }
 
         // Format the data to include the student_count
-        const universities = universitiesWithStudentCounts.map(uni => ({
-          ...uni,
-          student_count: uni.student_count[0].count || 0
-        }));
+        // The count is returned as an array with a single object that has a count property
+        const universities = universitiesWithStudentCounts.map(uni => {
+          // Check if student_count exists and has the expected structure
+          let studentCount = 0;
+          if (uni.student_count && Array.isArray(uni.student_count) && uni.student_count.length > 0) {
+            // Extract the count value correctly based on the returned structure
+            const countObj = uni.student_count[0];
+            studentCount = typeof countObj === 'object' && countObj !== null ? 
+              (countObj.count as number || 0) : 0;
+          }
+          
+          return {
+            ...uni,
+            student_count: studentCount
+          };
+        });
         
         setUniversities(universities);
         setFilteredUniversities(universities);
