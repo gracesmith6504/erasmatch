@@ -9,6 +9,7 @@ export type Profile = {
   bio: string | null;
   avatar_url: string | null;
   created_at: string;
+  home_university: string | null;
 };
 
 export type Message = {

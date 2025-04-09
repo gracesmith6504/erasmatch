@@ -13,6 +13,7 @@ type ProfileFormState = {
   semester: string;
   bio: string;
   avatar_url: string | null;
+  home_university: string;
 };
 
 type ProfileContextType = {
@@ -21,6 +22,7 @@ type ProfileContextType = {
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleSelectChange: (name: string, value: string | null) => void;
   handleUniversityChange: (university: string) => void;
+  handleHomeUniversityChange: (university: string) => void;
   handleSubmit: (e: FormEvent) => Promise<void>;
 };
 
@@ -50,6 +52,7 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
     semester: profile?.semester || "",
     bio: profile?.bio || "",
     avatar_url: profile?.avatar_url || null,
+    home_university: profile?.home_university || "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -64,6 +67,10 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
 
   const handleUniversityChange = (university: string) => {
     setForm((prev) => ({ ...prev, university }));
+  };
+  
+  const handleHomeUniversityChange = (home_university: string) => {
+    setForm((prev) => ({ ...prev, home_university }));
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -92,6 +99,7 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
           semester: form.semester,
           bio: form.bio,
           avatar_url: form.avatar_url,
+          home_university: form.home_university,
         })
         .eq('id', user.user.id);
 
@@ -114,6 +122,7 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
     handleChange,
     handleSelectChange,
     handleUniversityChange,
+    handleHomeUniversityChange,
     handleSubmit
   };
 

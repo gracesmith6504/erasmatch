@@ -43,6 +43,7 @@ export type Database = {
           city: string | null
           created_at: string
           email: string | null
+          home_university: string | null
           id: string
           name: string | null
           semester: string | null
@@ -54,6 +55,7 @@ export type Database = {
           city?: string | null
           created_at?: string
           email?: string | null
+          home_university?: string | null
           id: string
           name?: string | null
           semester?: string | null
@@ -65,6 +67,7 @@ export type Database = {
           city?: string | null
           created_at?: string
           email?: string | null
+          home_university?: string | null
           id?: string
           name?: string | null
           semester?: string | null

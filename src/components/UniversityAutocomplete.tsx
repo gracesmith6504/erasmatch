@@ -8,9 +8,14 @@ import { useUniversitySearch } from "./university/useUniversitySearch";
 type UniversityAutocompleteProps = {
   value: string;
   onChange: (value: string) => void;
+  label?: string;
 };
 
-const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps) => {
+const UniversityAutocomplete = ({ 
+  value, 
+  onChange,
+  label = "University" 
+}: UniversityAutocompleteProps) => {
   const [manualEntry, setManualEntry] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
   const { universities, isLoading, searchQuery, handleSearch } = useUniversitySearch();
@@ -26,7 +31,7 @@ const UniversityAutocomplete = ({ value, onChange }: UniversityAutocompleteProps
   return (
     <div className="space-y-2">
       <Label htmlFor="university" className="block text-sm font-medium text-gray-700">
-        Destination University
+        {label}
       </Label>
       
       {!manualEntry ? (

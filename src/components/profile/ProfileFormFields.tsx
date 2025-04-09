@@ -12,7 +12,17 @@ import { Button } from "@/components/ui/button";
 const SEMESTERS = ["Fall 2024", "Spring 2025", "Fall 2025", "Spring 2026"];
 
 export function ProfileFormFields() {
-  const { form, handleChange, handleSelectChange, handleUniversityChange, handleFileUpload, uploadStatus, avatarUrl, handleRemoveAvatar } = useProfileForm();
+  const { 
+    form, 
+    handleChange, 
+    handleSelectChange, 
+    handleUniversityChange,
+    handleHomeUniversityChange,
+    handleFileUpload, 
+    uploadStatus, 
+    avatarUrl, 
+    handleRemoveAvatar 
+  } = useProfileForm();
 
   return (
     <>
@@ -51,9 +61,20 @@ export function ProfileFormFields() {
         </div>
 
         <div>
+          <Label htmlFor="home_university" className="block text-sm font-medium text-gray-700">
+            Home University
+          </Label>
+          <UniversityAutocomplete
+            value={form.home_university}
+            onChange={handleHomeUniversityChange}
+          />
+        </div>
+
+        <div>
           <UniversityAutocomplete
             value={form.university}
             onChange={handleUniversityChange}
+            label="Destination University"
           />
         </div>
 

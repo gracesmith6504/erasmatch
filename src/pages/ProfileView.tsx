@@ -1,8 +1,9 @@
+
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, School, MapPin, CalendarClock } from "lucide-react";
+import { MessageSquare, School, MapPin, CalendarClock, Home } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
@@ -100,6 +101,10 @@ const ProfileView = ({ profiles, currentUserId, onSendMessage }: ProfileViewProp
 
           <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div className="space-y-4">
+              <div className="flex items-center text-gray-700">
+                <Home className="h-5 w-5 mr-2 text-erasmatch-purple" />
+                <span>{profile.home_university || "Home university not specified"}</span>
+              </div>
               <div className="flex items-center text-gray-700">
                 <School className="h-5 w-5 mr-2 text-erasmatch-blue" />
                 <span>{profile.university || "University not specified"}</span>

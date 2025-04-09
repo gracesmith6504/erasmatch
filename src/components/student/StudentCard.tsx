@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { School, MapPin, CalendarClock } from "lucide-react";
+import { School, MapPin, CalendarClock, Home } from "lucide-react";
 import { Profile } from "@/types";
 
 interface StudentCardProps {
@@ -36,6 +36,12 @@ const StudentCard = ({ profile }: StudentCardProps) => {
       <CardContent className="pt-4 text-center">
         <h3 className="font-semibold text-lg text-gray-900 mt-4">{profile.name || "Anonymous Student"}</h3>
         <div className="mt-4 space-y-3">
+          {profile.home_university && (
+            <div className="flex items-center justify-center text-sm text-gray-600">
+              <Home className="h-4 w-4 mr-2 text-erasmatch-purple opacity-70" />
+              <span>{profile.home_university}</span>
+            </div>
+          )}
           <div className="flex items-center justify-center text-sm text-gray-600">
             <School className="h-4 w-4 mr-2 text-erasmatch-blue opacity-70" />
             <span>{profile.university || "University not specified"}</span>

@@ -28,7 +28,17 @@ export function useUniversityDetails(universityId: string | undefined) {
           throw universityError;
         }
         
-        setUniversity(universityData);
+        // Convert the JSON links to the expected format
+        const universityWithFormattedLinks: University = {
+          ...universityData,
+          links: universityData.links ? {
+            housing: universityData.links.housing,
+            transport: universityData.links.transport,
+            student_groups: universityData.links.student_groups
+          } : null
+        };
+        
+        setUniversity(universityWithFormattedLinks);
         
         // Fetch students for this university
         const { data: studentsData, error: studentsError } = await supabase
