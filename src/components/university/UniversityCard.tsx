@@ -78,7 +78,15 @@ const UniversityCard = ({ university }: UniversityCardProps) => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
         <div className="absolute bottom-0 left-0 p-4 w-full">
-          <h2 className="text-xl font-semibold text-white">{university.name}</h2>
+          <div className="flex justify-between items-start">
+            <h2 className="text-xl font-semibold text-white">{university.name}</h2>
+            {university.student_count !== undefined && university.student_count > 0 && (
+              <Badge className="bg-erasmatch-blue border-0 text-white flex items-center">
+                <Users className="h-3 w-3 mr-1" />
+                {university.student_count} {university.student_count === 1 ? 'student' : 'students'}
+              </Badge>
+            )}
+          </div>
           <div className="flex items-center text-sm text-white/90 mt-1">
             <MapPin className="h-4 w-4 mr-1" />
             <span>{university.city || "City not specified"}{university.country ? `, ${university.country}` : ""}</span>

@@ -18,16 +18,26 @@ export function useUniversitiesData() {
     const fetchUniversities = async () => {
       try {
         setLoading(true);
-        const { data, error } = await supabase
-          .from("universities")
-          .select("*")
-          .order("name");
+        
+        // Create a query that joins universities with profiles to get student counts
+        const { data: universitiesWithStudentCounts, error } = await supabase
+          .from('universities')
+          .select(`
+            *,
+            student_count:profiles(count)
+          `)
+          .order('student_count', { ascending: false });
 
         if (error) {
           throw error;
         }
 
-        const universities = data || [];
+        // Format the data to include the student_count
+        const universities = universitiesWithStudentCounts.map(uni => ({
+          ...uni,
+          student_count: uni.student_count[0].count || 0
+        }));
+        
         setUniversities(universities);
         setFilteredUniversities(universities);
         

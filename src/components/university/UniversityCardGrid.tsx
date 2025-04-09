@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { University } from "./types";
 import UniversityCard from "./UniversityCard";
-import { Search } from "lucide-react";
+import { Search, TrendingUp } from "lucide-react";
 
 type UniversityCardGridProps = {
   universities: University[];
@@ -21,8 +21,14 @@ const UniversityCardGrid = ({
   return (
     <>
       {/* Results count */}
-      <div className="mb-4 text-sm text-gray-600">
-        Showing <span className="font-medium text-gray-900">{filteredCount}</span> of <span className="font-medium text-gray-900">{totalCount}</span> universities
+      <div className="mb-4 flex items-center justify-between">
+        <div className="text-sm text-gray-600">
+          Showing <span className="font-medium text-gray-900">{filteredCount}</span> of <span className="font-medium text-gray-900">{totalCount}</span> universities
+        </div>
+        <div className="text-sm flex items-center text-erasmatch-blue">
+          <TrendingUp className="h-4 w-4 mr-1" />
+          <span>Sorted by popularity</span>
+        </div>
       </div>
       
       {universities.length === 0 ? (
