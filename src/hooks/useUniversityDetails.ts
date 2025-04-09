@@ -17,11 +17,11 @@ export function useUniversityDetails(universityId: string | undefined) {
       try {
         setLoading(true);
         
-        // Fetch university details
+        // Fetch university details - convert string ID to number
         const { data: universityData, error: universityError } = await supabase
           .from('universities')
           .select('*')
-          .eq('id', universityId)
+          .eq('id', parseInt(universityId))
           .single();
         
         if (universityError) {
