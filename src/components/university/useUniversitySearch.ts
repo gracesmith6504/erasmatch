@@ -28,7 +28,15 @@ export function useUniversitySearch() {
       }
       
       if (data) {
-        setUniversities(data as University[]);
+        // Cast the data to University type after ensuring it has the correct structure
+        const typedData = data.map(uni => ({
+          id: uni.id,
+          name: uni.name,
+          city: uni.city,
+          country: uni.country
+        })) as University[];
+        
+        setUniversities(typedData);
       } else {
         setUniversities([]);
       }
@@ -60,7 +68,15 @@ export function useUniversitySearch() {
         }
         
         if (data) {
-          setUniversities(data as University[]);
+          // Cast the data to University type after ensuring it has the correct structure
+          const typedData = data.map(uni => ({
+            id: uni.id,
+            name: uni.name,
+            city: uni.city,
+            country: uni.country
+          })) as University[];
+          
+          setUniversities(typedData);
         } else {
           setUniversities([]);
         }

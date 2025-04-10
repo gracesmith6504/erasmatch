@@ -58,10 +58,11 @@ export function useUniversitiesData() {
           let formattedLinks = null;
           
           if (uni.links && typeof uni.links === 'object') {
+            const linksObj = uni.links as Record<string, unknown>;
             formattedLinks = {
-              housing: uni.links.housing,
-              transport: uni.links.transport,
-              student_groups: uni.links.student_groups
+              housing: linksObj.housing as string | undefined,
+              transport: linksObj.transport as string | undefined,
+              student_groups: linksObj.student_groups as string | undefined
             };
           }
           
@@ -70,7 +71,7 @@ export function useUniversitiesData() {
             name: uni.name,
             city: uni.city,
             country: uni.country,
-            description: uni.description || null,
+            description: null, // Set default values for properties that might not exist
             overview: uni.overview || null,
             erasmus_tips: uni.erasmus_tips || null,
             accommodation_info: uni.accommodation_info || null,

@@ -32,10 +32,11 @@ export function useUniversityDetails(universityId: string | undefined) {
         let formattedLinks = null;
         
         if (universityData.links && typeof universityData.links === 'object') {
+          const linksObj = universityData.links as Record<string, unknown>;
           formattedLinks = {
-            housing: universityData.links.housing,
-            transport: universityData.links.transport,
-            student_groups: universityData.links.student_groups
+            housing: linksObj.housing as string | undefined,
+            transport: linksObj.transport as string | undefined,
+            student_groups: linksObj.student_groups as string | undefined
           };
         }
         
@@ -45,14 +46,14 @@ export function useUniversityDetails(universityId: string | undefined) {
           name: universityData.name,
           city: universityData.city,
           country: universityData.country,
-          description: universityData.description || null,
+          description: null, // This property might not exist in the database
           overview: universityData.overview || null,
           erasmus_tips: universityData.erasmus_tips || null,
           accommodation_info: universityData.accommodation_info || null,
           popular_courses: universityData.popular_courses || null,
           image_url: universityData.image_url || null,
           links: formattedLinks,
-          student_count: universityData.student_count || 0
+          student_count: 0 // Will be updated with the count of students
         };
         
         setUniversity(universityWithFormattedLinks);
@@ -74,6 +75,12 @@ export function useUniversityDetails(universityId: string | undefined) {
         })) as Profile[];
         
         setStudents(studentsWithHomeUniversity);
+        
+        // Update the university with the correct student count
+        setUniversity(prev => prev ? {
+          ...prev,
+          student_count: studentsWithHomeUniversity.length
+        } : null);
         
       } catch (err: any) {
         console.error("Error fetching university details:", err);
