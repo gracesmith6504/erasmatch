@@ -29,13 +29,20 @@ export function useUniversityDetails(universityId: string | undefined) {
         }
         
         // Convert the JSON links to the expected format
+        let formattedLinks = null;
+        
+        if (universityData.links && typeof universityData.links === 'object') {
+          const links = universityData.links as Record<string, unknown>;
+          formattedLinks = {
+            housing: links.housing as string | undefined,
+            transport: links.transport as string | undefined,
+            student_groups: links.student_groups as string | undefined
+          };
+        }
+        
         const universityWithFormattedLinks: University = {
           ...universityData,
-          links: universityData.links ? {
-            housing: universityData.links.housing as string | undefined,
-            transport: universityData.links.transport as string | undefined,
-            student_groups: universityData.links.student_groups as string | undefined
-          } : null
+          links: formattedLinks
         };
         
         setUniversity(universityWithFormattedLinks);

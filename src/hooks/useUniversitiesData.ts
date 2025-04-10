@@ -49,11 +49,16 @@ export function useUniversitiesData() {
         // Combine university data with student counts and transform to correct type
         const universitiesWithCounts = universitiesData.map(uni => {
           // Convert JSON links to the expected format
-          const formattedLinks = uni.links ? {
-            housing: uni.links.housing as string | undefined,
-            transport: uni.links.transport as string | undefined,
-            student_groups: uni.links.student_groups as string | undefined
-          } : null;
+          let formattedLinks = null;
+          
+          if (uni.links && typeof uni.links === 'object') {
+            const links = uni.links as Record<string, unknown>;
+            formattedLinks = {
+              housing: links.housing as string | undefined,
+              transport: links.transport as string | undefined,
+              student_groups: links.student_groups as string | undefined
+            };
+          }
           
           return {
             ...uni,
