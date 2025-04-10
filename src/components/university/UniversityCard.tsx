@@ -22,6 +22,7 @@ const UniversityCard = ({ university }: UniversityCardProps) => {
   const [showStudents, setShowStudents] = useState(false);
   const [students, setStudents] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   // Placeholder programs - in a real app, these would come from the database
   const programs = ["Business", "Engineering", "Arts"];
@@ -64,17 +65,20 @@ const UniversityCard = ({ university }: UniversityCardProps) => {
     }
   };
 
-  // Image based on the university name (placeholder)
-  const universityImage = `https://source.unsplash.com/400x200/?university,${university.name.replace(/\s/g, '+')}`;
+  // Image with fallback
+  const universityImage = imageError || !university.image_url 
+    ? `https://source.unsplash.com/600x400/?university,${university.name.replace(/\s/g, '+')}` 
+    : university.image_url;
 
   return (
     <Card className="overflow-hidden h-full flex flex-col card-hover bg-white border border-gray-100">
       <div className="relative h-48 w-full overflow-hidden">
         <img 
           src={universityImage} 
-          alt={university.name} 
+          alt={`Image of ${university.name}`} 
           className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
           loading="lazy"
+          onError={() => setImageError(true)}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
         <div className="absolute bottom-0 left-0 p-4 w-full">

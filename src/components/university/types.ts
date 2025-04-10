@@ -10,6 +10,7 @@ export type University = {
   erasmus_tips?: string | null;
   accommodation_info?: string | null;
   popular_courses?: string | null;
+  image_url?: string | null;
   links?: {
     housing?: string;
     transport?: string;

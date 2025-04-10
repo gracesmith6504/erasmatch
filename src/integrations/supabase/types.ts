@@ -81,7 +81,7 @@ export type Database = {
           city: string | null
           country: string | null
           erasmus_tips: string | null
-          id: number
+          image_url: string | null
           links: Json | null
           name: string
           overview: string | null
@@ -92,7 +92,7 @@ export type Database = {
           city?: string | null
           country?: string | null
           erasmus_tips?: string | null
-          id?: number
+          image_url?: string | null
           links?: Json | null
           name: string
           overview?: string | null
@@ -103,7 +103,7 @@ export type Database = {
           city?: string | null
           country?: string | null
           erasmus_tips?: string | null
-          id?: number
+          image_url?: string | null
           links?: Json | null
           name?: string
           overview?: string | null
