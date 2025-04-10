@@ -1,4 +1,5 @@
 
+
 export type Profile = {
   id: string;
   name: string | null;
@@ -24,3 +25,4 @@ export type ChatThread = {
   partner: Profile;
   lastMessage: Message | null;
 };
+

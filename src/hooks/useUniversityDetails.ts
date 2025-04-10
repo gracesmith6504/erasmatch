@@ -32,9 +32,9 @@ export function useUniversityDetails(universityId: string | undefined) {
         const universityWithFormattedLinks: University = {
           ...universityData,
           links: universityData.links ? {
-            housing: universityData.links.housing,
-            transport: universityData.links.transport,
-            student_groups: universityData.links.student_groups
+            housing: universityData.links.housing as string | undefined,
+            transport: universityData.links.transport as string | undefined,
+            student_groups: universityData.links.student_groups as string | undefined
           } : null
         };
         
@@ -50,7 +50,13 @@ export function useUniversityDetails(universityId: string | undefined) {
           throw studentsError;
         }
         
-        setStudents(studentsData || []);
+        // Add the home_university property if it's missing
+        const studentsWithHomeUniversity = studentsData.map(student => ({
+          ...student,
+          home_university: student.home_university || null
+        })) as Profile[];
+        
+        setStudents(studentsWithHomeUniversity);
         
       } catch (err: any) {
         console.error("Error fetching university details:", err);

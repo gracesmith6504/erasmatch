@@ -46,12 +46,20 @@ export function useUniversitiesData() {
           }
         });
 
-        // Combine university data with student counts
+        // Combine university data with student counts and transform to correct type
         const universitiesWithCounts = universitiesData.map(uni => {
+          // Convert JSON links to the expected format
+          const formattedLinks = uni.links ? {
+            housing: uni.links.housing as string | undefined,
+            transport: uni.links.transport as string | undefined,
+            student_groups: uni.links.student_groups as string | undefined
+          } : null;
+          
           return {
             ...uni,
-            student_count: studentCountMap.get(uni.name) || 0
-          };
+            student_count: studentCountMap.get(uni.name) || 0,
+            links: formattedLinks
+          } as University;
         });
 
         // Sort by student count (descending)
