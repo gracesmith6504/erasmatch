@@ -18,6 +18,10 @@ import Universities from "./pages/Universities";
 import UniversityHub from "./pages/UniversityHub";
 import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
+import ForumCities from "./pages/ForumCities";
+import CityForum from "./pages/CityForum";
+import ForumPostDetail from "./pages/ForumPostDetail";
+import NewForumPost from "./pages/NewForumPost";
 
 // Types
 import { Profile as ProfileType, Message } from "@/types";
@@ -104,6 +108,8 @@ const App = () => {
     if (session?.user) {
       setIsAuthenticated(true);
       setCurrentUserId(session.user.id);
+      // Store user ID in localStorage for forum functionality
+      localStorage.setItem('userId', session.user.id);
       setCurrentUserEmail(session.user.email);
 
       // Fetch user profile
@@ -133,6 +139,8 @@ const App = () => {
     } else {
       setIsAuthenticated(false);
       setCurrentUserId(null);
+      // Remove user ID from localStorage
+      localStorage.removeItem('userId');
       setCurrentUserEmail(null);
       setCurrentUserProfile(null);
     }
@@ -290,6 +298,18 @@ const App = () => {
                   </ProtectedRoute>
                 } 
               />
+              {/* Forum Routes */}
+              <Route path="/forum" element={<ForumCities />} />
+              <Route path="/forum/:city" element={<CityForum />} />
+              <Route 
+                path="/forum/:city/new" 
+                element={
+                  <ProtectedRoute>
+                    <NewForumPost />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route path="/forum/post/:postId" element={<ForumPostDetail />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>

@@ -1,8 +1,7 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, MessageSquare, Users, User, LogOut, Building, Home } from "lucide-react";
+import { Menu, X, MessageSquare, Users, User, LogOut, Building, Home, MessageCircle } from "lucide-react";
 
 type NavbarProps = {
   isAuthenticated: boolean;
@@ -15,12 +14,10 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Close mobile menu when route changes
   useEffect(() => {
     setIsOpen(false);
   }, [navigate]);
 
-  // Add scroll effect to navbar
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 10) {
@@ -36,7 +33,6 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
     };
   }, []);
 
-  // Check if nav link is active
   const isActive = (path: string) => {
     return location.pathname === path;
   };
@@ -57,7 +53,6 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
             </Link>
           </div>
           
-          {/* Desktop menu */}
           <div className="hidden md:flex items-center space-x-1">
             {isAuthenticated ? (
               <>
@@ -89,6 +84,16 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                   <div className="flex items-center space-x-1.5">
                     <Building className="w-4 h-4" />
                     <span>Universities</span>
+                  </div>
+                </Link>
+                <Link to="/forum" className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  location.pathname.startsWith('/forum')
+                    ? 'text-erasmatch-blue bg-blue-50' 
+                    : 'text-gray-700 hover:text-erasmatch-blue hover:bg-gray-50'
+                }`}>
+                  <div className="flex items-center space-x-1.5">
+                    <MessageCircle className="w-4 h-4" />
+                    <span>Forums</span>
                   </div>
                 </Link>
                 <Link to="/messages" className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -134,7 +139,6 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
             )}
           </div>
           
-          {/* Mobile menu button */}
           <div className="flex items-center md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -150,7 +154,6 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
         </div>
       </div>
 
-      {/* Mobile menu */}
       <div className={`md:hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-screen' : 'max-h-0 overflow-hidden'}`}>
         <div className="px-4 pt-2 pb-3 space-y-1 bg-white shadow-md rounded-b-lg">
           {isAuthenticated ? (
@@ -183,6 +186,16 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                 <div className="flex items-center">
                   <Building className="w-5 h-5 mr-3" />
                   Universities
+                </div>
+              </Link>
+              <Link to="/forum" className={`block px-3 py-2.5 rounded-lg text-base font-medium ${
+                location.pathname.startsWith('/forum')
+                  ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple' 
+                  : 'text-gray-700 hover:bg-gray-50'
+              }`}>
+                <div className="flex items-center">
+                  <MessageCircle className="w-5 h-5 mr-3" />
+                  Forums
                 </div>
               </Link>
               <Link to="/messages" className={`block px-3 py-2.5 rounded-lg text-base font-medium ${
