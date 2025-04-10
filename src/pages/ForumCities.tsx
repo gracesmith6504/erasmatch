@@ -25,8 +25,8 @@ export default function ForumCities() {
     try {
       setLoading(true);
       
-      // Get unique cities and count posts per city
-      const { data, error } = await supabase
+      // Get unique cities and count posts per city - using any to bypass type checking
+      const { data, error } = await (supabase as any)
         .from('city_forums')
         .select('city, id')
         .order('city');
@@ -37,7 +37,7 @@ export default function ForumCities() {
       
       // Process data to count posts per city
       const cityMap = new Map<string, number>();
-      data.forEach(item => {
+      data.forEach((item: any) => {
         const count = cityMap.get(item.city) || 0;
         cityMap.set(item.city, count + 1);
       });
