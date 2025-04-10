@@ -1,7 +1,8 @@
+
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, MessageSquare, Users, User, LogOut, Building, Home, MessageCircle } from "lucide-react";
+import { Menu, X, MessageSquare, Users, User, LogOut, Building, Home, MessageCircle, MapPin } from "lucide-react";
 
 type NavbarProps = {
   isAuthenticated: boolean;
@@ -82,8 +83,8 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                     : 'text-gray-700 hover:text-erasmatch-blue hover:bg-gray-50'
                 }`}>
                   <div className="flex items-center space-x-1.5">
-                    <Building className="w-4 h-4" />
-                    <span>Universities</span>
+                    <MapPin className="w-4 h-4" />
+                    <span>Locations</span>
                   </div>
                 </Link>
                 <Link to="/forum" className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -184,8 +185,8 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                   : 'text-gray-700 hover:bg-gray-50'
               }`}>
                 <div className="flex items-center">
-                  <Building className="w-5 h-5 mr-3" />
-                  Universities
+                  <MapPin className="w-5 h-5 mr-3" />
+                  Locations
                 </div>
               </Link>
               <Link to="/forum" className={`block px-3 py-2.5 rounded-lg text-base font-medium ${

@@ -14,7 +14,7 @@ import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import ProfileView from "./pages/ProfileView";
 import Students from "./pages/Students";
-import Universities from "./pages/Universities";
+import Locations from "./pages/Universities";
 import UniversityHub from "./pages/UniversityHub";
 import Messages from "./pages/Messages";
 import NotFound from "./pages/NotFound";
@@ -279,7 +279,7 @@ const App = () => {
               />
               <Route 
                 path="/universities" 
-                element={<Universities />} 
+                element={<Locations />} 
               />
               <Route 
                 path="/university-hub/:id" 
