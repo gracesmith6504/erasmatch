@@ -27,7 +27,11 @@ export function useUniversitySearch() {
         return;
       }
       
-      setUniversities(data as University[] || []);
+      if (data) {
+        setUniversities(data as University[]);
+      } else {
+        setUniversities([]);
+      }
     } catch (error) {
       console.error("Error in fetch operation:", error);
       setUniversities([]);
@@ -55,7 +59,11 @@ export function useUniversitySearch() {
           return;
         }
         
-        setUniversities(data as University[] || []);
+        if (data) {
+          setUniversities(data as University[]);
+        } else {
+          setUniversities([]);
+        }
       } catch (error) {
         console.error("Error in search operation:", error);
         setUniversities([]);

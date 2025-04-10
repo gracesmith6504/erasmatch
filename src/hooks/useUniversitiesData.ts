@@ -28,6 +28,12 @@ export function useUniversitiesData() {
           throw universitiesError;
         }
 
+        if (!universitiesData) {
+          setUniversities([]);
+          setFilteredUniversities([]);
+          return;
+        }
+
         // Then, fetch all profiles to count students per university
         const { data: profilesData, error: profilesError } = await supabase
           .from('profiles')
@@ -52,16 +58,24 @@ export function useUniversitiesData() {
           let formattedLinks = null;
           
           if (uni.links && typeof uni.links === 'object') {
-            const links = uni.links as Record<string, unknown>;
             formattedLinks = {
-              housing: links.housing as string | undefined,
-              transport: links.transport as string | undefined,
-              student_groups: links.student_groups as string | undefined
+              housing: uni.links.housing,
+              transport: uni.links.transport,
+              student_groups: uni.links.student_groups
             };
           }
           
           return {
-            ...uni,
+            id: uni.id,
+            name: uni.name,
+            city: uni.city,
+            country: uni.country,
+            description: uni.description || null,
+            overview: uni.overview || null,
+            erasmus_tips: uni.erasmus_tips || null,
+            accommodation_info: uni.accommodation_info || null,
+            popular_courses: uni.popular_courses || null,
+            image_url: uni.image_url || null,
             student_count: studentCountMap.get(uni.name) || 0,
             links: formattedLinks
           } as University;
@@ -79,10 +93,10 @@ export function useUniversitiesData() {
         const countries = sortedUniversities
           .map(uni => uni.country)
           .filter(Boolean) // Remove null/undefined values
-          .filter((country, index, self) => self.indexOf(country) === index)
+          .filter((country, index, self) => country !== null && self.indexOf(country) === index)
           .sort();
         
-        setUniqueCountries(countries);
+        setUniqueCountries(countries as string[]);
       } catch (err: any) {
         console.error("Error fetching universities:", err);
         setError(err.message);

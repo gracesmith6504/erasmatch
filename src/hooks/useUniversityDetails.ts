@@ -32,17 +32,27 @@ export function useUniversityDetails(universityId: string | undefined) {
         let formattedLinks = null;
         
         if (universityData.links && typeof universityData.links === 'object') {
-          const links = universityData.links as Record<string, unknown>;
           formattedLinks = {
-            housing: links.housing as string | undefined,
-            transport: links.transport as string | undefined,
-            student_groups: links.student_groups as string | undefined
+            housing: universityData.links.housing,
+            transport: universityData.links.transport,
+            student_groups: universityData.links.student_groups
           };
         }
         
+        // Creating a properly typed University object
         const universityWithFormattedLinks: University = {
-          ...universityData,
-          links: formattedLinks
+          id: universityData.id,
+          name: universityData.name,
+          city: universityData.city,
+          country: universityData.country,
+          description: universityData.description || null,
+          overview: universityData.overview || null,
+          erasmus_tips: universityData.erasmus_tips || null,
+          accommodation_info: universityData.accommodation_info || null,
+          popular_courses: universityData.popular_courses || null,
+          image_url: universityData.image_url || null,
+          links: formattedLinks,
+          student_count: universityData.student_count || 0
         };
         
         setUniversity(universityWithFormattedLinks);
