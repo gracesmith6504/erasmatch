@@ -1,17 +1,47 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { School, MapPin, CalendarClock, Home } from "lucide-react";
 import { Profile } from "@/types";
+import { supabase } from "@/integrations/supabase/client";
 
 interface StudentCardProps {
   profile: Profile;
 }
 
 const StudentCard = ({ profile }: StudentCardProps) => {
+  const [universityCity, setUniversityCity] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUniversityCity = async () => {
+      if (!profile.university) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('universities')
+          .select('city')
+          .eq('name', profile.university)
+          .single();
+
+        if (error) throw error;
+        setUniversityCity(data?.city || null);
+      } catch (error) {
+        console.error("Error fetching university city:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUniversityCity();
+  }, [profile.university]);
+
   const getInitials = (name: string | null) => {
     if (!name) return "?";
     return name
@@ -48,7 +78,13 @@ const StudentCard = ({ profile }: StudentCardProps) => {
           </div>
           <div className="flex items-center justify-center text-sm text-gray-600">
             <MapPin className="h-4 w-4 mr-2 text-erasmatch-green opacity-70" />
-            <span>{profile.city || "City not specified"}</span>
+            {loading ? (
+              <span className="text-gray-400">Loading city...</span>
+            ) : universityCity ? (
+              <span>{universityCity}</span>
+            ) : (
+              <span className="text-gray-400">Destination city not available</span>
+            )}
           </div>
           <div className="flex items-center justify-center text-sm text-gray-600">
             <CalendarClock className="h-4 w-4 mr-2 text-erasmatch-purple opacity-70" />

@@ -9,7 +9,6 @@ type ProfileFormState = {
   name: string;
   email: string;
   university: string;
-  city: string;
   semester: string;
   bio: string;
   avatar_url: string | null;
@@ -48,7 +47,6 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
     name: profile?.name || "",
     email: profile?.email || "",
     university: profile?.university || "",
-    city: profile?.city || "",
     semester: profile?.semester || "",
     bio: profile?.bio || "",
     avatar_url: profile?.avatar_url || null,
@@ -95,7 +93,6 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
         .update({
           name: form.name,
           university: form.university,
-          city: form.city,
           semester: form.semester,
           bio: form.bio,
           avatar_url: form.avatar_url,

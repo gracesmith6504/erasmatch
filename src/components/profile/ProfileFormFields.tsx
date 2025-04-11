@@ -79,21 +79,6 @@ export function ProfileFormFields() {
         </div>
 
         <div>
-          <Label htmlFor="city" className="block text-sm font-medium text-gray-700">
-            City
-          </Label>
-          <Input
-            id="city"
-            name="city"
-            value={form.city || ""}
-            onChange={handleChange}
-            placeholder="Your exchange city"
-            required
-            className="mt-1"
-          />
-        </div>
-
-        <div>
           <Label htmlFor="semester" className="block text-sm font-medium text-gray-700">
             Exchange Semester
           </Label>

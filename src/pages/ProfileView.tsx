@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -19,10 +19,36 @@ type ProfileViewProps = {
 const ProfileView = ({ profiles, currentUserId, onSendMessage }: ProfileViewProps) => {
   const { id } = useParams<{ id: string }>();
   const profile = profiles.find((p) => p.id === id);
+  const [universityCity, setUniversityCity] = useState<string | null>(null);
+  const [isLoadingCity, setIsLoadingCity] = useState(false);
 
   const [isMessageDialogOpen, setIsMessageDialogOpen] = useState(false);
   const [messageContent, setMessageContent] = useState("");
   const [isSending, setIsSending] = useState(false);
+
+  useEffect(() => {
+    const fetchUniversityCity = async () => {
+      if (!profile?.university) return;
+      
+      setIsLoadingCity(true);
+      try {
+        const { data, error } = await supabase
+          .from('universities')
+          .select('city')
+          .eq('name', profile.university)
+          .single();
+
+        if (error) throw error;
+        setUniversityCity(data?.city || null);
+      } catch (error) {
+        console.error("Error fetching university city:", error);
+      } finally {
+        setIsLoadingCity(false);
+      }
+    };
+
+    fetchUniversityCity();
+  }, [profile?.university]);
 
   const handleSendMessage = async () => {
     if (!messageContent.trim() || !id || !currentUserId) return;
@@ -109,10 +135,17 @@ const ProfileView = ({ profiles, currentUserId, onSendMessage }: ProfileViewProp
                 <School className="h-5 w-5 mr-2 text-erasmatch-blue" />
                 <span>{profile.university || "University not specified"}</span>
               </div>
-              <div className="flex items-center text-gray-700">
-                <MapPin className="h-5 w-5 mr-2 text-erasmatch-blue" />
-                <span>{profile.city || "City not specified"}</span>
-              </div>
+              {(profile.university && !isLoadingCity) ? (
+                <div className="flex items-center text-gray-700">
+                  <MapPin className="h-5 w-5 mr-2 text-erasmatch-blue" />
+                  <span>{universityCity || "Destination city not available"}</span>
+                </div>
+              ) : isLoadingCity ? (
+                <div className="flex items-center text-gray-500">
+                  <MapPin className="h-5 w-5 mr-2 text-erasmatch-blue" />
+                  <span>Loading city information...</span>
+                </div>
+              ) : null}
               <div className="flex items-center text-gray-700">
                 <CalendarClock className="h-5 w-5 mr-2 text-erasmatch-blue" />
                 <span>{profile.semester || "Semester not specified"}</span>
