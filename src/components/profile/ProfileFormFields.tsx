@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import UniversityAutocomplete from "@/components/UniversityAutocomplete";
 import { useProfileForm } from "./useProfileForm";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Upload, X } from "lucide-react";
+import { Upload, X, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const SEMESTERS = ["Fall 2024", "Spring 2025", "Fall 2025", "Spring 2026"];
@@ -70,12 +70,22 @@ export function ProfileFormFields() {
           />
         </div>
 
-        <div>
+        <div className="space-y-2">
           <UniversityAutocomplete
             value={form.university}
             onChange={handleUniversityChange}
             label="Destination University"
           />
+          
+          {/* Display city as read-only information */}
+          {form.university && (
+            <div className="flex items-center text-sm mt-2 text-gray-600">
+              <MapPin className="h-4 w-4 mr-1 text-erasmatch-green" />
+              <span>
+                {form.city ? form.city : "City not available for this university"}
+              </span>
+            </div>
+          )}
         </div>
 
         <div>

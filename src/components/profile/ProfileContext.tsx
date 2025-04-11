@@ -13,6 +13,7 @@ type ProfileFormState = {
   bio: string;
   avatar_url: string | null;
   home_university: string;
+  city: string | null;
 };
 
 type ProfileContextType = {
@@ -51,6 +52,7 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
     bio: profile?.bio || "",
     avatar_url: profile?.avatar_url || null,
     home_university: profile?.home_university || "",
+    city: profile?.city || null,
   });
   const [loading, setLoading] = useState(false);
 
@@ -63,8 +65,35 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleUniversityChange = (university: string) => {
+  const handleUniversityChange = async (university: string) => {
     setForm((prev) => ({ ...prev, university }));
+    
+    // If university is empty, clear the city field
+    if (!university.trim()) {
+      setForm((prev) => ({ ...prev, city: null }));
+      return;
+    }
+
+    // Fetch corresponding city from universities table
+    try {
+      const { data, error } = await supabase
+        .from('universities')
+        .select('city')
+        .eq('name', university)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching university city:', error);
+        // Don't update city if there's an error
+        return;
+      }
+      
+      // Update city in form state
+      setForm((prev) => ({ ...prev, university, city: data?.city || null }));
+      
+    } catch (error) {
+      console.error('Error in university change handler:', error);
+    }
   };
   
   const handleHomeUniversityChange = (home_university: string) => {
@@ -97,6 +126,7 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
           bio: form.bio,
           avatar_url: form.avatar_url,
           home_university: form.home_university,
+          city: form.city,
         })
         .eq('id', user.user.id);
 
