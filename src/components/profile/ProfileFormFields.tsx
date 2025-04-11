@@ -8,7 +8,6 @@ import { useProfileForm } from "./useProfileForm";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Upload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CityDropdown } from "./CityDropdown";
 
 const SEMESTERS = ["Fall 2024", "Spring 2025", "Fall 2025", "Spring 2026"];
 
@@ -80,10 +79,17 @@ export function ProfileFormFields() {
         </div>
 
         <div>
-          <CityDropdown
-            value={form.city}
-            onChange={(value) => handleSelectChange("city", value)}
-            universityName={form.university}
+          <Label htmlFor="city" className="block text-sm font-medium text-gray-700">
+            City
+          </Label>
+          <Input
+            id="city"
+            name="city"
+            value={form.city || ""}
+            onChange={handleChange}
+            placeholder="Your exchange city"
+            required
+            className="mt-1"
           />
         </div>
 
