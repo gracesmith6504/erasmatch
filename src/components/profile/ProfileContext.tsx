@@ -66,7 +66,8 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
   const handleSelectChange = (name: string, value: string | string[] | null) => {
     if (name === "personality_tags") {
       // Ensure personality_tags is always an array
-      setForm((prev) => ({ ...prev, [name]: value || [] }));
+      const tagsArray = Array.isArray(value) ? value : (value ? [value] : []);
+      setForm((prev) => ({ ...prev, [name]: tagsArray }));
     } else {
       setForm((prev) => ({ ...prev, [name]: value }));
     }

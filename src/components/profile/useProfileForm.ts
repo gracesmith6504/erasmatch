@@ -72,12 +72,8 @@ export const useProfileForm = () => {
   };
 
   const handleSelectChange = (name: string, value: string | string[] | null) => {
-    // Ensure personality_tags is always an array
-    if (name === "personality_tags" && value === null) {
-      context.handleSelectChange(name, []);
-    } else {
-      context.handleSelectChange(name, value);
-    }
+    // For personality_tags, ensure we're consistent with the ProfileContext handling
+    context.handleSelectChange(name, value);
   };
 
   return {
