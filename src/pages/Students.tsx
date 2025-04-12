@@ -16,17 +16,12 @@ type StudentsProps = {
 
 const Students = ({ profiles, currentUserId }: StudentsProps) => {
   const {
-    searchTerm,
-    setSearchTerm,
     universityFilter,
     setUniversityFilter,
     cityFilter,
     setCityFilter,
-    semesterFilter,
-    setSemesterFilter,
     uniqueUniversities,
     uniqueCities,
-    uniqueSemesters,
     filteredProfiles,
     loading,
     resetFilters
@@ -57,17 +52,12 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
         
         <TabsContent value="list" className="mt-0">
           <StudentFilters
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
             universityFilter={universityFilter}
             setUniversityFilter={setUniversityFilter}
             cityFilter={cityFilter}
             setCityFilter={setCityFilter}
-            semesterFilter={semesterFilter}
-            setSemesterFilter={setSemesterFilter}
             uniqueUniversities={uniqueUniversities}
             uniqueCities={uniqueCities}
-            uniqueSemesters={uniqueSemesters}
             resetFilters={resetFilters}
           />
 
