@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useProfileContext } from "./ProfileContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -71,7 +72,12 @@ export const useProfileForm = () => {
   };
 
   const handleSelectChange = (name: string, value: string | string[] | null) => {
-    context.form[name] = value;
+    // Ensure personality_tags is always an array
+    if (name === "personality_tags" && value === null) {
+      context.handleSelectChange(name, []);
+    } else {
+      context.handleSelectChange(name, value);
+    }
   };
 
   return {

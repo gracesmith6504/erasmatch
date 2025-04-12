@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -13,14 +14,14 @@ type ProfileFormState = {
   avatar_url: string | null;
   home_university: string;
   city: string | null;
-  personality_tags: string[] | null;
+  personality_tags: string[];
 };
 
 type ProfileContextType = {
   form: ProfileFormState;
   loading: boolean;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  handleSelectChange: (name: string, value: string | null) => void;
+  handleSelectChange: (name: string, value: string | string[] | null) => void;
   handleUniversityChange: (university: string) => void;
   handleHomeUniversityChange: (university: string) => void;
   handleSubmit: (e: FormEvent) => Promise<void>;
@@ -53,7 +54,7 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
     avatar_url: profile?.avatar_url || null,
     home_university: profile?.home_university || "",
     city: profile?.city || null,
-    personality_tags: profile?.personality_tags || null,
+    personality_tags: profile?.personality_tags || [],
   });
   const [loading, setLoading] = useState(false);
 
@@ -62,8 +63,13 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSelectChange = (name: string, value: string | null) => {
-    setForm((prev) => ({ ...prev, [name]: value }));
+  const handleSelectChange = (name: string, value: string | string[] | null) => {
+    if (name === "personality_tags") {
+      // Ensure personality_tags is always an array
+      setForm((prev) => ({ ...prev, [name]: value || [] }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleUniversityChange = async (university: string) => {
