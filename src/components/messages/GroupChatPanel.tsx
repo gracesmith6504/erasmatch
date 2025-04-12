@@ -7,16 +7,8 @@ import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 import { Send, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Profile } from "@/types";
+import { Profile, GroupMessage } from "@/types";
 import { toast } from "sonner";
-
-type GroupMessage = {
-  id: string;
-  sender_id: string;
-  university_name: string;
-  content: string;
-  created_at: string;
-};
 
 type GroupChatPanelProps = {
   universityName: string;
@@ -99,11 +91,13 @@ export const GroupChatPanel = ({
     
     setIsSending(true);
     try {
-      const { error } = await supabase.from("group_messages").insert({
-        sender_id: currentUserId,
-        university_name: universityName,
-        content: newMessage.trim(),
-      });
+      const { error } = await supabase
+        .from("group_messages")
+        .insert({
+          sender_id: currentUserId,
+          university_name: universityName,
+          content: newMessage.trim(),
+        });
       
       if (error) throw error;
       

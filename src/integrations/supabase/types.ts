@@ -68,6 +68,38 @@ export type Database = {
         }
         Relationships: []
       }
+      group_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          sender_id: string
+          university_name: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          sender_id: string
+          university_name: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          sender_id?: string
+          university_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       listings: {
         Row: {
           city: string | null

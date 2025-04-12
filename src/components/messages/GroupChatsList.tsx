@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Users } from "lucide-react";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
-import { GroupChat, Profile } from "@/types";
+import { GroupChat, Profile, GroupMessage } from "@/types";
 
 type GroupChatsListProps = {
   profiles: Profile[];
@@ -35,7 +35,7 @@ export const GroupChatsList = ({
         );
         
         // Get latest message for the university
-        const { data: latestMessage, error } = await supabase
+        const { data: latestMessages, error } = await supabase
           .from("group_messages")
           .select("*")
           .eq("university_name", currentUserProfile.university)
@@ -44,14 +44,16 @@ export const GroupChatsList = ({
         
         if (error) throw error;
         
+        const latestMessage = latestMessages?.[0] as GroupMessage | undefined;
+        
         const groupChat: GroupChat = {
           university_name: currentUserProfile.university,
           participants_count: universityStudents.length,
-          last_message: latestMessage?.[0] 
+          last_message: latestMessage 
             ? {
-                content: latestMessage[0].content,
-                created_at: latestMessage[0].created_at,
-                sender_name: profiles.find(p => p.id === latestMessage[0].sender_id)?.name || 'Unknown user'
+                content: latestMessage.content,
+                created_at: latestMessage.created_at,
+                sender_name: profiles.find(p => p.id === latestMessage.sender_id)?.name || 'Unknown user'
               }
             : null
         };

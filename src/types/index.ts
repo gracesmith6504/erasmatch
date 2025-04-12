@@ -38,3 +38,11 @@ export type GroupChat = {
     sender_name: string;
   } | null;
 };
+
+export type GroupMessage = {
+  id: string;
+  sender_id: string;
+  university_name: string;
+  content: string;
+  created_at: string;
+};
