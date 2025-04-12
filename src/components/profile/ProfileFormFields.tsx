@@ -60,7 +60,7 @@ export function ProfileFormFields() {
       {/* New centered header section with pastel background */}
       <div className="text-center px-4 pt-6 pb-4 bg-indigo-50 rounded-b-2xl mb-6">
         <div className="relative">
-          <Avatar className="w-20 h-20 rounded-full mx-auto text-xl font-bold bg-indigo-200 text-white flex items-center justify-center">
+          <Avatar className="w-24 h-24 rounded-full mx-auto text-xl font-bold bg-indigo-100 text-indigo-700 flex items-center justify-center">
             <AvatarImage src={avatarUrl || undefined} alt={form.name || "Profile"} />
             <AvatarFallback className="flex items-center justify-center">
               {getInitials(form.name)}
@@ -83,11 +83,10 @@ export function ProfileFormFields() {
             {form.email}
           </div>
           
-          <div className="mt-4 flex justify-center">
+          <div className="mt-2 flex justify-center">
             {!uploadStatus.uploading ? (
               <label htmlFor="avatar-upload" className="cursor-pointer">
-                <div className="text-sm bg-white border border-indigo-200 text-indigo-600 px-3 py-1 rounded-full hover:bg-indigo-100 transition inline-flex items-center">
-                  <Upload size={14} className="mr-1" />
+                <div className="mt-2 text-sm text-indigo-600 hover:underline text-center block">
                   {avatarUrl ? "Change Photo" : "Upload Photo"}
                 </div>
                 <Input 
@@ -117,6 +116,20 @@ export function ProfileFormFields() {
           <UniversityAutocomplete
             value={form.home_university}
             onChange={handleHomeUniversityChange}
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="course" className="block text-sm font-medium text-gray-700">
+            Course Name
+          </Label>
+          <Input
+            id="course"
+            name="course"
+            value={form.course || ""}
+            onChange={handleChange}
+            placeholder="Enter your course name"
+            className="mt-1 rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200"
           />
         </div>
 

@@ -13,6 +13,7 @@ export type Profile = {
   country: string | null;
   personality_tags?: string[] | null;
   interests?: string | null;
+  course?: string | null;
 };
 
 export type Message = {

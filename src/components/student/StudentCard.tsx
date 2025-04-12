@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { School, MapPin, CalendarClock, Home, Globe, Mail } from "lucide-react";
+import { School, MapPin, CalendarClock, Home, Globe, Mail, BookOpen } from "lucide-react";
 import { Profile } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
 import { getTagInfo, getTagBgColor } from "@/components/profile/constants";
@@ -121,6 +121,12 @@ const StudentCard = ({ profile }: StudentCardProps) => {
             <div className="flex items-center justify-center text-sm text-gray-600">
               <Home className="h-4 w-4 mr-2 text-erasmatch-purple opacity-70" />
               <span>{profile.home_university}</span>
+            </div>
+          )}
+          {profile.course && (
+            <div className="flex items-center justify-center text-sm text-gray-600">
+              <BookOpen className="h-4 w-4 mr-2 text-erasmatch-purple opacity-70" />
+              <span>{profile.course}</span>
             </div>
           )}
           <div className="flex items-center justify-center text-sm text-gray-600">

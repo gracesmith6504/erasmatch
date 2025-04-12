@@ -15,6 +15,7 @@ type ProfileFormState = {
   home_university: string;
   city: string | null;
   personality_tags: string[];
+  course: string;
 };
 
 type ProfileContextType = {
@@ -55,6 +56,7 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
     home_university: profile?.home_university || "",
     city: profile?.city || null,
     personality_tags: profile?.personality_tags || [],
+    course: profile?.course || "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -130,6 +132,7 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
           home_university: form.home_university,
           city: form.city,
           personality_tags: form.personality_tags,
+          course: form.course,
         })
         .eq('id', user.user.id);
 
