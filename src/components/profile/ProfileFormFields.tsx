@@ -10,7 +10,6 @@ import { Upload, X, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PERSONALITY_TAGS, PERSONALITY_TAG_GROUPS } from "./constants";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 const SEMESTERS = ["Fall 2024", "Spring 2025", "Fall 2025", "Spring 2026"];
 
@@ -46,42 +45,71 @@ export function ProfileFormFields() {
     return colors[index];
   };
 
+  const getInitials = (name: string | null) => {
+    if (!name) return "?";
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .substring(0, 2);
+  };
+
   return (
     <>
+      {/* New centered header section with pastel background */}
+      <div className="text-center px-4 pt-6 pb-4 bg-indigo-50 rounded-b-2xl mb-6">
+        <div className="relative">
+          <Avatar className="w-20 h-20 rounded-full mx-auto text-xl font-bold bg-indigo-200 text-white flex items-center justify-center">
+            <AvatarImage src={avatarUrl || undefined} alt={form.name || "Profile"} />
+            <AvatarFallback className="flex items-center justify-center">
+              {getInitials(form.name)}
+            </AvatarFallback>
+          </Avatar>
+          
+          <div className="mt-2">
+            <Input
+              id="name"
+              name="name"
+              value={form.name || ""}
+              onChange={handleChange}
+              placeholder="Your full name"
+              required
+              className="text-center text-lg font-semibold border-none focus:ring-0 bg-transparent"
+            />
+          </div>
+          
+          <div className="text-sm text-gray-500">
+            {form.email}
+          </div>
+          
+          <div className="mt-4 flex justify-center">
+            {!uploadStatus.uploading ? (
+              <label htmlFor="avatar-upload" className="cursor-pointer">
+                <div className="text-sm bg-white border border-indigo-200 text-indigo-600 px-3 py-1 rounded-full hover:bg-indigo-100 transition inline-flex items-center">
+                  <Upload size={14} className="mr-1" />
+                  {avatarUrl ? "Change Photo" : "Upload Photo"}
+                </div>
+                <Input 
+                  id="avatar-upload" 
+                  type="file" 
+                  accept="image/*"
+                  className="hidden" 
+                  onChange={handleFileUpload}
+                />
+              </label>
+            ) : (
+              <div className="text-sm text-gray-500">Uploading...</div>
+            )}
+          </div>
+          
+          {uploadStatus.error && (
+            <p className="text-xs text-red-500 mt-1">{uploadStatus.error}</p>
+          )}
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div>
-          <Label htmlFor="name" className="block text-sm font-medium text-gray-700">
-            Full Name
-          </Label>
-          <Input
-            id="name"
-            name="name"
-            value={form.name || ""}
-            onChange={handleChange}
-            placeholder="Your full name"
-            required
-            className="mt-1"
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Email
-          </Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            value={form.email || ""}
-            onChange={handleChange}
-            placeholder="you@example.com"
-            required
-            disabled
-            className="mt-1 bg-gray-50"
-          />
-          <p className="mt-1 text-xs text-gray-500">Email cannot be changed</p>
-        </div>
-
         <div>
           <Label htmlFor="home_university" className="block text-sm font-medium text-gray-700">
             Home University
@@ -129,60 +157,6 @@ export function ProfileFormFields() {
               ))}
             </SelectContent>
           </Select>
-        </div>
-
-        <div>
-          <Label className="block text-sm font-medium text-gray-700 mb-2">
-            Profile Picture
-          </Label>
-          <div className="flex items-center gap-4">
-            <Avatar className="h-16 w-16 border">
-              <AvatarImage src={avatarUrl || undefined} />
-              <AvatarFallback className="bg-gray-100">
-                {form.name ? form.name.charAt(0).toUpperCase() : "?"}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col gap-2">
-              {!uploadStatus.uploading ? (
-                <>
-                  <label htmlFor="avatar-upload">
-                    <Button type="button" variant="outline" size="sm" className="cursor-pointer" asChild>
-                      <div className="flex items-center gap-2">
-                        <Upload size={16} />
-                        {avatarUrl ? "Change Photo" : "Upload Photo"}
-                      </div>
-                    </Button>
-                  </label>
-                  <Input 
-                    id="avatar-upload" 
-                    type="file" 
-                    accept="image/*"
-                    className="hidden" 
-                    onChange={handleFileUpload}
-                  />
-                  {avatarUrl && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={handleRemoveAvatar}
-                      className="text-red-500 hover:text-red-600 flex items-center gap-2"
-                    >
-                      <X size={16} />
-                      Remove
-                    </Button>
-                  )}
-                </>
-              ) : (
-                <Button disabled size="sm" variant="outline">
-                  Uploading...
-                </Button>
-              )}
-              {uploadStatus.error && (
-                <p className="text-xs text-red-500 mt-1">{uploadStatus.error}</p>
-              )}
-            </div>
-          </div>
         </div>
       </div>
 
