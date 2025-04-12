@@ -3,18 +3,18 @@ import { ReactNode } from "react";
 import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 type LayoutProps = {
   children: ReactNode;
-  isAuthenticated: boolean;
-  onLogout: () => void;
 };
 
-const Layout = ({ children, isAuthenticated, onLogout }: LayoutProps) => {
+const Layout = ({ children }: LayoutProps) => {
   const navigate = useNavigate();
+  const { isAuthenticated, handleLogout } = useAuth();
 
-  const handleLogout = () => {
-    onLogout();
+  const handleLogoutClick = () => {
+    handleLogout();
     toast.success("You have been logged out", {
       position: "top-center",
       duration: 3000,
@@ -25,7 +25,7 @@ const Layout = ({ children, isAuthenticated, onLogout }: LayoutProps) => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogout} />
+      <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogoutClick} />
       {/* Adjusted pt value to accommodate the new navbar */}
       <main className="flex-1 pt-16 pb-20 md:pb-8">{children}</main>
       <footer className="bg-white border-t py-8 mt-12">
