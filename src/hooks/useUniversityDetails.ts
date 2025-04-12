@@ -71,8 +71,10 @@ export function useUniversityDetails(universityId: string | undefined) {
         // Add the home_university property if it's missing
         const studentsWithHomeUniversity = studentsData.map(student => ({
           ...student,
-          home_university: student.home_university || null
-        })) as Profile[];
+          home_university: student.home_university || null,
+          country: student.country || null,
+          interests: student.interests || null
+        })) as unknown as Profile[];
         
         setStudents(studentsWithHomeUniversity);
         

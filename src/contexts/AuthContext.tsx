@@ -85,7 +85,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
 
         if (data) {
-          setCurrentUserProfile(data as Profile);
+          // Type cast to ensure all required fields are present
+          const profileData = data as unknown as Profile;
+          setCurrentUserProfile(profileData);
         }
       } catch (error) {
         console.error('Error fetching user data:', error);

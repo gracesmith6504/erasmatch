@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { 
@@ -48,7 +47,14 @@ const UniversityCard = ({ university }: UniversityCardProps) => {
         return;
       }
       
-      setStudents(data as Profile[] || []);
+      // Ensure all required fields are present in the data
+      const profilesWithRequiredFields = data?.map(profile => ({
+        ...profile,
+        country: profile.country || null,
+        interests: profile.interests || null
+      })) as unknown as Profile[];
+      
+      setStudents(profilesWithRequiredFields || []);
       setShowStudents(true);
     } catch (error) {
       console.error("Error in fetch operation:", error);

@@ -47,7 +47,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
       if (error) throw error;
       
       if (data) {
-        setProfiles(data as Profile[]);
+        setProfiles(data as unknown as Profile[]);
       }
     } catch (error) {
       console.error('Error fetching profiles:', error);

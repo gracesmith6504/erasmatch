@@ -25,7 +25,7 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
         }
 
         if (data) {
-          setLoadedProfiles(data as Profile[]);
+          setLoadedProfiles(data as unknown as Profile[]);
         }
       } catch (error) {
         console.error('Error fetching profiles:', error);
