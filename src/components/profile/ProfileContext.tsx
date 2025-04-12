@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, FormEvent } from "react";
+import React, { createContext, useContext, useState, FormEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Profile as ProfileType } from "@/types";
@@ -58,6 +58,7 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
     personality_tags: profile?.personality_tags || [],
   });
   const [loading, setLoading] = useState(false);
+  const [lastFetchedUniversity, setLastFetchedUniversity] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -77,6 +78,13 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
       return;
     }
 
+    // Skip fetching if we recently fetched for the same university
+    if (university === lastFetchedUniversity) {
+      return;
+    }
+
+    setLastFetchedUniversity(university);
+
     // Fetch corresponding city from universities table
     try {
       const { data, error } = await supabase
@@ -92,7 +100,7 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
       }
       
       // Update city in form state
-      setForm((prev) => ({ ...prev, university, city: data?.city || null }));
+      setForm((prev) => ({ ...prev, city: data?.city || null }));
       
     } catch (error) {
       console.error('Error in university change handler:', error);

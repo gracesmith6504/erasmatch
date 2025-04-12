@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useProfileContext } from "./ProfileContext";
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
@@ -11,6 +11,11 @@ export const useProfileForm = () => {
     error: null as string | null,
   });
   const [avatarUrl, setAvatarUrl] = useState<string | null>(context.form.avatar_url);
+
+  // Update local avatar URL when the form's avatar URL changes
+  useEffect(() => {
+    setAvatarUrl(context.form.avatar_url);
+  }, [context.form.avatar_url]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
