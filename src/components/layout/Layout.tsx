@@ -15,15 +15,19 @@ const Layout = ({ children, isAuthenticated, onLogout }: LayoutProps) => {
 
   const handleLogout = () => {
     onLogout();
-    toast.success("You have been logged out");
+    toast.success("You have been logged out", {
+      position: "top-center",
+      duration: 3000,
+      icon: "👋",
+    });
     navigate("/");
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogout} />
-      {/* Added pt-16 to ensure content appears below the navbar */}
-      <main className="flex-1 pt-16">{children}</main>
+      {/* Adjusted pt value to accommodate the new navbar */}
+      <main className="flex-1 pt-16 pb-20 md:pb-8">{children}</main>
       <footer className="bg-white border-t py-8 mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">

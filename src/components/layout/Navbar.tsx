@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -39,115 +38,120 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
   };
 
   return (
-    <nav 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-white/90 backdrop-blur-md shadow-sm' : 'bg-white'
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          <div className="flex items-center">
-            <Link to="/" className="flex-shrink-0 flex items-center">
-              <span className="text-xl font-bold gradient-text">
-                Eras<span className="text-erasmatch-green">Match</span>
-              </span>
-            </Link>
-          </div>
-          
-          <div className="hidden md:flex items-center space-x-4">
-            {isAuthenticated ? (
-              <>
-                <Link to="/" className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isActive('/') 
-                    ? 'text-erasmatch-blue bg-blue-50' 
-                    : 'text-gray-700 hover:text-erasmatch-blue hover:bg-gray-50'
-                }`}>
-                  <div className="flex items-center space-x-1.5">
-                    <Home className="w-4 h-4" />
-                    <span>Home</span>
-                  </div>
-                </Link>
-                <Link to="/students" className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isActive('/students') 
-                    ? 'text-erasmatch-blue bg-blue-50' 
-                    : 'text-gray-700 hover:text-erasmatch-blue hover:bg-gray-50'
-                }`}>
-                  <div className="flex items-center space-x-1.5">
-                    <Users className="w-4 h-4" />
-                    <span>Students</span>
-                  </div>
-                </Link>
-                <Link to="/accommodation" className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isActive('/accommodation') 
-                    ? 'text-erasmatch-blue bg-blue-50' 
-                    : 'text-gray-700 hover:text-erasmatch-blue hover:bg-gray-50'
-                }`}>
-                  <div className="flex items-center space-x-1.5">
-                    <Building className="w-4 h-4" />
-                    <span>Accommodation</span>
-                  </div>
-                </Link>
-                <Link to="/messages" className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isActive('/messages') 
-                    ? 'text-erasmatch-blue bg-blue-50' 
-                    : 'text-gray-700 hover:text-erasmatch-blue hover:bg-gray-50'
-                }`}>
-                  <div className="flex items-center space-x-1.5">
-                    <MessageSquare className="w-4 h-4" />
-                    <span>Messages</span>
-                  </div>
-                </Link>
-                <Link to="/profile" className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isActive('/profile') 
-                    ? 'text-erasmatch-blue bg-blue-50' 
-                    : 'text-gray-700 hover:text-erasmatch-blue hover:bg-gray-50'
-                }`}>
-                  <div className="flex items-center space-x-1.5">
-                    <User className="w-4 h-4" />
-                    <span>Profile</span>
-                  </div>
-                </Link>
-                <Button 
-                  variant="ghost" 
-                  onClick={onLogout} 
-                  className="button-hover text-gray-700 hover:text-red-600 hover:bg-red-50"
-                >
-                  <LogOut className="w-4 h-4 mr-1.5" />
-                  Log Out
-                </Button>
-              </>
-            ) : (
-              <>
-                <Link to="/auth?mode=login">
-                  <Button variant="ghost" className="button-hover">Log In</Button>
-                </Link>
-                <Link to="/auth?mode=signup">
-                  <Button className="button-hover bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple border-0 text-white">
-                    Sign Up
-                  </Button>
-                </Link>
-              </>
-            )}
-          </div>
-          
-          <div className="flex items-center md:hidden">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-erasmatch-blue focus:outline-none"
-            >
-              {isOpen ? (
-                <X className="block h-6 w-6" />
+    <>
+      <nav 
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled ? 'bg-white/90 backdrop-blur-md shadow-sm' : 'bg-white'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16 items-center">
+            <div className="flex items-center">
+              <Link to="/" className="flex-shrink-0 flex items-center">
+                <span className="text-xl font-bold gradient-text animate-pulse-soft">
+                  Eras<span className="text-erasmatch-green">Match</span> 🌍
+                </span>
+              </Link>
+            </div>
+            
+            <div className="hidden md:flex items-center space-x-1">
+              {isAuthenticated ? (
+                <div className="bg-gray-100 rounded-full p-1 flex items-center space-x-1">
+                  <Link to="/" className={`px-4 py-2 rounded-full transition-all duration-200 ${
+                    isActive('/') 
+                      ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple shadow-sm' 
+                      : 'text-gray-700 hover:bg-gray-200'
+                  }`}>
+                    <div className="flex items-center space-x-1.5">
+                      <Home className="w-4 h-4" />
+                      <span>Home</span>
+                    </div>
+                  </Link>
+                  <Link to="/students" className={`px-4 py-2 rounded-full transition-all duration-200 ${
+                    isActive('/students') 
+                      ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple shadow-sm' 
+                      : 'text-gray-700 hover:bg-gray-200'
+                  }`}>
+                    <div className="flex items-center space-x-1.5">
+                      <Users className="w-4 h-4" />
+                      <span>Students</span>
+                    </div>
+                  </Link>
+                  <Link to="/accommodation" className={`px-4 py-2 rounded-full transition-all duration-200 ${
+                    isActive('/accommodation') 
+                      ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple shadow-sm' 
+                      : 'text-gray-700 hover:bg-gray-200'
+                  }`}>
+                    <div className="flex items-center space-x-1.5">
+                      <Building className="w-4 h-4" />
+                      <span>Accommodation</span>
+                    </div>
+                  </Link>
+                  <Link to="/messages" className={`px-4 py-2 rounded-full transition-all duration-200 ${
+                    isActive('/messages') 
+                      ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple shadow-sm' 
+                      : 'text-gray-700 hover:bg-gray-200'
+                  }`}>
+                    <div className="flex items-center space-x-1.5">
+                      <MessageSquare className="w-4 h-4" />
+                      <span>Messages</span>
+                    </div>
+                  </Link>
+                </div>
               ) : (
-                <Menu className="block h-6 w-6" />
+                <>
+                  <Link to="/auth?mode=login">
+                    <Button variant="ghost" className="button-hover">Log In</Button>
+                  </Link>
+                  <Link to="/auth?mode=signup">
+                    <Button className="button-hover bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple border-0 text-white">
+                      Sign Up
+                    </Button>
+                  </Link>
+                </>
               )}
-            </button>
+            </div>
+            
+            {isAuthenticated && (
+              <div className="hidden md:block">
+                <div className="flex items-center space-x-2">
+                  <Link to="/profile" className={`p-2 rounded-full ${
+                    isActive('/profile') 
+                      ? 'bg-gray-200' 
+                      : 'hover:bg-gray-100'
+                  }`}>
+                    <User className="w-5 h-5 text-erasmatch-blue" />
+                  </Link>
+                  <Button 
+                    variant="ghost" 
+                    onClick={onLogout} 
+                    className="p-2 rounded-full hover:bg-red-100 hover:text-red-600"
+                    size="icon"
+                  >
+                    <LogOut className="w-5 h-5" />
+                  </Button>
+                </div>
+              </div>
+            )}
+            
+            <div className="flex items-center md:hidden">
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-erasmatch-blue focus:outline-none"
+              >
+                {isOpen ? (
+                  <X className="block h-6 w-6" />
+                ) : (
+                  <Menu className="block h-6 w-6" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className={`md:hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-screen' : 'max-h-0 overflow-hidden'}`}>
-        <div className="px-4 pt-2 pb-3 space-y-1 bg-white shadow-md rounded-b-lg">
-          {isAuthenticated ? (
+        <div className={`md:hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-screen' : 'max-h-0 overflow-hidden'}`}>
+          <div className="px-4 pt-2 pb-3 space-y-1 bg-white shadow-md rounded-b-lg">
+            {isAuthenticated ? (
             <>
               <Link to="/" className={`block px-3 py-2.5 rounded-lg text-base font-medium ${
                 isActive('/') 
@@ -221,9 +225,38 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
               </Link>
             </div>
           )}
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+      
+      {/* Mobile Bottom Navigation for authenticated users */}
+      {isAuthenticated && (
+        <div className="md:hidden fixed bottom-4 left-0 right-0 z-50 flex justify-center">
+          <div className="bg-white shadow-lg rounded-full flex items-center px-2 py-1 space-x-1 border">
+            <Link to="/" className={`p-3 rounded-full transition-colors ${
+              isActive('/') ? 'bg-blue-100 text-erasmatch-blue' : 'text-gray-500'
+            }`}>
+              <Home className="w-5 h-5" />
+            </Link>
+            <Link to="/students" className={`p-3 rounded-full transition-colors ${
+              isActive('/students') ? 'bg-blue-100 text-erasmatch-blue' : 'text-gray-500'
+            }`}>
+              <Users className="w-5 h-5" />
+            </Link>
+            <Link to="/messages" className={`p-3 rounded-full transition-colors ${
+              isActive('/messages') ? 'bg-blue-100 text-erasmatch-blue' : 'text-gray-500'
+            }`}>
+              <MessageSquare className="w-5 h-5" />
+            </Link>
+            <Link to="/profile" className={`p-3 rounded-full transition-colors ${
+              isActive('/profile') ? 'bg-blue-100 text-erasmatch-blue' : 'text-gray-500'
+            }`}>
+              <User className="w-5 h-5" />
+            </Link>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

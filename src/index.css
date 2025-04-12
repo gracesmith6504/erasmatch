@@ -93,6 +93,10 @@
   h3 {
     @apply text-xl lg:text-2xl;
   }
+  
+  ::selection {
+    @apply bg-erasmatch-blue/20 text-erasmatch-blue;
+  }
 }
 
 @layer components {
@@ -116,13 +120,63 @@
     @apply bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple bg-clip-text text-transparent;
   }
 
-  /* Add animation classes */
+  /* Enhanced animation classes */
   .animate-fade-in {
     @apply animate-in fade-in duration-500;
   }
 
+  .animate-slide-in {
+    @apply animate-in slide-in-from-bottom duration-500;
+  }
+  
+  .animate-scale-in {
+    @apply animate-in zoom-in duration-300;
+  }
+
   .animate-pulse-soft {
     animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .animate-bounce-slow {
+    animation: bounce 3s infinite;
+  }
+
+  .hover-scale {
+    @apply transition-transform duration-300 hover:scale-105;
+  }
+  
+  .hover-rotate {
+    @apply transition-transform duration-300 hover:rotate-3;
+  }
+  
+  .message-bubble-in {
+    @apply animate-in slide-in-from-left fade-in duration-200;
+  }
+  
+  .message-bubble-out {
+    @apply animate-in slide-in-from-right fade-in duration-200;
+  }
+  
+  .typing-indicator {
+    @apply flex space-x-1 items-center;
+  }
+  
+  .typing-indicator-dot {
+    @apply w-2 h-2 rounded-full bg-gray-400;
+    animation: typing-animation 1.4s infinite ease-in-out both;
+  }
+  
+  .typing-indicator-dot:nth-child(1) {
+    animation-delay: -0.32s;
+  }
+  
+  .typing-indicator-dot:nth-child(2) {
+    animation-delay: -0.16s;
+  }
+  
+  @keyframes typing-animation {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
   }
 
   @keyframes pulse-soft {
@@ -132,6 +186,12 @@
     50% {
       opacity: 0.7;
     }
+  }
+  
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
   }
 
   .shadow-card {
@@ -144,6 +204,82 @@
 
   .shadow-soft {
     @apply shadow-md shadow-gray-200/30;
+  }
+  
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  .badge-blue {
+    @apply bg-blue-100 text-blue-800;
+  }
+  
+  .badge-green {
+    @apply bg-green-100 text-green-800;
+  }
+  
+  .badge-purple {
+    @apply bg-purple-100 text-purple-800;
+  }
+  
+  .badge-pink {
+    @apply bg-pink-100 text-pink-800;
+  }
+  
+  /* Profile completion bar */
+  .profile-completion-bar {
+    @apply w-full h-2 bg-gray-200 rounded-full overflow-hidden;
+  }
+  
+  .profile-completion-progress {
+    @apply h-full transition-all duration-500 ease-out;
+  }
+  
+  /* Avatar with online status */
+  .avatar-with-status {
+    @apply relative inline-block;
+  }
+  
+  .status-indicator {
+    @apply absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white;
+  }
+  
+  .status-online {
+    @apply bg-green-500;
+  }
+  
+  .status-offline {
+    @apply bg-gray-400;
+  }
+  
+  /* Message indicator */
+  .message-indicator {
+    @apply flex space-x-0.5;
+  }
+  
+  .message-read {
+    @apply text-blue-500;
+  }
+  
+  .message-sent {
+    @apply text-gray-400;
+  }
+  
+  /* Floating bottom navigation */
+  .bottom-nav-container {
+    @apply fixed bottom-4 left-0 right-0 flex justify-center z-50 px-4;
+  }
+  
+  .bottom-nav {
+    @apply bg-white flex items-center justify-between px-6 py-2 rounded-full shadow-lg border border-gray-100;
+  }
+  
+  .bottom-nav-item {
+    @apply p-3 text-gray-500 hover:text-erasmatch-blue transition-colors;
+  }
+  
+  .bottom-nav-item-active {
+    @apply text-erasmatch-blue;
   }
 }
 
