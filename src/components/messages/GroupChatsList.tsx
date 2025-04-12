@@ -82,9 +82,9 @@ export const GroupChatsList = ({
 
   if (!currentUserProfile?.university) {
     return (
-      <div className="p-4">
+      <div className="p-4 bg-white rounded-lg shadow-sm">
         <p className="text-sm text-gray-500">
-          Update your profile with a university to join group chats.
+          Select your destination university to join your group chat.
         </p>
       </div>
     );
@@ -92,7 +92,7 @@ export const GroupChatsList = ({
 
   if (availableGroups.length === 0) {
     return (
-      <div className="p-4">
+      <div className="p-4 bg-white rounded-lg shadow-sm">
         <p className="text-sm text-gray-500">No group chats available.</p>
       </div>
     );
@@ -104,8 +104,8 @@ export const GroupChatsList = ({
       {availableGroups.map((group) => (
         <button
           key={group.university_name}
-          className={`w-full p-3 text-left hover:bg-gray-50 rounded-lg ${
-            selectedGroupChat === group.university_name ? "bg-gray-100" : ""
+          className={`w-full bg-white rounded-lg p-4 shadow-sm mb-3 text-left hover:bg-gray-50 ${
+            selectedGroupChat === group.university_name ? "ring-2 ring-erasmatch-blue" : ""
           }`}
           onClick={() => onSelectGroupChat(group.university_name)}
         >
