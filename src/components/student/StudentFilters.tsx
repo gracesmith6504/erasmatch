@@ -9,6 +9,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { School, MapPin, X } from "lucide-react";
+import PersonalityTagFilter from "./PersonalityTagFilter";
+import { Badge } from "@/components/ui/badge";
+import { getTagColorClass } from "@/components/profile/PersonalityTagSelector";
 
 interface StudentFiltersProps {
   universityFilter: string;
@@ -17,6 +20,8 @@ interface StudentFiltersProps {
   setCityFilter: (value: string) => void;
   uniqueUniversities: string[];
   uniqueCities: string[];
+  tagFilters: string[];
+  onTagFilterToggle: (tag: string) => void;
   resetFilters: () => void;
 }
 
@@ -27,10 +32,12 @@ const StudentFilters = ({
   setCityFilter,
   uniqueUniversities,
   uniqueCities,
+  tagFilters,
+  onTagFilterToggle,
   resetFilters,
 }: StudentFiltersProps) => {
   // Check if any filter is active
-  const isAnyFilterActive = universityFilter || cityFilter;
+  const isAnyFilterActive = universityFilter || cityFilter || tagFilters.length > 0;
   
   return (
     <div className="bg-white shadow-sm rounded-xl p-6 mb-8 border border-gray-100">
@@ -73,6 +80,14 @@ const StudentFilters = ({
           </Select>
         </div>
       </div>
+      
+      {/* Personality tag filter */}
+      <div className="mt-5">
+        <PersonalityTagFilter
+          selectedTags={tagFilters}
+          onTagToggle={onTagFilterToggle}
+        />
+      </div>
 
       {/* Tag display for active filters */}
       {isAnyFilterActive && (
@@ -94,6 +109,17 @@ const StudentFilters = ({
               </button>
             </div>
           )}
+          {tagFilters.map(tag => (
+            <Badge 
+              key={tag}
+              className={`${getTagColorClass(tag)} flex items-center text-xs`}
+            >
+              {tag}
+              <button className="ml-1" onClick={() => onTagFilterToggle(tag)}>
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          ))}
         </div>
       )}
 

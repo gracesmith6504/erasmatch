@@ -7,6 +7,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { School, MapPin, CalendarClock, Home, Globe, Mail } from "lucide-react";
 import { Profile } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
+import { Badge } from "@/components/ui/badge";
+import { getTagColorClass } from "@/components/profile/PersonalityTagSelector";
 
 interface StudentCardProps {
   profile: Profile;
@@ -85,6 +87,15 @@ const StudentCard = ({ profile }: StudentCardProps) => {
       .substring(0, 2);
   };
 
+  // Get a subset of personality tags to display on card
+  const getDisplayTags = (tags: string[] | null): string[] => {
+    if (!tags || tags.length === 0) return [];
+    return tags.slice(0, 3); // Show max 3 tags on card
+  };
+
+  const displayTags = getDisplayTags(profile.personality_tags);
+  const hasMoreTags = profile.personality_tags && profile.personality_tags.length > 3;
+
   return (
     <Card className="overflow-hidden card-hover border-gray-100 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group">
       <div className="h-24 bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple"></div>
@@ -100,9 +111,21 @@ const StudentCard = ({ profile }: StudentCardProps) => {
         <h3 className="font-semibold text-lg text-gray-900 mt-4 flex items-center justify-center">
           {profile.name || "Anonymous Student"} <span className="ml-2">{countryEmoji}</span>
         </h3>
-        <p className="text-xs text-gray-500 mt-1 flex items-center justify-center space-x-1">
-          <span>{getInterestEmojis()}</span>
-        </p>
+        
+        {/* Personality tags */}
+        <div className="mt-2 flex flex-wrap justify-center gap-1.5">
+          {displayTags.map(tag => (
+            <Badge key={tag} variant="outline" className={`${getTagColorClass(tag)} text-xs font-normal`}>
+              {tag}
+            </Badge>
+          ))}
+          {hasMoreTags && (
+            <Badge variant="outline" className="bg-gray-50 text-gray-500 text-xs font-normal">
+              +{(profile.personality_tags?.length || 0) - 3} more
+            </Badge>
+          )}
+        </div>
+        
         <div className="mt-4 space-y-3">
           {profile.home_university && (
             <div className="flex items-center justify-center text-sm text-gray-600">

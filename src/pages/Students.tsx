@@ -20,6 +20,8 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
     setUniversityFilter,
     cityFilter,
     setCityFilter,
+    tagFilters,
+    toggleTagFilter,
     uniqueUniversities,
     uniqueCities,
     filteredProfiles,
@@ -58,6 +60,8 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
             setCityFilter={setCityFilter}
             uniqueUniversities={uniqueUniversities}
             uniqueCities={uniqueCities}
+            tagFilters={tagFilters}
+            onTagFilterToggle={toggleTagFilter}
             resetFilters={resetFilters}
           />
 

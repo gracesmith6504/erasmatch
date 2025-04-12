@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const useStudentsData = (initialProfiles: Profile[], currentUserId: string | null) => {
   const [universityFilter, setUniversityFilter] = useState("");
   const [cityFilter, setCityFilter] = useState("");
+  const [tagFilters, setTagFilters] = useState<string[]>([]);
 
   const [uniqueUniversities, setUniqueUniversities] = useState<string[]>([]);
   const [uniqueCities, setUniqueCities] = useState<string[]>([]);
@@ -48,20 +49,34 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     }
   }, [loadedProfiles]);
 
-  // Filter profiles based on university and city filters
+  // Handle toggling personality tag filters
+  const toggleTagFilter = (tag: string) => {
+    setTagFilters(prev => 
+      prev.includes(tag) 
+        ? prev.filter(t => t !== tag) 
+        : [...prev, tag]
+    );
+  };
+
+  // Filter profiles based on university, city, and personality tag filters
   const filteredProfiles = loadedProfiles.filter(profile => {
     // Skip current user
     if (profile.id === currentUserId) return false;
 
     const uniMatch = !universityFilter || universityFilter === "all-universities" || profile.university === universityFilter;
     const cityMatch = !cityFilter || cityFilter === "all-cities" || profile.city === cityFilter;
+    
+    // Match any of the selected personality tags (OR logic)
+    const tagMatch = tagFilters.length === 0 || 
+      (profile.personality_tags && profile.personality_tags.some(tag => tagFilters.includes(tag)));
 
-    return uniMatch && cityMatch;
+    return uniMatch && cityMatch && tagMatch;
   });
 
   const resetFilters = () => {
     setUniversityFilter("");
     setCityFilter("");
+    setTagFilters([]);
   };
 
   return {
@@ -69,6 +84,8 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     setUniversityFilter,
     cityFilter,
     setCityFilter,
+    tagFilters,
+    toggleTagFilter,
     uniqueUniversities,
     uniqueCities,
     filteredProfiles,

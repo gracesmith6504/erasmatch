@@ -12,6 +12,7 @@ export type Profile = {
   home_university: string | null;
   country: string | null;
   interests: string | null;
+  personality_tags: string[] | null;
 };
 
 export type Message = {
