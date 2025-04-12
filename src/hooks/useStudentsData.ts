@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const useStudentsData = (initialProfiles: Profile[], currentUserId: string | null) => {
   const [universityFilter, setUniversityFilter] = useState("");
   const [cityFilter, setCityFilter] = useState("");
+  const [personalityTagsFilter, setPersonalityTagsFilter] = useState<string[]>([]);
 
   const [uniqueUniversities, setUniqueUniversities] = useState<string[]>([]);
   const [uniqueCities, setUniqueCities] = useState<string[]>([]);
@@ -25,7 +26,15 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
         }
 
         if (data) {
-          setLoadedProfiles(data as unknown as Profile[]);
+          // Ensure all profiles have the required fields
+          const profilesWithRequiredFields = data.map(profile => ({
+            ...profile,
+            country: null,
+            interests: null,
+            personality_tags: profile.personality_tags || []
+          })) as unknown as Profile[];
+          
+          setLoadedProfiles(profilesWithRequiredFields);
         }
       } catch (error) {
         console.error('Error fetching profiles:', error);
@@ -48,20 +57,25 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     }
   }, [loadedProfiles]);
 
-  // Filter profiles based on university and city filters
+  // Filter profiles based on university, city, and personality tag filters
   const filteredProfiles = loadedProfiles.filter(profile => {
     // Skip current user
     if (profile.id === currentUserId) return false;
 
     const uniMatch = !universityFilter || universityFilter === "all-universities" || profile.university === universityFilter;
     const cityMatch = !cityFilter || cityFilter === "all-cities" || profile.city === cityFilter;
+    
+    // Personality tags filter - show profiles that have ANY of the selected tags (OR logic)
+    const tagMatch = personalityTagsFilter.length === 0 || 
+      (profile.personality_tags && profile.personality_tags.some(tag => personalityTagsFilter.includes(tag)));
 
-    return uniMatch && cityMatch;
+    return uniMatch && cityMatch && tagMatch;
   });
 
   const resetFilters = () => {
     setUniversityFilter("");
     setCityFilter("");
+    setPersonalityTagsFilter([]);
   };
 
   return {
@@ -69,6 +83,8 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     setUniversityFilter,
     cityFilter,
     setCityFilter,
+    personalityTagsFilter,
+    setPersonalityTagsFilter,
     uniqueUniversities,
     uniqueCities,
     filteredProfiles,

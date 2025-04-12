@@ -3,12 +3,14 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { MessageSquare, School, MapPin, CalendarClock, Home } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Profile } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
+import { getTagInfo, getTagBgColor } from "@/components/profile/constants";
 
 type ProfileViewProps = {
   profiles: Profile[];
@@ -92,6 +94,28 @@ const ProfileView = ({ profiles, currentUserId, onSendMessage }: ProfileViewProp
       .substring(0, 2);
   };
 
+  const renderPersonalityTags = () => {
+    if (!profile.personality_tags || profile.personality_tags.length === 0) {
+      return null;
+    }
+
+    return (
+      <div className="mt-6">
+        <h2 className="text-lg font-medium text-gray-900 mb-2">Personality</h2>
+        <div className="flex flex-wrap gap-2">
+          {profile.personality_tags.map((tag) => {
+            const tagInfo = getTagInfo(tag);
+            return (
+              <Badge key={tag} className={`${getTagBgColor(tag)}`}>
+                {tagInfo?.icon} {tagInfo?.label}
+              </Badge>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="max-w-3xl mx-auto py-8 px-4 sm:px-6">
       <div className="bg-white shadow rounded-lg overflow-hidden">
@@ -150,6 +174,8 @@ const ProfileView = ({ profiles, currentUserId, onSendMessage }: ProfileViewProp
                 <CalendarClock className="h-5 w-5 mr-2 text-erasmatch-blue" />
                 <span>{profile.semester || "Semester not specified"}</span>
               </div>
+              
+              {renderPersonalityTags()}
             </div>
 
             <div>

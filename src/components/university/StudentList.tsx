@@ -2,8 +2,10 @@
 import { Link } from "react-router-dom";
 import { Profile } from "@/types";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { School, MapPin, CalendarClock } from "lucide-react";
+import { getTagInfo, getTagBgColor } from "@/components/profile/constants";
 
 interface StudentListProps {
   students: Profile[];
@@ -18,6 +20,30 @@ const StudentList = ({ students }: StudentListProps) => {
       .join("")
       .toUpperCase()
       .substring(0, 2);
+  };
+
+  const renderPersonalityTags = (profile: Profile) => {
+    if (!profile.personality_tags || profile.personality_tags.length === 0) {
+      return null;
+    }
+
+    return (
+      <div className="flex flex-wrap gap-1 mt-2">
+        {profile.personality_tags.slice(0, 2).map((tag) => {
+          const tagInfo = getTagInfo(tag);
+          return (
+            <Badge key={tag} className={`${getTagBgColor(tag)} text-xs`}>
+              {tagInfo?.icon} {tagInfo?.label}
+            </Badge>
+          );
+        })}
+        {profile.personality_tags.length > 2 && (
+          <Badge className="bg-gray-100 text-gray-700 text-xs">
+            +{profile.personality_tags.length - 2} more
+          </Badge>
+        )}
+      </div>
+    );
   };
 
   if (students.length === 0) {
@@ -51,6 +77,12 @@ const StudentList = ({ students }: StudentListProps) => {
             
             <div className="flex-grow text-center sm:text-left">
               <h4 className="font-semibold text-gray-900">{student.name || "Name not specified"}</h4>
+              
+              {/* Display personality tags */}
+              <div className="mt-1 sm:mt-1 flex justify-center sm:justify-start">
+                {renderPersonalityTags(student)}
+              </div>
+              
               <div className="mt-2 space-y-1 text-sm">
                 <div className="flex items-center justify-center sm:justify-start text-gray-600">
                   <School className="h-4 w-4 mr-2 text-erasmatch-blue opacity-70" />

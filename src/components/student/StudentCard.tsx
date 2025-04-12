@@ -4,9 +4,11 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { School, MapPin, CalendarClock, Home, Globe, Mail } from "lucide-react";
 import { Profile } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
+import { getTagInfo, getTagBgColor } from "@/components/profile/constants";
 
 interface StudentCardProps {
   profile: Profile;
@@ -16,20 +18,6 @@ const StudentCard = ({ profile }: StudentCardProps) => {
   const [universityCity, setUniversityCity] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [countryEmoji, setCountryEmoji] = useState<string>("🌍");
-
-  // Helper function to get random interest emojis
-  const getInterestEmojis = () => {
-    const interests = ["🎭", "🎨", "🎮", "📚", "🎬", "🎵", "👨‍🍳", "🧳", "⚽", "🏄‍♂️", "📸"];
-    const count = Math.floor(Math.random() * 3) + 1;
-    const selectedEmojis = [];
-    
-    for (let i = 0; i < count; i++) {
-      const index = Math.floor(Math.random() * interests.length);
-      selectedEmojis.push(interests[index]);
-    }
-    
-    return selectedEmojis.join(" ");
-  };
 
   // Country emoji mapping (simplified)
   useEffect(() => {
@@ -85,6 +73,30 @@ const StudentCard = ({ profile }: StudentCardProps) => {
       .substring(0, 2);
   };
 
+  const renderPersonalityTags = () => {
+    if (!profile.personality_tags || profile.personality_tags.length === 0) {
+      return null;
+    }
+
+    return (
+      <div className="flex flex-wrap justify-center gap-1 mt-2">
+        {profile.personality_tags.slice(0, 3).map((tag) => {
+          const tagInfo = getTagInfo(tag);
+          return (
+            <Badge key={tag} className={`${getTagBgColor(tag)} text-xs`}>
+              {tagInfo?.icon} {tagInfo?.label}
+            </Badge>
+          );
+        })}
+        {profile.personality_tags.length > 3 && (
+          <Badge className="bg-gray-100 text-gray-700 text-xs">
+            +{profile.personality_tags.length - 3} more
+          </Badge>
+        )}
+      </div>
+    );
+  };
+
   return (
     <Card className="overflow-hidden card-hover border-gray-100 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group">
       <div className="h-24 bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple"></div>
@@ -100,9 +112,10 @@ const StudentCard = ({ profile }: StudentCardProps) => {
         <h3 className="font-semibold text-lg text-gray-900 mt-4 flex items-center justify-center">
           {profile.name || "Anonymous Student"} <span className="ml-2">{countryEmoji}</span>
         </h3>
-        <p className="text-xs text-gray-500 mt-1 flex items-center justify-center space-x-1">
-          <span>{getInterestEmojis()}</span>
-        </p>
+        
+        {/* Personality tags */}
+        {renderPersonalityTags()}
+        
         <div className="mt-4 space-y-3">
           {profile.home_university && (
             <div className="flex items-center justify-center text-sm text-gray-600">

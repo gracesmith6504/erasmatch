@@ -8,6 +8,9 @@ import { useProfileForm } from "./useProfileForm";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Upload, X, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { PERSONALITY_TAGS, PERSONALITY_TAG_GROUPS } from "./constants";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 const SEMESTERS = ["Fall 2024", "Spring 2025", "Fall 2025", "Spring 2026"];
 
@@ -21,8 +24,27 @@ export function ProfileFormFields() {
     handleFileUpload, 
     uploadStatus, 
     avatarUrl, 
-    handleRemoveAvatar 
+    handleRemoveAvatar,
+    handlePersonalityTagToggle,
   } = useProfileForm();
+
+  // Generate a tag color based on the tag name for consistent coloring
+  const getTagColor = (tag: string) => {
+    const colors = [
+      "bg-blue-100 text-blue-800",
+      "bg-green-100 text-green-800",
+      "bg-purple-100 text-purple-800",
+      "bg-yellow-100 text-yellow-800",
+      "bg-pink-100 text-pink-800",
+      "bg-indigo-100 text-indigo-800",
+      "bg-orange-100 text-orange-800",
+      "bg-teal-100 text-teal-800",
+    ];
+    
+    // Use the tag string to pick a consistent color
+    const index = tag.length % colors.length;
+    return colors[index];
+  };
 
   return (
     <>
@@ -177,6 +199,65 @@ export function ProfileFormFields() {
           rows={4}
           className="mt-1"
         />
+      </div>
+
+      {/* Personality Tags Section */}
+      <div className="mt-6">
+        <Label htmlFor="personality-tags" className="block text-sm font-medium text-gray-700 mb-3">
+          What describes you?
+        </Label>
+
+        <div className="space-y-4">
+          {PERSONALITY_TAG_GROUPS.map((group) => (
+            <div key={group.name} className="border rounded-md p-4">
+              <h3 className="text-sm font-medium text-gray-700 mb-2">{group.name}</h3>
+              <div className="flex flex-wrap gap-2">
+                {group.tags.map((tag) => {
+                  const isSelected = form.personality_tags?.includes(tag.value);
+                  return (
+                    <Badge
+                      key={tag.value}
+                      variant={isSelected ? "default" : "outline"}
+                      className={`cursor-pointer transition-all ${
+                        isSelected ? getTagColor(tag.value) : "hover:bg-gray-100"
+                      }`}
+                      onClick={() => handlePersonalityTagToggle(tag.value)}
+                    >
+                      {tag.icon} {tag.label}
+                      {isSelected && <X className="h-3 w-3 ml-1" />}
+                    </Badge>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Display selected tags */}
+        {form.personality_tags && form.personality_tags.length > 0 && (
+          <div className="mt-4">
+            <h4 className="text-sm font-medium text-gray-700 mb-2">Selected Tags:</h4>
+            <div className="flex flex-wrap gap-2">
+              {form.personality_tags.map((tag) => {
+                const tagInfo = PERSONALITY_TAGS.find(t => t.value === tag);
+                return (
+                  <Badge
+                    key={tag}
+                    className={`${getTagColor(tag)}`}
+                  >
+                    {tagInfo?.icon} {tagInfo?.label}
+                    <button 
+                      className="ml-1" 
+                      onClick={() => handlePersonalityTagToggle(tag)}
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

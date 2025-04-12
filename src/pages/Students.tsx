@@ -20,6 +20,8 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
     setUniversityFilter,
     cityFilter,
     setCityFilter,
+    personalityTagsFilter,
+    setPersonalityTagsFilter,
     uniqueUniversities,
     uniqueCities,
     filteredProfiles,
@@ -56,6 +58,8 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
             setUniversityFilter={setUniversityFilter}
             cityFilter={cityFilter}
             setCityFilter={setCityFilter}
+            personalityTagsFilter={personalityTagsFilter}
+            setPersonalityTagsFilter={setPersonalityTagsFilter}
             uniqueUniversities={uniqueUniversities}
             uniqueCities={uniqueCities}
             resetFilters={resetFilters}

@@ -71,11 +71,21 @@ export const useProfileForm = () => {
     setAvatarUrl(null);
   };
 
+  const handlePersonalityTagToggle = (tag: string) => {
+    const currentTags = context.form.personality_tags || [];
+    const updatedTags = currentTags.includes(tag)
+      ? currentTags.filter(t => t !== tag)
+      : [...currentTags, tag];
+    
+    context.handleSelectChange("personality_tags", updatedTags);
+  };
+
   return {
     ...context,
     handleFileUpload,
     uploadStatus,
     avatarUrl,
-    handleRemoveAvatar
+    handleRemoveAvatar,
+    handlePersonalityTagToggle
   };
 };
