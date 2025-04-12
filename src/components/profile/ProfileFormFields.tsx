@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Upload, X, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { PERSONALITY_TAGS, PERSONALITY_TAG_GROUPS } from "./constants";
+import { PERSONALITY_TAGS } from "./constants";
 
 const SEMESTERS = ["Fall 2024", "Spring 2025", "Fall 2025", "Spring 2026"];
 
@@ -188,36 +188,31 @@ export function ProfileFormFields() {
         />
       </div>
 
-      {/* Personality Tags Section */}
+      {/* Personality Tags Section - Updated to a unified layout */}
       <div className="mt-6">
         <Label htmlFor="personality-tags" className="block text-sm font-medium text-gray-700 mb-3">
           What describes you?
         </Label>
 
-        <div className="space-y-4">
-          {PERSONALITY_TAG_GROUPS.map((group) => (
-            <div key={group.name} className="border rounded-md p-4">
-              <h3 className="text-sm font-medium text-gray-700 mb-2">{group.name}</h3>
-              <div className="flex flex-wrap gap-2">
-                {group.tags.map((tag) => {
-                  const isSelected = form.personality_tags?.includes(tag.value);
-                  return (
-                    <Badge
-                      key={tag.value}
-                      variant={isSelected ? "default" : "outline"}
-                      className={`cursor-pointer transition-all ${
-                        isSelected ? getTagColor(tag.value) : "hover:bg-gray-100"
-                      }`}
-                      onClick={() => handlePersonalityTagToggle(tag.value)}
-                    >
-                      {tag.icon} {tag.label}
-                      {isSelected && <X className="h-3 w-3 ml-1" />}
-                    </Badge>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
+        <div className="border rounded-md p-4">
+          <div className="flex flex-wrap gap-2 mt-2">
+            {PERSONALITY_TAGS.map((tag) => {
+              const isSelected = form.personality_tags?.includes(tag.value);
+              return (
+                <Badge
+                  key={tag.value}
+                  variant={isSelected ? "default" : "outline"}
+                  className={`cursor-pointer transition-all ${
+                    isSelected ? getTagColor(tag.value) : "hover:bg-gray-100"
+                  }`}
+                  onClick={() => handlePersonalityTagToggle(tag.value)}
+                >
+                  {tag.icon} {tag.label}
+                  {isSelected && <X className="h-3 w-3 ml-1" />}
+                </Badge>
+              );
+            })}
+          </div>
         </div>
 
         {/* Display selected tags */}
