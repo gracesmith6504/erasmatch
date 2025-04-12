@@ -34,6 +34,7 @@ const StudentCard = ({ profile }: StudentCardProps) => {
   // Country emoji mapping (simplified)
   useEffect(() => {
     const getCountryEmoji = () => {
+      if (!profile.country) return "🌍";
       if (profile.country === "Spain") return "🇪🇸";
       if (profile.country === "France") return "🇫🇷";
       if (profile.country === "Germany") return "🇩🇪";
