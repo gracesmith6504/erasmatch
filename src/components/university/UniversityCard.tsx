@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { 
@@ -47,11 +48,12 @@ const UniversityCard = ({ university }: UniversityCardProps) => {
         return;
       }
       
-      // Ensure all required fields are present in the data
+      // Transform data to match Profile type with all required fields
       const profilesWithRequiredFields = data?.map(profile => ({
         ...profile,
-        country: profile.country || null,
-        interests: profile.interests || null
+        // Ensure all required fields are present with default values if they don't exist
+        country: null,
+        interests: null
       })) as unknown as Profile[];
       
       setStudents(profilesWithRequiredFields || []);

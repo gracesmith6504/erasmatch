@@ -68,20 +68,21 @@ export function useUniversityDetails(universityId: string | undefined) {
           throw studentsError;
         }
         
-        // Add the home_university property if it's missing
-        const studentsWithHomeUniversity = studentsData.map(student => ({
+        // Transform data to match Profile type with all required fields
+        const studentsWithRequiredFields = studentsData.map(student => ({
           ...student,
           home_university: student.home_university || null,
-          country: student.country || null,
-          interests: student.interests || null
+          // Add missing fields required by the Profile type
+          country: null,
+          interests: null
         })) as unknown as Profile[];
         
-        setStudents(studentsWithHomeUniversity);
+        setStudents(studentsWithRequiredFields);
         
         // Update the university with the correct student count
         setUniversity(prev => prev ? {
           ...prev,
-          student_count: studentsWithHomeUniversity.length
+          student_count: studentsWithRequiredFields.length
         } : null);
         
       } catch (err: any) {
