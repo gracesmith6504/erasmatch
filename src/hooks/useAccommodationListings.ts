@@ -15,11 +15,12 @@ export const useAccommodationListings = () => {
   useEffect(() => {
     const fetchListings = async () => {
       try {
+        console.log("Fetching listings with filters:", { cityFilter, roomTypeFilter });
         setLoading(true);
+        
         let query = supabase
           .from('listings')
-          .select('*')
-          .order('created_at', { ascending: false });
+          .select('*');
         
         if (cityFilter) {
           query = query.eq('city', cityFilter);
@@ -29,10 +30,16 @@ export const useAccommodationListings = () => {
           query = query.eq('room_type', roomTypeFilter);
         }
         
+        query = query.order('created_at', { ascending: false });
+        
         const { data, error } = await query;
         
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching listings:', error);
+          throw error;
+        }
         
+        console.log("Fetched listings:", data?.length || 0);
         if (data) {
           setListings(data as ListingProps[]);
         }

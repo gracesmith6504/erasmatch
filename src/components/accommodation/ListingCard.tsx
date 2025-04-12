@@ -48,7 +48,8 @@ const ListingCard: React.FC<{ listing: ListingProps }> = ({ listing }) => {
           {listing.room_type || 'Room type not available'}
         </p>
         <p className="text-gray-500 text-sm">
-          {listing.details || listing.availability || 'No details available'}
+          {listing.city && <span>Location: {listing.city}</span>}
+          {!listing.city && (listing.details || listing.availability || 'No details available')}
         </p>
       </CardContent>
 
