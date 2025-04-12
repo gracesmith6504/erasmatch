@@ -28,3 +28,13 @@ export type ChatThread = {
   partner: Profile;
   lastMessage: Message | null;
 };
+
+export type GroupChat = {
+  university_name: string;
+  participants_count: number;
+  last_message?: {
+    content: string;
+    created_at: string;
+    sender_name: string;
+  } | null;
+};
