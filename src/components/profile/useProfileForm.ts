@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useProfileContext } from "./ProfileContext";
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
@@ -11,14 +11,6 @@ export const useProfileForm = () => {
     error: null as string | null,
   });
   const [avatarUrl, setAvatarUrl] = useState<string | null>(context.form.avatar_url);
-
-  // Update local avatar URL when the form's avatar URL changes
-  useEffect(() => {
-    // Only update if values are different to prevent unnecessary re-renders
-    if (avatarUrl !== context.form.avatar_url) {
-      setAvatarUrl(context.form.avatar_url);
-    }
-  }, [context.form.avatar_url]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -62,6 +54,7 @@ export const useProfileForm = () => {
       
       // Update the form state with the new avatar URL
       context.handleSelectChange("avatar_url", publicUrlData.publicUrl);
+      setAvatarUrl(publicUrlData.publicUrl);
     } catch (error: any) {
       console.error("Error uploading avatar:", error);
       setUploadStatus({

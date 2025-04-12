@@ -138,7 +138,6 @@ export type Database = {
           home_university: string | null
           id: string
           name: string | null
-          personality_tags: string[] | null
           semester: string | null
           university: string | null
         }
@@ -151,7 +150,6 @@ export type Database = {
           home_university?: string | null
           id: string
           name?: string | null
-          personality_tags?: string[] | null
           semester?: string | null
           university?: string | null
         }
@@ -164,7 +162,6 @@ export type Database = {
           home_university?: string | null
           id?: string
           name?: string | null
-          personality_tags?: string[] | null
           semester?: string | null
           university?: string | null
         }

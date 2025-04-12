@@ -9,8 +9,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Profile } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
-import { Badge } from "@/components/ui/badge";
-import { getTagColorClass } from "@/components/profile/PersonalityTagSelector";
 
 type ProfileViewProps = {
   profiles: Profile[];
@@ -94,8 +92,6 @@ const ProfileView = ({ profiles, currentUserId, onSendMessage }: ProfileViewProp
       .substring(0, 2);
   };
 
-  const personalityTags = profile.personality_tags || [];
-
   return (
     <div className="max-w-3xl mx-auto py-8 px-4 sm:px-6">
       <div className="bg-white shadow rounded-lg overflow-hidden">
@@ -113,17 +109,6 @@ const ProfileView = ({ profiles, currentUserId, onSendMessage }: ProfileViewProp
               </div>
               <div className="mt-4 sm:mt-0 sm:ml-4">
                 <h1 className="text-2xl font-bold text-gray-900">{profile.name}</h1>
-                
-                {/* Personality tags */}
-                {personalityTags.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mt-1.5">
-                    {personalityTags.map(tag => (
-                      <Badge key={tag} variant="outline" className={`${getTagColorClass(tag)}`}>
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
               </div>
             </div>
 

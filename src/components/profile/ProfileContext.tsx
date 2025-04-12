@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, FormEvent, useEffect } from "react";
+import React, { createContext, useContext, useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Profile as ProfileType } from "@/types";
@@ -14,7 +14,6 @@ type ProfileFormState = {
   avatar_url: string | null;
   home_university: string;
   city: string | null;
-  personality_tags: string[] | null;
 };
 
 type ProfileContextType = {
@@ -24,7 +23,6 @@ type ProfileContextType = {
   handleSelectChange: (name: string, value: string | null) => void;
   handleUniversityChange: (university: string) => void;
   handleHomeUniversityChange: (university: string) => void;
-  handlePersonalityTagsChange: (tags: string[]) => void;
   handleSubmit: (e: FormEvent) => Promise<void>;
 };
 
@@ -55,11 +53,8 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
     avatar_url: profile?.avatar_url || null,
     home_university: profile?.home_university || "",
     city: profile?.city || null,
-    personality_tags: profile?.personality_tags || [],
   });
   const [loading, setLoading] = useState(false);
-  const [lastFetchedUniversity, setLastFetchedUniversity] = useState<string | null>(null);
-  const [isFetchingCity, setIsFetchingCity] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -71,23 +66,15 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
   };
 
   const handleUniversityChange = async (university: string) => {
-    // First, update the university field immediately
     setForm((prev) => ({ ...prev, university }));
     
-    // If university is empty, clear the city field and exit
+    // If university is empty, clear the city field
     if (!university.trim()) {
       setForm((prev) => ({ ...prev, city: null }));
       return;
     }
 
-    // Skip fetching if we already fetched this university or if we're currently fetching
-    if (university === lastFetchedUniversity || isFetchingCity) {
-      return;
-    }
-
-    setLastFetchedUniversity(university);
-    setIsFetchingCity(true);
-
+    // Fetch corresponding city from universities table
     try {
       const { data, error } = await supabase
         .from('universities')
@@ -98,23 +85,19 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
       if (error) {
         console.error('Error fetching university city:', error);
         // Don't update city if there's an error
-      } else {
-        // Update city in form state without updating university again
-        setForm((prev) => ({ ...prev, city: data?.city || null }));
+        return;
       }
+      
+      // Update city in form state
+      setForm((prev) => ({ ...prev, university, city: data?.city || null }));
+      
     } catch (error) {
       console.error('Error in university change handler:', error);
-    } finally {
-      setIsFetchingCity(false);
     }
   };
   
   const handleHomeUniversityChange = (home_university: string) => {
     setForm((prev) => ({ ...prev, home_university }));
-  };
-
-  const handlePersonalityTagsChange = (tags: string[]) => {
-    setForm((prev) => ({ ...prev, personality_tags: tags }));
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -144,7 +127,6 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
           avatar_url: form.avatar_url,
           home_university: form.home_university,
           city: form.city,
-          personality_tags: form.personality_tags,
         })
         .eq('id', user.user.id);
 
@@ -168,7 +150,6 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
     handleSelectChange,
     handleUniversityChange,
     handleHomeUniversityChange,
-    handlePersonalityTagsChange,
     handleSubmit
   };
 

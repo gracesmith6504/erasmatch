@@ -8,7 +8,6 @@ import { useProfileForm } from "./useProfileForm";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Upload, X, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PersonalityTagSelector } from "./PersonalityTagSelector";
 
 const SEMESTERS = ["Fall 2024", "Spring 2025", "Fall 2025", "Spring 2026"];
 
@@ -22,8 +21,7 @@ export function ProfileFormFields() {
     handleFileUpload, 
     uploadStatus, 
     avatarUrl, 
-    handleRemoveAvatar,
-    handlePersonalityTagsChange
+    handleRemoveAvatar 
   } = useProfileForm();
 
   return (
@@ -179,21 +177,6 @@ export function ProfileFormFields() {
           rows={4}
           className="mt-1"
         />
-      </div>
-
-      <div className="mt-6">
-        <Label className="block text-sm font-medium text-gray-700 mb-2">
-          What describes you?
-        </Label>
-        <div className="mt-2 bg-gray-50 p-4 rounded-md border border-gray-100">
-          <PersonalityTagSelector 
-            value={form.personality_tags} 
-            onChange={handlePersonalityTagsChange}
-          />
-        </div>
-        <p className="mt-1 text-xs text-gray-500">
-          Choose up to 5 tags that describe you best. These will help other students with similar interests find you.
-        </p>
       </div>
     </>
   );
