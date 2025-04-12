@@ -14,7 +14,10 @@ export const useProfileForm = () => {
 
   // Update local avatar URL when the form's avatar URL changes
   useEffect(() => {
-    setAvatarUrl(context.form.avatar_url);
+    // Only update if values are different to prevent unnecessary re-renders
+    if (avatarUrl !== context.form.avatar_url) {
+      setAvatarUrl(context.form.avatar_url);
+    }
   }, [context.form.avatar_url]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,7 +62,6 @@ export const useProfileForm = () => {
       
       // Update the form state with the new avatar URL
       context.handleSelectChange("avatar_url", publicUrlData.publicUrl);
-      setAvatarUrl(publicUrlData.publicUrl);
     } catch (error: any) {
       console.error("Error uploading avatar:", error);
       setUploadStatus({

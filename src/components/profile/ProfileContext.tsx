@@ -59,6 +59,7 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
   });
   const [loading, setLoading] = useState(false);
   const [lastFetchedUniversity, setLastFetchedUniversity] = useState<string | null>(null);
+  const [isFetchingCity, setIsFetchingCity] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -70,22 +71,23 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
   };
 
   const handleUniversityChange = async (university: string) => {
+    // First, update the university field immediately
     setForm((prev) => ({ ...prev, university }));
     
-    // If university is empty, clear the city field
+    // If university is empty, clear the city field and exit
     if (!university.trim()) {
       setForm((prev) => ({ ...prev, city: null }));
       return;
     }
 
-    // Skip fetching if we recently fetched for the same university
-    if (university === lastFetchedUniversity) {
+    // Skip fetching if we already fetched this university or if we're currently fetching
+    if (university === lastFetchedUniversity || isFetchingCity) {
       return;
     }
 
     setLastFetchedUniversity(university);
+    setIsFetchingCity(true);
 
-    // Fetch corresponding city from universities table
     try {
       const { data, error } = await supabase
         .from('universities')
@@ -96,14 +98,14 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
       if (error) {
         console.error('Error fetching university city:', error);
         // Don't update city if there's an error
-        return;
+      } else {
+        // Update city in form state without updating university again
+        setForm((prev) => ({ ...prev, city: data?.city || null }));
       }
-      
-      // Update city in form state
-      setForm((prev) => ({ ...prev, city: data?.city || null }));
-      
     } catch (error) {
       console.error('Error in university change handler:', error);
+    } finally {
+      setIsFetchingCity(false);
     }
   };
   
