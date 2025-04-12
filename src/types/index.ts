@@ -12,17 +12,5 @@ export type Profile = {
   home_university: string | null;
   country: string | null;
   interests: string | null;
-};
-
-export type Message = {
-  id: string;
-  sender_id: string;
-  receiver_id: string;
-  content: string;
-  created_at: string;
-};
-
-export type ChatThread = {
-  partner: Profile;
-  lastMessage: Message | null;
+  personality_tags: string[] | null; // Add this line
 };

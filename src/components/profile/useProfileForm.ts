@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useProfileContext } from "./ProfileContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -71,11 +70,16 @@ export const useProfileForm = () => {
     setAvatarUrl(null);
   };
 
+  const handleSelectChange = (name: string, value: string | string[] | null) => {
+    context.form[name] = value;
+  };
+
   return {
     ...context,
     handleFileUpload,
     uploadStatus,
     avatarUrl,
+    handleSelectChange,
     handleRemoveAvatar
   };
 };

@@ -1,4 +1,3 @@
-
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -8,14 +7,33 @@ import { useProfileForm } from "./useProfileForm";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Upload, X, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { MultiSelect } from "@/components/ui/multi-select";
 
 const SEMESTERS = ["Fall 2024", "Spring 2025", "Fall 2025", "Spring 2026"];
+
+const PERSONALITY_TAGS = [
+  { value: "Weekend Trips", label: "🗺️ Weekend Trips" },
+  { value: "Beach Days", label: "🏖️ Beach Days" },
+  { value: "Train Adventures", label: "🚆 Train Adventures" },
+  { value: "Pub Nights", label: "🍻 Pub Nights" },
+  { value: "Clubbing", label: "🕺 Clubbing" },
+  { value: "Sport", label: "🏅 Sport" },
+  { value: "Music Lover", label: "🎧 Music Lover" },
+  { value: "Photography", label: "📸 Photography" },
+  { value: "Artsy", label: "🎨 Artsy" },
+  { value: "Mindfulness", label: "🧘 Mindfulness" },
+  { value: "Bookworm", label: "📚 Bookworm" },
+  { value: "Café Hunting", label: "☕ Café Hunting" },
+  { value: "Social Butterfly", label: "🧑‍🤝‍🧑 Social Butterfly" },
+  { value: "Open-minded", label: "🌟 Open-minded" },
+  { value: "Looking to meet new people", label: "👀 Looking to meet new people" }
+];
 
 export function ProfileFormFields() {
   const { 
     form, 
     handleChange, 
-    handleSelectChange, 
+    handleSelectChange,
     handleUniversityChange,
     handleHomeUniversityChange,
     handleFileUpload, 
@@ -77,7 +95,6 @@ export function ProfileFormFields() {
             label="Destination University"
           />
           
-          {/* Display city as read-only information */}
           {form.university && (
             <div className="flex items-center text-sm mt-2 text-gray-600">
               <MapPin className="h-4 w-4 mr-1 text-erasmatch-green" />
@@ -176,6 +193,18 @@ export function ProfileFormFields() {
           placeholder="Tell others about yourself, your interests, and what you're looking forward to in your Erasmus experience"
           rows={4}
           className="mt-1"
+        />
+      </div>
+
+      <div>
+        <Label className="block text-sm font-medium text-gray-700 mb-2">
+          What describes you?
+        </Label>
+        <MultiSelect
+          options={PERSONALITY_TAGS}
+          value={form.personality_tags || []}
+          onValueChange={(values) => handleSelectChange("personality_tags", values)}
+          placeholder="Select personality tags"
         />
       </div>
     </>
