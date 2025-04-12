@@ -68,6 +68,39 @@ export type Database = {
         }
         Relationships: []
       }
+      listings: {
+        Row: {
+          city: string | null
+          created_at: string
+          id: string
+          image_url: string | null
+          platform: string | null
+          price: string | null
+          room_type: string | null
+          source_url: string | null
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          platform?: string | null
+          price?: string | null
+          room_type?: string | null
+          source_url?: string | null
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          platform?: string | null
+          price?: string | null
+          room_type?: string | null
+          source_url?: string | null
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string

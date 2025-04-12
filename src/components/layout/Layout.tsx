@@ -38,8 +38,7 @@ const Layout = ({ children, isAuthenticated, onLogout }: LayoutProps) => {
               <ul className="space-y-2 text-sm">
                 <li><a href="/" className="text-gray-500 hover:text-erasmatch-blue">Home</a></li>
                 <li><a href="/students" className="text-gray-500 hover:text-erasmatch-blue">Find Students</a></li>
-                {/* Temporarily commented out Links menu item */}
-                {/* <li><a href="/universities" className="text-gray-500 hover:text-erasmatch-blue">Universities</a></li> */}
+                <li><a href="/accommodation" className="text-gray-500 hover:text-erasmatch-blue">Accommodation</a></li>
               </ul>
             </div>
             <div>

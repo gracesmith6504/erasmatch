@@ -22,6 +22,7 @@ import ForumCities from "./pages/ForumCities";
 import CityForum from "./pages/CityForum";
 import ForumPostDetail from "./pages/ForumPostDetail";
 import NewForumPost from "./pages/NewForumPost";
+import Accommodation from "./pages/Accommodation";
 
 // Types
 import { Profile as ProfileType, Message } from "@/types";
@@ -297,6 +298,10 @@ const App = () => {
                     />
                   </ProtectedRoute>
                 } 
+              />
+              <Route 
+                path="/accommodation" 
+                element={<Accommodation />} 
               />
               {/* Forum Routes */}
               <Route path="/forum" element={<ForumCities />} />
