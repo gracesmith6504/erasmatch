@@ -22,7 +22,8 @@ const Layout = ({ children, isAuthenticated, onLogout }: LayoutProps) => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogout} />
-      <main className="flex-1 pt-4">{children}</main>
+      {/* Added pt-16 to ensure content appears below the navbar */}
+      <main className="flex-1 pt-16">{children}</main>
       <footer className="bg-white border-t py-8 mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
@@ -37,7 +38,8 @@ const Layout = ({ children, isAuthenticated, onLogout }: LayoutProps) => {
               <ul className="space-y-2 text-sm">
                 <li><a href="/" className="text-gray-500 hover:text-erasmatch-blue">Home</a></li>
                 <li><a href="/students" className="text-gray-500 hover:text-erasmatch-blue">Find Students</a></li>
-                <li><a href="/universities" className="text-gray-500 hover:text-erasmatch-blue">Universities</a></li>
+                {/* Temporarily commented out Links menu item */}
+                {/* <li><a href="/universities" className="text-gray-500 hover:text-erasmatch-blue">Universities</a></li> */}
               </ul>
             </div>
             <div>

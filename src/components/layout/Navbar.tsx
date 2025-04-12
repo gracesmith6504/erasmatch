@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, MessageSquare, Users, User, LogOut, Building, Home, MessageCircle, MapPin } from "lucide-react";
+import { Menu, X, MessageSquare, Users, User, LogOut, Home } from "lucide-react";
 
 type NavbarProps = {
   isAuthenticated: boolean;
@@ -54,7 +54,7 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
             </Link>
           </div>
           
-          <div className="hidden md:flex items-center space-x-1">
+          <div className="hidden md:flex items-center space-x-4">
             {isAuthenticated ? (
               <>
                 <Link to="/" className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -77,26 +77,7 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                     <span>Students</span>
                   </div>
                 </Link>
-                <Link to="/universities" className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isActive('/universities') 
-                    ? 'text-erasmatch-blue bg-blue-50' 
-                    : 'text-gray-700 hover:text-erasmatch-blue hover:bg-gray-50'
-                }`}>
-                  <div className="flex items-center space-x-1.5">
-                    <MapPin className="w-4 h-4" />
-                    <span>Locations</span>
-                  </div>
-                </Link>
-                <Link to="/forum" className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  location.pathname.startsWith('/forum')
-                    ? 'text-erasmatch-blue bg-blue-50' 
-                    : 'text-gray-700 hover:text-erasmatch-blue hover:bg-gray-50'
-                }`}>
-                  <div className="flex items-center space-x-1.5">
-                    <MessageCircle className="w-4 h-4" />
-                    <span>Forums</span>
-                  </div>
-                </Link>
+                {/* Temporarily removed Locations and Forums navigation items */}
                 <Link to="/messages" className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   isActive('/messages') 
                     ? 'text-erasmatch-blue bg-blue-50' 
@@ -179,26 +160,7 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                   Students
                 </div>
               </Link>
-              <Link to="/universities" className={`block px-3 py-2.5 rounded-lg text-base font-medium ${
-                isActive('/universities') 
-                  ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple' 
-                  : 'text-gray-700 hover:bg-gray-50'
-              }`}>
-                <div className="flex items-center">
-                  <MapPin className="w-5 h-5 mr-3" />
-                  Locations
-                </div>
-              </Link>
-              <Link to="/forum" className={`block px-3 py-2.5 rounded-lg text-base font-medium ${
-                location.pathname.startsWith('/forum')
-                  ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple' 
-                  : 'text-gray-700 hover:bg-gray-50'
-              }`}>
-                <div className="flex items-center">
-                  <MessageCircle className="w-5 h-5 mr-3" />
-                  Forums
-                </div>
-              </Link>
+              {/* Temporarily removed Locations and Forums navigation items */}
               <Link to="/messages" className={`block px-3 py-2.5 rounded-lg text-base font-medium ${
                 isActive('/messages') 
                   ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple' 
