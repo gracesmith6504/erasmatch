@@ -125,14 +125,14 @@ const Accommodation = () => {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
             <Select 
-              value={cityFilter || ""} 
-              onValueChange={(value) => setCityFilter(value || null)}
+              value={cityFilter || "all-cities"} 
+              onValueChange={(value) => setCityFilter(value === "all-cities" ? null : value)}
             >
               <SelectTrigger className="h-12 border-gray-200 focus:border-erasmatch-blue">
                 <SelectValue placeholder="Filter by City" />
               </SelectTrigger>
               <SelectContent className="max-h-80">
-                <SelectItem value="">All Cities</SelectItem>
+                <SelectItem value="all-cities">All Cities</SelectItem>
                 {uniqueCities.map((city) => (
                   <SelectItem key={city} value={city}>
                     {city}
@@ -144,14 +144,14 @@ const Accommodation = () => {
 
           <div>
             <Select 
-              value={roomTypeFilter || ""} 
-              onValueChange={(value) => setRoomTypeFilter(value || null)}
+              value={roomTypeFilter || "all-room-types"} 
+              onValueChange={(value) => setRoomTypeFilter(value === "all-room-types" ? null : value)}
             >
               <SelectTrigger className="h-12 border-gray-200 focus:border-erasmatch-blue">
                 <SelectValue placeholder="Filter by Room Type" />
               </SelectTrigger>
               <SelectContent className="max-h-80">
-                <SelectItem value="">All Room Types</SelectItem>
+                <SelectItem value="all-room-types">All Room Types</SelectItem>
                 {uniqueRoomTypes.map((type) => (
                   <SelectItem key={type} value={type}>
                     {type}
