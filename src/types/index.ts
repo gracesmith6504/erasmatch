@@ -46,3 +46,21 @@ export type GroupMessage = {
   content: string;
   created_at: string;
 };
+
+export type CityChat = {
+  city_name: string;
+  participants_count: number;
+  last_message?: {
+    content: string;
+    created_at: string;
+    sender_name: string;
+  } | null;
+};
+
+export type CityMessage = {
+  id: string;
+  sender_id: string;
+  city_name: string;
+  content: string;
+  created_at: string;
+};

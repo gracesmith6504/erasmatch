@@ -8,9 +8,11 @@ import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import { Message, Profile, ChatThread } from "@/types";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Send, Users } from "lucide-react";
+import { Send, Users, MapPin } from "lucide-react";
 import { GroupChatsList } from "@/components/messages/GroupChatsList";
 import { GroupChatPanel } from "@/components/messages/GroupChatPanel";
+import { CityList } from "@/components/messages/CityList";
+import { CityPanel } from "@/components/messages/CityPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type MessagesProps = {
@@ -25,8 +27,9 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
   const [selectedThread, setSelectedThread] = useState<ChatThread | null>(null);
   const [newMessage, setNewMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
-  const [activeTab, setActiveTab] = useState<"direct" | "groups">("direct");
+  const [activeTab, setActiveTab] = useState<"direct" | "groups" | "cities">("direct");
   const [selectedGroupChat, setSelectedGroupChat] = useState<string | null>(null);
+  const [selectedCityChat, setSelectedCityChat] = useState<string | null>(null);
 
   const currentUserProfile = useMemo(() => {
     return profiles.find(profile => profile.id === currentUserId) || null;
@@ -104,8 +107,17 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
 
   const handleSelectGroupChat = (universityName: string) => {
     setSelectedGroupChat(universityName);
+    setSelectedCityChat(null);
     if (isMobile) {
       setActiveTab("groups");
+    }
+  };
+
+  const handleSelectCityChat = (cityName: string) => {
+    setSelectedCityChat(cityName);
+    setSelectedGroupChat(null);
+    if (isMobile) {
+      setActiveTab("cities");
     }
   };
 
@@ -125,18 +137,21 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
   };
 
   // Show message list on mobile when no thread selected
-  if (isMobile && !selectedThread && !selectedGroupChat) {
+  if (isMobile && !selectedThread && !selectedGroupChat && !selectedCityChat) {
     return (
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">Messages</h1>
         
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "direct" | "groups")}>
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "direct" | "groups" | "cities")}>
           <TabsList className="w-full mb-4">
             <TabsTrigger value="direct" className="flex-1">
               Direct Messages
             </TabsTrigger>
             <TabsTrigger value="groups" className="flex-1">
-              Group Chats
+              University Groups
+            </TabsTrigger>
+            <TabsTrigger value="cities" className="flex-1">
+              City Groups
             </TabsTrigger>
           </TabsList>
           
@@ -195,6 +210,17 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
               />
             </div>
           </TabsContent>
+          
+          <TabsContent value="cities">
+            <div className="bg-white rounded-lg shadow overflow-hidden">
+              <CityList 
+                profiles={profiles}
+                currentUserProfile={currentUserProfile}
+                onSelectCityChat={handleSelectCityChat}
+                selectedCityChat={selectedCityChat}
+              />
+            </div>
+          </TabsContent>
         </Tabs>
       </div>
     );
@@ -207,15 +233,18 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
       
       <div className="flex flex-1 bg-white rounded-lg shadow overflow-hidden">
         {/* Thread list (hidden on mobile when conversation is open) */}
-        {(!isMobile || (!selectedThread && !selectedGroupChat)) && (
+        {(!isMobile || (!selectedThread && !selectedGroupChat && !selectedCityChat)) && (
           <div className="w-full md:w-1/3 border-r flex flex-col">
-            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "direct" | "groups")} className="h-full flex flex-col">
+            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "direct" | "groups" | "cities")} className="h-full flex flex-col">
               <TabsList className="w-full">
                 <TabsTrigger value="direct" className="flex-1">
                   Direct Messages
                 </TabsTrigger>
                 <TabsTrigger value="groups" className="flex-1">
-                  <Users className="h-4 w-4 mr-2" /> Group Chats
+                  <Users className="h-4 w-4 mr-2" /> University
+                </TabsTrigger>
+                <TabsTrigger value="cities" className="flex-1">
+                  <MapPin className="h-4 w-4 mr-2" /> City
                 </TabsTrigger>
               </TabsList>
               
@@ -237,6 +266,7 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
                         onClick={() => {
                           setSelectedThread(thread);
                           setSelectedGroupChat(null);
+                          setSelectedCityChat(null);
                         }}
                       >
                         <Avatar className="h-10 w-10 mr-3">
@@ -267,6 +297,15 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
                   currentUserProfile={currentUserProfile}
                   onSelectGroupChat={handleSelectGroupChat}
                   selectedGroupChat={selectedGroupChat}
+                />
+              </TabsContent>
+              
+              <TabsContent value="cities" className="flex-1 overflow-y-auto">
+                <CityList 
+                  profiles={profiles}
+                  currentUserProfile={currentUserProfile}
+                  onSelectCityChat={handleSelectCityChat}
+                  selectedCityChat={selectedCityChat}
                 />
               </TabsContent>
             </Tabs>
@@ -372,6 +411,26 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
             )}
             <GroupChatPanel 
               universityName={selectedGroupChat}
+              currentUserId={currentUserId}
+              profiles={profiles}
+            />
+          </div>
+        ) : selectedCityChat ? (
+          <div className="flex flex-col w-full md:w-2/3 h-full">
+            {isMobile && (
+              <div className="border-b p-2">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setSelectedCityChat(null)}
+                  className="mr-2"
+                >
+                  Back
+                </Button>
+              </div>
+            )}
+            <CityPanel
+              cityName={selectedCityChat}
               currentUserId={currentUserId}
               profiles={profiles}
             />
