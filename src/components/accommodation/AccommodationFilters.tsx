@@ -41,7 +41,7 @@ const AccommodationFilters: React.FC<AccommodationFiltersProps> = ({
             }
           >
             <SelectTrigger className="h-12 border-gray-200 focus:border-erasmatch-blue">
-              <SelectValue placeholder="Filter by City" />
+              <SelectValue placeholder="All Cities" />
             </SelectTrigger>
             <SelectContent className="max-h-80">
               <SelectItem value="all-cities">All Cities</SelectItem>
@@ -62,7 +62,7 @@ const AccommodationFilters: React.FC<AccommodationFiltersProps> = ({
             }
           >
             <SelectTrigger className="h-12 border-gray-200 focus:border-erasmatch-blue">
-              <SelectValue placeholder="Filter by Room Type" />
+              <SelectValue placeholder="All Room Types" />
             </SelectTrigger>
             <SelectContent className="max-h-80">
               <SelectItem value="all-room-types">All Room Types</SelectItem>

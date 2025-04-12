@@ -59,7 +59,10 @@ export const useAccommodationListings = () => {
         if (cityError) throw cityError;
         
         if (cityData) {
-          const cities = [...new Set(cityData.map(item => item.city))].filter(Boolean) as string[];
+          // Trim whitespace and filter out empty values
+          const cities = [...new Set(cityData.map(item => item.city?.trim()))]
+            .filter(Boolean)
+            .sort() as string[];
           setUniqueCities(cities);
         }
         
@@ -72,7 +75,10 @@ export const useAccommodationListings = () => {
         if (roomTypeError) throw roomTypeError;
         
         if (roomTypeData) {
-          const roomTypes = [...new Set(roomTypeData.map(item => item.room_type))].filter(Boolean) as string[];
+          // Trim whitespace and filter out empty values
+          const roomTypes = [...new Set(roomTypeData.map(item => item.room_type?.trim()))]
+            .filter(Boolean)
+            .sort() as string[];
           setUniqueRoomTypes(roomTypes);
         }
       } catch (error) {

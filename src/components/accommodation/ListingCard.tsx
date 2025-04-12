@@ -3,6 +3,7 @@ import React from "react";
 import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export interface ListingProps {
   id: string;
@@ -32,17 +33,19 @@ const ListingCard: React.FC<{ listing: ListingProps }> = ({ listing }) => {
             <span className="text-gray-400">No image available</span>
           </div>
         )}
-        <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded">
-          HousingAnywhere
-        </div>
+        {listing.platform && (
+          <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded">
+            {listing.platform}
+          </div>
+        )}
       </div>
 
       <CardContent className="flex-grow p-5">
         <h3 className="text-lg font-bold mb-1">
-          {listing.price && `${listing.price} – `}{listing.room_type || 'Room'}
+          {listing.price || 'Price not available'}
         </h3>
         <p className="text-gray-600 text-sm mb-2">
-          {listing.city && `${listing.city}`}
+          {listing.room_type || 'Room type not available'}
         </p>
         <p className="text-gray-500 text-sm">
           {listing.details || listing.availability || 'No details available'}
