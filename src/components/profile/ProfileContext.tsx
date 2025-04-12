@@ -14,14 +14,13 @@ type ProfileFormState = {
   avatar_url: string | null;
   home_university: string;
   city: string | null;
-  personality_tags: string[];
 };
 
 type ProfileContextType = {
   form: ProfileFormState;
   loading: boolean;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  handleSelectChange: (name: string, value: string | string[] | null) => void;
+  handleSelectChange: (name: string, value: string | null) => void;
   handleUniversityChange: (university: string) => void;
   handleHomeUniversityChange: (university: string) => void;
   handleSubmit: (e: FormEvent) => Promise<void>;
@@ -54,7 +53,6 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
     avatar_url: profile?.avatar_url || null,
     home_university: profile?.home_university || "",
     city: profile?.city || null,
-    personality_tags: profile?.personality_tags || [],
   });
   const [loading, setLoading] = useState(false);
 
@@ -63,24 +61,20 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSelectChange = (name: string, value: string | string[] | null) => {
-    if (name === "personality_tags") {
-      // Ensure personality_tags is always an array
-      const tagsArray = Array.isArray(value) ? value : (value ? [value] : []);
-      setForm((prev) => ({ ...prev, [name]: tagsArray }));
-    } else {
-      setForm((prev) => ({ ...prev, [name]: value }));
-    }
+  const handleSelectChange = (name: string, value: string | null) => {
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleUniversityChange = async (university: string) => {
     setForm((prev) => ({ ...prev, university }));
     
+    // If university is empty, clear the city field
     if (!university.trim()) {
       setForm((prev) => ({ ...prev, city: null }));
       return;
     }
 
+    // Fetch corresponding city from universities table
     try {
       const { data, error } = await supabase
         .from('universities')
@@ -90,10 +84,13 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
       
       if (error) {
         console.error('Error fetching university city:', error);
+        // Don't update city if there's an error
         return;
       }
       
+      // Update city in form state
       setForm((prev) => ({ ...prev, university, city: data?.city || null }));
+      
     } catch (error) {
       console.error('Error in university change handler:', error);
     }
@@ -130,7 +127,6 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
           avatar_url: form.avatar_url,
           home_university: form.home_university,
           city: form.city,
-          personality_tags: form.personality_tags,
         })
         .eq('id', user.user.id);
 

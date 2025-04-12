@@ -71,17 +71,11 @@ export const useProfileForm = () => {
     setAvatarUrl(null);
   };
 
-  const handleSelectChange = (name: string, value: string | string[] | null) => {
-    // For personality_tags, ensure we're consistent with the ProfileContext handling
-    context.handleSelectChange(name, value);
-  };
-
   return {
     ...context,
     handleFileUpload,
     uploadStatus,
     avatarUrl,
-    handleSelectChange,
     handleRemoveAvatar
   };
 };
