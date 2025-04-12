@@ -2,6 +2,7 @@
 import { Profile } from "@/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from "date-fns";
+import { Link } from "react-router-dom";
 
 interface GroupChatMessageProps {
   content: string;
@@ -14,6 +15,7 @@ interface GroupChatMessageProps {
 export const GroupChatMessage = ({
   content,
   createdAt,
+  senderId,
   isCurrentUser,
   senderProfile,
 }: GroupChatMessageProps) => {
@@ -37,12 +39,14 @@ export const GroupChatMessage = ({
     <div className={`flex ${isCurrentUser ? "justify-end" : "justify-start"}`}>
       <div className={`flex max-w-[75%] ${isCurrentUser ? "flex-row-reverse" : ""}`}>
         {!isCurrentUser && (
-          <Avatar className="h-8 w-8 mr-2">
-            <AvatarImage src={senderProfile?.avatar_url || undefined} />
-            <AvatarFallback className="bg-erasmatch-light-accent">
-              {getInitials(senderProfile?.name)}
-            </AvatarFallback>
-          </Avatar>
+          <Link to={`/profile/${senderId}`}>
+            <Avatar className="h-8 w-8 mr-2 hover:ring-2 hover:ring-indigo-300 transition">
+              <AvatarImage src={senderProfile?.avatar_url || undefined} />
+              <AvatarFallback className="bg-erasmatch-light-accent">
+                {getInitials(senderProfile?.name)}
+              </AvatarFallback>
+            </Avatar>
+          </Link>
         )}
         
         <div>
