@@ -1,6 +1,7 @@
+
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Users, School, ArrowRight, MapPin, GraduationCap, Languages, MessagesSquare } from "lucide-react";
+import { MessageSquare, Users, Globe, School, ArrowRight, MapPin, GraduationCap, Languages } from "lucide-react";
 
 const Index = () => {
   return (
@@ -13,10 +14,10 @@ const Index = () => {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-6 leading-tight">
-              Meet Other <span className="text-erasmatch-yellow">Erasmus</span> Students Before You Arrive
+              Find Your <span className="text-erasmatch-yellow">Erasmus</span> Community
             </h1>
             <p className="text-lg sm:text-xl md:text-2xl max-w-3xl mx-auto opacity-90 mb-10 leading-relaxed">
-              Find students going to the same university or city. Chat, share info, and even find flatmates — all before your Erasmus begins.
+              Connect with fellow students, explore universities, and make friends before you even arrive at your destination.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link to="/auth?mode=signup">
@@ -34,21 +35,18 @@ const Index = () => {
           </div>
           
           {/* Stats */}
-          <div className="mt-16 grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="flex flex-col items-center p-6 bg-white/10 rounded-xl backdrop-blur-sm">
-              <span className="text-4xl font-bold mb-2">120+</span>
-              <span className="text-lg">Erasmus universities</span>
+              <span className="text-4xl font-bold mb-2">300+</span>
+              <span className="text-lg">Universities</span>
             </div>
             <div className="flex flex-col items-center p-6 bg-white/10 rounded-xl backdrop-blur-sm">
-              <span className="text-4xl font-bold mb-2">2</span>
-              <span className="text-lg">University & city group chats</span>
+              <span className="text-4xl font-bold mb-2">5,000+</span>
+              <span className="text-lg">Students</span>
             </div>
             <div className="flex flex-col items-center p-6 bg-white/10 rounded-xl backdrop-blur-sm">
-              <span className="text-4xl font-bold mb-2">100s</span>
-              <span className="text-lg">Students already connecting</span>
-            </div>
-            <div className="flex flex-col items-center p-6 bg-white/10 rounded-xl backdrop-blur-sm">
-              <span className="text-lg text-center">Built by Erasmus students, for Erasmus students</span>
+              <span className="text-4xl font-bold mb-2">30+</span>
+              <span className="text-lg">Countries</span>
             </div>
           </div>
         </div>
@@ -58,40 +56,50 @@ const Index = () => {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold gradient-text mb-4">What You Can Do</h2>
+            <h2 className="text-3xl font-bold gradient-text mb-4">How ErasMatch Helps You</h2>
             <p className="max-w-2xl mx-auto text-xl text-gray-600">
               Make the most of your Erasmus experience with our platform designed specially for exchange students
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="bg-white p-6 rounded-xl shadow-soft border border-gray-100 text-center transition-all hover:-translate-y-1 duration-300">
               <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-blue-100 to-purple-100 text-erasmatch-blue mb-4">
                 <Users className="h-7 w-7" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Find People</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Find Students</h3>
               <p className="text-gray-600">
-                See who's going to your university or city
+                Connect with students going to the same university or city as you
               </p>
             </div>
 
             <div className="bg-white p-6 rounded-xl shadow-soft border border-gray-100 text-center transition-all hover:-translate-y-1 duration-300">
               <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-green-100 to-teal-100 text-erasmatch-green mb-4">
-                <MessagesSquare className="h-7 w-7" />
+                <MessageSquare className="h-7 w-7" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Group Chat</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Chat</h3>
               <p className="text-gray-600">
-                Join university and city chats to talk in advance
+                Message other students directly through our simple chat system
               </p>
             </div>
 
             <div className="bg-white p-6 rounded-xl shadow-soft border border-gray-100 text-center transition-all hover:-translate-y-1 duration-300">
               <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-blue-100 to-purple-100 text-erasmatch-purple mb-4">
-                <MessageSquare className="h-7 w-7" />
+                <School className="h-7 w-7" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Message Directly</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Share Experiences</h3>
               <p className="text-gray-600">
-                Start conversations 1-on-1
+                Learn from others who have been to your destination university
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl shadow-soft border border-gray-100 text-center transition-all hover:-translate-y-1 duration-300">
+              <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-orange-100 to-yellow-100 text-erasmatch-orange mb-4">
+                <Globe className="h-7 w-7" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Build Community</h3>
+              <p className="text-gray-600">
+                Start building your international network before you even arrive
               </p>
             </div>
           </div>
@@ -118,7 +126,7 @@ const Index = () => {
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Create Your Profile</h3>
               <p className="text-gray-600">
-                Add your Erasmus destination, interests, and course
+                Sign up and share details about your home university, destination, and interests
               </p>
             </div>
 
@@ -127,11 +135,11 @@ const Index = () => {
                 2
               </div>
               <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-blue-50 to-purple-50 mb-6">
-                <MessageSquare className="h-8 w-8 text-erasmatch-purple" />
+                <MapPin className="h-8 w-8 text-erasmatch-purple" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Join the Right Group Chat</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">Discover Connections</h3>
               <p className="text-gray-600">
-                Instantly connect with others going to your uni or city
+                Find students and universities that match your destination and interests
               </p>
             </div>
 
@@ -142,9 +150,9 @@ const Index = () => {
               <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-blue-50 to-purple-50 mb-6">
                 <Languages className="h-8 w-8 text-erasmatch-green" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Start Talking</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">Connect & Communicate</h3>
               <p className="text-gray-600">
-                Ask questions, make plans, or just say hi
+                Message other students and start building your international network
               </p>
             </div>
           </div>
