@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 import { ProfileProvider } from "@/components/profile/ProfileContext";
@@ -14,7 +13,6 @@ const Profile = () => {
   const [profile, setProfile] = useState<ProfileType | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch profile data when component mounts or when currentUserId changes
   const fetchProfile = async () => {
     if (!currentUserId) return;
     
@@ -28,13 +26,12 @@ const Profile = () => {
 
       if (error) throw error;
       
-      // Ensure the data conforms to the Profile type by adding any missing properties
       if (data) {
-        const profileData = {
+        const profileData: ProfileType = {
           ...data,
-          country: data.country || null, // Add country field with null default if missing
+          country: null,
         };
-        setProfile(profileData as ProfileType);
+        setProfile(profileData);
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -47,7 +44,6 @@ const Profile = () => {
     fetchProfile();
   }, [currentUserId]);
 
-  // Function to handle profile updates
   const handleProfileUpdate = async (updatedProfile: Partial<ProfileType>) => {
     if (!currentUserId || !profile) return;
     
@@ -59,10 +55,8 @@ const Profile = () => {
       
       if (error) throw error;
       
-      // Update local state with new profile data
       setProfile({ ...profile, ...updatedProfile });
       
-      // Refetch the profile to ensure we have the latest data
       fetchProfile();
       
       return Promise.resolve();
