@@ -202,7 +202,6 @@ export type Database = {
           email: string | null
           home_university: string | null
           id: string
-          joined_university_chat: boolean
           name: string | null
           personality_tags: string[] | null
           semester: string | null
@@ -217,7 +216,6 @@ export type Database = {
           email?: string | null
           home_university?: string | null
           id: string
-          joined_university_chat?: boolean
           name?: string | null
           personality_tags?: string[] | null
           semester?: string | null
@@ -232,7 +230,6 @@ export type Database = {
           email?: string | null
           home_university?: string | null
           id?: string
-          joined_university_chat?: boolean
           name?: string | null
           personality_tags?: string[] | null
           semester?: string | null

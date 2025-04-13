@@ -54,8 +54,7 @@ const Auth = ({ onLogin }: AuthProps) => {
           password,
           options: {
             data: {
-              full_name: name,
-              name: name
+              name
             }
           }
         });
@@ -63,23 +62,14 @@ const Auth = ({ onLogin }: AuthProps) => {
         if (error) throw error;
         
         if (data.user) {
-          // Double-check that the profile gets created with name
-          const { data: profileData, error: profileError } = await supabase
+          // Update the profile with name
+          const { error: updateError } = await supabase
             .from('profiles')
-            .select('name')
-            .eq('id', data.user.id)
-            .single();
+            .update({ name })
+            .eq('id', data.user.id);
             
-          if (profileError || !profileData?.name) {
-            // If profile doesn't exist or name is not set, update it manually
-            const { error: updateError } = await supabase
-              .from('profiles')
-              .update({ name })
-              .eq('id', data.user.id);
-              
-            if (updateError) {
-              console.error("Error updating profile:", updateError);
-            }
+          if (updateError) {
+            console.error("Error updating profile:", updateError);
           }
           
           toast.success("Account created successfully!");
@@ -89,6 +79,7 @@ const Auth = ({ onLogin }: AuthProps) => {
           toast.info("Please check your email to confirm your registration");
         }
       } else {
+        // Login
         const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password

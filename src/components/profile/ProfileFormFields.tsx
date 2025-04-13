@@ -1,4 +1,5 @@
 
+import { Input } from "@/components/ui/input";
 import { useProfileForm } from "./useProfileForm";
 import { ProfileAvatar } from "./components/ProfileAvatar";
 import { NameDisplay } from "./components/NameDisplay";
@@ -33,6 +34,7 @@ export function ProfileFormFields() {
         <NameDisplay 
           name={form.name}
           email={form.email}
+          handleChange={handleChange}
         />
       </div>
 
