@@ -88,7 +88,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         } else {
           // If no profile exists, create one with default values
           console.warn("No profile found for user, creating new profile");
-          const newProfile: Partial<Profile> = {
+          
+          // Create profile object with id as non-optional property
+          const newProfile = {
             id: session.user.id,
             email: session.user.email,
             name: session.user.user_metadata?.name || null,
@@ -105,9 +107,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             joined_university_chat: false
           };
           
+          // Insert without wrapping in array since we're inserting a single record
           const { error: insertError } = await supabase
             .from('profiles')
-            .insert([newProfile]);
+            .insert(newProfile);
             
           if (insertError) {
             console.error('Error creating profile:', insertError);
