@@ -4,6 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import UniversityAutocomplete from "@/components/UniversityAutocomplete";
 import { MapPin } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 type UniversityDetailsProps = {
   form: {
@@ -28,6 +32,39 @@ export const UniversityDetails = ({
   handleUniversityChange,
   handleHomeUniversityChange
 }: UniversityDetailsProps) => {
+  const navigate = useNavigate();
+
+  // Handle realtime university changes to automatically update group chats
+  useEffect(() => {
+    // When university changes and we have a valid university, show a toast notification
+    if (form.university && form.university.trim().length > 0) {
+      toast.success(`You've been added to the ${form.university} chat group`, {
+        description: "Check your messages to join the conversation",
+        action: {
+          label: "View Chat",
+          onClick: () => navigate('/messages')
+        }
+      });
+    }
+  }, [form.university, navigate]);
+
+  // Enhanced handleUniversityChange function to better handle the change
+  const enhancedUniversityChange = (university: string) => {
+    // Call the original handler
+    handleUniversityChange(university);
+    
+    // If the university is valid, show a notification that you've joined the chat
+    if (university && university.trim().length > 0) {
+      toast.success(`You've been added to the ${university} chat group`, {
+        description: "Check your messages to join the conversation",
+        action: {
+          label: "View Chat",
+          onClick: () => navigate('/messages')
+        }
+      });
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
       <div>
@@ -57,7 +94,7 @@ export const UniversityDetails = ({
       <div className="space-y-2">
         <UniversityAutocomplete
           value={form.university}
-          onChange={handleUniversityChange}
+          onChange={enhancedUniversityChange}
           label="Destination University"
         />
         

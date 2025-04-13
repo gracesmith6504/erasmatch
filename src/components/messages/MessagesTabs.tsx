@@ -1,7 +1,7 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, MapPin } from "lucide-react";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
 interface MessagesTabsProps {
   activeTab: "direct" | "groups" | "cities";
@@ -20,6 +20,11 @@ export const MessagesTabs = ({
   citiesContent,
   className = "",
 }: MessagesTabsProps) => {
+  // Force the document title to be ErasMatch for this component too
+  useEffect(() => {
+    document.title = "ErasMatch";
+  }, []);
+
   return (
     <Tabs 
       value={activeTab} 
