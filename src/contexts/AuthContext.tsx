@@ -78,9 +78,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           .from('profiles')
           .select('*')
           .eq('id', session.user.id)
-          .single();
+          .maybeSingle();
 
-        if (error && error.code !== 'PGRST116') {
+        if (error) {
           throw error;
         }
 
@@ -88,6 +88,35 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           // Type cast to ensure all required fields are present
           const profileData = data as unknown as Profile;
           setCurrentUserProfile(profileData);
+        } else {
+          // No profile found, create a new one with user metadata if available
+          const userData = session.user.user_metadata || {};
+          const defaultName = userData.name || userData.full_name || null;
+          
+          const newProfile = {
+            id: session.user.id,
+            name: defaultName,
+            email: session.user.email,
+            university: null,
+            city: null,
+            semester: null,
+            bio: null,
+            avatar_url: null,
+            created_at: new Date().toISOString(),
+            home_university: null,
+            personality_tags: [],
+            course: null,
+          };
+          
+          const { error: createError } = await supabase
+            .from('profiles')
+            .upsert(newProfile);
+            
+          if (createError) {
+            console.error("Error creating profile:", createError);
+          } else {
+            setCurrentUserProfile(newProfile as Profile);
+          }
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -120,14 +149,27 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const handleProfileUpdate = async (updatedProfile: Partial<Profile>) => {
     if (!currentUserId) return;
 
-    // The actual profile update happens in the Profile component
-    // This is just to update the local state
-    if (currentUserProfile) {
-      const updated = {
-        ...currentUserProfile,
-        ...updatedProfile,
-      };
-      setCurrentUserProfile(updated);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update(updatedProfile)
+        .eq('id', currentUserId);
+      
+      if (error) throw error;
+      
+      // Update the local state with the updated profile
+      if (currentUserProfile) {
+        const updated = {
+          ...currentUserProfile,
+          ...updatedProfile,
+        };
+        setCurrentUserProfile(updated);
+      }
+      
+      return Promise.resolve();
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      return Promise.reject(error);
     }
   };
 
