@@ -10,6 +10,7 @@ interface MessagesContainerProps {
   profiles: Profile[];
   currentUserId: string;
   onSendMessage: (receiverId: string, content: string) => void;
+  initialSelectedUserId?: string | null;
 }
 
 export const MessagesContainer = ({
@@ -17,6 +18,7 @@ export const MessagesContainer = ({
   profiles,
   currentUserId,
   onSendMessage,
+  initialSelectedUserId,
 }: MessagesContainerProps) => {
   const isMobile = useIsMobile();
   const [selectedThread, setSelectedThread] = useState<ChatThread | null>(null);
@@ -67,12 +69,18 @@ export const MessagesContainer = ({
     }).filter(Boolean) as ChatThread[];
   }, [currentUserId, messages, profiles]);
 
-  // Auto-select the first thread if none selected
+  // Initialize selectedThread based on initialSelectedUserId if provided
   useEffect(() => {
-    if (threads.length > 0 && !selectedThread && !isMobile && activeTab === "direct") {
+    if (initialSelectedUserId && threads.length > 0 && !selectedThread) {
+      const thread = threads.find(t => t.partner.id === initialSelectedUserId);
+      if (thread) {
+        setSelectedThread(thread);
+        setActiveTab("direct");
+      }
+    } else if (threads.length > 0 && !selectedThread && !isMobile && activeTab === "direct") {
       setSelectedThread(threads[0]);
     }
-  }, [threads, selectedThread, isMobile, activeTab]);
+  }, [threads, selectedThread, isMobile, activeTab, initialSelectedUserId]);
 
   // Get messages for selected thread
   const threadMessages = useMemo(() => {
