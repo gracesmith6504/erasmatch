@@ -40,11 +40,12 @@ export const useProfileContext = () => {
 
 type ProfileProviderProps = {
   profile: ProfileType | null;
-  onProfileUpdate: (profile: Partial<ProfileType>) => void;
+  onProfileUpdate: (profile: Partial<ProfileType>) => Promise<void>;
+  fetchProfile: () => Promise<void>;
   children: React.ReactNode;
 };
 
-export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileProviderProps) => {
+export const ProfileProvider = ({ profile, onProfileUpdate, fetchProfile, children }: ProfileProviderProps) => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
     name: profile?.name || "",
@@ -59,6 +60,24 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
     course: profile?.course || "",
   });
   const [loading, setLoading] = useState(false);
+
+  // Update form state when profile changes
+  React.useEffect(() => {
+    if (profile) {
+      setForm({
+        name: profile.name || "",
+        email: profile.email || "",
+        university: profile.university || "",
+        semester: profile.semester || "",
+        bio: profile.bio || "",
+        avatar_url: profile.avatar_url || null,
+        home_university: profile.home_university || "",
+        city: profile.city || null,
+        personality_tags: profile.personality_tags || [],
+        course: profile.course || "",
+      });
+    }
+  }, [profile]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -115,30 +134,19 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
     setLoading(true);
 
     try {
-      const { data: user } = await supabase.auth.getUser();
+      // Update profile using the onProfileUpdate function from props
+      await onProfileUpdate({
+        name: form.name,
+        university: form.university,
+        semester: form.semester,
+        bio: form.bio,
+        avatar_url: form.avatar_url,
+        home_university: form.home_university,
+        city: form.city,
+        personality_tags: form.personality_tags,
+        course: form.course,
+      });
       
-      if (!user.user) {
-        throw new Error("No user found");
-      }
-
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          name: form.name,
-          university: form.university,
-          semester: form.semester,
-          bio: form.bio,
-          avatar_url: form.avatar_url,
-          home_university: form.home_university,
-          city: form.city,
-          personality_tags: form.personality_tags,
-          course: form.course,
-        })
-        .eq('id', user.user.id);
-
-      if (error) throw error;
-      
-      onProfileUpdate(form);
       toast.success("Profile updated successfully");
       navigate("/students");
     } catch (error: any) {
