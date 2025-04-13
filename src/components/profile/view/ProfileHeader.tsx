@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Profile } from "@/types";
-import { Upload } from "lucide-react";
 
 type ProfileHeaderProps = {
   profile: Profile;
@@ -22,27 +21,33 @@ export const ProfileHeader = ({ profile, isOwnProfile }: ProfileHeaderProps) => 
   };
 
   return (
-    <div className="text-center px-4 pt-6 pb-4 bg-indigo-50 rounded-b-2xl">
-      <Avatar className="w-24 h-24 rounded-full mx-auto text-xl font-bold bg-indigo-200 text-white flex items-center justify-center">
-        <AvatarImage src={profile.avatar_url || undefined} alt={profile.name || "Profile"} />
-        <AvatarFallback>
-          {getInitials(profile.name)}
-        </AvatarFallback>
-      </Avatar>
-      
-      <h1 className="text-lg font-semibold mt-2">{profile.name}</h1>
-      <p className="text-sm text-gray-500">{profile.email}</p>
-      
-      {isOwnProfile && (
-        <div className="mt-4">
-          <Link to="/profile">
-            <Button variant="outline" className="text-sm bg-white border border-indigo-200 text-indigo-600 px-3 py-1 rounded-full hover:bg-indigo-100 transition">
-              <Upload className="h-4 w-4 mr-1" />
-              Edit Profile
-            </Button>
-          </Link>
+    <>
+      <div className="bg-gradient-to-r from-erasmatch-blue to-erasmatch-green h-32"></div>
+      <div className="px-4 sm:px-6 py-5 relative">
+        <div className="sm:flex sm:items-center sm:justify-between">
+          <div className="sm:flex sm:items-center">
+            <div className="sm:flex-shrink-0 -mt-16 relative z-10">
+              <Avatar className="h-24 w-24 ring-4 ring-white">
+                <AvatarImage src={profile.avatar_url || undefined} />
+                <AvatarFallback className="text-lg bg-erasmatch-light-accent">
+                  {getInitials(profile.name)}
+                </AvatarFallback>
+              </Avatar>
+            </div>
+            <div className="mt-4 sm:mt-0 sm:ml-4">
+              <h1 className="text-2xl font-bold text-gray-900">{profile.name}</h1>
+            </div>
+          </div>
+
+          {isOwnProfile && (
+            <div className="mt-6 flex justify-end">
+              <Link to="/profile">
+                <Button variant="outline">Edit Profile</Button>
+              </Link>
+            </div>
+          )}
         </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 };

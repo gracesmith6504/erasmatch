@@ -13,7 +13,6 @@ export type Profile = {
   country: string | null;
   personality_tags?: string[] | null;
   interests?: string | null;
-  course?: string | null;
 };
 
 export type Message = {
@@ -27,40 +26,4 @@ export type Message = {
 export type ChatThread = {
   partner: Profile;
   lastMessage: Message | null;
-};
-
-export type GroupChat = {
-  university_name: string;
-  participants_count: number;
-  last_message?: {
-    content: string;
-    created_at: string;
-    sender_name: string;
-  } | null;
-};
-
-export type GroupMessage = {
-  id: string;
-  sender_id: string;
-  university_name: string;
-  content: string;
-  created_at: string;
-};
-
-export type CityChat = {
-  city_name: string;
-  participants_count: number;
-  last_message?: {
-    content: string;
-    created_at: string;
-    sender_name: string;
-  } | null;
-};
-
-export type CityMessage = {
-  id: string;
-  sender_id: string;
-  city_name: string;
-  content: string;
-  created_at: string;
 };

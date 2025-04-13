@@ -1,3 +1,4 @@
+
 import { useState, FormEvent } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -64,11 +65,8 @@ const Auth = ({ onLogin }: AuthProps) => {
           // Update the profile with name
           const { error: updateError } = await supabase
             .from('profiles')
-            .upsert({
-              id: data.user.id,
-              name,
-              email
-            });
+            .update({ name })
+            .eq('id', data.user.id);
             
           if (updateError) {
             console.error("Error updating profile:", updateError);

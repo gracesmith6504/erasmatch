@@ -1,8 +1,7 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, MessageSquare, Users, User, LogOut, Home } from "lucide-react";
+import { Menu, X, MessageSquare, Users, User, LogOut, Home, Building } from "lucide-react";
 
 type NavbarProps = {
   isAuthenticated: boolean;
@@ -76,6 +75,16 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                     <div className="flex items-center space-x-1.5">
                       <Users className="w-4 h-4" />
                       <span>Students</span>
+                    </div>
+                  </Link>
+                  <Link to="/accommodation" className={`px-4 py-2 rounded-full transition-all duration-200 ${
+                    isActive('/accommodation') 
+                      ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple shadow-sm' 
+                      : 'text-gray-700 hover:bg-gray-200'
+                  }`}>
+                    <div className="flex items-center space-x-1.5">
+                      <Building className="w-4 h-4" />
+                      <span>Accommodation</span>
                     </div>
                   </Link>
                   <Link to="/messages" className={`px-4 py-2 rounded-full transition-all duration-200 ${
@@ -162,6 +171,16 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                 <div className="flex items-center">
                   <Users className="w-5 h-5 mr-3" />
                   Students
+                </div>
+              </Link>
+              <Link to="/accommodation" className={`block px-3 py-2.5 rounded-lg text-base font-medium ${
+                isActive('/accommodation') 
+                  ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple' 
+                  : 'text-gray-700 hover:bg-gray-50'
+              }`}>
+                <div className="flex items-center">
+                  <Building className="w-5 h-5 mr-3" />
+                  Accommodation
                 </div>
               </Link>
               <Link to="/messages" className={`block px-3 py-2.5 rounded-lg text-base font-medium ${

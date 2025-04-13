@@ -51,7 +51,10 @@ const AppRoutes = () => {
         path="/profile" 
         element={
           <ProtectedRoute>
-            <Profile />
+            <Profile 
+              profile={currentUserProfile} 
+              onProfileUpdate={handleProfileUpdate}
+            />
           </ProtectedRoute>
         } 
       />

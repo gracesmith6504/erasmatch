@@ -24,7 +24,6 @@ type UniversityDropdownProps = {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   popoverRef: React.RefObject<HTMLDivElement>;
-  required?: boolean;
 };
 
 export function UniversityDropdown({
@@ -36,7 +35,6 @@ export function UniversityDropdown({
   searchQuery,
   onSearchChange,
   popoverRef,
-  required = false,
 }: UniversityDropdownProps) {
   const [open, setOpen] = useState(false);
 
@@ -60,9 +58,7 @@ export function UniversityDropdown({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={`w-full justify-between ${required && !value ? 'border-red-300' : ''}`}
-          aria-required={required}
-          data-required={required}
+          className="w-full justify-between"
         >
           {value || "Select university..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />

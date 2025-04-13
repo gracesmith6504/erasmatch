@@ -9,14 +9,12 @@ type UniversityAutocompleteProps = {
   value: string;
   onChange: (value: string) => void;
   label?: string;
-  required?: boolean;
 };
 
 const UniversityAutocomplete = ({ 
   value, 
   onChange,
-  label = "University", 
-  required = false 
+  label = "University" 
 }: UniversityAutocompleteProps) => {
   const [manualEntry, setManualEntry] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -33,7 +31,7 @@ const UniversityAutocomplete = ({
   return (
     <div className="space-y-2">
       <Label htmlFor="university" className="block text-sm font-medium text-gray-700">
-        {label}{required && <span className="text-red-500 ml-1">*</span>}
+        {label}
       </Label>
       
       {!manualEntry ? (
@@ -46,14 +44,12 @@ const UniversityAutocomplete = ({
           searchQuery={searchQuery}
           onSearchChange={handleSearch}
           popoverRef={popoverRef}
-          required={required}
         />
       ) : (
         <ManualUniversityEntry
           value={value}
           onChange={handleManualInputChange}
           onReturn={() => setManualEntry(false)}
-          required={required}
         />
       )}
     </div>
