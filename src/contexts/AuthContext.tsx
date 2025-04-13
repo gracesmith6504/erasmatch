@@ -1,6 +1,8 @@
+
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile } from "@/types";
+import { toast } from "sonner";
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -72,7 +74,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           .from('profiles')
           .select('*')
           .eq('id', session.user.id)
-          .single();
+          .maybeSingle();
 
         if (error) {
           console.error('Error fetching profile data:', error);
@@ -84,7 +86,37 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           const profileData = data as unknown as Profile;
           setCurrentUserProfile(profileData);
         } else {
-          console.warn("No profile data returned for user");
+          // If no profile exists, create one with default values
+          console.warn("No profile found for user, creating new profile");
+          const newProfile: Partial<Profile> = {
+            id: session.user.id,
+            email: session.user.email,
+            name: session.user.user_metadata?.name || null,
+            university: null,
+            city: null,
+            semester: null,
+            bio: null,
+            avatar_url: null,
+            home_university: null,
+            country: null,
+            personality_tags: [],
+            interests: null,
+            course: null,
+            joined_university_chat: false
+          };
+          
+          const { error: insertError } = await supabase
+            .from('profiles')
+            .insert([newProfile]);
+            
+          if (insertError) {
+            console.error('Error creating profile:', insertError);
+            toast.error("Failed to create profile");
+          } else {
+            // Set the newly created profile as current
+            setCurrentUserProfile(newProfile as Profile);
+            toast.success("Profile created successfully");
+          }
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
