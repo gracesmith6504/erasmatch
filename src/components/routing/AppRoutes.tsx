@@ -1,4 +1,3 @@
-
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -26,9 +25,7 @@ const AppRoutes = () => {
   const { 
     isAuthenticated, 
     currentUserId, 
-    currentUserProfile, 
-    handleLogin, 
-    handleProfileUpdate 
+    handleLogin 
   } = useAuth();
   
   const { 
@@ -51,10 +48,7 @@ const AppRoutes = () => {
         path="/profile" 
         element={
           <ProtectedRoute>
-            <Profile 
-              profile={currentUserProfile} 
-              onProfileUpdate={handleProfileUpdate}
-            />
+            <Profile />
           </ProtectedRoute>
         } 
       />

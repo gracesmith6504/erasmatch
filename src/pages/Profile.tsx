@@ -27,7 +27,11 @@ const Profile = () => {
         .single();
 
       if (error) throw error;
-      setProfile(data);
+      
+      // Ensure the data conforms to the Profile type
+      if (data) {
+        setProfile(data as ProfileType);
+      }
     } catch (error) {
       console.error('Error fetching profile:', error);
     } finally {

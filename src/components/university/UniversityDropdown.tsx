@@ -61,7 +61,7 @@ export function UniversityDropdown({
           role="combobox"
           aria-expanded={open}
           className={`w-full justify-between ${required && !value ? 'border-red-300' : ''}`}
-          required={required}
+          aria-required={required}
         >
           {value || "Select university..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
