@@ -28,9 +28,13 @@ const Profile = () => {
 
       if (error) throw error;
       
-      // Ensure the data conforms to the Profile type
+      // Ensure the data conforms to the Profile type by adding any missing properties
       if (data) {
-        setProfile(data as ProfileType);
+        const profileData = {
+          ...data,
+          country: data.country || null, // Add country field with null default if missing
+        };
+        setProfile(profileData as ProfileType);
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
