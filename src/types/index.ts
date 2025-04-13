@@ -1,4 +1,3 @@
-
 export type Profile = {
   id: string;
   name: string | null;
@@ -14,6 +13,7 @@ export type Profile = {
   personality_tags?: string[] | null;
   interests?: string | null;
   course?: string | null;
+  joined_university_chat: boolean;
 };
 
 export type Message = {
