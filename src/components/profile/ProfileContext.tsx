@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -16,6 +15,7 @@ type ProfileFormState = {
   city: string | null;
   personality_tags: string[];
   course: string;
+  joined_university_chat: boolean;
 };
 
 type ProfileContextType = {
@@ -57,6 +57,7 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
     city: profile?.city || null,
     personality_tags: profile?.personality_tags || [],
     course: profile?.course || "",
+    joined_university_chat: profile?.joined_university_chat || false,
   });
   const [loading, setLoading] = useState(false);
 
@@ -88,12 +89,49 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
       
       if (error) {
         console.error('Error fetching university city:', error);
-        // Don't update city if there's an error
         return;
       }
       
       // Update city in form state
       setForm((prev) => ({ ...prev, university, city: data?.city || null }));
+
+      // Check if this is the first time the user is joining this university chat
+      if (!form.joined_university_chat) {
+        // Show toast notification
+        toast.success(`You've been added to the ${university} chat group`, {
+          description: "Check your messages to join the conversation",
+          action: {
+            label: "View Chat",
+            onClick: () => navigate('/messages')
+          }
+        });
+
+        // Update Supabase to mark university chat as joined
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({ 
+            joined_university_chat: true, 
+            university: university 
+          })
+          .eq('id', profile?.id);
+
+        if (updateError) {
+          console.error('Error updating university chat status:', updateError);
+          return;
+        }
+
+        // Update local form state
+        setForm((prev) => ({ 
+          ...prev, 
+          joined_university_chat: true 
+        }));
+
+        // Trigger profile update in parent component
+        onProfileUpdate({ 
+          joined_university_chat: true, 
+          university: university 
+        });
+      }
       
     } catch (error) {
       console.error('Error in university change handler:', error);
