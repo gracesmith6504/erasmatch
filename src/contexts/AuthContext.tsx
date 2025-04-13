@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile } from "@/types";
@@ -35,9 +34,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [currentUserProfile, setCurrentUserProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Initialize and listen for auth changes
   useEffect(() => {
-    // Fetch current session
     const fetchSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
@@ -51,7 +48,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     fetchSession();
 
-    // Set up auth listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         handleAuthChange(session);
@@ -63,31 +59,32 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
   }, []);
 
-  // Function to handle auth state changes
   const handleAuthChange = async (session: any) => {
     if (session?.user) {
       setIsAuthenticated(true);
       setCurrentUserId(session.user.id);
-      // Store user ID in localStorage for forum functionality
       localStorage.setItem('userId', session.user.id);
       setCurrentUserEmail(session.user.email);
 
-      // Fetch user profile
       try {
+        console.log("Fetching profile for user:", session.user.id);
         const { data, error } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', session.user.id)
           .single();
 
-        if (error && error.code !== 'PGRST116') {
+        if (error) {
+          console.error('Error fetching profile data:', error);
           throw error;
         }
 
         if (data) {
-          // Type cast to ensure all required fields are present
+          console.log("Profile data loaded:", data);
           const profileData = data as unknown as Profile;
           setCurrentUserProfile(profileData);
+        } else {
+          console.warn("No profile data returned for user");
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -95,7 +92,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     } else {
       setIsAuthenticated(false);
       setCurrentUserId(null);
-      // Remove user ID from localStorage
       localStorage.removeItem('userId');
       setCurrentUserEmail(null);
       setCurrentUserProfile(null);
@@ -103,15 +99,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const handleLogin = (email: string) => {
-    // The actual login happens in the Auth component
-    // This is just for additional state management if needed
     setCurrentUserEmail(email);
   };
 
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
-      // Auth listener will handle the state changes
     } catch (error) {
       console.error('Error signing out:', error);
     }
@@ -120,8 +113,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const handleProfileUpdate = async (updatedProfile: Partial<Profile>) => {
     if (!currentUserId) return;
 
-    // The actual profile update happens in the Profile component
-    // This is just to update the local state
     if (currentUserProfile) {
       const updated = {
         ...currentUserProfile,
