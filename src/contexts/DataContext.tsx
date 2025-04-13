@@ -7,6 +7,7 @@ import { useAuth } from "./AuthContext";
 type DataContextType = {
   profiles: Profile[];
   messages: Message[];
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
   handleSendMessage: (receiverId: string, content: string) => Promise<Message | undefined>;
 };
 
@@ -106,6 +107,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
       value={{
         profiles,
         messages,
+        setMessages,
         handleSendMessage
       }}
     >

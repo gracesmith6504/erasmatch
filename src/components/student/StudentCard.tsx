@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -9,6 +8,7 @@ import { School, MapPin, CalendarClock, Home, Globe, Mail, BookOpen } from "luci
 import { Profile } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
 import { getTagInfo, getTagBgColor } from "@/components/profile/constants";
+import { useMessageUser } from "@/hooks/useMessageUser";
 
 interface StudentCardProps {
   profile: Profile;
@@ -18,6 +18,7 @@ const StudentCard = ({ profile }: StudentCardProps) => {
   const [universityCity, setUniversityCity] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [countryEmoji, setCountryEmoji] = useState<string>("🌍");
+  const { messageUser, isProcessing } = useMessageUser();
 
   // Country emoji mapping (simplified)
   useEffect(() => {
@@ -97,6 +98,10 @@ const StudentCard = ({ profile }: StudentCardProps) => {
     );
   };
 
+  const handleMessageClick = () => {
+    messageUser(profile.id);
+  };
+
   return (
     <Card className="overflow-hidden card-hover border-gray-100 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group">
       <div className="h-24 bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple"></div>
@@ -150,11 +155,15 @@ const StudentCard = ({ profile }: StudentCardProps) => {
         </div>
       </CardContent>
       <CardFooter className="pt-1 flex justify-center space-x-2">
-        <Link to={`/messages?user=${profile.id}`} className="w-1/2">
-          <Button variant="outline" className="w-full button-hover group-hover:bg-blue-50 transition-colors">
-            <Mail className="mr-1 h-4 w-4" /> Message
-          </Button>
-        </Link>
+        <Button 
+          onClick={handleMessageClick}
+          disabled={isProcessing}
+          variant="outline" 
+          className="w-1/2 button-hover group-hover:bg-blue-50 transition-colors"
+        >
+          <Mail className="mr-1 h-4 w-4" /> 
+          {isProcessing ? "Sending..." : "Message"}
+        </Button>
         <Link to={`/profile/${profile.id}`} className="w-1/2">
           <Button className="w-full button-hover bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple hover:from-erasmatch-purple hover:to-erasmatch-blue">
             <Globe className="mr-1 h-4 w-4" /> Profile

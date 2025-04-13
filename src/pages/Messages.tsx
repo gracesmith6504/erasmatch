@@ -1,4 +1,6 @@
 
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Message, Profile } from "@/types";
 import { MessagesContainer } from "@/components/messages/MessagesContainer";
 
@@ -10,12 +12,16 @@ type MessagesProps = {
 };
 
 const Messages = ({ messages, profiles, currentUserId, onSendMessage }: MessagesProps) => {
+  const [searchParams] = useSearchParams();
+  const userId = searchParams.get("userId");
+  
   return (
     <MessagesContainer
       messages={messages}
       profiles={profiles}
       currentUserId={currentUserId}
       onSendMessage={onSendMessage}
+      initialSelectedUserId={userId}
     />
   );
 };
