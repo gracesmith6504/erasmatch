@@ -68,12 +68,11 @@ export const UniversityDetails = ({
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
       <div>
-        <Label htmlFor="home_university" className="block text-sm font-medium text-gray-700">
-          Home University
-        </Label>
         <UniversityAutocomplete
           value={form.home_university}
           onChange={handleHomeUniversityChange}
+          label="Home University"
+          required={true}
         />
       </div>
 
@@ -96,6 +95,7 @@ export const UniversityDetails = ({
           value={form.university}
           onChange={enhancedUniversityChange}
           label="Destination University"
+          required={false}
         />
         
         {/* Display city as read-only information */}

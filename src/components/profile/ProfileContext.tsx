@@ -107,8 +107,8 @@ export const ProfileProvider = ({ profile, onProfileUpdate, children }: ProfileP
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     
-    if (!form.university.trim()) {
-      toast.error("Please select or enter a university");
+    if (!form.home_university.trim()) {
+      toast.error("Please select or enter your home university");
       return;
     }
     
