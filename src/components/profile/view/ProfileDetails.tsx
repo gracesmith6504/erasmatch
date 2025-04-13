@@ -1,5 +1,5 @@
 
-import { Home, School, MapPin, CalendarClock } from "lucide-react";
+import { Home, School, MapPin, CalendarClock, BookOpen } from "lucide-react";
 import { Profile } from "@/types";
 import { ProfilePersonalityTags } from "./ProfilePersonalityTags";
 
@@ -17,6 +17,12 @@ export const ProfileDetails = ({ profile, universityCity, isLoadingCity }: Profi
           <Home className="h-5 w-5 mr-2 text-erasmatch-purple" />
           <span>{profile.home_university || "Home university not specified"}</span>
         </div>
+        {profile.course && (
+          <div className="flex items-center text-gray-700">
+            <BookOpen className="h-5 w-5 mr-2 text-erasmatch-purple" />
+            <span>{profile.course}</span>
+          </div>
+        )}
         <div className="flex items-center text-gray-700">
           <School className="h-5 w-5 mr-2 text-erasmatch-blue" />
           <span>{profile.university || "University not specified"}</span>

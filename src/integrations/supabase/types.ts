@@ -68,6 +68,70 @@ export type Database = {
         }
         Relationships: []
       }
+      city_messages: {
+        Row: {
+          city_name: string
+          content: string
+          created_at: string
+          id: string
+          sender_id: string
+        }
+        Insert: {
+          city_name: string
+          content: string
+          created_at?: string
+          id?: string
+          sender_id: string
+        }
+        Update: {
+          city_name?: string
+          content?: string
+          created_at?: string
+          id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "city_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      group_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          sender_id: string
+          university_name: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          sender_id: string
+          university_name: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          sender_id?: string
+          university_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       listings: {
         Row: {
           city: string | null
@@ -133,10 +197,12 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           city: string | null
+          course: string | null
           created_at: string
           email: string | null
           home_university: string | null
           id: string
+          joined_university_chat: boolean
           name: string | null
           personality_tags: string[] | null
           semester: string | null
@@ -146,10 +212,12 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           city?: string | null
+          course?: string | null
           created_at?: string
           email?: string | null
           home_university?: string | null
           id: string
+          joined_university_chat?: boolean
           name?: string | null
           personality_tags?: string[] | null
           semester?: string | null
@@ -159,10 +227,12 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           city?: string | null
+          course?: string | null
           created_at?: string
           email?: string | null
           home_university?: string | null
           id?: string
+          joined_university_chat?: boolean
           name?: string | null
           personality_tags?: string[] | null
           semester?: string | null

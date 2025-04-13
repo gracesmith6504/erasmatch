@@ -6,12 +6,14 @@ type ManualUniversityEntryProps = {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onReturn: () => void;
+  required?: boolean;
 };
 
 export function ManualUniversityEntry({ 
   value, 
   onChange, 
-  onReturn 
+  onReturn,
+  required = false
 }: ManualUniversityEntryProps) {
   return (
     <div className="space-y-2">
@@ -21,7 +23,8 @@ export function ManualUniversityEntry({
         value={value}
         onChange={onChange}
         placeholder="Enter your university name"
-        className="w-full"
+        className={`w-full ${required && !value ? 'border-red-300' : ''}`}
+        required={required}
       />
       <Button 
         variant="link" 
