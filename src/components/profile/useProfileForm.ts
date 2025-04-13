@@ -86,8 +86,6 @@ export const useProfileForm = () => {
     uploadStatus,
     avatarUrl,
     handleRemoveAvatar,
-    handlePersonalityTagToggle,
-    fetchingProfile: context.fetchingProfile,
-    isSaving: context.isSaving
+    handlePersonalityTagToggle
   };
 };

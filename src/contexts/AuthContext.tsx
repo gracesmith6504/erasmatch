@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const fetchSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        await handleAuthChange(session);
+        handleAuthChange(session);
       } catch (error) {
         console.error("Error fetching session:", error);
       } finally {
@@ -53,8 +53,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     // Set up auth listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        await handleAuthChange(session);
+      (event, session) => {
+        handleAuthChange(session);
       }
     );
 
@@ -147,7 +147,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const handleProfileUpdate = async (updatedProfile: Partial<Profile>) => {
-    if (!currentUserId) return Promise.reject("No authenticated user");
+    if (!currentUserId) return;
 
     try {
       const { error } = await supabase
