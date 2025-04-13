@@ -1,24 +1,15 @@
 
-import { Input } from "@/components/ui/input";
-
 type NameDisplayProps = {
   name: string | null;
   email: string | null;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-export const NameDisplay = ({ name, email, handleChange }: NameDisplayProps) => {
+export const NameDisplay = ({ name, email }: NameDisplayProps) => {
   return (
-    <div>
-      <Input
-        id="name"
-        name="name"
-        value={name || ""}
-        onChange={handleChange}
-        placeholder="Your full name"
-        required
-        className="text-center text-lg font-semibold border-none focus:ring-0 bg-transparent"
-      />
+    <div className="text-center py-2">
+      <h2 className="text-lg font-semibold text-gray-800">
+        {name || "Your full name"}
+      </h2>
       
       <div className="text-sm text-gray-500">
         {email}

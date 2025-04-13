@@ -1,4 +1,3 @@
-
 import { useState, FormEvent } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -54,7 +53,8 @@ const Auth = ({ onLogin }: AuthProps) => {
           password,
           options: {
             data: {
-              name
+              full_name: name,
+              name: name
             }
           }
         });
@@ -62,16 +62,6 @@ const Auth = ({ onLogin }: AuthProps) => {
         if (error) throw error;
         
         if (data.user) {
-          // Update the profile with name
-          const { error: updateError } = await supabase
-            .from('profiles')
-            .update({ name })
-            .eq('id', data.user.id);
-            
-          if (updateError) {
-            console.error("Error updating profile:", updateError);
-          }
-          
           toast.success("Account created successfully!");
           onLogin(email);
           navigate("/profile");
@@ -79,7 +69,6 @@ const Auth = ({ onLogin }: AuthProps) => {
           toast.info("Please check your email to confirm your registration");
         }
       } else {
-        // Login
         const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password
