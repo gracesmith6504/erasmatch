@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -17,8 +16,8 @@ type GroupChatViewProps = {
   chatType: "university" | "city";
 };
 
-// Define a simpler payload type to avoid deep type instantiation
-interface MessagePayload {
+// Define a much simpler payload type to avoid deep type instantiation
+type SimplePayload = {
   new: {
     id: string;
     sender_id: string;
@@ -27,7 +26,7 @@ interface MessagePayload {
     university_name?: string;
     city_name?: string;
   };
-}
+};
 
 const GroupChatView = ({ chatType }: GroupChatViewProps) => {
   const { id } = useParams<{ id: string }>();
@@ -54,11 +53,9 @@ const GroupChatView = ({ chatType }: GroupChatViewProps) => {
         if (error) throw error;
         
         if (data) {
-          // Cast data to Profile array with the correct type
           const profilesData = data as unknown as Profile[];
           setAllProfiles(profilesData);
           
-          // Filter profiles based on chat type
           const filteredProfiles = profilesData.filter((profile) => {
             return chatType === "university" 
               ? profile.university === decodedId
@@ -95,7 +92,6 @@ const GroupChatView = ({ chatType }: GroupChatViewProps) => {
         if (error) throw error;
         
         if (data) {
-          // Cast data to the appropriate type
           setMessages(data as (GroupMessage | CityMessage)[]);
         }
       } catch (error) {
@@ -122,10 +118,18 @@ const GroupChatView = ({ chatType }: GroupChatViewProps) => {
           table: tableName,
           filter: `${columnName}=eq.${decodedId}`,
         },
-        (payload: MessagePayload) => {
-          // Use the explicitly defined payload type to prevent deep type instantiation
-          const newMessage = payload.new as unknown as (GroupMessage | CityMessage);
-          setMessages((prevMessages) => [...prevMessages, newMessage]);
+        (payload: SimplePayload) => {
+          const newMsg = {
+            id: payload.new.id,
+            sender_id: payload.new.sender_id,
+            content: payload.new.content,
+            created_at: payload.new.created_at,
+            ...(chatType === "university" 
+              ? { university_name: payload.new.university_name } 
+              : { city_name: payload.new.city_name })
+          } as GroupMessage | CityMessage;
+          
+          setMessages((prevMessages) => [...prevMessages, newMsg]);
         }
       )
       .subscribe();
@@ -148,25 +152,28 @@ const GroupChatView = ({ chatType }: GroupChatViewProps) => {
     try {
       const tableName = chatType === "university" ? "group_messages" : "city_messages";
       
-      // Fix the issue with the message data object by properly typing it
       if (chatType === "university") {
+        const message = {
+          sender_id: currentUserId,
+          content: processMessage(newMessage),
+          university_name: decodedId
+        };
+        
         const { error } = await supabase
           .from(tableName)
-          .insert({
-            sender_id: currentUserId,
-            content: processMessage(newMessage),
-            university_name: decodedId
-          });
+          .insert(message);
           
         if (error) throw error;
       } else {
+        const message = {
+          sender_id: currentUserId,
+          content: processMessage(newMessage),
+          city_name: decodedId
+        };
+        
         const { error } = await supabase
           .from(tableName)
-          .insert({
-            sender_id: currentUserId,
-            content: processMessage(newMessage),
-            city_name: decodedId
-          });
+          .insert(message);
           
         if (error) throw error;
       }
@@ -182,7 +189,6 @@ const GroupChatView = ({ chatType }: GroupChatViewProps) => {
 
   // Process @mentions in messages
   const processMessage = (message: string): string => {
-    // Simple implementation - could be expanded to link to profiles or highlight mentions
     return message;
   };
 
@@ -210,7 +216,6 @@ const GroupChatView = ({ chatType }: GroupChatViewProps) => {
 
   return (
     <div className="container flex flex-col h-[calc(100vh-8rem)] max-w-4xl mx-auto">
-      {/* Header */}
       <div className="flex items-center justify-between py-4 px-4 border-b">
         <div className="flex items-center">
           <Button
@@ -246,7 +251,6 @@ const GroupChatView = ({ chatType }: GroupChatViewProps) => {
         </Button>
       </div>
 
-      {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {loading ? (
           <div className="space-y-4">
@@ -325,7 +329,6 @@ const GroupChatView = ({ chatType }: GroupChatViewProps) => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Message input */}
       <div className="p-4 border-t">
         <form
           onSubmit={(e) => {
