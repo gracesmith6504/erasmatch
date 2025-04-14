@@ -13,18 +13,6 @@ type GroupChatViewProps = {
   chatType: "university" | "city";
 };
 
-// Define a more specific type for the payload to avoid deep type instantiation
-type MessagePayload = {
-  new: {
-    id: string;
-    sender_id: string;
-    content: string;
-    created_at: string;
-    university_name?: string;
-    city_name?: string;
-  };
-};
-
 const GroupChatView = ({ chatType }: GroupChatViewProps) => {
   const { id } = useParams<{ id: string }>();
   const { currentUserId } = useAuth();
@@ -113,22 +101,30 @@ const GroupChatView = ({ chatType }: GroupChatViewProps) => {
           table: tableName,
           filter: `${columnName}=eq.${decodedId}`,
         },
-        // Use a simpler function parameter type to avoid complex type inference
         (payload) => {
-          // Type assertion to the simpler MessagePayload type
-          const typedPayload = payload as unknown as MessagePayload;
+          // Use a completely type-agnostic approach with any, then cast the parts we need
+          const payloadData = payload as any;
           
-          const newMsg = {
-            id: typedPayload.new.id,
-            sender_id: typedPayload.new.sender_id,
-            content: typedPayload.new.content,
-            created_at: typedPayload.new.created_at,
-            ...(chatType === "university" 
-              ? { university_name: typedPayload.new.university_name } 
-              : { city_name: typedPayload.new.city_name })
-          } as GroupMessage | CityMessage;
-          
-          setMessages((prevMessages) => [...prevMessages, newMsg]);
+          if (payloadData && payloadData.new) {
+            const newData = payloadData.new;
+            
+            // Create the message with only the properties we need
+            const newMsg = {
+              id: newData.id,
+              sender_id: newData.sender_id,
+              content: newData.content,
+              created_at: newData.created_at
+            } as GroupMessage | CityMessage;
+            
+            // Add the specific property for university or city
+            if (chatType === "university") {
+              (newMsg as GroupMessage).university_name = newData.university_name;
+            } else {
+              (newMsg as CityMessage).city_name = newData.city_name;
+            }
+            
+            setMessages((prevMessages) => [...prevMessages, newMsg]);
+          }
         }
       )
       .subscribe();
