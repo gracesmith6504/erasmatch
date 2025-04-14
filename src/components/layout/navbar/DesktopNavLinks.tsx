@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Home, Users, MessageSquare } from "lucide-react";
+import { Home, Users, MessageSquare, BellDot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface DesktopNavLinksProps {
@@ -48,10 +48,14 @@ export const DesktopNavLinks = ({
               : 'text-gray-700 hover:bg-gray-200'
           }`}>
             <div className="flex items-center space-x-1.5">
-              <MessageSquare className="w-4 h-4" />
+              {hasUnreadMessages && !isActive('/messages') ? (
+                <BellDot className="w-4 h-4 text-erasmatch-blue" />
+              ) : (
+                <MessageSquare className="w-4 h-4" />
+              )}
               <span>Messages</span>
               {hasUnreadMessages && !isActive('/messages') && (
-                <div className="absolute top-2 right-2 h-2 w-2 bg-erasmatch-blue rounded-full"></div>
+                <span className="absolute top-2 right-2 h-2 w-2 bg-erasmatch-blue rounded-full"></span>
               )}
             </div>
           </Link>

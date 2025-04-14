@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Home, Users, MessageSquare, User } from "lucide-react";
+import { Home, Users, MessageSquare, User, BellDot } from "lucide-react";
 
 interface MobileBottomNavProps {
   isAuthenticated: boolean;
@@ -35,9 +35,13 @@ export const MobileBottomNav = ({
         <Link to="/messages" className={`p-3 rounded-full transition-colors relative ${
           isActive('/messages') ? 'bg-blue-100 text-erasmatch-blue' : 'text-gray-500'
         }`}>
-          <MessageSquare className="w-5 h-5" />
+          {hasUnreadMessages && !isActive('/messages') ? (
+            <BellDot className="w-5 h-5 text-erasmatch-blue" />
+          ) : (
+            <MessageSquare className="w-5 h-5" />
+          )}
           {hasUnreadMessages && !isActive('/messages') && (
-            <div className="absolute top-2 right-2 h-2 w-2 bg-erasmatch-blue rounded-full"></div>
+            <span className="absolute top-1 right-1 h-2 w-2 bg-erasmatch-blue rounded-full"></span>
           )}
         </Link>
         <Link to="/groups" className={`p-3 rounded-full transition-colors ${

@@ -89,8 +89,6 @@ export function useMessageState(
       // Extract unique sender IDs
       const uniqueSenderIds = [...new Set(data?.map(m => m.sender_id) || [])];
       setUnreadThreadIds(uniqueSenderIds);
-      
-      console.log("Unread threads:", uniqueSenderIds);
     } catch (error) {
       console.error("Error in fetchUnreadMessages:", error);
     }
@@ -142,15 +140,33 @@ export function useMessageState(
     }
   };
 
-  // Fetch unread messages initially and when messages update
+  // Set up real-time message subscription
   useEffect(() => {
+    if (!currentUserId) return;
+    
+    // Subscribe to new messages sent to the current user
+    const channel = supabase
+      .channel('messages-updates')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'messages',
+        filter: `receiver_id=eq.${currentUserId}`
+      }, (payload) => {
+        console.log('New message received:', payload);
+        // Fetch unread messages and trigger refresh
+        fetchUnreadMessages();
+        setRefreshKey(prev => prev + 1);
+      })
+      .subscribe();
+
+    // Initial fetch
     fetchUnreadMessages();
     
-    // Set up a polling interval to check for new messages
-    const interval = setInterval(fetchUnreadMessages, 30000); // 30 seconds
-    
-    return () => clearInterval(interval);
-  }, [currentUserId, messages, messagesSent, refreshKey]);
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [currentUserId]);
 
   // Mark messages as read when a thread is selected
   useEffect(() => {

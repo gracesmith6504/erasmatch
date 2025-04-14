@@ -40,10 +40,11 @@ export const useNavbarState = ({ isAuthenticated, currentUserId }: NavbarStatePr
     };
   }, []);
 
-  // Check for unread messages
+  // Check for unread messages and set up real-time monitoring
   useEffect(() => {
     if (!isAuthenticated || !currentUserId) return;
 
+    // Function to check for unread messages
     const checkUnreadMessages = async () => {
       try {
         const { data, error } = await supabase
@@ -64,12 +65,37 @@ export const useNavbarState = ({ isAuthenticated, currentUserId }: NavbarStatePr
       }
     };
 
+    // Initial check
     checkUnreadMessages();
     
-    // Poll for new messages
-    const interval = setInterval(checkUnreadMessages, 30000); // 30 seconds
+    // Set up real-time subscription for new messages
+    const channel = supabase
+      .channel('navbar-message-updates')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'messages',
+        filter: `receiver_id=eq.${currentUserId}`
+      }, () => {
+        checkUnreadMessages();
+      })
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'messages',
+        filter: `receiver_id=eq.${currentUserId}`
+      }, () => {
+        checkUnreadMessages();
+      })
+      .subscribe();
     
-    return () => clearInterval(interval);
+    // Also poll for new messages as a fallback
+    const interval = setInterval(checkUnreadMessages, 15000); // 15 seconds
+    
+    return () => {
+      supabase.removeChannel(channel);
+      clearInterval(interval);
+    };
   }, [currentUserId, isAuthenticated]);
 
   return {
