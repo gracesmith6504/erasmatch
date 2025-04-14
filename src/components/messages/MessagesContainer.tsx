@@ -28,12 +28,6 @@ export const MessagesContainer = ({
   const {
     selectedThread,
     setSelectedThread,
-    activeTab,
-    setActiveTab,
-    selectedGroupChat,
-    setSelectedGroupChat,
-    selectedCityChat,
-    setSelectedCityChat,
     messagesSent,
     setMessagesSent,
     refreshKey,
@@ -50,36 +44,21 @@ export const MessagesContainer = ({
     threads,
     selectedThread,
     isMobile,
-    activeTab,
+    "direct",
     setSelectedThread,
-    setActiveTab,
-    setSelectedGroupChat,
-    setSelectedCityChat,
+    () => {},
+    () => {},
+    () => {},
     refreshKey
   );
 
   // Custom wrapper for onSendMessage to ensure state updates properly
-  const handleSendMessage = createMessageHandler(onSendMessage, setMessagesSent, setRefreshKey, setActiveTab);
-
-  const handleSelectGroupChat = (universityName: string) => {
-    console.log("Selecting group chat:", universityName);
-    setSelectedGroupChat(universityName || null);
-    setSelectedCityChat(null);
-    setSelectedThread(null);
-    if (universityName) {
-      setActiveTab("groups");
-    }
-  };
-
-  const handleSelectCityChat = (cityName: string) => {
-    console.log("Selecting city chat:", cityName);
-    setSelectedCityChat(cityName || null);
-    setSelectedGroupChat(null);
-    setSelectedThread(null);
-    if (cityName) {
-      setActiveTab("cities");
-    }
-  };
+  const handleSendMessage = createMessageHandler(
+    onSendMessage, 
+    setMessagesSent, 
+    setRefreshKey, 
+    () => {}
+  );
 
   // Handle prompt selection - reset state
   const handlePromptUsed = () => {
@@ -87,7 +66,7 @@ export const MessagesContainer = ({
   };
 
   // Show mobile view when no conversation selected on mobile
-  if (isMobile && !selectedThread && !selectedGroupChat && !selectedCityChat) {
+  if (isMobile && !selectedThread) {
     return (
       <MobileMessagesView
         threads={threads}
@@ -95,12 +74,6 @@ export const MessagesContainer = ({
         setSelectedThread={setSelectedThread}
         profiles={profiles}
         currentUserProfile={currentUserProfile}
-        handleSelectGroupChat={handleSelectGroupChat}
-        selectedGroupChat={selectedGroupChat}
-        handleSelectCityChat={handleSelectCityChat}
-        selectedCityChat={selectedCityChat}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
       />
     );
   }
@@ -116,12 +89,6 @@ export const MessagesContainer = ({
         setSelectedThread={setSelectedThread}
         profiles={profiles}
         currentUserProfile={currentUserProfile}
-        handleSelectGroupChat={handleSelectGroupChat}
-        selectedGroupChat={selectedGroupChat}
-        handleSelectCityChat={handleSelectCityChat}
-        selectedCityChat={selectedCityChat}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
         threadMessages={threadMessages}
         currentUserId={currentUserId}
         isMobile={isMobile}

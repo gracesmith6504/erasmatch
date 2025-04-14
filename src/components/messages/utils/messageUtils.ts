@@ -28,24 +28,22 @@ export function createMessageHandler(
   onSendMessage: (receiverId: string, content: string) => Promise<void>,
   setMessagesSent: React.Dispatch<React.SetStateAction<number>>, 
   setRefreshKey: React.Dispatch<React.SetStateAction<number>>,
-  setActiveTab: (tab: "direct" | "groups" | "cities") => void
+  setActiveTab: (tab: any) => void
 ) {
-  return async function handleSendMessage(receiverId: string, content: string) {
+  return async function handleSendMessage(receiverId: string, content: string): Promise<void> {
     try {
       await onSendMessage(receiverId, content);
       
       // Force a refresh of threads by incrementing the counter
-      setMessagesSent(prev => prev + 1);
+      setMessagesSent((prev) => prev + 1);
       
       // Force a full component refresh
-      setRefreshKey(prev => prev + 1);
-      
-      // Make sure we're on the direct messages tab after sending a message
-      setActiveTab("direct");
+      setRefreshKey((prev) => prev + 1);
       
       console.log("Message sent, refreshing state");
     } catch (error) {
       console.error("Error in handleSendMessage:", error);
+      throw error;
     }
   };
 }

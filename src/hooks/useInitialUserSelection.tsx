@@ -2,55 +2,56 @@
 import { useEffect } from "react";
 import { Profile, ChatThread } from "@/types";
 
-/**
- * Handle initial user selection logic
- */
 export function useInitialUserSelection(
   initialSelectedUser: string | null,
   profiles: Profile[],
   threads: ChatThread[],
   selectedThread: ChatThread | null,
   isMobile: boolean,
-  activeTab: "direct" | "groups" | "cities",
+  activeTab: string,
   setSelectedThread: (thread: ChatThread | null) => void,
-  setActiveTab: (tab: "direct" | "groups" | "cities") => void,
-  setSelectedGroupChat: (chat: string | null) => void,
-  setSelectedCityChat: (chat: string | null) => void,
+  setActiveTab: (tab: any) => void,
+  setSelectedGroupChat: (name: string | null) => void,
+  setSelectedCityChat: (name: string | null) => void,
   refreshKey: number
 ) {
+  // Handle initial user selection from URL params
   useEffect(() => {
-    // If initialSelectedUser is provided, create or find a thread for that user
-    if (initialSelectedUser) {
-      console.log("Initial selected user:", initialSelectedUser);
-      // Find the profile for the selected user
-      const selectedUserProfile = profiles.find(p => p.id === initialSelectedUser);
+    if (initialSelectedUser && !selectedThread) {
+      console.log("Looking for user with ID:", initialSelectedUser);
       
-      if (selectedUserProfile) {
-        // Check if there's an existing thread with this user
-        const existingThread = threads.find(t => t.partner.id === initialSelectedUser);
+      // Find the thread with the selected user
+      const thread = threads.find(
+        t => t.partner.id === initialSelectedUser
+      );
+      
+      if (thread) {
+        console.log("Found thread for user:", thread.partner.name);
+        setSelectedThread(thread);
         
-        if (existingThread) {
-          // Use existing thread
-          setSelectedThread(existingThread);
-        } else {
-          // Create a new thread for this user
-          setSelectedThread({
+        // Set active tab to direct messages
+        setActiveTab("direct");
+      } else {
+        console.log("No thread found for user ID:", initialSelectedUser);
+        
+        // If no thread exists yet, find the user profile
+        const selectedUserProfile = profiles.find(
+          profile => profile.id === initialSelectedUser
+        );
+        
+        if (selectedUserProfile) {
+          console.log("Found profile for user:", selectedUserProfile.name);
+          
+          // Create a new thread with this user
+          const newThread: ChatThread = {
             partner: selectedUserProfile,
             lastMessage: null
-          });
+          };
+          
+          setSelectedThread(newThread);
+          setActiveTab("direct");
         }
-        
-        // Make sure we're on the direct messages tab
-        setActiveTab("direct");
-        
-        // Reset the group and city selections
-        setSelectedGroupChat(null);
-        setSelectedCityChat(null);
       }
-    } 
-    // If no initial user and no thread selected, default to first thread on desktop
-    else if (threads.length > 0 && !selectedThread && !isMobile && activeTab === "direct") {
-      setSelectedThread(threads[0]);
     }
-  }, [initialSelectedUser, threads, profiles, selectedThread, isMobile, activeTab, refreshKey]);
+  }, [initialSelectedUser, threads, selectedThread, profiles, refreshKey]);
 }

@@ -9,11 +9,8 @@ export function useMessageState(
   initialSelectedUser: string | null
 ) {
   const [selectedThread, setSelectedThread] = useState<ChatThread | null>(null);
-  const [activeTab, setActiveTab] = useState<"direct" | "groups" | "cities">("direct");
-  const [selectedGroupChat, setSelectedGroupChat] = useState<string | null>(null);
-  const [selectedCityChat, setSelectedCityChat] = useState<string | null>(null);
   const [messagesSent, setMessagesSent] = useState(0); // Counter to trigger thread refresh
-  const [refreshKey, setRefreshKey] = useState(0); // New key for forcing component refresh
+  const [refreshKey, setRefreshKey] = useState(0); // Key for forcing component refresh
 
   // Get the current user's profile
   const currentUserProfile = useMemo(() => {
@@ -74,12 +71,6 @@ export function useMessageState(
   return {
     selectedThread,
     setSelectedThread,
-    activeTab,
-    setActiveTab,
-    selectedGroupChat,
-    setSelectedGroupChat,
-    selectedCityChat,
-    setSelectedCityChat,
     messagesSent,
     setMessagesSent,
     refreshKey,
