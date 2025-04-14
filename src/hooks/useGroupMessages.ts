@@ -8,8 +8,15 @@ export type ChatMessage = {
   sender_id: string;
   content: string;
   created_at: string;
-  university?: string;
-  city?: string;
+  university_name?: string;
+  city_name?: string;
+};
+
+// Type for Supabase realtime payloads
+type RealtimePayload = {
+  new: ChatMessage;
+  old: null;
+  eventType: string;
 };
 
 export function useGroupMessages(chatType: "university" | "city", groupId: string) {
@@ -74,19 +81,27 @@ export function useGroupMessages(chatType: "university" | "city", groupId: strin
   const sendMessage = async (content: string, currentUserId: string): Promise<boolean> => {
     try {
       const tableName = chatType === "university" ? "group_messages" : "city_messages";
-      const columnName = chatType === "university" ? "university_name" : "city_name";
       
-      const messageData = {
-        sender_id: currentUserId,
-        content: content,
-        [columnName]: decodedId,
-      };
-
-      const { error } = await supabase
-        .from(tableName)
-        .insert([messageData]);
-
-      if (error) throw error;
+      // Create the message data with the proper type
+      if (chatType === "university") {
+        const messageData = {
+          sender_id: currentUserId,
+          content: content,
+          university_name: decodedId,
+        };
+        
+        const { error } = await supabase.from(tableName).insert(messageData);
+        if (error) throw error;
+      } else {
+        const messageData = {
+          sender_id: currentUserId,
+          content: content,
+          city_name: decodedId,
+        };
+        
+        const { error } = await supabase.from(tableName).insert(messageData);
+        if (error) throw error;
+      }
       
       return true;
     } catch (err: any) {
