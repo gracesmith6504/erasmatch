@@ -1,4 +1,3 @@
-
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -11,8 +10,6 @@ import Students from "@/pages/Students";
 import Locations from "@/pages/Universities";
 import UniversityHub from "@/pages/UniversityHub";
 import Messages from "@/pages/Messages";
-import Groups from "@/pages/Groups";
-import GroupChatView from "@/components/groups/GroupChatView";
 import NotFound from "@/pages/NotFound";
 import ForumCities from "@/pages/ForumCities";
 import CityForum from "@/pages/CityForum";
@@ -92,30 +89,6 @@ const AppRoutes = () => {
               currentUserId={currentUserId!}
               onSendMessage={handleSendMessage}
             />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/groups" 
-        element={
-          <ProtectedRoute>
-            <Groups />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/groups/university/:id" 
-        element={
-          <ProtectedRoute>
-            <GroupChatView chatType="university" />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/groups/city/:id" 
-        element={
-          <ProtectedRoute>
-            <GroupChatView chatType="city" />
           </ProtectedRoute>
         } 
       />
