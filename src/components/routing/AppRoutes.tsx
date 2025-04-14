@@ -1,3 +1,4 @@
+
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -16,6 +17,7 @@ import CityForum from "@/pages/CityForum";
 import ForumPostDetail from "@/pages/ForumPostDetail";
 import NewForumPost from "@/pages/NewForumPost";
 import Accommodation from "@/pages/Accommodation";
+import Groups from "@/pages/Groups";
 
 // Contexts
 import { useAuth } from "@/contexts/AuthContext";
@@ -95,6 +97,10 @@ const AppRoutes = () => {
       <Route 
         path="/accommodation" 
         element={<Accommodation />} 
+      />
+      <Route 
+        path="/groups" 
+        element={<Groups />} 
       />
       {/* Forum Routes */}
       <Route path="/forum" element={<ForumCities />} />
