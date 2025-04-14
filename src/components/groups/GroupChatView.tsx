@@ -17,6 +17,18 @@ type GroupChatViewProps = {
   chatType: "university" | "city";
 };
 
+// Define a simpler payload type to avoid deep type instantiation
+interface MessagePayload {
+  new: {
+    id: string;
+    sender_id: string;
+    content: string;
+    created_at: string;
+    university_name?: string;
+    city_name?: string;
+  };
+}
+
 const GroupChatView = ({ chatType }: GroupChatViewProps) => {
   const { id } = useParams<{ id: string }>();
   const { currentUserId } = useAuth();
@@ -110,9 +122,9 @@ const GroupChatView = ({ chatType }: GroupChatViewProps) => {
           table: tableName,
           filter: `${columnName}=eq.${decodedId}`,
         },
-        (payload) => {
-          // Fixed: Type the payload properly to avoid excessive type instantiation
-          const newMessage = payload.new as GroupMessage | CityMessage;
+        (payload: MessagePayload) => {
+          // Use the explicitly defined payload type to prevent deep type instantiation
+          const newMessage = payload.new as unknown as (GroupMessage | CityMessage);
           setMessages((prevMessages) => [...prevMessages, newMessage]);
         }
       )
