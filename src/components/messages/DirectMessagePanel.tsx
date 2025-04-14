@@ -45,6 +45,7 @@ export const DirectMessagePanel = ({
       await onSendMessage(thread.partner.id, newMessage);
       setNewMessage("");
       setShowSuggestedPrompts(false); // Hide prompts after sending a message
+      // No tab state changes here
     } finally {
       setIsSending(false);
     }
