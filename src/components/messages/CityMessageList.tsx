@@ -1,9 +1,8 @@
-
 import { Fragment } from "react";
 import { Profile, CityMessage } from "@/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MessageBubble } from "./MessageBubble";
+import MessageBubble from "./MessageBubble";
 
 type CityMessageListProps = {
   messages: any[]; // Using any[] to avoid type issues
@@ -73,7 +72,11 @@ export const CityMessageList = ({
                 </span>
               </div>
 
-              <MessageBubble isCurrentUser={isCurrentUser} content={message.content} />
+              <MessageBubble 
+                isCurrentUser={isCurrentUser} 
+                content={message.content} 
+                timestamp={message.created_at}
+              />
             </div>
           </div>
         );

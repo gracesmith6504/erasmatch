@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Profile } from "@/types";
+import { Profile, GroupMessage } from "@/types";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { useGroupMessages } from "@/hooks/useGroupMessages";
@@ -48,6 +48,11 @@ export const GroupChatPanel = ({
     }
   };
   
+  // Filter messages to ensure they're GroupMessage type for the GroupChatMessageList
+  const universityMessages = messages.filter((msg): msg is GroupMessage => 
+    'university_name' in msg && msg.university_name === universityName
+  );
+  
   return (
     <div className="flex flex-col h-full">
       {/* University header */}
@@ -61,7 +66,7 @@ export const GroupChatPanel = ({
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto p-4 flex flex-col">
         <GroupChatMessageList 
-          messages={messages}
+          messages={universityMessages}
           profiles={profiles}
           currentUserId={currentUserId}
           isLoading={isLoading}

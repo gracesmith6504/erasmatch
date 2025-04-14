@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
-import { Profile } from "@/types";
+import { Profile, CityMessage } from "@/types";
 import { toast } from "sonner";
 import { CityParticipantsInfo } from "./CityParticipantsInfo";
 import { CityMessageList } from "./CityMessageList";
@@ -30,6 +30,11 @@ export const CityPanel = ({
     chatType: "city",
     chatName: cityName,
   });
+  
+  // Filter messages to ensure they're CityMessage type for the CityMessageList
+  const cityMessages = messages.filter((msg): msg is CityMessage => 
+    'city_name' in msg && msg.city_name === cityName
+  );
   
   // Send city message
   const handleSendMessage = async (message: string) => {
@@ -61,7 +66,7 @@ export const CityPanel = ({
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto p-4 flex flex-col">
         <CityMessageList 
-          messages={messages}
+          messages={cityMessages}
           profiles={profiles}
           currentUserId={currentUserId}
           isLoading={isLoading}

@@ -10,6 +10,11 @@ type UseGroupMessagesProps = {
   chatName: string;
 };
 
+// Define a simpler payload type to prevent deep recursion
+type SimplifiedPayload = {
+  new: Record<string, any>;
+};
+
 export const useGroupMessages = ({ chatType, chatName }: UseGroupMessagesProps) => {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -58,8 +63,8 @@ export const useGroupMessages = ({ chatType, chatName }: UseGroupMessagesProps) 
           table: tableName,
           filter: `${nameField}=eq.${chatName}`,
         },
-        (payload) => {
-          // Type the payload explicitly to avoid deep instantiation
+        (payload: SimplifiedPayload) => {
+          // Add the new message to state with proper typing
           const newMessage = payload.new as MessageType;
           setMessages((prevMessages) => [...prevMessages, newMessage]);
         }
