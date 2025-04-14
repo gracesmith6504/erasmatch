@@ -1,10 +1,11 @@
 
-import { GroupMessage, Profile } from "@/types";
+import { Profile } from "@/types";
 import { GroupChatMessage } from "./GroupChatMessage";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ChatMessage } from "@/hooks/useGroupMessages";
 
 interface GroupChatMessageListProps {
-  messages: GroupMessage[];
+  messages: ChatMessage[];
   profiles: Profile[];
   currentUserId: string;
   isLoading?: boolean;

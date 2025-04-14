@@ -1,12 +1,13 @@
 
 import { Fragment } from "react";
-import { Profile, CityMessage } from "@/types";
+import { Profile } from "@/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import MessageBubble from "./MessageBubble";
+import { ChatMessage } from "@/hooks/useGroupMessages";
 
 type CityMessageListProps = {
-  messages: CityMessage[];
+  messages: ChatMessage[];
   profiles: Profile[];
   currentUserId: string;
   isLoading?: boolean;
