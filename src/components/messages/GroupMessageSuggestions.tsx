@@ -10,6 +10,16 @@ interface GroupMessageSuggestionProps {
   onDismiss: () => void;
 }
 
+// Function to shuffle array (for randomizing prompt order)
+const shuffleArray = (array: string[]) => {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+};
+
 export const GroupMessageSuggestions = ({
   chatType,
   cityName = "",
@@ -46,16 +56,6 @@ export const GroupMessageSuggestions = ({
     // Get 3 random prompts (or fewer if there aren't 3)
     return shuffleArray(suggestions).slice(0, 3);
   });
-
-  // Function to shuffle array (for randomizing prompt order)
-  const shuffleArray = (array: string[]) => {
-    const newArray = [...array];
-    for (let i = newArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-    }
-    return newArray;
-  };
 
   return (
     <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 mb-4 shadow-md border border-gray-100">
