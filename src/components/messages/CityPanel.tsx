@@ -31,11 +31,6 @@ export const CityPanel = ({
     cityName
   );
   
-  // Filter messages to ensure they're CityMessage type with a proper type guard
-  const cityMessages = messages.filter((msg): msg is CityMessage => 
-    'city_name' in msg && msg.city_name === cityName
-  );
-  
   // Send city message
   const handleSendMessage = async (message: string) => {
     setIsSending(true);
@@ -66,7 +61,7 @@ export const CityPanel = ({
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto p-4 flex flex-col">
         <CityMessageList 
-          messages={cityMessages}
+          messages={messages}
           profiles={profiles}
           currentUserId={currentUserId}
           isLoading={isLoading}

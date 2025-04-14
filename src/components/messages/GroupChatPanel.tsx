@@ -48,12 +48,6 @@ export const GroupChatPanel = ({
     }
   };
   
-  // Filter messages to ensure they're GroupMessage type for the GroupChatMessageList
-  // Use a type guard to filter out messages that don't have university_name
-  const universityMessages = messages.filter((msg): msg is GroupMessage => 
-    'university_name' in msg && msg.university_name === universityName
-  );
-  
   return (
     <div className="flex flex-col h-full">
       {/* University header */}
@@ -67,7 +61,7 @@ export const GroupChatPanel = ({
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto p-4 flex flex-col">
         <GroupChatMessageList 
-          messages={universityMessages}
+          messages={messages}
           profiles={profiles}
           currentUserId={currentUserId}
           isLoading={isLoading}
