@@ -8,11 +8,11 @@ export type ChatMessage = {
   sender_id: string;
   content: string;
   created_at: string;
-  university_name?: string;
-  city_name?: string;
+  university?: string;
+  city?: string;
 };
 
-// Type for Supabase realtime payloads
+// Define a simple generic type for Supabase realtime payload
 type RealtimePayload = {
   new: ChatMessage;
   old: null;
@@ -30,14 +30,14 @@ export function useGroupMessages(chatType: "university" | "city", groupId: strin
     if (!decodedId) return;
 
     const tableName = chatType === "university" ? "group_messages" : "city_messages";
-    const columnName = chatType === "university" ? "university_name" : "city_name";
+    const columnName = chatType === "university" ? "university" : "city";
 
     const fetchMessages = async () => {
       setLoading(true);
       try {
         const { data, error } = await supabase
           .from(tableName)
-          .select("id, sender_id, content, created_at, university_name, city_name")
+          .select("id, sender_id, content, created_at, university, city")
           .eq(columnName, decodedId)
           .order("created_at", { ascending: true });
 
@@ -56,7 +56,7 @@ export function useGroupMessages(chatType: "university" | "city", groupId: strin
 
     // Set up realtime subscription
     const channel = supabase
-      .channel(`${chatType}-messages`) // avoids conflicts
+      .channel(`${chatType}-messages`)
       .on(
         "postgres_changes",
         {
@@ -65,8 +65,8 @@ export function useGroupMessages(chatType: "university" | "city", groupId: strin
           table: tableName,
           filter: `${columnName}=eq.${decodedId}`,
         },
-        (payload) => {
-          const newMsg = payload.new as ChatMessage;
+        (payload: RealtimePayload) => {
+          const newMsg = payload.new;
           setMessages((prev) => [...prev, newMsg]);
         }
       )
@@ -77,32 +77,23 @@ export function useGroupMessages(chatType: "university" | "city", groupId: strin
     };
   }, [chatType, decodedId]);
 
-  // Add the sendMessage function
+  // Send message function
   const sendMessage = async (content: string, currentUserId: string): Promise<boolean> => {
     try {
       const tableName = chatType === "university" ? "group_messages" : "city_messages";
+      const columnName = chatType === "university" ? "university" : "city";
       
-      // Create the message data with the proper type
-      if (chatType === "university") {
-        const messageData = {
-          sender_id: currentUserId,
-          content: content,
-          university_name: decodedId,
-        };
-        
-        const { error } = await supabase.from(tableName).insert(messageData);
-        if (error) throw error;
-      } else {
-        const messageData = {
-          sender_id: currentUserId,
-          content: content,
-          city_name: decodedId,
-        };
-        
-        const { error } = await supabase.from(tableName).insert(messageData);
-        if (error) throw error;
-      }
+      const messageData = {
+        sender_id: currentUserId,
+        content: content,
+        [columnName]: decodedId
+      };
       
+      const { error } = await supabase
+        .from(tableName)
+        .insert(messageData);
+      
+      if (error) throw error;
       return true;
     } catch (err: any) {
       console.error("Error sending message:", err);
