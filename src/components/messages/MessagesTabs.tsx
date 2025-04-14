@@ -28,7 +28,10 @@ export const MessagesTabs = ({
   return (
     <Tabs 
       value={activeTab} 
-      onValueChange={(value) => setActiveTab(value as "direct" | "groups" | "cities")}
+      onValueChange={(value) => {
+        console.log("Tab changed to:", value);
+        setActiveTab(value as "direct" | "groups" | "cities");
+      }}
       className={className}
     >
       <TabsList className="w-full">

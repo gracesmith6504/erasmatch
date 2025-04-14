@@ -73,6 +73,7 @@ export const MessagesContainer = ({
   useEffect(() => {
     // If initialSelectedUser is provided, create or find a thread for that user
     if (initialSelectedUser) {
+      console.log("Initial selected user:", initialSelectedUser);
       // Find the profile for the selected user
       const selectedUserProfile = profiles.find(p => p.id === initialSelectedUser);
       
@@ -118,21 +119,29 @@ export const MessagesContainer = ({
   }, [selectedThread, currentUserId, messages]);
 
   const handleSelectGroupChat = (universityName: string) => {
+    console.log("Selecting group chat:", universityName);
     setSelectedGroupChat(universityName || null);
     setSelectedCityChat(null);
     setSelectedThread(null);
-    if (isMobile && universityName) {
+    if (universityName) {
       setActiveTab("groups");
     }
   };
 
   const handleSelectCityChat = (cityName: string) => {
+    console.log("Selecting city chat:", cityName);
     setSelectedCityChat(cityName || null);
     setSelectedGroupChat(null);
     setSelectedThread(null);
-    if (isMobile && cityName) {
+    if (cityName) {
       setActiveTab("cities");
     }
+  };
+
+  // Custom wrapper for onSendMessage to avoid affecting tab state
+  const handleSendMessage = async (receiverId: string, content: string) => {
+    await onSendMessage(receiverId, content);
+    // We don't manipulate the tab state here
   };
 
   const getInitials = (name: string | null) => {
@@ -186,7 +195,7 @@ export const MessagesContainer = ({
         threadMessages={threadMessages}
         currentUserId={currentUserId}
         isMobile={isMobile}
-        onSendMessage={onSendMessage}
+        onSendMessage={handleSendMessage}
       />
     </div>
   );

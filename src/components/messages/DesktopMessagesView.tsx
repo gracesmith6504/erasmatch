@@ -46,6 +46,8 @@ export const DesktopMessagesView = ({
   isMobile,
   onSendMessage,
 }: DesktopMessagesViewProps) => {
+  console.log("DesktopMessagesView activeTab:", activeTab);
+  
   return (
     <div className="flex flex-1 bg-white rounded-lg shadow overflow-hidden">
       {/* Thread list */}
@@ -85,7 +87,7 @@ export const DesktopMessagesView = ({
       </div>
       
       {/* Conversation area */}
-      {selectedThread && activeTab === "direct" ? (
+      {activeTab === "direct" && selectedThread ? (
         <DirectMessagePanel
           thread={selectedThread}
           messages={threadMessages}
@@ -94,7 +96,7 @@ export const DesktopMessagesView = ({
           onBack={() => setSelectedThread(null)}
           onSendMessage={onSendMessage}
         />
-      ) : selectedGroupChat ? (
+      ) : activeTab === "groups" && selectedGroupChat ? (
         <div className="flex flex-col w-full md:w-2/3 h-full">
           {isMobile && (
             <div className="border-b p-2">
@@ -114,7 +116,7 @@ export const DesktopMessagesView = ({
             profiles={profiles}
           />
         </div>
-      ) : selectedCityChat ? (
+      ) : activeTab === "cities" && selectedCityChat ? (
         <div className="flex flex-col w-full md:w-2/3 h-full">
           {isMobile && (
             <div className="border-b p-2">

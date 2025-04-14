@@ -20,6 +20,7 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
     const userParam = searchParams.get('user');
     
     if (userParam) {
+      console.log("URL parameter 'user' found:", userParam);
       setInitialSelectedUser(userParam);
     }
   }, [searchParams]);
