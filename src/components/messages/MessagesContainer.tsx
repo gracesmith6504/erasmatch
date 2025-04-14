@@ -10,6 +10,7 @@ interface MessagesContainerProps {
   profiles: Profile[];
   currentUserId: string;
   onSendMessage: (receiverId: string, content: string) => void;
+  initialSelectedUser?: string | null;
 }
 
 export const MessagesContainer = ({
@@ -17,6 +18,7 @@ export const MessagesContainer = ({
   profiles,
   currentUserId,
   onSendMessage,
+  initialSelectedUser = null,
 }: MessagesContainerProps) => {
   const isMobile = useIsMobile();
   const [selectedThread, setSelectedThread] = useState<ChatThread | null>(null);
@@ -67,12 +69,41 @@ export const MessagesContainer = ({
     }).filter(Boolean) as ChatThread[];
   }, [currentUserId, messages, profiles]);
 
-  // Auto-select the first thread if none selected
+  // Handle initial user selection or default to first thread
   useEffect(() => {
-    if (threads.length > 0 && !selectedThread && !isMobile && activeTab === "direct") {
+    // If initialSelectedUser is provided, create or find a thread for that user
+    if (initialSelectedUser) {
+      // Find the profile for the selected user
+      const selectedUserProfile = profiles.find(p => p.id === initialSelectedUser);
+      
+      if (selectedUserProfile) {
+        // Check if there's an existing thread with this user
+        const existingThread = threads.find(t => t.partner.id === initialSelectedUser);
+        
+        if (existingThread) {
+          // Use existing thread
+          setSelectedThread(existingThread);
+        } else {
+          // Create a new thread for this user
+          setSelectedThread({
+            partner: selectedUserProfile,
+            lastMessage: null
+          });
+        }
+        
+        // Make sure we're on the direct messages tab
+        setActiveTab("direct");
+        
+        // Reset the group and city selections
+        setSelectedGroupChat(null);
+        setSelectedCityChat(null);
+      }
+    } 
+    // If no initial user and no thread selected, default to first thread on desktop
+    else if (threads.length > 0 && !selectedThread && !isMobile && activeTab === "direct") {
       setSelectedThread(threads[0]);
     }
-  }, [threads, selectedThread, isMobile, activeTab]);
+  }, [initialSelectedUser, threads, profiles, selectedThread, isMobile, activeTab]);
 
   // Get messages for selected thread
   const threadMessages = useMemo(() => {

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Message, Profile, ChatThread } from "@/types";
 import { MessageHeader } from "./MessageHeader";
 import { DirectMessageList } from "./DirectMessageList";
@@ -25,11 +25,17 @@ export const DirectMessagePanel = ({
 }: DirectMessagePanelProps) => {
   const [newMessage, setNewMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [showSuggestedPrompts, setShowSuggestedPrompts] = useState(false);
 
   const formatMessageDate = (dateString: string) => {
     const date = new Date(dateString);
     return format(date, "MMM d, h:mm a");
   };
+
+  // Check if thread has no messages to show suggested prompts
+  useEffect(() => {
+    setShowSuggestedPrompts(messages.length === 0);
+  }, [messages]);
 
   const handleSendMessage = async () => {
     if (!thread || !newMessage.trim()) return;
@@ -38,6 +44,7 @@ export const DirectMessagePanel = ({
     try {
       await onSendMessage(thread.partner.id, newMessage);
       setNewMessage("");
+      setShowSuggestedPrompts(false); // Hide prompts after sending a message
     } finally {
       setIsSending(false);
     }
@@ -64,6 +71,8 @@ export const DirectMessagePanel = ({
         isSending={isSending}
         newMessage={newMessage}
         setNewMessage={setNewMessage}
+        showSuggestedPrompts={showSuggestedPrompts}
+        onDismissSuggestedPrompts={() => setShowSuggestedPrompts(false)}
       />
     </div>
   );
