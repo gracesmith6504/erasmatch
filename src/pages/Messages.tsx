@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { Message, Profile } from "@/types";
 import { MessagesContainer } from "@/components/messages/MessagesContainer";
 import { useSearchParams } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 
 type MessagesProps = {
   messages: Message[];

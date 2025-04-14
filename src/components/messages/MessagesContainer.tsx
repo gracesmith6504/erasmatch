@@ -34,9 +34,7 @@ export const MessagesContainer = ({
     setRefreshKey,
     currentUserProfile,
     threads,
-    threadMessages,
-    unreadThreadIds,
-    markThreadAsRead
+    threadMessages
   } = useMessageState(messages, profiles, currentUserId, initialSelectedUser);
 
   // Handle initial user selection
@@ -76,8 +74,6 @@ export const MessagesContainer = ({
         setSelectedThread={setSelectedThread}
         profiles={profiles}
         currentUserProfile={currentUserProfile}
-        unreadThreadIds={unreadThreadIds}
-        markThreadAsRead={markThreadAsRead}
       />
     );
   }
@@ -98,8 +94,6 @@ export const MessagesContainer = ({
         isMobile={isMobile}
         onSendMessage={handleSendMessage}
         onPromptUsed={handlePromptUsed}
-        unreadThreadIds={unreadThreadIds}
-        markThreadAsRead={markThreadAsRead}
       />
     </div>
   );
