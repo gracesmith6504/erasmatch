@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-// Define a better ChatMessage type without any recursive type dependencies
+// Define a simple ChatMessage type without any recursive dependencies
 export type ChatMessage = {
   id: string;
   sender_id: string;
@@ -11,11 +11,6 @@ export type ChatMessage = {
   created_at: string;
   university?: string;
   city?: string;
-};
-
-// Define a simple type for Supabase realtime payload
-type RealtimePayload = {
-  new: ChatMessage;
 };
 
 export function useGroupMessages(chatType: "university" | "city", groupId: string) {
@@ -34,16 +29,26 @@ export function useGroupMessages(chatType: "university" | "city", groupId: strin
     const fetchMessages = async () => {
       setLoading(true);
       try {
+        // Fetch messages with the correct column names
         const { data, error } = await supabase
           .from(tableName)
-          .select("id, sender_id, content, created_at, university_name, city_name")
+          .select("*")
           .eq(columnName, decodedId)
           .order("created_at", { ascending: true });
 
         if (error) throw error;
         
-        // Cast the data to ChatMessage[] since we know the structure
-        setMessages(data as unknown as ChatMessage[]);
+        // Map the data to our ChatMessage type with the correct fields
+        const mappedMessages: ChatMessage[] = data.map((item: any) => ({
+          id: item.id,
+          sender_id: item.sender_id,
+          content: item.content,
+          created_at: item.created_at,
+          university: chatType === "university" ? decodedId : undefined,
+          city: chatType === "city" ? decodedId : undefined
+        }));
+        
+        setMessages(mappedMessages);
       } catch (err: any) {
         console.error("Failed to load messages:", err);
         setError(err);
@@ -55,7 +60,7 @@ export function useGroupMessages(chatType: "university" | "city", groupId: strin
 
     fetchMessages();
 
-    // Set up realtime subscription
+    // Set up realtime subscription with proper typing
     const channel = supabase
       .channel(`${chatType}-messages`)
       .on(
@@ -66,9 +71,17 @@ export function useGroupMessages(chatType: "university" | "city", groupId: strin
           table: tableName,
           filter: `${columnName}=eq.${decodedId}`,
         },
-        (payload: any) => {
-          const newMsg = payload.new as ChatMessage;
-          setMessages((prev) => [...prev, newMsg]);
+        (payload) => {
+          const newMessage: ChatMessage = {
+            id: payload.new.id,
+            sender_id: payload.new.sender_id,
+            content: payload.new.content,
+            created_at: payload.new.created_at,
+            university: chatType === "university" ? decodedId : undefined,
+            city: chatType === "city" ? decodedId : undefined
+          };
+          
+          setMessages((prev) => [...prev, newMessage]);
         }
       )
       .subscribe();
@@ -78,18 +91,27 @@ export function useGroupMessages(chatType: "university" | "city", groupId: strin
     };
   }, [chatType, decodedId]);
 
-  // Send message function
+  // Send message function with explicit typing
   const sendMessage = async (content: string, currentUserId: string): Promise<boolean> => {
     try {
       const tableName = chatType === "university" ? "group_messages" : "city_messages";
       const columnName = chatType === "university" ? "university_name" : "city_name";
       
-      // Create the message data object with the correct column name
-      const messageData = {
-        sender_id: currentUserId,
-        content: content,
-        [columnName]: decodedId
-      };
+      // Create the message data with explicit typing for the dynamic field
+      let messageData;
+      if (chatType === "university") {
+        messageData = {
+          sender_id: currentUserId,
+          content: content,
+          university_name: decodedId
+        };
+      } else {
+        messageData = {
+          sender_id: currentUserId,
+          content: content,
+          city_name: decodedId
+        };
+      }
       
       const { error } = await supabase
         .from(tableName)
