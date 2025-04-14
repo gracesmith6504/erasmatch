@@ -87,8 +87,10 @@ export function useMessageState(
       }
 
       // Extract unique sender IDs
-      const uniqueSenderIds = [...new Set(data?.map(m => m.sender_id))];
+      const uniqueSenderIds = [...new Set(data?.map(m => m.sender_id) || [])];
       setUnreadThreadIds(uniqueSenderIds);
+      
+      console.log("Unread threads:", uniqueSenderIds);
     } catch (error) {
       console.error("Error in fetchUnreadMessages:", error);
     }
@@ -97,6 +99,7 @@ export function useMessageState(
   // Mark thread as read
   const markThreadAsRead = async (threadId: string) => {
     try {
+      console.log("Marking thread as read:", threadId);
       const { error } = await supabase
         .from("messages")
         .update({ read: true })
@@ -110,6 +113,8 @@ export function useMessageState(
 
       // Update local state
       setUnreadThreadIds(prev => prev.filter(id => id !== threadId));
+      
+      console.log("Thread marked as read:", threadId);
     } catch (error) {
       console.error("Error marking thread as read:", error);
     }
