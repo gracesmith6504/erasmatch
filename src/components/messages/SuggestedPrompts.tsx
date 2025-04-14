@@ -37,7 +37,7 @@ export const SuggestedPrompts = ({ onSelectPrompt }: SuggestedPromptsProps) => {
           <Badge
             key={index}
             variant="outline"
-            className="py-1.5 px-3 bg-white hover:bg-gray-50 cursor-pointer hover-scale text-gray-800 shadow-soft"
+            className="py-1.5 px-3 bg-white hover:bg-gray-50 cursor-pointer hover:scale-105 transition-transform text-gray-800 shadow-sm"
             onClick={() => onSelectPrompt(prompt)}
           >
             💬 {prompt}
