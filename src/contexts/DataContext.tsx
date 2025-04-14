@@ -1,7 +1,6 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Profile, Message } from "@/types";
+import { Profile, Message, PromptLog } from "@/types";
 import { useAuth } from "./AuthContext";
 
 type DataContextType = {
@@ -9,6 +8,12 @@ type DataContextType = {
   messages: Message[];
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
   handleSendMessage: (receiverId: string, content: string) => Promise<Message | undefined>;
+  logPrompt: (
+    sender_id: string, 
+    receiver_id: string, 
+    prompt_text: string, 
+    type: string
+  ) => Promise<PromptLog | undefined>;
 };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -30,7 +35,6 @@ export const DataProvider = ({ children }: DataProviderProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const { currentUserId, isAuthenticated } = useAuth();
 
-  // Fetch data when user is authenticated
   useEffect(() => {
     if (isAuthenticated && currentUserId) {
       fetchProfiles();
@@ -38,7 +42,6 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     }
   }, [isAuthenticated, currentUserId]);
 
-  // Function to fetch all profiles
   const fetchProfiles = async () => {
     try {
       const { data, error } = await supabase
@@ -55,7 +58,6 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     }
   };
 
-  // Function to fetch messages for the current user
   const fetchUserMessages = async (userId: string) => {
     try {
       const { data: userMessages, error } = await supabase
@@ -78,7 +80,6 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     if (!currentUserId) return;
 
     try {
-      // Send message via Supabase
       const { data, error } = await supabase
         .from('messages')
         .insert({
@@ -92,7 +93,6 @@ export const DataProvider = ({ children }: DataProviderProps) => {
       if (error) throw error;
 
       if (data) {
-        // Update local messages state
         setMessages(prev => [data as Message, ...prev]);
         return data as Message;
       }
@@ -102,13 +102,41 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     }
   };
 
+  const logPrompt = async (
+    sender_id: string, 
+    receiver_id: string, 
+    prompt_text: string, 
+    type: string
+  ) => {
+    try {
+      const { data, error } = await supabase
+        .from('prompt_logs')
+        .insert({
+          sender_id,
+          receiver_id,
+          prompt_text,
+          type
+        })
+        .select()
+        .single();
+      
+      if (error) throw error;
+      
+      return data as PromptLog;
+    } catch (error) {
+      console.error('Error logging prompt:', error);
+      return undefined;
+    }
+  };
+
   return (
     <DataContext.Provider
       value={{
         profiles,
         messages,
         setMessages,
-        handleSendMessage
+        handleSendMessage,
+        logPrompt
       }}
     >
       {children}

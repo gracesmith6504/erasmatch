@@ -1,4 +1,3 @@
-
 export type Profile = {
   id: string;
   name: string | null;
@@ -62,5 +61,14 @@ export type CityMessage = {
   sender_id: string;
   city_name: string;
   content: string;
+  created_at: string;
+};
+
+export type PromptLog = {
+  id: string;
+  sender_id: string;
+  receiver_id: string;
+  prompt_text: string;
+  type: string;
   created_at: string;
 };
