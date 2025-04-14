@@ -13,6 +13,17 @@ type GroupChatViewProps = {
   chatType: "university" | "city";
 };
 
+// Define a simple payload type for real-time updates
+type RealtimePayload = {
+  schema: string;
+  table: string;
+  commit_timestamp: string;
+  eventType: string;
+  new: Record<string, any>;
+  old: Record<string, any>;
+  errors: any;
+};
+
 const GroupChatView = ({ chatType }: GroupChatViewProps) => {
   const { id } = useParams<{ id: string }>();
   const { currentUserId } = useAuth();
@@ -101,29 +112,26 @@ const GroupChatView = ({ chatType }: GroupChatViewProps) => {
           table: tableName,
           filter: `${columnName}=eq.${decodedId}`,
         },
-        (payload) => {
-          // Use a completely type-agnostic approach with any, then cast the parts we need
-          const payloadData = payload as any;
-          
-          if (payloadData && payloadData.new) {
-            const newData = payloadData.new;
+        (payload: RealtimePayload) => {
+          if (payload && payload.new) {
+            const newData = payload.new;
             
-            // Create the message with only the properties we need
-            const newMsg = {
+            // Create message with basic properties first
+            const newMsg: Partial<GroupMessage | CityMessage> = {
               id: newData.id,
               sender_id: newData.sender_id,
               content: newData.content,
               created_at: newData.created_at
-            } as GroupMessage | CityMessage;
+            };
             
-            // Add the specific property for university or city
+            // Add type-specific property
             if (chatType === "university") {
-              (newMsg as GroupMessage).university_name = newData.university_name;
+              (newMsg as Partial<GroupMessage>).university_name = newData.university_name;
             } else {
-              (newMsg as CityMessage).city_name = newData.city_name;
+              (newMsg as Partial<CityMessage>).city_name = newData.city_name;
             }
             
-            setMessages((prevMessages) => [...prevMessages, newMsg]);
+            setMessages((prevMessages) => [...prevMessages, newMsg as (GroupMessage | CityMessage)]);
           }
         }
       )
