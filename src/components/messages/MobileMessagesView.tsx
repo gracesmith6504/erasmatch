@@ -6,12 +6,12 @@ import { MessagesTabs } from "./MessagesTabs";
 import { ThreadsList } from "./ThreadsList";
 import { GroupChatsList } from "./GroupChatsList";
 import { CityList } from "./CityList";
+import { getInitials } from "./utils/messageUtils";
 
 interface MobileMessagesViewProps {
   threads: any[];
   selectedThread: any;
   setSelectedThread: (thread: any) => void;
-  getInitials: (name: string | null) => string;
   profiles: Profile[];
   currentUserProfile: Profile | null;
   handleSelectGroupChat: (universityName: string) => void;
@@ -26,7 +26,6 @@ export const MobileMessagesView = ({
   threads,
   selectedThread,
   setSelectedThread,
-  getInitials,
   profiles,
   currentUserProfile,
   handleSelectGroupChat,

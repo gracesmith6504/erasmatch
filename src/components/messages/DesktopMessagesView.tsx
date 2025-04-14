@@ -8,12 +8,12 @@ import { CityList } from "./CityList";
 import { Button } from "@/components/ui/button";
 import { GroupChatPanel } from "./GroupChatPanel";
 import { CityPanel } from "./CityPanel";
+import { getInitials } from "./utils/messageUtils";
 
 interface DesktopMessagesViewProps {
   threads: ChatThread[];
   selectedThread: ChatThread | null;
   setSelectedThread: (thread: ChatThread | null) => void;
-  getInitials: (name: string | null) => string;
   profiles: Profile[];
   currentUserProfile: Profile | null;
   handleSelectGroupChat: (universityName: string) => void;
@@ -26,14 +26,13 @@ interface DesktopMessagesViewProps {
   currentUserId: string;
   isMobile: boolean;
   onSendMessage: (receiverId: string, content: string) => void;
-  onPromptUsed?: () => void; // New prop to handle prompt selection
+  onPromptUsed?: () => void;
 }
 
 export const DesktopMessagesView = ({
   threads,
   selectedThread,
   setSelectedThread,
-  getInitials,
   profiles,
   currentUserProfile,
   handleSelectGroupChat,

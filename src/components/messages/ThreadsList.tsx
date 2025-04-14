@@ -1,6 +1,5 @@
-
 import { Link } from "react-router-dom";
-import { ChatThread, Profile } from "@/types";
+import { ChatThread } from "@/types";
 import { format } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
