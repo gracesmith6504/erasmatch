@@ -45,6 +45,8 @@ export const DirectMessagePanel = ({
       await onSendMessage(thread.partner.id, newMessage);
       setNewMessage("");
       setShowSuggestedPrompts(false); // Hide prompts after sending a message
+    } catch (error) {
+      console.error("Error sending message:", error);
     } finally {
       setIsSending(false);
     }

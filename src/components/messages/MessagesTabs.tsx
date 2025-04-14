@@ -25,13 +25,15 @@ export const MessagesTabs = ({
     document.title = "ErasMatch";
   }, []);
 
+  const handleTabChange = (value: string) => {
+    console.log("Tab changed to:", value);
+    setActiveTab(value as "direct" | "groups" | "cities");
+  };
+
   return (
     <Tabs 
       value={activeTab} 
-      onValueChange={(value) => {
-        console.log("Tab changed to:", value);
-        setActiveTab(value as "direct" | "groups" | "cities");
-      }}
+      onValueChange={handleTabChange}
       className={className}
     >
       <TabsList className="w-full">

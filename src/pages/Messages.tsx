@@ -22,15 +22,28 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
     if (userParam) {
       console.log("URL parameter 'user' found:", userParam);
       setInitialSelectedUser(userParam);
+    } else {
+      // Clear the initial selection if no user param exists
+      setInitialSelectedUser(null);
     }
   }, [searchParams]);
+
+  // Wrapper for onSendMessage to ensure proper state updates
+  const handleSendMessage = async (receiverId: string, content: string) => {
+    try {
+      return await onSendMessage(receiverId, content);
+    } catch (error) {
+      console.error("Error in Messages handleSendMessage:", error);
+      throw error;
+    }
+  };
 
   return (
     <MessagesContainer
       messages={messages}
       profiles={profiles}
       currentUserId={currentUserId}
-      onSendMessage={onSendMessage}
+      onSendMessage={handleSendMessage}
       initialSelectedUser={initialSelectedUser}
     />
   );

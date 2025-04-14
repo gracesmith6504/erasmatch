@@ -25,6 +25,7 @@ export const MessagesContainer = ({
   const [activeTab, setActiveTab] = useState<"direct" | "groups" | "cities">("direct");
   const [selectedGroupChat, setSelectedGroupChat] = useState<string | null>(null);
   const [selectedCityChat, setSelectedCityChat] = useState<string | null>(null);
+  const [messagesSent, setMessagesSent] = useState(0); // Counter to trigger thread refresh
 
   const currentUserProfile = useMemo(() => {
     return profiles.find(profile => profile.id === currentUserId) || null;
@@ -67,7 +68,7 @@ export const MessagesContainer = ({
         lastMessage
       };
     }).filter(Boolean) as ChatThread[];
-  }, [currentUserId, messages, profiles]);
+  }, [currentUserId, messages, profiles, messagesSent]); // Added messagesSent as a dependency
 
   // Handle initial user selection or default to first thread
   useEffect(() => {
@@ -116,7 +117,7 @@ export const MessagesContainer = ({
              (m.receiver_id === currentUserId && m.sender_id === selectedThread.partner.id)
       )
       .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
-  }, [selectedThread, currentUserId, messages]);
+  }, [selectedThread, currentUserId, messages, messagesSent]); // Added messagesSent as a dependency
 
   const handleSelectGroupChat = (universityName: string) => {
     console.log("Selecting group chat:", universityName);
@@ -138,10 +139,19 @@ export const MessagesContainer = ({
     }
   };
 
-  // Custom wrapper for onSendMessage to avoid affecting tab state
+  // Custom wrapper for onSendMessage to ensure state updates properly
   const handleSendMessage = async (receiverId: string, content: string) => {
-    await onSendMessage(receiverId, content);
-    // We don't manipulate the tab state here
+    try {
+      await onSendMessage(receiverId, content);
+      // Force a refresh of threads by incrementing the counter
+      setMessagesSent(prev => prev + 1);
+      // Ensure we're on the direct messages tab after sending a message
+      if (activeTab !== "direct") {
+        setActiveTab("direct");
+      }
+    } catch (error) {
+      console.error("Error in handleSendMessage:", error);
+    }
   };
 
   const getInitials = (name: string | null) => {
