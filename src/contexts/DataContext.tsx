@@ -7,7 +7,7 @@ import { useAuth } from "./AuthContext";
 type DataContextType = {
   profiles: Profile[];
   messages: Message[];
-  handleSendMessage: (receiverId: string, content: string) => Promise<Message | undefined>;
+  handleSendMessage: (receiverId: string, content: string) => Promise<void>;
 };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -73,7 +73,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     }
   };
 
-  const handleSendMessage = async (receiverId: string, content: string) => {
+  const handleSendMessage = async (receiverId: string, content: string): Promise<void> => {
     if (!currentUserId) return;
 
     try {
@@ -93,7 +93,6 @@ export const DataProvider = ({ children }: DataProviderProps) => {
       if (data) {
         // Update local messages state
         setMessages(prev => [data as Message, ...prev]);
-        return data as Message;
       }
     } catch (error) {
       console.error('Error sending message:', error);
