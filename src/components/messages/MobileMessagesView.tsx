@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { MessagesTabs } from "./MessagesTabs";
 import { ThreadsList } from "./ThreadsList";
+import { GroupChatsList } from "./GroupChatsList";
 import { CityList } from "./CityList";
 
 interface MobileMessagesViewProps {
@@ -13,10 +14,12 @@ interface MobileMessagesViewProps {
   getInitials: (name: string | null) => string;
   profiles: Profile[];
   currentUserProfile: Profile | null;
+  handleSelectGroupChat: (universityName: string) => void;
+  selectedGroupChat: string | null;
   handleSelectCityChat: (cityName: string) => void;
   selectedCityChat: string | null;
-  activeTab: "direct" | "cities";
-  setActiveTab: (tab: "direct" | "cities") => void;
+  activeTab: "direct" | "groups" | "cities";
+  setActiveTab: (tab: "direct" | "groups" | "cities") => void;
 }
 
 export const MobileMessagesView = ({
@@ -26,6 +29,8 @@ export const MobileMessagesView = ({
   getInitials,
   profiles,
   currentUserProfile,
+  handleSelectGroupChat,
+  selectedGroupChat,
   handleSelectCityChat,
   selectedCityChat,
   activeTab,
@@ -45,6 +50,16 @@ export const MobileMessagesView = ({
               selectedThread={selectedThread} 
               onSelectThread={setSelectedThread}
               getInitials={getInitials}
+            />
+          </div>
+        }
+        groupsContent={
+          <div className="bg-white rounded-lg shadow overflow-hidden">
+            <GroupChatsList 
+              profiles={profiles}
+              currentUserProfile={currentUserProfile}
+              onSelectGroupChat={handleSelectGroupChat}
+              selectedGroupChat={selectedGroupChat}
             />
           </div>
         }

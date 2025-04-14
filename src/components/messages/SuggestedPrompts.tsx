@@ -20,12 +20,6 @@ export const SuggestedPrompts: React.FC<SuggestedPromptsProps> = ({
     "still looking for a place to stay?",
   ];
 
-  // Handle prompt selection with any necessary cleanup
-  const handleSelectPrompt = (prompt: string) => {
-    console.log("Prompt selected:", prompt);
-    onSelectPrompt(prompt);
-  };
-
   return (
     <Card className="p-3 mb-2 relative rounded-lg shadow-sm border-gray-200 bg-white/70 backdrop-blur-sm">
       <Button 
@@ -48,7 +42,7 @@ export const SuggestedPrompts: React.FC<SuggestedPromptsProps> = ({
             variant="outline"
             size="sm"
             className="text-sm bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 rounded-full transition-all"
-            onClick={() => handleSelectPrompt(prompt)}
+            onClick={() => onSelectPrompt(prompt)}
           >
             {prompt}
           </Button>

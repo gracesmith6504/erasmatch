@@ -3,8 +3,10 @@ import { Profile, ChatThread } from "@/types";
 import { DirectMessagePanel } from "./DirectMessagePanel";
 import { MessagesTabs } from "./MessagesTabs";
 import { ThreadsList } from "./ThreadsList";
+import { GroupChatsList } from "./GroupChatsList";
 import { CityList } from "./CityList";
 import { Button } from "@/components/ui/button";
+import { GroupChatPanel } from "./GroupChatPanel";
 import { CityPanel } from "./CityPanel";
 
 interface DesktopMessagesViewProps {
@@ -14,15 +16,16 @@ interface DesktopMessagesViewProps {
   getInitials: (name: string | null) => string;
   profiles: Profile[];
   currentUserProfile: Profile | null;
+  handleSelectGroupChat: (universityName: string) => void;
+  selectedGroupChat: string | null;
   handleSelectCityChat: (cityName: string) => void;
   selectedCityChat: string | null;
-  activeTab: "direct" | "cities";
-  setActiveTab: (tab: "direct" | "cities") => void;
+  activeTab: "direct" | "groups" | "cities";
+  setActiveTab: (tab: "direct" | "groups" | "cities") => void;
   threadMessages: any[];
   currentUserId: string;
   isMobile: boolean;
   onSendMessage: (receiverId: string, content: string) => void;
-  onPromptUsed?: () => void; // New prop to handle prompt selection
 }
 
 export const DesktopMessagesView = ({
@@ -32,6 +35,8 @@ export const DesktopMessagesView = ({
   getInitials,
   profiles,
   currentUserProfile,
+  handleSelectGroupChat,
+  selectedGroupChat,
   handleSelectCityChat,
   selectedCityChat,
   activeTab,
@@ -40,19 +45,7 @@ export const DesktopMessagesView = ({
   currentUserId,
   isMobile,
   onSendMessage,
-  onPromptUsed = () => {},
 }: DesktopMessagesViewProps) => {
-  console.log("DesktopMessagesView activeTab:", activeTab);
-  
-  // Handle send message and ensure tab state is preserved
-  const handleSendDirectMessage = async (receiverId: string, content: string) => {
-    try {
-      await onSendMessage(receiverId, content);
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
-  };
-  
   return (
     <div className="flex flex-1 bg-white rounded-lg shadow overflow-hidden">
       {/* Thread list */}
@@ -72,6 +65,14 @@ export const DesktopMessagesView = ({
               getInitials={getInitials}
             />
           }
+          groupsContent={
+            <GroupChatsList 
+              profiles={profiles}
+              currentUserProfile={currentUserProfile}
+              onSelectGroupChat={handleSelectGroupChat}
+              selectedGroupChat={selectedGroupChat}
+            />
+          }
           citiesContent={
             <CityList 
               profiles={profiles}
@@ -84,17 +85,36 @@ export const DesktopMessagesView = ({
       </div>
       
       {/* Conversation area */}
-      {activeTab === "direct" && selectedThread ? (
+      {selectedThread && activeTab === "direct" ? (
         <DirectMessagePanel
           thread={selectedThread}
           messages={threadMessages}
           currentUserId={currentUserId}
           isMobile={isMobile}
           onBack={() => setSelectedThread(null)}
-          onSendMessage={handleSendDirectMessage}
-          onPromptUsed={onPromptUsed}
+          onSendMessage={onSendMessage}
         />
-      ) : activeTab === "cities" && selectedCityChat ? (
+      ) : selectedGroupChat ? (
+        <div className="flex flex-col w-full md:w-2/3 h-full">
+          {isMobile && (
+            <div className="border-b p-2">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => handleSelectGroupChat("")}
+                className="mr-2"
+              >
+                Back
+              </Button>
+            </div>
+          )}
+          <GroupChatPanel 
+            universityName={selectedGroupChat}
+            currentUserId={currentUserId}
+            profiles={profiles}
+          />
+        </div>
+      ) : selectedCityChat ? (
         <div className="flex flex-col w-full md:w-2/3 h-full">
           {isMobile && (
             <div className="border-b p-2">
