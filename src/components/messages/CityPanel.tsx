@@ -1,12 +1,12 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Separator } from "@/components/ui/separator";
-import { supabase } from "@/integrations/supabase/client";
 import { Profile } from "@/types";
 import { toast } from "sonner";
 import { CityParticipantsInfo } from "./CityParticipantsInfo";
 import { CityMessageList } from "./CityMessageList";
 import { CityInput } from "./CityInput";
+import { useGroupMessages } from "@/hooks/useGroupMessages";
 
 type CityPanelProps = {
   cityName: string;
@@ -19,85 +19,29 @@ export const CityPanel = ({
   currentUserId,
   profiles,
 }: CityPanelProps) => {
-  const [messages, setMessages] = useState<any[]>([]);
   const [isSending, setIsSending] = useState(false);
-  const [participants, setParticipants] = useState<Profile[]>([]);
   
   // Get profiles of students in this city
-  useEffect(() => {
-    const getCityParticipants = () => {
-      const cityResidents = profiles.filter(
-        (profile) => profile.city === cityName
-      );
-      setParticipants(cityResidents);
-    };
-    
-    getCityParticipants();
-  }, [cityName, profiles]);
+  const cityParticipants = profiles.filter(
+    (profile) => profile.city === cityName
+  );
   
-  // Fetch city messages
-  useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("city_messages")
-          .select("*")
-          .eq("city_name", cityName)
-          .order("created_at", { ascending: true });
-          
-        if (error) {
-          throw error;
-        }
-        
-        if (data) {
-          setMessages(data);
-        }
-      } catch (error: any) {
-        console.error("Error fetching city messages:", error.message);
-      }
-    };
-    
-    fetchMessages();
-    
-    // Subscribe to new messages in real-time
-    const channel = supabase
-      .channel("city_messages_changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "city_messages",
-          filter: `city_name=eq.${cityName}`,
-        },
-        (payload) => {
-          const newMessage = payload.new;
-          setMessages((prevMessages) => [...prevMessages, newMessage]);
-        }
-      )
-      .subscribe();
-      
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [cityName]);
+  const { messages, isLoading, error, sendMessage } = useGroupMessages({
+    chatType: "city",
+    chatName: cityName,
+  });
   
   // Send city message
   const handleSendMessage = async (message: string) => {
     setIsSending(true);
     try {
-      const { error } = await supabase
-        .from("city_messages")
-        .insert({
-          sender_id: currentUserId,
-          city_name: cityName,
-          content: message.trim(),
-        });
+      const success = await sendMessage(message, currentUserId);
       
-      if (error) throw error;
-      
+      if (!success) {
+        toast.error("Failed to send message");
+      }
     } catch (error: any) {
-      toast.error("Failed to send message: " + error.message);
+      toast.error(`Failed to send message: ${error.message}`);
       console.error("Error sending city message:", error);
     } finally {
       setIsSending(false);
@@ -110,7 +54,7 @@ export const CityPanel = ({
       <div className="p-4 border-b flex items-center justify-between">
         <div>
           <h2 className="font-medium text-lg">🏙️ {cityName} Erasmus Chat</h2>
-          <CityParticipantsInfo count={participants.length} />
+          <CityParticipantsInfo count={cityParticipants.length} />
         </div>
       </div>
       
@@ -120,6 +64,7 @@ export const CityPanel = ({
           messages={messages}
           profiles={profiles}
           currentUserId={currentUserId}
+          isLoading={isLoading}
         />
       </div>
       

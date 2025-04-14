@@ -1,46 +1,81 @@
 
-import { GroupMessage, Profile } from "@/types";
-import { GroupChatMessage } from "./GroupChatMessage";
+import { Fragment } from "react";
+import { Profile, CityMessage } from "@/types";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { MessageBubble } from "./MessageBubble";
 
-interface CityMessageListProps {
-  messages: GroupMessage[];
+type CityMessageListProps = {
+  messages: any[]; // Using any[] to avoid type issues
   profiles: Profile[];
   currentUserId: string;
-}
+  isLoading?: boolean;
+};
 
 export const CityMessageList = ({
   messages,
   profiles,
   currentUserId,
+  isLoading = false,
 }: CityMessageListProps) => {
-  if (messages.length === 0) {
+  if (isLoading) {
     return (
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-500 mb-2">No messages yet</p>
-          <p className="text-sm text-gray-400">
-            Be the first to start the conversation in your city!
-          </p>
-        </div>
+      <div className="space-y-4">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="flex items-start gap-3">
+            <Skeleton className="h-8 w-8 rounded-full" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-[200px]" />
+              <Skeleton className="h-10 w-[250px]" />
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
-  
+
+  if (messages.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full">
+        <div className="text-4xl mb-3">💬</div>
+        <p className="text-gray-500 text-center">
+          No messages yet. Be the first to say hello!
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       {messages.map((message) => {
+        const sender = profiles.find((p) => p.id === message.sender_id);
         const isCurrentUser = message.sender_id === currentUserId;
-        const senderProfile = profiles.find((profile) => profile.id === message.sender_id);
         
         return (
-          <GroupChatMessage
+          <div
             key={message.id}
-            content={message.content}
-            createdAt={message.created_at}
-            senderId={message.sender_id}
-            isCurrentUser={isCurrentUser}
-            senderProfile={senderProfile}
-          />
+            className={`flex items-start gap-3 ${
+              isCurrentUser ? "flex-row-reverse" : ""
+            }`}
+          >
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={sender?.avatar_url || ""} />
+              <AvatarFallback>
+                {sender?.name?.substring(0, 2).toUpperCase() || "??"}
+              </AvatarFallback>
+            </Avatar>
+
+            <div className={`flex flex-col ${isCurrentUser ? "items-end" : ""}`}>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xs text-gray-500 font-medium">
+                  {sender?.name || "Unknown"} {!isCurrentUser && sender?.home_university && `· ${sender.home_university}`}
+                  {!isCurrentUser && !sender?.home_university && sender?.country && `· ${sender.country}`}
+                </span>
+              </div>
+
+              <MessageBubble isCurrentUser={isCurrentUser} content={message.content} />
+            </div>
+          </div>
         );
       })}
     </div>

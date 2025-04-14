@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, MessageSquare, Users, User, LogOut, Home } from "lucide-react";
+import { Menu, X, MessageSquare, Users, User, LogOut, Home, Laptop, MapPin } from "lucide-react";
 
 type NavbarProps = {
   isAuthenticated: boolean;
@@ -76,6 +76,16 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                     <div className="flex items-center space-x-1.5">
                       <Users className="w-4 h-4" />
                       <span>Students</span>
+                    </div>
+                  </Link>
+                  <Link to="/groups" className={`px-4 py-2 rounded-full transition-all duration-200 ${
+                    isActive('/groups') 
+                      ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple shadow-sm' 
+                      : 'text-gray-700 hover:bg-gray-200'
+                  }`}>
+                    <div className="flex items-center space-x-1.5">
+                      <Laptop className="w-4 h-4" />
+                      <span>Groups</span>
                     </div>
                   </Link>
                   <Link to="/messages" className={`px-4 py-2 rounded-full transition-all duration-200 ${
@@ -164,6 +174,16 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                   Students
                 </div>
               </Link>
+              <Link to="/groups" className={`block px-3 py-2.5 rounded-lg text-base font-medium ${
+                isActive('/groups') 
+                  ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple' 
+                  : 'text-gray-700 hover:bg-gray-50'
+              }`}>
+                <div className="flex items-center">
+                  <Laptop className="w-5 h-5 mr-3" />
+                  Groups
+                </div>
+              </Link>
               <Link to="/messages" className={`block px-3 py-2.5 rounded-lg text-base font-medium ${
                 isActive('/messages') 
                   ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple' 
@@ -223,6 +243,11 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
               isActive('/students') ? 'bg-blue-100 text-erasmatch-blue' : 'text-gray-500'
             }`}>
               <Users className="w-5 h-5" />
+            </Link>
+            <Link to="/groups" className={`p-3 rounded-full transition-colors ${
+              isActive('/groups') ? 'bg-blue-100 text-erasmatch-blue' : 'text-gray-500'
+            }`}>
+              <Laptop className="w-5 h-5" />
             </Link>
             <Link to="/messages" className={`p-3 rounded-full transition-colors ${
               isActive('/messages') ? 'bg-blue-100 text-erasmatch-blue' : 'text-gray-500'
