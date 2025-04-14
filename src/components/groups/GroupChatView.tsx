@@ -113,15 +113,19 @@ const GroupChatView = ({ chatType }: GroupChatViewProps) => {
           table: tableName,
           filter: `${columnName}=eq.${decodedId}`,
         },
-        (payload: MessagePayload) => {
+        // Use a simpler function parameter type to avoid complex type inference
+        (payload) => {
+          // Type assertion to the simpler MessagePayload type
+          const typedPayload = payload as unknown as MessagePayload;
+          
           const newMsg = {
-            id: payload.new.id,
-            sender_id: payload.new.sender_id,
-            content: payload.new.content,
-            created_at: payload.new.created_at,
+            id: typedPayload.new.id,
+            sender_id: typedPayload.new.sender_id,
+            content: typedPayload.new.content,
+            created_at: typedPayload.new.created_at,
             ...(chatType === "university" 
-              ? { university_name: payload.new.university_name } 
-              : { city_name: payload.new.city_name })
+              ? { university_name: typedPayload.new.university_name } 
+              : { city_name: typedPayload.new.city_name })
           } as GroupMessage | CityMessage;
           
           setMessages((prevMessages) => [...prevMessages, newMsg]);
