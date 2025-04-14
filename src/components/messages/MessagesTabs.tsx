@@ -1,13 +1,11 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, MapPin } from "lucide-react";
 import { ReactNode, useEffect } from "react";
 
 interface MessagesTabsProps {
-  activeTab: "direct" | "groups" | "cities";
-  setActiveTab: (value: "direct" | "groups" | "cities") => void;
+  activeTab: "direct" | "cities";
+  setActiveTab: (value: "direct" | "cities") => void;
   directContent: ReactNode;
-  groupsContent: ReactNode;
   citiesContent: ReactNode;
   className?: string;
 }
@@ -16,7 +14,6 @@ export const MessagesTabs = ({
   activeTab,
   setActiveTab,
   directContent,
-  groupsContent,
   citiesContent,
   className = "",
 }: MessagesTabsProps) => {
@@ -27,7 +24,7 @@ export const MessagesTabs = ({
 
   const handleTabChange = (value: string) => {
     console.log("Tab changed to:", value);
-    setActiveTab(value as "direct" | "groups" | "cities");
+    setActiveTab(value as "direct" | "cities");
   };
 
   return (
@@ -40,20 +37,13 @@ export const MessagesTabs = ({
         <TabsTrigger value="direct" className="flex-1">
           Direct Messages
         </TabsTrigger>
-        <TabsTrigger value="groups" className="flex-1">
-          <Users className="h-4 w-4 mr-2" /> University
-        </TabsTrigger>
         <TabsTrigger value="cities" className="flex-1">
-          <MapPin className="h-4 w-4 mr-2" /> City
+          City Chats
         </TabsTrigger>
       </TabsList>
       
       <TabsContent value="direct" className="flex-1 overflow-y-auto">
         {directContent}
-      </TabsContent>
-      
-      <TabsContent value="groups" className="flex-1 overflow-y-auto">
-        {groupsContent}
       </TabsContent>
       
       <TabsContent value="cities" className="flex-1 overflow-y-auto">

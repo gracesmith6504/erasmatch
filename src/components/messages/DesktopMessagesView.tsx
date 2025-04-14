@@ -3,10 +3,8 @@ import { Profile, ChatThread } from "@/types";
 import { DirectMessagePanel } from "./DirectMessagePanel";
 import { MessagesTabs } from "./MessagesTabs";
 import { ThreadsList } from "./ThreadsList";
-import { GroupChatsList } from "./GroupChatsList";
 import { CityList } from "./CityList";
 import { Button } from "@/components/ui/button";
-import { GroupChatPanel } from "./GroupChatPanel";
 import { CityPanel } from "./CityPanel";
 
 interface DesktopMessagesViewProps {
@@ -16,12 +14,10 @@ interface DesktopMessagesViewProps {
   getInitials: (name: string | null) => string;
   profiles: Profile[];
   currentUserProfile: Profile | null;
-  handleSelectGroupChat: (universityName: string) => void;
-  selectedGroupChat: string | null;
   handleSelectCityChat: (cityName: string) => void;
   selectedCityChat: string | null;
-  activeTab: "direct" | "groups" | "cities";
-  setActiveTab: (tab: "direct" | "groups" | "cities") => void;
+  activeTab: "direct" | "cities";
+  setActiveTab: (tab: "direct" | "cities") => void;
   threadMessages: any[];
   currentUserId: string;
   isMobile: boolean;
@@ -36,8 +32,6 @@ export const DesktopMessagesView = ({
   getInitials,
   profiles,
   currentUserProfile,
-  handleSelectGroupChat,
-  selectedGroupChat,
   handleSelectCityChat,
   selectedCityChat,
   activeTab,
@@ -78,14 +72,6 @@ export const DesktopMessagesView = ({
               getInitials={getInitials}
             />
           }
-          groupsContent={
-            <GroupChatsList 
-              profiles={profiles}
-              currentUserProfile={currentUserProfile}
-              onSelectGroupChat={handleSelectGroupChat}
-              selectedGroupChat={selectedGroupChat}
-            />
-          }
           citiesContent={
             <CityList 
               profiles={profiles}
@@ -108,26 +94,6 @@ export const DesktopMessagesView = ({
           onSendMessage={handleSendDirectMessage}
           onPromptUsed={onPromptUsed}
         />
-      ) : activeTab === "groups" && selectedGroupChat ? (
-        <div className="flex flex-col w-full md:w-2/3 h-full">
-          {isMobile && (
-            <div className="border-b p-2">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => handleSelectGroupChat("")}
-                className="mr-2"
-              >
-                Back
-              </Button>
-            </div>
-          )}
-          <GroupChatPanel 
-            universityName={selectedGroupChat}
-            currentUserId={currentUserId}
-            profiles={profiles}
-          />
-        </div>
       ) : activeTab === "cities" && selectedCityChat ? (
         <div className="flex flex-col w-full md:w-2/3 h-full">
           {isMobile && (

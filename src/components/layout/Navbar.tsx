@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, MessageSquare, Users, User, LogOut, Home } from "lucide-react";
+import { Menu, X, MessageSquare, Users, User, LogOut, Home, UserRound } from "lucide-react";
 
 type NavbarProps = {
   isAuthenticated: boolean;
@@ -86,6 +86,16 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                     <div className="flex items-center space-x-1.5">
                       <MessageSquare className="w-4 h-4" />
                       <span>Messages</span>
+                    </div>
+                  </Link>
+                  <Link to="/groups" className={`px-4 py-2 rounded-full transition-all duration-200 ${
+                    isActive('/groups') 
+                      ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple shadow-sm' 
+                      : 'text-gray-700 hover:bg-gray-200'
+                  }`}>
+                    <div className="flex items-center space-x-1.5">
+                      <UserRound className="w-4 h-4" />
+                      <span>Groups</span>
                     </div>
                   </Link>
                 </div>
@@ -174,6 +184,16 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                   Messages
                 </div>
               </Link>
+              <Link to="/groups" className={`block px-3 py-2.5 rounded-lg text-base font-medium ${
+                isActive('/groups') 
+                  ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple' 
+                  : 'text-gray-700 hover:bg-gray-50'
+              }`}>
+                <div className="flex items-center">
+                  <UserRound className="w-5 h-5 mr-3" />
+                  Groups
+                </div>
+              </Link>
               <Link to="/profile" className={`block px-3 py-2.5 rounded-lg text-base font-medium ${
                 isActive('/profile') 
                   ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple' 
@@ -228,6 +248,11 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
               isActive('/messages') ? 'bg-blue-100 text-erasmatch-blue' : 'text-gray-500'
             }`}>
               <MessageSquare className="w-5 h-5" />
+            </Link>
+            <Link to="/groups" className={`p-3 rounded-full transition-colors ${
+              isActive('/groups') ? 'bg-blue-100 text-erasmatch-blue' : 'text-gray-500'
+            }`}>
+              <UserRound className="w-5 h-5" />
             </Link>
             <Link to="/profile" className={`p-3 rounded-full transition-colors ${
               isActive('/profile') ? 'bg-blue-100 text-erasmatch-blue' : 'text-gray-500'
