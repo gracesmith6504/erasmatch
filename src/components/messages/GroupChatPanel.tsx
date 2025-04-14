@@ -49,6 +49,7 @@ export const GroupChatPanel = ({
   };
   
   // Filter messages to ensure they're GroupMessage type for the GroupChatMessageList
+  // Use a type guard to filter out messages that don't have university_name
   const universityMessages = messages.filter((msg): msg is GroupMessage => 
     'university_name' in msg && msg.university_name === universityName
   );

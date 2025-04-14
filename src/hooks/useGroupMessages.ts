@@ -3,20 +3,25 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { GroupMessage, CityMessage } from "@/types";
 
-type MessageType = GroupMessage | CityMessage;
-
 type UseGroupMessagesProps = {
   chatType: "university" | "city";
   chatName: string;
 };
 
-// Define a simpler payload type to prevent deep recursion
-type SimplifiedPayload = {
-  new: Record<string, any>;
+// Use more specific type for the payload to avoid deep recursion
+type MessagePayload = {
+  new: {
+    id: string;
+    sender_id: string;
+    content: string;
+    created_at: string;
+    [key: string]: any; // To accommodate both university_name and city_name
+  };
 };
 
 export const useGroupMessages = ({ chatType, chatName }: UseGroupMessagesProps) => {
-  const [messages, setMessages] = useState<MessageType[]>([]);
+  // Use union type instead of generic type parameter
+  const [messages, setMessages] = useState<(GroupMessage | CityMessage)[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -63,10 +68,15 @@ export const useGroupMessages = ({ chatType, chatName }: UseGroupMessagesProps) 
           table: tableName,
           filter: `${nameField}=eq.${chatName}`,
         },
-        (payload: SimplifiedPayload) => {
-          // Add the new message to state with proper typing
-          const newMessage = payload.new as MessageType;
-          setMessages((prevMessages) => [...prevMessages, newMessage]);
+        (payload: MessagePayload) => {
+          // Cast the new message based on chatType to ensure proper typing
+          if (chatType === "university") {
+            const newMessage = payload.new as GroupMessage;
+            setMessages((prevMessages) => [...prevMessages, newMessage]);
+          } else {
+            const newMessage = payload.new as CityMessage;
+            setMessages((prevMessages) => [...prevMessages, newMessage]);
+          }
         }
       )
       .subscribe();

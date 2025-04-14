@@ -1,3 +1,4 @@
+
 import { Fragment } from "react";
 import { Profile, CityMessage } from "@/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -5,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import MessageBubble from "./MessageBubble";
 
 type CityMessageListProps = {
-  messages: any[]; // Using any[] to avoid type issues
+  messages: CityMessage[];
   profiles: Profile[];
   currentUserId: string;
   isLoading?: boolean;

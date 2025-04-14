@@ -31,7 +31,7 @@ export const CityPanel = ({
     chatName: cityName,
   });
   
-  // Filter messages to ensure they're CityMessage type for the CityMessageList
+  // Filter messages to ensure they're CityMessage type with a proper type guard
   const cityMessages = messages.filter((msg): msg is CityMessage => 
     'city_name' in msg && msg.city_name === cityName
   );
