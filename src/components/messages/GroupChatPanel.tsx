@@ -1,12 +1,12 @@
 
-import { useState } from "react";
-import { Profile, GroupMessage } from "@/types";
+import { useState, useEffect } from "react";
 import { Separator } from "@/components/ui/separator";
+import { supabase } from "@/integrations/supabase/client";
+import { Profile, GroupMessage } from "@/types";
 import { toast } from "sonner";
-import { useGroupMessages } from "@/hooks/useGroupMessages";
+import { GroupParticipantsInfo } from "./GroupParticipantsInfo";
 import { GroupChatMessageList } from "./GroupChatMessageList";
 import { GroupChatInput } from "./GroupChatInput";
-import { GroupParticipantsInfo } from "./GroupParticipantsInfo";
 
 type GroupChatPanelProps = {
   universityName: string;
@@ -19,29 +19,85 @@ export const GroupChatPanel = ({
   currentUserId,
   profiles,
 }: GroupChatPanelProps) => {
+  const [messages, setMessages] = useState<GroupMessage[]>([]);
   const [isSending, setIsSending] = useState(false);
+  const [participants, setParticipants] = useState<Profile[]>([]);
   
-  // Get profiles of students in this university
-  const universityParticipants = profiles.filter(
-    (profile) => profile.university === universityName
-  );
+  // Get profiles of students at this university
+  useEffect(() => {
+    const getParticipants = () => {
+      const universityStudents = profiles.filter(
+        (profile) => profile.university === universityName
+      );
+      setParticipants(universityStudents);
+    };
+    
+    getParticipants();
+  }, [universityName, profiles]);
   
-  const { messages, loading: isLoading, error, sendMessage } = useGroupMessages(
-    "university",
-    universityName
-  );
+  // Fetch group messages
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("group_messages")
+          .select("*")
+          .eq("university_name", universityName)
+          .order("created_at", { ascending: true });
+          
+        if (error) {
+          throw error;
+        }
+        
+        if (data) {
+          setMessages(data as GroupMessage[]);
+        }
+      } catch (error: any) {
+        console.error("Error fetching group messages:", error.message);
+      }
+    };
+    
+    fetchMessages();
+    
+    // Subscribe to new messages in real-time
+    const channel = supabase
+      .channel("group_messages_changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "group_messages",
+          filter: `university_name=eq.${universityName}`,
+        },
+        (payload) => {
+          const newMessage = payload.new as GroupMessage;
+          setMessages((prevMessages) => [...prevMessages, newMessage]);
+        }
+      )
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [universityName]);
   
   // Send group message
   const handleSendMessage = async (message: string) => {
     setIsSending(true);
     try {
-      const success = await sendMessage(message, currentUserId);
+      const { error } = await supabase
+        .from("group_messages")
+        .insert({
+          sender_id: currentUserId,
+          university_name: universityName,
+          content: message.trim(),
+        });
       
-      if (!success) {
-        toast.error("Failed to send message");
-      }
+      if (error) throw error;
+      
     } catch (error: any) {
-      toast.error(`Failed to send message: ${error.message}`);
+      toast.error("Failed to send message: " + error.message);
       console.error("Error sending group message:", error);
     } finally {
       setIsSending(false);
@@ -50,11 +106,11 @@ export const GroupChatPanel = ({
   
   return (
     <div className="flex flex-col h-full">
-      {/* University header */}
+      {/* Group header */}
       <div className="p-4 border-b flex items-center justify-between">
         <div>
           <h2 className="font-medium text-lg">🎓 {universityName} Chat</h2>
-          <GroupParticipantsInfo count={universityParticipants.length} />
+          <GroupParticipantsInfo count={participants.length} />
         </div>
       </div>
       
@@ -64,7 +120,6 @@ export const GroupChatPanel = ({
           messages={messages}
           profiles={profiles}
           currentUserId={currentUserId}
-          isLoading={isLoading}
         />
       </div>
       

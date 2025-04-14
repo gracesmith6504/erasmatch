@@ -26,6 +26,7 @@ interface DesktopMessagesViewProps {
   currentUserId: string;
   isMobile: boolean;
   onSendMessage: (receiverId: string, content: string) => void;
+  onPromptUsed?: () => void; // New prop to handle prompt selection
 }
 
 export const DesktopMessagesView = ({
@@ -45,7 +46,19 @@ export const DesktopMessagesView = ({
   currentUserId,
   isMobile,
   onSendMessage,
+  onPromptUsed = () => {},
 }: DesktopMessagesViewProps) => {
+  console.log("DesktopMessagesView activeTab:", activeTab);
+  
+  // Handle send message and ensure tab state is preserved
+  const handleSendDirectMessage = async (receiverId: string, content: string) => {
+    try {
+      await onSendMessage(receiverId, content);
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+  };
+  
   return (
     <div className="flex flex-1 bg-white rounded-lg shadow overflow-hidden">
       {/* Thread list */}
@@ -85,16 +98,17 @@ export const DesktopMessagesView = ({
       </div>
       
       {/* Conversation area */}
-      {selectedThread && activeTab === "direct" ? (
+      {activeTab === "direct" && selectedThread ? (
         <DirectMessagePanel
           thread={selectedThread}
           messages={threadMessages}
           currentUserId={currentUserId}
           isMobile={isMobile}
           onBack={() => setSelectedThread(null)}
-          onSendMessage={onSendMessage}
+          onSendMessage={handleSendDirectMessage}
+          onPromptUsed={onPromptUsed}
         />
-      ) : selectedGroupChat ? (
+      ) : activeTab === "groups" && selectedGroupChat ? (
         <div className="flex flex-col w-full md:w-2/3 h-full">
           {isMobile && (
             <div className="border-b p-2">
@@ -114,7 +128,7 @@ export const DesktopMessagesView = ({
             profiles={profiles}
           />
         </div>
-      ) : selectedCityChat ? (
+      ) : activeTab === "cities" && selectedCityChat ? (
         <div className="flex flex-col w-full md:w-2/3 h-full">
           {isMobile && (
             <div className="border-b p-2">

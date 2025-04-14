@@ -13,6 +13,7 @@ interface DirectMessagePanelProps {
   isMobile: boolean;
   onBack?: () => void;
   onSendMessage: (receiverId: string, content: string) => void;
+  onPromptUsed?: () => void; // New prop to handle prompt selection
 }
 
 export const DirectMessagePanel = ({
@@ -22,6 +23,7 @@ export const DirectMessagePanel = ({
   isMobile,
   onBack,
   onSendMessage,
+  onPromptUsed = () => {},
 }: DirectMessagePanelProps) => {
   const [newMessage, setNewMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
@@ -45,6 +47,8 @@ export const DirectMessagePanel = ({
       await onSendMessage(thread.partner.id, newMessage);
       setNewMessage("");
       setShowSuggestedPrompts(false); // Hide prompts after sending a message
+    } catch (error) {
+      console.error("Error sending message:", error);
     } finally {
       setIsSending(false);
     }
@@ -73,6 +77,7 @@ export const DirectMessagePanel = ({
         setNewMessage={setNewMessage}
         showSuggestedPrompts={showSuggestedPrompts}
         onDismissSuggestedPrompts={() => setShowSuggestedPrompts(false)}
+        onPromptUsed={onPromptUsed}
       />
     </div>
   );

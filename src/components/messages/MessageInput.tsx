@@ -12,6 +12,7 @@ interface MessageInputProps {
   setNewMessage: (message: string) => void;
   showSuggestedPrompts?: boolean;
   onDismissSuggestedPrompts?: () => void;
+  onPromptUsed?: () => void;  // New prop to handle prompt selection
 }
 
 export const MessageInput = ({
@@ -21,14 +22,22 @@ export const MessageInput = ({
   setNewMessage,
   showSuggestedPrompts = false,
   onDismissSuggestedPrompts = () => {},
+  onPromptUsed = () => {},  // Default no-op function
 }: MessageInputProps) => {
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSendMessage();
+    if (newMessage.trim() && !isSending) {
+      try {
+        await onSendMessage();
+      } catch (error) {
+        console.error("Error sending message:", error);
+      }
+    }
   };
 
   const handleSelectPrompt = (prompt: string) => {
     setNewMessage(prompt);
+    onPromptUsed(); // Notify parent component that a prompt was used
   };
 
   return (

@@ -25,6 +25,8 @@ export const MessagesContainer = ({
   const [activeTab, setActiveTab] = useState<"direct" | "groups" | "cities">("direct");
   const [selectedGroupChat, setSelectedGroupChat] = useState<string | null>(null);
   const [selectedCityChat, setSelectedCityChat] = useState<string | null>(null);
+  const [messagesSent, setMessagesSent] = useState(0); // Counter to trigger thread refresh
+  const [refreshKey, setRefreshKey] = useState(0); // New key for forcing component refresh
 
   const currentUserProfile = useMemo(() => {
     return profiles.find(profile => profile.id === currentUserId) || null;
@@ -67,12 +69,13 @@ export const MessagesContainer = ({
         lastMessage
       };
     }).filter(Boolean) as ChatThread[];
-  }, [currentUserId, messages, profiles]);
+  }, [currentUserId, messages, profiles, messagesSent, refreshKey]); // Added refreshKey as a dependency
 
   // Handle initial user selection or default to first thread
   useEffect(() => {
     // If initialSelectedUser is provided, create or find a thread for that user
     if (initialSelectedUser) {
+      console.log("Initial selected user:", initialSelectedUser);
       // Find the profile for the selected user
       const selectedUserProfile = profiles.find(p => p.id === initialSelectedUser);
       
@@ -103,7 +106,7 @@ export const MessagesContainer = ({
     else if (threads.length > 0 && !selectedThread && !isMobile && activeTab === "direct") {
       setSelectedThread(threads[0]);
     }
-  }, [initialSelectedUser, threads, profiles, selectedThread, isMobile, activeTab]);
+  }, [initialSelectedUser, threads, profiles, selectedThread, isMobile, activeTab, refreshKey]); // Added refreshKey
 
   // Get messages for selected thread
   const threadMessages = useMemo(() => {
@@ -115,23 +118,50 @@ export const MessagesContainer = ({
              (m.receiver_id === currentUserId && m.sender_id === selectedThread.partner.id)
       )
       .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
-  }, [selectedThread, currentUserId, messages]);
+  }, [selectedThread, currentUserId, messages, messagesSent, refreshKey]); // Added refreshKey
+
+  // Handle prompt selection - reset state
+  const handlePromptUsed = () => {
+    console.log("Prompt was used - will reset state after message is sent");
+  };
 
   const handleSelectGroupChat = (universityName: string) => {
+    console.log("Selecting group chat:", universityName);
     setSelectedGroupChat(universityName || null);
     setSelectedCityChat(null);
     setSelectedThread(null);
-    if (isMobile && universityName) {
+    if (universityName) {
       setActiveTab("groups");
     }
   };
 
   const handleSelectCityChat = (cityName: string) => {
+    console.log("Selecting city chat:", cityName);
     setSelectedCityChat(cityName || null);
     setSelectedGroupChat(null);
     setSelectedThread(null);
-    if (isMobile && cityName) {
+    if (cityName) {
       setActiveTab("cities");
+    }
+  };
+
+  // Custom wrapper for onSendMessage to ensure state updates properly
+  const handleSendMessage = async (receiverId: string, content: string) => {
+    try {
+      await onSendMessage(receiverId, content);
+      
+      // Force a refresh of threads by incrementing the counter
+      setMessagesSent(prev => prev + 1);
+      
+      // Force a full component refresh
+      setRefreshKey(prev => prev + 1);
+      
+      // Make sure we're on the direct messages tab after sending a message
+      setActiveTab("direct");
+      
+      console.log("Message sent, refreshing state");
+    } catch (error) {
+      console.error("Error in handleSendMessage:", error);
     }
   };
 
@@ -186,7 +216,8 @@ export const MessagesContainer = ({
         threadMessages={threadMessages}
         currentUserId={currentUserId}
         isMobile={isMobile}
-        onSendMessage={onSendMessage}
+        onSendMessage={handleSendMessage}
+        onPromptUsed={handlePromptUsed}
       />
     </div>
   );

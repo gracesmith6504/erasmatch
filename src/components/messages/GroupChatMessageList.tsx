@@ -1,38 +1,18 @@
 
-import { Profile } from "@/types";
+import { GroupMessage, Profile } from "@/types";
 import { GroupChatMessage } from "./GroupChatMessage";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ChatMessage } from "@/hooks/useGroupMessages";
 
 interface GroupChatMessageListProps {
-  messages: ChatMessage[];
+  messages: GroupMessage[];
   profiles: Profile[];
   currentUserId: string;
-  isLoading?: boolean;
 }
 
 export const GroupChatMessageList = ({
   messages,
   profiles,
   currentUserId,
-  isLoading = false,
 }: GroupChatMessageListProps) => {
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        {[...Array(3)].map((_, i) => (
-          <div key={i} className="flex items-start gap-3">
-            <Skeleton className="h-8 w-8 rounded-full" />
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-[200px]" />
-              <Skeleton className="h-10 w-[250px]" />
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
   if (messages.length === 0) {
     return (
       <div className="flex-1 flex items-center justify-center">
