@@ -26,10 +26,10 @@ export const CityPanel = ({
     (profile) => profile.city === cityName
   );
   
-  const { messages, isLoading, error, sendMessage } = useGroupMessages({
-    chatType: "city",
-    chatName: cityName,
-  });
+  const { messages, loading: isLoading, error, sendMessage } = useGroupMessages(
+    "city",
+    cityName
+  );
   
   // Filter messages to ensure they're CityMessage type with a proper type guard
   const cityMessages = messages.filter((msg): msg is CityMessage => 

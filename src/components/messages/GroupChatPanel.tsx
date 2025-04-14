@@ -26,10 +26,10 @@ export const GroupChatPanel = ({
     (profile) => profile.university === universityName
   );
   
-  const { messages, isLoading, error, sendMessage } = useGroupMessages({
-    chatType: "university",
-    chatName: universityName,
-  });
+  const { messages, loading: isLoading, error, sendMessage } = useGroupMessages(
+    "university",
+    universityName
+  );
   
   // Send group message
   const handleSendMessage = async (message: string) => {
