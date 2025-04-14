@@ -1,13 +1,20 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { GroupMessage, CityMessage, Profile } from "@/types";
+import { GroupMessage, CityMessage } from "@/types";
 import { toast } from "sonner";
 
 // Simplified payload type for real-time updates
 type RealtimePayload = {
-  new: Record<string, any>;
-  [key: string]: any;
+  new: {
+    id: string;
+    sender_id: string;
+    content: string;
+    created_at: string;
+    university_name?: string;
+    city_name?: string;
+    [key: string]: any;
+  };
 };
 
 export function useGroupMessages(
@@ -68,22 +75,26 @@ export function useGroupMessages(
           if (payload && payload.new) {
             const newData = payload.new;
             
-            // Create message with basic properties first
-            const newMsg: Partial<GroupMessage | CityMessage> = {
-              id: newData.id,
-              sender_id: newData.sender_id,
-              content: newData.content,
-              created_at: newData.created_at
-            };
-            
-            // Add type-specific property
+            // Create new message with the appropriate type
             if (chatType === "university") {
-              (newMsg as Partial<GroupMessage>).university_name = newData.university_name;
+              const newMsg: GroupMessage = {
+                id: newData.id,
+                sender_id: newData.sender_id,
+                content: newData.content,
+                created_at: newData.created_at,
+                university_name: newData.university_name || decodedId
+              };
+              setMessages((prevMessages) => [...prevMessages, newMsg]);
             } else {
-              (newMsg as Partial<CityMessage>).city_name = newData.city_name;
+              const newMsg: CityMessage = {
+                id: newData.id,
+                sender_id: newData.sender_id,
+                content: newData.content,
+                created_at: newData.created_at,
+                city_name: newData.city_name || decodedId
+              };
+              setMessages((prevMessages) => [...prevMessages, newMsg]);
             }
-            
-            setMessages((prevMessages) => [...prevMessages, newMsg as (GroupMessage | CityMessage)]);
           }
         }
       )
