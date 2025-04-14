@@ -100,21 +100,43 @@ export function useMessageState(
   const markThreadAsRead = async (threadId: string) => {
     try {
       console.log("Marking thread as read:", threadId);
-      const { error } = await supabase
-        .from("messages")
-        .update({ read: true })
-        .eq("sender_id", threadId)
-        .eq("receiver_id", currentUserId);
       
-      if (error) {
-        console.error("Error marking thread as read:", error);
+      // First, verify there are unread messages for this thread
+      const { data: unreadMessages, error: checkError } = await supabase
+        .from("messages")
+        .select("id")
+        .eq("sender_id", threadId)
+        .eq("receiver_id", currentUserId)
+        .eq("read", false);
+      
+      if (checkError) {
+        console.error("Error checking unread messages:", checkError);
         return;
       }
-
-      // Update local state
-      setUnreadThreadIds(prev => prev.filter(id => id !== threadId));
       
-      console.log("Thread marked as read:", threadId);
+      // Only update if there are unread messages
+      if (unreadMessages && unreadMessages.length > 0) {
+        const { error } = await supabase
+          .from("messages")
+          .update({ read: true })
+          .eq("sender_id", threadId)
+          .eq("receiver_id", currentUserId);
+        
+        if (error) {
+          console.error("Error marking thread as read:", error);
+          return;
+        }
+
+        // Update local state
+        setUnreadThreadIds(prev => prev.filter(id => id !== threadId));
+        
+        // Force a refresh of the message list
+        setRefreshKey(prev => prev + 1);
+        
+        console.log("Thread marked as read:", threadId);
+      } else {
+        console.log("No unread messages found for thread:", threadId);
+      }
     } catch (error) {
       console.error("Error marking thread as read:", error);
     }
