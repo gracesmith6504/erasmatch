@@ -30,10 +30,7 @@ export const MessagesTabs = ({
       value={activeTab} 
       onValueChange={(value) => {
         console.log("Tab changed to:", value);
-        // Ensure we're setting a valid tab value
-        if (value === "direct" || value === "groups" || value === "cities") {
-          setActiveTab(value);
-        }
+        setActiveTab(value as "direct" | "groups" | "cities");
       }}
       className={className}
     >

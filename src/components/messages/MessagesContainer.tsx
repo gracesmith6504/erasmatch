@@ -118,48 +118,30 @@ export const MessagesContainer = ({
       .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
   }, [selectedThread, currentUserId, messages]);
 
-  // Updated handlers for tab switching
   const handleSelectGroupChat = (universityName: string) => {
     console.log("Selecting group chat:", universityName);
+    setSelectedGroupChat(universityName || null);
+    setSelectedCityChat(null);
+    setSelectedThread(null);
     if (universityName) {
       setActiveTab("groups");
-      setSelectedGroupChat(universityName);
-      // Clear other selections
-      setSelectedCityChat(null);
-      setSelectedThread(null);
-    } else {
-      setSelectedGroupChat(null);
     }
   };
 
   const handleSelectCityChat = (cityName: string) => {
     console.log("Selecting city chat:", cityName);
+    setSelectedCityChat(cityName || null);
+    setSelectedGroupChat(null);
+    setSelectedThread(null);
     if (cityName) {
       setActiveTab("cities");
-      setSelectedCityChat(cityName);
-      // Clear other selections
-      setSelectedGroupChat(null);
-      setSelectedThread(null);
-    } else {
-      setSelectedCityChat(null);
     }
   };
 
-  // Updated handler for thread selection
-  const handleSelectThread = (thread: ChatThread) => {
-    console.log("Selecting thread:", thread.partner.name);
-    setSelectedThread(thread);
-    setActiveTab("direct");
-    // Clear other selections
-    setSelectedGroupChat(null);
-    setSelectedCityChat(null);
-  };
-
-  // Wrapper for onSendMessage that preserves tab state
+  // Custom wrapper for onSendMessage to avoid affecting tab state
   const handleSendMessage = async (receiverId: string, content: string) => {
-    console.log("Sending message to:", receiverId);
     await onSendMessage(receiverId, content);
-    // Explicitly do not change tab state here
+    // We don't manipulate the tab state here
   };
 
   const getInitials = (name: string | null) => {
@@ -178,7 +160,7 @@ export const MessagesContainer = ({
       <MobileMessagesView
         threads={threads}
         selectedThread={selectedThread}
-        setSelectedThread={handleSelectThread}
+        setSelectedThread={setSelectedThread}
         getInitials={getInitials}
         profiles={profiles}
         currentUserProfile={currentUserProfile}
@@ -200,7 +182,7 @@ export const MessagesContainer = ({
       <DesktopMessagesView
         threads={threads}
         selectedThread={selectedThread}
-        setSelectedThread={handleSelectThread}
+        setSelectedThread={setSelectedThread}
         getInitials={getInitials}
         profiles={profiles}
         currentUserProfile={currentUserProfile}

@@ -86,7 +86,7 @@ export const DesktopMessagesView = ({
         />
       </div>
       
-      {/* Conversation area - with strict tab condition checks */}
+      {/* Conversation area */}
       {activeTab === "direct" && selectedThread ? (
         <DirectMessagePanel
           thread={selectedThread}
