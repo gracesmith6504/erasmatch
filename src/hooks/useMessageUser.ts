@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 export const useMessageUser = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const { currentUserId } = useAuth();
-  const { messages, setMessages } = useData();
+  const { messages } = useData();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -35,32 +35,13 @@ export const useMessageUser = () => {
         return;
       }
 
-      // No conversation exists, create a new message
-      const newMessage = {
-        sender_id: currentUserId,
-        receiver_id: receiverId,
-        content: "👋 Hey!",
-      };
-
-      const { data, error } = await supabase
-        .from("messages")
-        .insert(newMessage)
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      // Add the new message to local state (optimistic UI)
-      if (data) {
-        setMessages((prev) => [data as Message, ...prev]);
-      }
-
-      // Navigate to messages page with this user's conversation open
+      // No conversation exists, but don't create a message yet
+      // Just navigate to messages page with this user's conversation open
       navigate(`/messages?userId=${receiverId}`);
     } catch (error) {
-      console.error("Error sending message:", error);
+      console.error("Error processing message action:", error);
       toast({
-        title: "Could not send message",
+        title: "Could not open message thread",
         description: "Please try again later",
         variant: "destructive",
       });
