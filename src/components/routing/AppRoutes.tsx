@@ -31,10 +31,7 @@ const AppRoutes = () => {
     handleLogin 
   } = useAuth();
   
-  const { 
-    profiles, 
-    handleSendMessage 
-  } = useData();
+  const { profiles, handleSendMessage } = useData();
 
   return (
     <Routes>
@@ -86,12 +83,7 @@ const AppRoutes = () => {
         path="/messages" 
         element={
           <ProtectedRoute>
-            <Messages 
-              messages={useData().messages}
-              profiles={profiles}
-              currentUserId={currentUserId!}
-              onSendMessage={handleSendMessage}
-            />
+            <Messages />
           </ProtectedRoute>
         } 
       />

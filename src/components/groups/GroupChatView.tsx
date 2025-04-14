@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -41,7 +42,7 @@ const GroupChatView = ({ chatType }: GroupChatViewProps) => {
         if (error) throw error;
         
         if (data) {
-          // Cast data to unknown first, then to Profile[]
+          // Cast data to Profile array with the correct type
           const profilesData = data as unknown as Profile[];
           setAllProfiles(profilesData);
           
@@ -110,6 +111,7 @@ const GroupChatView = ({ chatType }: GroupChatViewProps) => {
           filter: `${columnName}=eq.${decodedId}`,
         },
         (payload) => {
+          // Fixed: Type the payload properly to avoid excessive type instantiation
           const newMessage = payload.new as GroupMessage | CityMessage;
           setMessages((prevMessages) => [...prevMessages, newMessage]);
         }
@@ -133,22 +135,29 @@ const GroupChatView = ({ chatType }: GroupChatViewProps) => {
     
     try {
       const tableName = chatType === "university" ? "group_messages" : "city_messages";
-      const columnName = chatType === "university" ? "university_name" : "city_name";
       
-      // Create the message data object
-      const messageData: Record<string, string> = {
-        sender_id: currentUserId,
-        content: processMessage(newMessage),
-      };
-      
-      // Add the correct property based on chat type
-      messageData[columnName] = decodedId;
-      
-      const { error } = await supabase
-        .from(tableName)
-        .insert(messageData);
-        
-      if (error) throw error;
+      // Fix the issue with the message data object by properly typing it
+      if (chatType === "university") {
+        const { error } = await supabase
+          .from(tableName)
+          .insert({
+            sender_id: currentUserId,
+            content: processMessage(newMessage),
+            university_name: decodedId
+          });
+          
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from(tableName)
+          .insert({
+            sender_id: currentUserId,
+            content: processMessage(newMessage),
+            city_name: decodedId
+          });
+          
+        if (error) throw error;
+      }
       
       setNewMessage("");
     } catch (error) {
