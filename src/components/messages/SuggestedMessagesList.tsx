@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Check, Edit } from "lucide-react";
+import { Check, Edit, X } from "lucide-react";
 import { 
   AlertDialog,
   AlertDialogAction,
@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { SuggestedMessage } from "./SuggestedMessage";
 import { useData } from "@/contexts/DataContext";
+import { Card } from "@/components/ui/card";
 
 type SuggestedMessagesListProps = {
   suggestions: string[];
@@ -31,6 +32,7 @@ export const SuggestedMessagesList = ({
 }: SuggestedMessagesListProps) => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [selectedMessage, setSelectedMessage] = useState("");
+  const [isVisible, setIsVisible] = useState(true);
   const { logPrompt } = useData();
 
   const handleSuggestionClick = (text: string) => {
@@ -65,10 +67,26 @@ export const SuggestedMessagesList = ({
     setShowConfirmation(false);
   };
 
+  const handleDismiss = () => {
+    setIsVisible(false);
+  };
+
+  if (!isVisible) {
+    return null;
+  }
+
   return (
     <>
-      <div className="mb-3">
-        <p className="text-sm text-muted-foreground mb-2">Not sure what to say? Try one of these:</p>
+      <Card className="relative mb-4 p-4">
+        <button 
+          onClick={handleDismiss} 
+          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+          aria-label="Dismiss suggestions"
+        >
+          <X className="h-4 w-4" />
+        </button>
+        
+        <p className="text-sm text-muted-foreground mb-3">Not sure what to say? Try one of these!</p>
         <div className="flex flex-wrap gap-2">
           {suggestions.map((suggestion, index) => (
             <SuggestedMessage 
@@ -78,7 +96,7 @@ export const SuggestedMessagesList = ({
             />
           ))}
         </div>
-      </div>
+      </Card>
 
       <AlertDialog open={showConfirmation} onOpenChange={setShowConfirmation}>
         <AlertDialogContent>

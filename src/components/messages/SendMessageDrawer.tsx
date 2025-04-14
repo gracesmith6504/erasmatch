@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
 import { Send, X } from "lucide-react";
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Textarea } from "@/components/ui/textarea";
 import { SuggestedMessagesList } from "./SuggestedMessagesList";
+import { Profile } from "@/types";
 
 type SendMessageDrawerProps = {
   isOpen: boolean;
@@ -25,15 +26,49 @@ export const SendMessageDrawer = ({
 }: SendMessageDrawerProps) => {
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
-  const { handleSendMessage } = useData();
+  const [suggestedMessages, setSuggestedMessages] = useState<string[]>([]);
+  const { handleSendMessage, profiles } = useData();
   const { currentUserId } = useAuth();
 
-  // Example suggested messages - these would be replaced with your actual suggestions
-  const suggestedMessages = [
-    "Hi there! I noticed we're in the same city. Want to grab coffee sometime?",
-    "Hello! I'm also studying abroad. How are you finding your experience so far?",
-    "Hey! Do you have any tips for good places to eat around campus?"
-  ];
+  useEffect(() => {
+    if (isOpen && currentUserId && recipientId) {
+      const currentProfile = profiles.find(p => p.id === currentUserId);
+      const recipientProfile = profiles.find(p => p.id === recipientId);
+      
+      if (currentProfile && recipientProfile) {
+        generateSuggestedMessages(currentProfile, recipientProfile);
+      }
+    }
+  }, [isOpen, currentUserId, recipientId, profiles]);
+
+  const generateSuggestedMessages = (currentUser: Profile, recipient: Profile) => {
+    const suggestions: string[] = [];
+    
+    // Check for matching university
+    if (currentUser?.university && recipient.university && 
+        currentUser.university === recipient.university) {
+      suggestions.push(`hi! saw ur also going to ${recipient.university}, figured i'd say hey 👋`);
+    }
+    
+    // Check for matching city
+    if (currentUser?.city && recipient.city && 
+        currentUser.city === recipient.city) {
+      suggestions.push(`Hey! I saw you're also going to ${recipient.city} — do you have housing yet?`);
+    }
+    
+    // Check for matching home university
+    if (currentUser?.home_university && recipient.home_university && 
+        currentUser.home_university === recipient.home_university) {
+      suggestions.push(`Saw you're also from ${recipient.home_university}, had to say hey 👋`);
+    }
+    
+    // Always add a general fallback
+    suggestions.push("hey 👋 just saying hi before things get busy");
+    
+    // Randomize and limit to 3 suggestions
+    const shuffledSuggestions = [...suggestions].sort(() => 0.5 - Math.random());
+    setSuggestedMessages(shuffledSuggestions.slice(0, 3));
+  };
 
   const handleSend = async () => {
     if (!message.trim() || !currentUserId) return;
@@ -51,6 +86,10 @@ export const SendMessageDrawer = ({
     } finally {
       setIsSending(false);
     }
+  };
+
+  const handleSelectSuggestion = (text: string) => {
+    setMessage(text);
   };
 
   return (
@@ -71,7 +110,7 @@ export const SendMessageDrawer = ({
           {currentUserId && (
             <SuggestedMessagesList
               suggestions={suggestedMessages}
-              onSelectMessage={(text) => setMessage(text)}
+              onSelectMessage={handleSelectSuggestion}
               currentMessage={message}
               receiverId={recipientId}
               currentUserId={currentUserId}
