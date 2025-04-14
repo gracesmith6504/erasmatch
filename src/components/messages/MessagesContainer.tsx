@@ -22,8 +22,7 @@ export const MessagesContainer = ({
 }: MessagesContainerProps) => {
   const isMobile = useIsMobile();
   const [selectedThread, setSelectedThread] = useState<ChatThread | null>(null);
-  const [activeTab, setActiveTab] = useState<"direct" | "groups" | "cities">("direct");
-  const [selectedGroupChat, setSelectedGroupChat] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"direct" | "cities">("direct");
   const [selectedCityChat, setSelectedCityChat] = useState<string | null>(null);
   const [messagesSent, setMessagesSent] = useState(0); // Counter to trigger thread refresh
   const [refreshKey, setRefreshKey] = useState(0); // New key for forcing component refresh
@@ -69,7 +68,7 @@ export const MessagesContainer = ({
         lastMessage
       };
     }).filter(Boolean) as ChatThread[];
-  }, [currentUserId, messages, profiles, messagesSent, refreshKey]); // Added refreshKey as a dependency
+  }, [currentUserId, messages, profiles, messagesSent, refreshKey]);
 
   // Handle initial user selection or default to first thread
   useEffect(() => {
@@ -97,8 +96,7 @@ export const MessagesContainer = ({
         // Make sure we're on the direct messages tab
         setActiveTab("direct");
         
-        // Reset the group and city selections
-        setSelectedGroupChat(null);
+        // Reset the city selection
         setSelectedCityChat(null);
       }
     } 
@@ -106,7 +104,7 @@ export const MessagesContainer = ({
     else if (threads.length > 0 && !selectedThread && !isMobile && activeTab === "direct") {
       setSelectedThread(threads[0]);
     }
-  }, [initialSelectedUser, threads, profiles, selectedThread, isMobile, activeTab, refreshKey]); // Added refreshKey
+  }, [initialSelectedUser, threads, profiles, selectedThread, isMobile, activeTab, refreshKey]);
 
   // Get messages for selected thread
   const threadMessages = useMemo(() => {
@@ -118,27 +116,16 @@ export const MessagesContainer = ({
              (m.receiver_id === currentUserId && m.sender_id === selectedThread.partner.id)
       )
       .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
-  }, [selectedThread, currentUserId, messages, messagesSent, refreshKey]); // Added refreshKey
+  }, [selectedThread, currentUserId, messages, messagesSent, refreshKey]);
 
   // Handle prompt selection - reset state
   const handlePromptUsed = () => {
     console.log("Prompt was used - will reset state after message is sent");
   };
 
-  const handleSelectGroupChat = (universityName: string) => {
-    console.log("Selecting group chat:", universityName);
-    setSelectedGroupChat(universityName || null);
-    setSelectedCityChat(null);
-    setSelectedThread(null);
-    if (universityName) {
-      setActiveTab("groups");
-    }
-  };
-
   const handleSelectCityChat = (cityName: string) => {
     console.log("Selecting city chat:", cityName);
     setSelectedCityChat(cityName || null);
-    setSelectedGroupChat(null);
     setSelectedThread(null);
     if (cityName) {
       setActiveTab("cities");
@@ -176,7 +163,7 @@ export const MessagesContainer = ({
   };
 
   // Show mobile view when no conversation selected on mobile
-  if (isMobile && !selectedThread && !selectedGroupChat && !selectedCityChat) {
+  if (isMobile && !selectedThread && !selectedCityChat) {
     return (
       <MobileMessagesView
         threads={threads}
@@ -185,8 +172,6 @@ export const MessagesContainer = ({
         getInitials={getInitials}
         profiles={profiles}
         currentUserProfile={currentUserProfile}
-        handleSelectGroupChat={handleSelectGroupChat}
-        selectedGroupChat={selectedGroupChat}
         handleSelectCityChat={handleSelectCityChat}
         selectedCityChat={selectedCityChat}
         activeTab={activeTab}
@@ -207,8 +192,6 @@ export const MessagesContainer = ({
         getInitials={getInitials}
         profiles={profiles}
         currentUserProfile={currentUserProfile}
-        handleSelectGroupChat={handleSelectGroupChat}
-        selectedGroupChat={selectedGroupChat}
         handleSelectCityChat={handleSelectCityChat}
         selectedCityChat={selectedCityChat}
         activeTab={activeTab}
