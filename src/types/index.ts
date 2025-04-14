@@ -10,7 +10,7 @@ export type Profile = {
   avatar_url: string | null;
   created_at: string;
   home_university: string | null;
-  country?: string | null;  // Make country optional with ?
+  country: string | null;
   personality_tags?: string[] | null;
   interests?: string | null;
   course?: string | null;

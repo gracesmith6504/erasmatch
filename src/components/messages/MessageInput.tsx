@@ -4,7 +4,6 @@ import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SuggestedPrompts } from "./SuggestedPrompts";
-import { Profile } from "@/types";
 
 interface MessageInputProps {
   onSendMessage: () => Promise<void>;
@@ -13,8 +12,6 @@ interface MessageInputProps {
   setNewMessage: (message: string) => void;
   showSuggestedPrompts?: boolean;
   onDismissSuggestedPrompts?: () => void;
-  currentUserProfile?: Profile | null;
-  partnerProfile?: Profile | null;
 }
 
 export const MessageInput = ({
@@ -24,8 +21,6 @@ export const MessageInput = ({
   setNewMessage,
   showSuggestedPrompts = false,
   onDismissSuggestedPrompts = () => {},
-  currentUserProfile,
-  partnerProfile,
 }: MessageInputProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,8 +37,6 @@ export const MessageInput = ({
         <SuggestedPrompts
           onSelectPrompt={handleSelectPrompt}
           onDismiss={onDismissSuggestedPrompts}
-          currentUserProfile={currentUserProfile}
-          partnerProfile={partnerProfile}
         />
       )}
       <form onSubmit={handleSubmit} className="flex space-x-2">

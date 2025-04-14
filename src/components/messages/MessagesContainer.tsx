@@ -22,6 +22,9 @@ export const MessagesContainer = ({
 }: MessagesContainerProps) => {
   const isMobile = useIsMobile();
   const [selectedThread, setSelectedThread] = useState<ChatThread | null>(null);
+  const [activeTab, setActiveTab] = useState<"direct" | "groups" | "cities">("direct");
+  const [selectedGroupChat, setSelectedGroupChat] = useState<string | null>(null);
+  const [selectedCityChat, setSelectedCityChat] = useState<string | null>(null);
 
   const currentUserProfile = useMemo(() => {
     return profiles.find(profile => profile.id === currentUserId) || null;
@@ -87,13 +90,20 @@ export const MessagesContainer = ({
             lastMessage: null
           });
         }
+        
+        // Make sure we're on the direct messages tab
+        setActiveTab("direct");
+        
+        // Reset the group and city selections
+        setSelectedGroupChat(null);
+        setSelectedCityChat(null);
       }
     } 
     // If no initial user and no thread selected, default to first thread on desktop
-    else if (threads.length > 0 && !selectedThread && !isMobile) {
+    else if (threads.length > 0 && !selectedThread && !isMobile && activeTab === "direct") {
       setSelectedThread(threads[0]);
     }
-  }, [initialSelectedUser, threads, profiles, selectedThread, isMobile]);
+  }, [initialSelectedUser, threads, profiles, selectedThread, isMobile, activeTab]);
 
   // Get messages for selected thread
   const threadMessages = useMemo(() => {
@@ -107,6 +117,24 @@ export const MessagesContainer = ({
       .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
   }, [selectedThread, currentUserId, messages]);
 
+  const handleSelectGroupChat = (universityName: string) => {
+    setSelectedGroupChat(universityName || null);
+    setSelectedCityChat(null);
+    setSelectedThread(null);
+    if (isMobile && universityName) {
+      setActiveTab("groups");
+    }
+  };
+
+  const handleSelectCityChat = (cityName: string) => {
+    setSelectedCityChat(cityName || null);
+    setSelectedGroupChat(null);
+    setSelectedThread(null);
+    if (isMobile && cityName) {
+      setActiveTab("cities");
+    }
+  };
+
   const getInitials = (name: string | null) => {
     if (!name) return "?";
     return name
@@ -118,7 +146,7 @@ export const MessagesContainer = ({
   };
 
   // Show mobile view when no conversation selected on mobile
-  if (isMobile && !selectedThread) {
+  if (isMobile && !selectedThread && !selectedGroupChat && !selectedCityChat) {
     return (
       <MobileMessagesView
         threads={threads}
@@ -126,6 +154,13 @@ export const MessagesContainer = ({
         setSelectedThread={setSelectedThread}
         getInitials={getInitials}
         profiles={profiles}
+        currentUserProfile={currentUserProfile}
+        handleSelectGroupChat={handleSelectGroupChat}
+        selectedGroupChat={selectedGroupChat}
+        handleSelectCityChat={handleSelectCityChat}
+        selectedCityChat={selectedCityChat}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
       />
     );
   }
@@ -142,6 +177,12 @@ export const MessagesContainer = ({
         getInitials={getInitials}
         profiles={profiles}
         currentUserProfile={currentUserProfile}
+        handleSelectGroupChat={handleSelectGroupChat}
+        selectedGroupChat={selectedGroupChat}
+        handleSelectCityChat={handleSelectCityChat}
+        selectedCityChat={selectedCityChat}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
         threadMessages={threadMessages}
         currentUserId={currentUserId}
         isMobile={isMobile}
