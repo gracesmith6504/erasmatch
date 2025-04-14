@@ -1,130 +1,70 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { GroupMessage, CityMessage } from "@/types";
+import { toast } from "sonner";
 
-type UseGroupMessagesProps = {
-  chatType: "university" | "city";
-  chatName: string;
+export type ChatMessage = {
+  id: string;
+  sender_id: string;
+  content: string;
+  created_at: string;
+  university?: string;
+  city?: string;
 };
 
-// Use more specific type for the payload to avoid deep recursion
-type MessagePayload = {
-  new: {
-    id: string;
-    sender_id: string;
-    content: string;
-    created_at: string;
-    university_name?: string;
-    city_name?: string;
-  };
-};
+export function useGroupMessages(chatType: "university" | "city", groupId: string) {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export const useGroupMessages = ({ chatType, chatName }: UseGroupMessagesProps) => {
-  // Use union type instead of generic type parameter
-  const [messages, setMessages] = useState<(GroupMessage | CityMessage)[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const decodedId = groupId ? decodeURIComponent(groupId) : "";
 
   useEffect(() => {
+    if (!decodedId) return;
+
+    const tableName = chatType === "university" ? "group_messages" : "city_messages";
+    const columnName = chatType === "university" ? "university" : "city";
+
     const fetchMessages = async () => {
+      setLoading(true);
       try {
-        setIsLoading(true);
-        
-        const tableName = chatType === "university" ? "group_messages" : "city_messages";
-        const nameField = chatType === "university" ? "university_name" : "city_name";
-        
         const { data, error } = await supabase
           .from(tableName)
-          .select("*")
-          .eq(nameField, chatName)
+          .select("id, sender_id, content, created_at, university, city")
+          .eq(columnName, decodedId)
           .order("created_at", { ascending: true });
-          
-        if (error) {
-          throw error;
-        }
-        
+
+        if (error) throw error;
         setMessages(data || []);
-      } catch (err: any) {
-        setError(err.message);
-        console.error(`Error fetching ${chatType} messages:`, err);
+      } catch (err) {
+        console.error("Failed to load messages:", err);
+        toast.error("Could not fetch group messages");
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
-    
+
     fetchMessages();
-    
-    // Set up real-time subscription
-    const tableName = chatType === "university" ? "group_messages" : "city_messages";
-    const nameField = chatType === "university" ? "university_name" : "city_name";
-    
+
     const channel = supabase
-      .channel(`${chatType}-${chatName}-changes`)
+      .channel(`${chatType}-messages`) // avoids conflicts
       .on(
         "postgres_changes",
         {
           event: "INSERT",
           schema: "public",
           table: tableName,
-          filter: `${nameField}=eq.${chatName}`,
+          filter: `${columnName}=eq.${decodedId}`,
         },
-        (payload: MessagePayload) => {
-          // Cast the new message based on chatType to ensure proper typing
-          if (chatType === "university") {
-            const newMessage = payload.new as GroupMessage;
-            setMessages((prevMessages) => [...prevMessages, newMessage]);
-          } else {
-            const newMessage = payload.new as CityMessage;
-            setMessages((prevMessages) => [...prevMessages, newMessage]);
-          }
+        (payload) => {
+          const newMsg: ChatMessage = payload.new as ChatMessage;
+          setMessages((prev) => [...prev, newMsg]);
         }
       )
       .subscribe();
-      
+
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [chatType, chatName]);
-  
-  const sendMessage = async (content: string, senderId: string) => {
-    try {
-      if (chatType === "university") {
-        // Insert into group_messages for university chats
-        const { error } = await supabase
-          .from("group_messages")
-          .insert({
-            sender_id: senderId,
-            university_name: chatName,
-            content: content.trim(),
-          });
-        
-        if (error) throw error;
-      } else {
-        // Insert into city_messages for city chats
-        const { error } = await supabase
-          .from("city_messages")
-          .insert({
-            sender_id: senderId,
-            city_name: chatName,
-            content: content.trim(),
-          });
-        
-        if (error) throw error;
-      }
-      
-      return true;
-    } catch (err: any) {
-      setError(err.message);
-      console.error(`Error sending ${chatType} message:`, err);
-      return false;
-    }
-  };
-  
-  return {
-    messages,
-    isLoading,
-    error,
-    sendMessage,
-  };
-};
+  }, [chatType, decodedId]);
+
+  return { messages, loading };
+}
