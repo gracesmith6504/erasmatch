@@ -29,17 +29,17 @@ export function useGroupMessages(chatType: "university" | "city", groupId: strin
     const fetchMessages = async () => {
       setLoading(true);
       try {
-        // Fetch messages with the correct column names
+        // Use explicit type annotation to prevent deep type inference
         const { data, error } = await supabase
           .from(tableName)
-          .select("*")
+          .select("id, sender_id, content, created_at")
           .eq(columnName, decodedId)
           .order("created_at", { ascending: true });
 
         if (error) throw error;
         
         // Map the data to our ChatMessage type with the correct fields
-        const mappedMessages: ChatMessage[] = data.map((item: any) => ({
+        const mappedMessages: ChatMessage[] = (data || []).map((item: any) => ({
           id: item.id,
           sender_id: item.sender_id,
           content: item.content,
@@ -98,7 +98,7 @@ export function useGroupMessages(chatType: "university" | "city", groupId: strin
       const columnName = chatType === "university" ? "university_name" : "city_name";
       
       // Create the message data with explicit typing for the dynamic field
-      let messageData;
+      let messageData: Record<string, any>;
       if (chatType === "university") {
         messageData = {
           sender_id: currentUserId,
