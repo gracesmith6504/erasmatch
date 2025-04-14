@@ -3,34 +3,70 @@ import { useState } from "react";
 import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { GroupMessageSuggestions } from "./GroupMessageSuggestions";
 
 interface GroupChatInputProps {
   onSendMessage: (message: string) => Promise<void>;
   isSending: boolean;
+  universityName: string;
+  showSuggestions?: boolean;
+  onSuggestionUsed?: () => void;
 }
 
-export const GroupChatInput = ({ onSendMessage, isSending }: GroupChatInputProps) => {
+export const GroupChatInput = ({ 
+  onSendMessage, 
+  isSending, 
+  universityName,
+  showSuggestions = false,
+  onSuggestionUsed = () => {}
+}: GroupChatInputProps) => {
   const [newMessage, setNewMessage] = useState("");
+  const [showPrompts, setShowPrompts] = useState(showSuggestions);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (newMessage.trim()) {
       onSendMessage(newMessage);
       setNewMessage("");
+      if (showPrompts) {
+        setShowPrompts(false);
+        onSuggestionUsed();
+      }
     }
   };
 
+  const handleSelectPrompt = (prompt: string) => {
+    setNewMessage(prompt);
+    setShowPrompts(false);
+    onSuggestionUsed();
+  };
+
+  const handleDismissPrompts = () => {
+    setShowPrompts(false);
+    onSuggestionUsed();
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="flex space-x-2">
-      <Input
-        placeholder="Type a message to the group..."
-        value={newMessage}
-        onChange={(e) => setNewMessage(e.target.value)}
-        disabled={isSending}
-      />
-      <Button type="submit" disabled={!newMessage.trim() || isSending}>
-        <Send className="h-4 w-4" />
-      </Button>
-    </form>
+    <div className="space-y-4">
+      {showPrompts && (
+        <GroupMessageSuggestions
+          chatType="university"
+          universityName={universityName}
+          onSelectPrompt={handleSelectPrompt}
+          onDismiss={handleDismissPrompts}
+        />
+      )}
+      <form onSubmit={handleSubmit} className="flex space-x-2">
+        <Input
+          placeholder="Type a message to the group..."
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          disabled={isSending}
+        />
+        <Button type="submit" disabled={!newMessage.trim() || isSending}>
+          <Send className="h-4 w-4" />
+        </Button>
+      </form>
+    </div>
   );
 };

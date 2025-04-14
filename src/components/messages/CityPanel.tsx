@@ -7,21 +7,28 @@ import { toast } from "sonner";
 import { CityParticipantsInfo } from "./CityParticipantsInfo";
 import { CityMessageList } from "./CityMessageList";
 import { CityInput } from "./CityInput";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 type CityPanelProps = {
   cityName: string;
   currentUserId: string;
   profiles: Profile[];
+  onBack?: () => void;
+  isFullScreen?: boolean;
 };
 
 export const CityPanel = ({
   cityName,
   currentUserId,
   profiles,
+  onBack,
+  isFullScreen = false,
 }: CityPanelProps) => {
   const [messages, setMessages] = useState<any[]>([]);
   const [isSending, setIsSending] = useState(false);
   const [participants, setParticipants] = useState<Profile[]>([]);
+  const [hasSentMessage, setHasSentMessage] = useState(false);
   
   // Get profiles of students in this city
   useEffect(() => {
@@ -51,6 +58,10 @@ export const CityPanel = ({
         
         if (data) {
           setMessages(data);
+          
+          // Check if user has sent any messages in this chat
+          const userMessages = data.filter(msg => msg.sender_id === currentUserId);
+          setHasSentMessage(userMessages.length > 0);
         }
       } catch (error: any) {
         console.error("Error fetching city messages:", error.message);
@@ -73,6 +84,11 @@ export const CityPanel = ({
         (payload) => {
           const newMessage = payload.new;
           setMessages((prevMessages) => [...prevMessages, newMessage]);
+          
+          // If this is the current user's message, update the hasSentMessage state
+          if (newMessage.sender_id === currentUserId) {
+            setHasSentMessage(true);
+          }
         }
       )
       .subscribe();
@@ -80,7 +96,7 @@ export const CityPanel = ({
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [cityName]);
+  }, [cityName, currentUserId]);
   
   // Send city message
   const handleSendMessage = async (message: string) => {
@@ -95,6 +111,7 @@ export const CityPanel = ({
         });
       
       if (error) throw error;
+      setHasSentMessage(true);
       
     } catch (error: any) {
       toast.error("Failed to send message: " + error.message);
@@ -103,14 +120,31 @@ export const CityPanel = ({
       setIsSending(false);
     }
   };
+
+  const handleSuggestionUsed = () => {
+    console.log("Suggestion was used in city chat");
+  };
   
   return (
     <div className="flex flex-col h-full">
       {/* City header */}
       <div className="p-4 border-b flex items-center justify-between">
-        <div>
-          <h2 className="font-medium text-lg">🏙️ {cityName} Erasmus Chat</h2>
-          <CityParticipantsInfo count={participants.length} />
+        <div className="flex items-center">
+          {isFullScreen && onBack && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={onBack} 
+              className="mr-2"
+            >
+              <ArrowLeft className="h-4 w-4 mr-1" />
+              Back to Groups
+            </Button>
+          )}
+          <div>
+            <h2 className="font-medium text-lg">🏙️ {cityName} Erasmus Chat</h2>
+            <CityParticipantsInfo count={participants.length} />
+          </div>
         </div>
       </div>
       
@@ -128,6 +162,9 @@ export const CityPanel = ({
         <CityInput
           onSendMessage={handleSendMessage}
           isSending={isSending}
+          cityName={cityName}
+          showSuggestions={!hasSentMessage}
+          onSuggestionUsed={handleSuggestionUsed}
         />
       </div>
     </div>

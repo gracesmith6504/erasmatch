@@ -4,6 +4,7 @@ import { ThreadsList } from "./ThreadsList";
 import { getInitials } from "./utils/messageUtils";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 interface MobileMessagesViewProps {
   threads: any[];
