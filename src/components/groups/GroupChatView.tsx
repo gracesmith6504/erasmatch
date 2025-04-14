@@ -42,14 +42,15 @@ const GroupChatView = ({ chatType }: GroupChatViewProps) => {
         if (error) throw error;
         
         if (data) {
-          setAllProfiles(data);
+          // Explicitly cast the data to Profile[] to handle optional fields
+          setAllProfiles(data as Profile[]);
           // Filter profiles based on chat type
           const filteredProfiles = data.filter((profile) => {
             return chatType === "university" 
               ? profile.university === decodedId
               : profile.city === decodedId;
           });
-          setParticipants(filteredProfiles);
+          setParticipants(filteredProfiles as Profile[]);
         }
       } catch (error) {
         console.error(`Error fetching profiles:`, error);
@@ -131,11 +132,13 @@ const GroupChatView = ({ chatType }: GroupChatViewProps) => {
       const tableName = chatType === "university" ? "group_messages" : "city_messages";
       const columnName = chatType === "university" ? "university_name" : "city_name";
       
-      const messageData = {
+      const messageData: any = {
         sender_id: currentUserId,
-        [columnName]: decodedId,
         content: processMessage(newMessage),
       };
+      
+      // Add the correct property based on chat type
+      messageData[columnName] = decodedId;
       
       const { error } = await supabase
         .from(tableName)
