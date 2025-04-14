@@ -13,13 +13,16 @@ type GroupChatViewProps = {
   chatType: "university" | "city";
 };
 
-type MessageData = {
-  id: string;
-  sender_id: string;
-  content: string;
-  created_at: string;
-  university_name?: string;
-  city_name?: string;
+// Define a more specific type for the payload to avoid deep type instantiation
+type MessagePayload = {
+  new: {
+    id: string;
+    sender_id: string;
+    content: string;
+    created_at: string;
+    university_name?: string;
+    city_name?: string;
+  };
 };
 
 const GroupChatView = ({ chatType }: GroupChatViewProps) => {
@@ -110,7 +113,7 @@ const GroupChatView = ({ chatType }: GroupChatViewProps) => {
           table: tableName,
           filter: `${columnName}=eq.${decodedId}`,
         },
-        (payload: { new: MessageData }) => {
+        (payload: MessagePayload) => {
           const newMsg = {
             id: payload.new.id,
             sender_id: payload.new.sender_id,
