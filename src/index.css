@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
@@ -280,6 +279,15 @@
   
   .bottom-nav-item-active {
     @apply text-erasmatch-blue;
+  }
+
+  .message-input-animation {
+    animation: highlight-message 1s ease;
+  }
+
+  @keyframes highlight-message {
+    0% { background-color: rgba(79, 70, 229, 0.1); }
+    100% { background-color: transparent; }
   }
 }
 

@@ -30,6 +30,7 @@ export const MessageInput = ({
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           disabled={isSending}
+          className="message-input"
         />
         <Button type="submit" disabled={!newMessage.trim() || isSending}>
           <Send className="h-4 w-4" />
