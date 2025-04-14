@@ -13,6 +13,7 @@ interface DirectMessagePanelProps {
   isMobile: boolean;
   onBack?: () => void;
   onSendMessage: (receiverId: string, content: string) => void;
+  currentUserProfile?: Profile | null;
 }
 
 export const DirectMessagePanel = ({
@@ -22,6 +23,7 @@ export const DirectMessagePanel = ({
   isMobile,
   onBack,
   onSendMessage,
+  currentUserProfile,
 }: DirectMessagePanelProps) => {
   const [newMessage, setNewMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
@@ -73,6 +75,8 @@ export const DirectMessagePanel = ({
         setNewMessage={setNewMessage}
         showSuggestedPrompts={showSuggestedPrompts}
         onDismissSuggestedPrompts={() => setShowSuggestedPrompts(false)}
+        currentUserProfile={currentUserProfile}
+        partnerProfile={thread.partner}
       />
     </div>
   );

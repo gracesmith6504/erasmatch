@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -42,15 +41,18 @@ const GroupChatView = ({ chatType }: GroupChatViewProps) => {
         if (error) throw error;
         
         if (data) {
-          // Explicitly cast the data to Profile[] to handle optional fields
-          setAllProfiles(data as Profile[]);
+          // Cast data to unknown first, then to Profile[]
+          const profilesData = data as unknown as Profile[];
+          setAllProfiles(profilesData);
+          
           // Filter profiles based on chat type
-          const filteredProfiles = data.filter((profile) => {
+          const filteredProfiles = profilesData.filter((profile) => {
             return chatType === "university" 
               ? profile.university === decodedId
               : profile.city === decodedId;
           });
-          setParticipants(filteredProfiles as Profile[]);
+          
+          setParticipants(filteredProfiles);
         }
       } catch (error) {
         console.error(`Error fetching profiles:`, error);
@@ -80,7 +82,8 @@ const GroupChatView = ({ chatType }: GroupChatViewProps) => {
         if (error) throw error;
         
         if (data) {
-          setMessages(data);
+          // Cast data to the appropriate type
+          setMessages(data as (GroupMessage | CityMessage)[]);
         }
       } catch (error) {
         console.error(`Error fetching ${chatType} messages:`, error);
@@ -132,7 +135,8 @@ const GroupChatView = ({ chatType }: GroupChatViewProps) => {
       const tableName = chatType === "university" ? "group_messages" : "city_messages";
       const columnName = chatType === "university" ? "university_name" : "city_name";
       
-      const messageData: any = {
+      // Create the message data object
+      const messageData: Record<string, string> = {
         sender_id: currentUserId,
         content: processMessage(newMessage),
       };
