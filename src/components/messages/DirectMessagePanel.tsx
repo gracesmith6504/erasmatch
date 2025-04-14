@@ -10,6 +10,7 @@ interface DirectMessagePanelProps {
   thread: ChatThread;
   messages: Message[];
   currentUserId: string;
+  currentUserProfile: Profile | null;
   isMobile: boolean;
   onBack?: () => void;
   onSendMessage: (receiverId: string, content: string) => void;
@@ -20,6 +21,7 @@ export const DirectMessagePanel = ({
   thread,
   messages,
   currentUserId,
+  currentUserProfile,
   isMobile,
   onBack,
   onSendMessage,
@@ -78,6 +80,8 @@ export const DirectMessagePanel = ({
         showSuggestedPrompts={showSuggestedPrompts}
         onDismissSuggestedPrompts={() => setShowSuggestedPrompts(false)}
         onPromptUsed={onPromptUsed}
+        currentUser={currentUserProfile}
+        selectedUser={thread.partner}
       />
     </div>
   );

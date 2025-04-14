@@ -48,6 +48,7 @@ export const DesktopMessagesView = ({
           thread={selectedThread}
           messages={threadMessages}
           currentUserId={currentUserId}
+          currentUserProfile={currentUserProfile}
           isMobile={isMobile}
           onBack={() => setSelectedThread(null)}
           onSendMessage={onSendMessage}

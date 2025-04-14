@@ -4,6 +4,7 @@ import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SuggestedPrompts } from "./SuggestedPrompts";
+import { Profile } from "@/types";
 
 interface MessageInputProps {
   onSendMessage: () => Promise<void>;
@@ -12,7 +13,9 @@ interface MessageInputProps {
   setNewMessage: (message: string) => void;
   showSuggestedPrompts?: boolean;
   onDismissSuggestedPrompts?: () => void;
-  onPromptUsed?: () => void;  // New prop to handle prompt selection
+  onPromptUsed?: () => void;  // Callback for when a prompt is used
+  currentUser?: Profile | null;
+  selectedUser?: Profile | null;
 }
 
 export const MessageInput = ({
@@ -22,7 +25,9 @@ export const MessageInput = ({
   setNewMessage,
   showSuggestedPrompts = false,
   onDismissSuggestedPrompts = () => {},
-  onPromptUsed = () => {},  // Default no-op function
+  onPromptUsed = () => {},
+  currentUser,
+  selectedUser,
 }: MessageInputProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,6 +51,8 @@ export const MessageInput = ({
         <SuggestedPrompts
           onSelectPrompt={handleSelectPrompt}
           onDismiss={onDismissSuggestedPrompts}
+          currentUser={currentUser}
+          selectedUser={selectedUser}
         />
       )}
       <form onSubmit={handleSubmit} className="flex space-x-2">
