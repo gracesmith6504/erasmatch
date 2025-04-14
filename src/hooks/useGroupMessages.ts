@@ -97,27 +97,29 @@ export function useGroupMessages(chatType: "university" | "city", groupId: strin
       const tableName = chatType === "university" ? "group_messages" : "city_messages";
       const columnName = chatType === "university" ? "university_name" : "city_name";
       
-      // Create the message data with explicit typing for the dynamic field
-      let messageData: Record<string, any>;
+      // Create the message data with specific types based on chat type
       if (chatType === "university") {
-        messageData = {
-          sender_id: currentUserId,
-          content: content,
-          university_name: decodedId
-        };
+        const { error } = await supabase
+          .from(tableName)
+          .insert({
+            sender_id: currentUserId,
+            content: content,
+            university_name: decodedId
+          });
+        
+        if (error) throw error;
       } else {
-        messageData = {
-          sender_id: currentUserId,
-          content: content,
-          city_name: decodedId
-        };
+        const { error } = await supabase
+          .from(tableName)
+          .insert({
+            sender_id: currentUserId,
+            content: content,
+            city_name: decodedId
+          });
+        
+        if (error) throw error;
       }
       
-      const { error } = await supabase
-        .from(tableName)
-        .insert(messageData);
-      
-      if (error) throw error;
       return true;
     } catch (err: any) {
       console.error("Error sending message:", err);
