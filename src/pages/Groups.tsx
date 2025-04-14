@@ -49,7 +49,7 @@ const Groups = () => {
       for (const uni of universitiesData || []) {
         const { count: memberCount, error: countError } = await supabase
           .from('profiles')
-          .select('id', { count: true, head: false })
+          .select('id', { count: "exact", head: false })
           .eq('university', uni.name);
           
         if (countError) throw countError;
