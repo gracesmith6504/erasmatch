@@ -26,6 +26,7 @@ interface DesktopMessagesViewProps {
   currentUserId: string;
   isMobile: boolean;
   onSendMessage: (receiverId: string, content: string) => void;
+  onPromptUsed?: () => void; // New prop to handle prompt selection
 }
 
 export const DesktopMessagesView = ({
@@ -45,6 +46,7 @@ export const DesktopMessagesView = ({
   currentUserId,
   isMobile,
   onSendMessage,
+  onPromptUsed = () => {},
 }: DesktopMessagesViewProps) => {
   console.log("DesktopMessagesView activeTab:", activeTab);
   
@@ -104,6 +106,7 @@ export const DesktopMessagesView = ({
           isMobile={isMobile}
           onBack={() => setSelectedThread(null)}
           onSendMessage={handleSendDirectMessage}
+          onPromptUsed={onPromptUsed}
         />
       ) : activeTab === "groups" && selectedGroupChat ? (
         <div className="flex flex-col w-full md:w-2/3 h-full">

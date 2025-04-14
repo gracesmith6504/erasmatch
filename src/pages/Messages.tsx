@@ -14,6 +14,7 @@ type MessagesProps = {
 const Messages = ({ messages, profiles, currentUserId, onSendMessage }: MessagesProps) => {
   const [searchParams] = useSearchParams();
   const [initialSelectedUser, setInitialSelectedUser] = useState<string | null>(null);
+  const [messageKey, setMessageKey] = useState(0); // Add key to force refresh
   
   // Check for a user param in the URL (e.g., from StudentCard navigation)
   useEffect(() => {
@@ -31,7 +32,10 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
   // Wrapper for onSendMessage to ensure proper state updates
   const handleSendMessage = async (receiverId: string, content: string) => {
     try {
-      return await onSendMessage(receiverId, content);
+      await onSendMessage(receiverId, content);
+      // Force a refresh of the Messages component
+      setMessageKey(prev => prev + 1);
+      return true;
     } catch (error) {
       console.error("Error in Messages handleSendMessage:", error);
       throw error;
@@ -40,6 +44,7 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
 
   return (
     <MessagesContainer
+      key={messageKey} // Force a full re-render when messages are sent
       messages={messages}
       profiles={profiles}
       currentUserId={currentUserId}
