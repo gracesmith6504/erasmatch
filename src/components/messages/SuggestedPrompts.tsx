@@ -21,9 +21,6 @@ export const SuggestedPrompts: React.FC<SuggestedPromptsProps> = ({
   // Static prompts as requested
   const staticPrompts = [
     "hey 👋",
-    "yo — you headed to the same uni?",
-    "still looking for a place to stay?",
-    "hey 👋 just saying hi before things get busy"
   ];
 
   // Dynamic prompts based on profile data
@@ -48,7 +45,7 @@ export const SuggestedPrompts: React.FC<SuggestedPromptsProps> = ({
     if (currentUserProfile.university && 
         partnerProfile.university && 
         currentUserProfile.university === partnerProfile.university) {
-      dynamicPrompts.push(`hi! saw ur also going to ${partnerProfile.university}, figured i'd say hey 👋`);
+      dynamicPrompts.push(`hi! saw ur also going to ${partnerProfile.university}, thought i'd say hey 👋`);
     }
   }
   
