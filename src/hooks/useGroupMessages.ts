@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { GroupMessage, CityMessage } from "@/types";
 import { toast } from "sonner";
 
-// Simplified payload type for real-time updates
+// Simplified payload type with explicit structure to avoid deep type instantiation
 type RealtimePayload = {
   new: {
     id: string;
@@ -13,7 +13,6 @@ type RealtimePayload = {
     created_at: string;
     university_name?: string;
     city_name?: string;
-    [key: string]: any;
   };
 };
 
