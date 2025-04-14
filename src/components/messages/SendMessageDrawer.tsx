@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
@@ -30,45 +29,16 @@ export const SendMessageDrawer = ({
   const { handleSendMessage, profiles } = useData();
   const { currentUserId } = useAuth();
 
+  // Always show these static suggestions when drawer opens
   useEffect(() => {
-    if (isOpen && currentUserId && recipientId) {
-      const currentProfile = profiles.find(p => p.id === currentUserId);
-      const recipientProfile = profiles.find(p => p.id === recipientId);
-      
-      if (currentProfile && recipientProfile) {
-        generateSuggestedMessages(currentProfile, recipientProfile);
-      }
+    if (isOpen) {
+      setSuggestedMessages([
+        "hey 👋",
+        "We should meet up!",
+        "you found accomodation yet?"
+      ]);
     }
-  }, [isOpen, currentUserId, recipientId, profiles]);
-
-  const generateSuggestedMessages = (currentUser: Profile, recipient: Profile) => {
-    const suggestions: string[] = [];
-    
-    // Check for matching university
-    if (currentUser?.university && recipient.university && 
-        currentUser.university === recipient.university) {
-      suggestions.push(`hi! saw ur also going to ${recipient.university}, figured i'd say hey 👋`);
-    }
-    
-    // Check for matching city
-    if (currentUser?.city && recipient.city && 
-        currentUser.city === recipient.city) {
-      suggestions.push(`Hey! I saw you're also going to ${recipient.city} — do you have housing yet?`);
-    }
-    
-    // Check for matching home university
-    if (currentUser?.home_university && recipient.home_university && 
-        currentUser.home_university === recipient.home_university) {
-      suggestions.push(`Saw you're also from ${recipient.home_university}, had to say hey 👋`);
-    }
-    
-    // Always add a general fallback
-    suggestions.push("hey 👋 just saying hi before things get busy");
-    
-    // Randomize and limit to 3 suggestions
-    const shuffledSuggestions = [...suggestions].sort(() => 0.5 - Math.random());
-    setSuggestedMessages(shuffledSuggestions.slice(0, 3));
-  };
+  }, [isOpen]);
 
   const handleSend = async () => {
     if (!message.trim() || !currentUserId) return;
