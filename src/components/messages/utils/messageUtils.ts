@@ -26,8 +26,8 @@ export const handlePromptUsed = (): void => {
  */
 export function createMessageHandler(
   onSendMessage: (receiverId: string, content: string) => Promise<void>,
-  setMessagesSent: (prev: number) => void, 
-  setRefreshKey: (prev: number) => void,
+  setMessagesSent: React.Dispatch<React.SetStateAction<number>>, 
+  setRefreshKey: React.Dispatch<React.SetStateAction<number>>,
   setActiveTab: (tab: "direct" | "groups" | "cities") => void
 ) {
   return async function handleSendMessage(receiverId: string, content: string) {

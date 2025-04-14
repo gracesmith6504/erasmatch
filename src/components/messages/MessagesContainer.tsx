@@ -11,7 +11,7 @@ interface MessagesContainerProps {
   messages: Message[];
   profiles: Profile[];
   currentUserId: string;
-  onSendMessage: (receiverId: string, content: string) => void;
+  onSendMessage: (receiverId: string, content: string) => Promise<void>;
   initialSelectedUser?: string | null;
 }
 

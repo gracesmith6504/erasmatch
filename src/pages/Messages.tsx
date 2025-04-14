@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Message, Profile, ChatThread } from "@/types";
+import { Message, Profile } from "@/types";
 import { MessagesContainer } from "@/components/messages/MessagesContainer";
 import { useSearchParams } from "react-router-dom";
 
@@ -8,7 +8,7 @@ type MessagesProps = {
   messages: Message[];
   profiles: Profile[];
   currentUserId: string;
-  onSendMessage: (receiverId: string, content: string) => void;
+  onSendMessage: (receiverId: string, content: string) => Promise<void>;
 };
 
 const Messages = ({ messages, profiles, currentUserId, onSendMessage }: MessagesProps) => {
@@ -30,12 +30,12 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
   }, [searchParams]);
 
   // Wrapper for onSendMessage to ensure proper state updates
-  const handleSendMessage = async (receiverId: string, content: string) => {
+  const handleSendMessage = async (receiverId: string, content: string): Promise<void> => {
     try {
       await onSendMessage(receiverId, content);
       // Force a refresh of the Messages component
       setMessageKey(prev => prev + 1);
-      return true;
+      return;
     } catch (error) {
       console.error("Error in Messages handleSendMessage:", error);
       throw error;
