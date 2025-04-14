@@ -16,8 +16,6 @@ export const SuggestedPrompts: React.FC<SuggestedPromptsProps> = ({
   // Static prompts as requested
   const prompts = [
     "hey 👋",
-    "yo — you headed to the same uni?",
-    "still looking for a place to stay?",
   ];
 
   // Handle prompt selection with any necessary cleanup
