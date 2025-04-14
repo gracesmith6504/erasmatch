@@ -15,7 +15,8 @@ type MessagePayload = {
     sender_id: string;
     content: string;
     created_at: string;
-    [key: string]: any; // To accommodate both university_name and city_name
+    university_name?: string;
+    city_name?: string;
   };
 };
 
