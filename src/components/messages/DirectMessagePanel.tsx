@@ -43,9 +43,6 @@ export const DirectMessagePanel = ({
     }
   };
 
-  // Show prompts only if there are no messages in the thread
-  const shouldShowPrompts = messages.length === 0;
-
   return (
     <div className="flex flex-col w-full md:w-2/3 h-full">
       <MessageHeader 
@@ -67,7 +64,6 @@ export const DirectMessagePanel = ({
         isSending={isSending}
         newMessage={newMessage}
         setNewMessage={setNewMessage}
-        showPrompts={shouldShowPrompts}
       />
     </div>
   );

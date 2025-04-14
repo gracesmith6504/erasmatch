@@ -240,33 +240,6 @@ export type Database = {
         }
         Relationships: []
       }
-      prompt_logs: {
-        Row: {
-          created_at: string
-          id: string
-          prompt_text: string
-          receiver_id: string
-          sender_id: string
-          type: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          prompt_text: string
-          receiver_id: string
-          sender_id: string
-          type: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          prompt_text?: string
-          receiver_id?: string
-          sender_id?: string
-          type?: string
-        }
-        Relationships: []
-      }
       universities: {
         Row: {
           accommodation_info: string | null
