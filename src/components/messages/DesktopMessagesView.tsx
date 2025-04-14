@@ -16,6 +16,8 @@ interface DesktopMessagesViewProps {
   isMobile: boolean;
   onSendMessage: (receiverId: string, content: string) => Promise<void>;
   onPromptUsed?: () => void;
+  unreadThreadIds?: string[];  // Add prop for unread threads
+  markThreadAsRead?: (threadId: string) => void;  // Add function to mark thread as read
 }
 
 export const DesktopMessagesView = ({
@@ -29,7 +31,19 @@ export const DesktopMessagesView = ({
   isMobile,
   onSendMessage,
   onPromptUsed = () => {},
+  unreadThreadIds = [],  // Default to empty array
+  markThreadAsRead = () => {},  // Default to empty function
 }: DesktopMessagesViewProps) => {
+  // Handler to select thread and mark as read
+  const handleSelectThread = (thread: ChatThread) => {
+    setSelectedThread(thread);
+    
+    // Mark the thread as read when selected
+    if (unreadThreadIds.includes(thread.partner.id)) {
+      markThreadAsRead(thread.partner.id);
+    }
+  };
+
   return (
     <div className="flex flex-1 bg-white rounded-lg shadow overflow-hidden">
       {/* Thread list */}
@@ -37,8 +51,9 @@ export const DesktopMessagesView = ({
         <ThreadsList 
           threads={threads} 
           selectedThread={selectedThread} 
-          onSelectThread={setSelectedThread}
+          onSelectThread={handleSelectThread}
           getInitials={getInitials}
+          unreadThreadIds={unreadThreadIds}
         />
       </div>
       

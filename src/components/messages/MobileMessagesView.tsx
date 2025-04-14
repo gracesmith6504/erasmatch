@@ -1,17 +1,16 @@
 
-import { Profile } from "@/types";
+import { ChatThread, Profile } from "@/types";
 import { ThreadsList } from "./ThreadsList";
 import { getInitials } from "./utils/messageUtils";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 interface MobileMessagesViewProps {
-  threads: any[];
-  selectedThread: any;
-  setSelectedThread: (thread: any) => void;
+  threads: ChatThread[];
+  selectedThread: ChatThread | null;
+  setSelectedThread: (thread: ChatThread | null) => void;
   profiles: Profile[];
   currentUserProfile: Profile | null;
+  unreadThreadIds?: string[];
+  markThreadAsRead?: (threadId: string) => void;
 }
 
 export const MobileMessagesView = ({
@@ -20,34 +19,29 @@ export const MobileMessagesView = ({
   setSelectedThread,
   profiles,
   currentUserProfile,
+  unreadThreadIds = [],
+  markThreadAsRead = () => {},
 }: MobileMessagesViewProps) => {
+  // Handler to select thread and mark as read
+  const handleSelectThread = (thread: ChatThread) => {
+    setSelectedThread(thread);
+    
+    // Mark the thread as read when selected
+    if (unreadThreadIds.includes(thread.partner.id)) {
+      markThreadAsRead(thread.partner.id);
+    }
+  };
+
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      {selectedThread ? (
-        <>
-          <div className="flex items-center mb-4">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => setSelectedThread(null)}
-              className="mr-2"
-            >
-              <ChevronLeft className="h-4 w-4 mr-1" />
-              Back
-            </Button>
-            <h1 className="text-2xl font-bold text-gray-900">Messages</h1>
-          </div>
-        </>
-      ) : (
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Messages</h1>
-      )}
-      
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+    <div className="max-w-7xl mx-auto h-[calc(100vh-128px)] py-8 px-4 sm:px-6 lg:px-8 flex flex-col">
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Messages</h1>
+      <div className="bg-white rounded-lg shadow overflow-hidden flex-1">
         <ThreadsList 
-          threads={threads} 
+          threads={threads}
           selectedThread={selectedThread} 
-          onSelectThread={setSelectedThread}
+          onSelectThread={handleSelectThread}
           getInitials={getInitials}
+          unreadThreadIds={unreadThreadIds}
         />
       </div>
     </div>

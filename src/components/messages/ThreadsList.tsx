@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { ChatThread } from "@/types";
 import { format } from "date-fns";
@@ -10,6 +11,7 @@ interface ThreadsListProps {
   selectedThread: ChatThread | null;
   onSelectThread: (thread: ChatThread) => void;
   getInitials: (name: string | null) => string;
+  unreadThreadIds?: string[]; // Add prop to track unread thread IDs
 }
 
 export const ThreadsList = ({
@@ -17,6 +19,7 @@ export const ThreadsList = ({
   selectedThread,
   onSelectThread,
   getInitials,
+  unreadThreadIds = [], // Default to empty array
 }: ThreadsListProps) => {
   return (
     <>
@@ -55,6 +58,11 @@ export const ThreadsList = ({
                 <div className="ml-auto text-xs text-gray-400">
                   {format(new Date(thread.lastMessage.created_at), "MMM d")}
                 </div>
+              )}
+              
+              {/* Unread message indicator */}
+              {unreadThreadIds.includes(thread.partner.id) && (
+                <div className="h-2 w-2 bg-erasmatch-blue rounded-full ml-2 flex-shrink-0"></div>
               )}
             </button>
             <Separator />

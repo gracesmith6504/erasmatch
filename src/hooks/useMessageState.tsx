@@ -1,6 +1,7 @@
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Message, Profile, ChatThread } from "@/types";
+import { supabase } from "@/integrations/supabase/client";
 
 export function useMessageState(
   messages: Message[],
@@ -11,6 +12,7 @@ export function useMessageState(
   const [selectedThread, setSelectedThread] = useState<ChatThread | null>(null);
   const [messagesSent, setMessagesSent] = useState(0); // Counter to trigger thread refresh
   const [refreshKey, setRefreshKey] = useState(0); // Key for forcing component refresh
+  const [unreadThreadIds, setUnreadThreadIds] = useState<string[]>([]);
 
   // Get the current user's profile
   const currentUserProfile = useMemo(() => {
@@ -68,6 +70,68 @@ export function useMessageState(
       .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
   }, [selectedThread, currentUserId, messages, messagesSent, refreshKey]);
 
+  // Function to fetch unread messages
+  const fetchUnreadMessages = async () => {
+    if (!currentUserId) return;
+
+    try {
+      const { data, error } = await supabase
+        .from("messages")
+        .select("sender_id")
+        .eq("receiver_id", currentUserId)
+        .eq("read", false);
+      
+      if (error) {
+        console.error("Error fetching unread messages:", error);
+        return;
+      }
+
+      // Extract unique sender IDs
+      const uniqueSenderIds = [...new Set(data?.map(m => m.sender_id))];
+      setUnreadThreadIds(uniqueSenderIds);
+    } catch (error) {
+      console.error("Error in fetchUnreadMessages:", error);
+    }
+  };
+
+  // Mark thread as read
+  const markThreadAsRead = async (threadId: string) => {
+    try {
+      const { error } = await supabase
+        .from("messages")
+        .update({ read: true })
+        .eq("sender_id", threadId)
+        .eq("receiver_id", currentUserId);
+      
+      if (error) {
+        console.error("Error marking thread as read:", error);
+        return;
+      }
+
+      // Update local state
+      setUnreadThreadIds(prev => prev.filter(id => id !== threadId));
+    } catch (error) {
+      console.error("Error marking thread as read:", error);
+    }
+  };
+
+  // Fetch unread messages initially and when messages update
+  useEffect(() => {
+    fetchUnreadMessages();
+    
+    // Set up a polling interval to check for new messages
+    const interval = setInterval(fetchUnreadMessages, 30000); // 30 seconds
+    
+    return () => clearInterval(interval);
+  }, [currentUserId, messages, messagesSent, refreshKey]);
+
+  // Mark messages as read when a thread is selected
+  useEffect(() => {
+    if (selectedThread && unreadThreadIds.includes(selectedThread.partner.id)) {
+      markThreadAsRead(selectedThread.partner.id);
+    }
+  }, [selectedThread, unreadThreadIds]);
+
   return {
     selectedThread,
     setSelectedThread,
@@ -77,6 +141,9 @@ export function useMessageState(
     setRefreshKey,
     currentUserProfile,
     threads,
-    threadMessages
+    threadMessages,
+    unreadThreadIds,
+    markThreadAsRead,
+    fetchUnreadMessages
   };
 }

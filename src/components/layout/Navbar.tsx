@@ -3,15 +3,18 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, MessageSquare, Users, User, LogOut, Home } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 type NavbarProps = {
   isAuthenticated: boolean;
   onLogout: () => void;
+  currentUserId?: string;
 };
 
-const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
+const Navbar = ({ isAuthenticated, onLogout, currentUserId }: NavbarProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -33,6 +36,38 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  // Check for unread messages
+  useEffect(() => {
+    if (!isAuthenticated || !currentUserId) return;
+
+    const checkUnreadMessages = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("messages")
+          .select("id")
+          .eq("receiver_id", currentUserId)
+          .eq("read", false)
+          .limit(1);
+        
+        if (error) {
+          console.error("Error checking for unread messages:", error);
+          return;
+        }
+
+        setHasUnreadMessages(Boolean(data?.length));
+      } catch (error) {
+        console.error("Error in checkUnreadMessages:", error);
+      }
+    };
+
+    checkUnreadMessages();
+    
+    // Poll for new messages
+    const interval = setInterval(checkUnreadMessages, 30000); // 30 seconds
+    
+    return () => clearInterval(interval);
+  }, [currentUserId, isAuthenticated]);
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -78,7 +113,7 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                       <span>Students</span>
                     </div>
                   </Link>
-                  <Link to="/messages" className={`px-4 py-2 rounded-full transition-all duration-200 ${
+                  <Link to="/messages" className={`px-4 py-2 rounded-full transition-all duration-200 relative ${
                     isActive('/messages') 
                       ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple shadow-sm' 
                       : 'text-gray-700 hover:bg-gray-200'
@@ -86,6 +121,9 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                     <div className="flex items-center space-x-1.5">
                       <MessageSquare className="w-4 h-4" />
                       <span>Messages</span>
+                      {hasUnreadMessages && !isActive('/messages') && (
+                        <div className="absolute top-2 right-2 h-2 w-2 bg-erasmatch-blue rounded-full"></div>
+                      )}
                     </div>
                   </Link>
                   <Link to="/groups" className={`px-4 py-2 rounded-full transition-all duration-200 ${
@@ -174,7 +212,7 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                   Students
                 </div>
               </Link>
-              <Link to="/messages" className={`block px-3 py-2.5 rounded-lg text-base font-medium ${
+              <Link to="/messages" className={`block px-3 py-2.5 rounded-lg text-base font-medium relative ${
                 isActive('/messages') 
                   ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple' 
                   : 'text-gray-700 hover:bg-gray-50'
@@ -182,6 +220,9 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                 <div className="flex items-center">
                   <MessageSquare className="w-5 h-5 mr-3" />
                   Messages
+                  {hasUnreadMessages && !isActive('/messages') && (
+                    <div className="absolute top-3 left-7 h-2 w-2 bg-erasmatch-blue rounded-full"></div>
+                  )}
                 </div>
               </Link>
               <Link to="/groups" className={`block px-3 py-2.5 rounded-lg text-base font-medium ${
@@ -244,10 +285,13 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
             }`}>
               <Users className="w-5 h-5" />
             </Link>
-            <Link to="/messages" className={`p-3 rounded-full transition-colors ${
+            <Link to="/messages" className={`p-3 rounded-full transition-colors relative ${
               isActive('/messages') ? 'bg-blue-100 text-erasmatch-blue' : 'text-gray-500'
             }`}>
               <MessageSquare className="w-5 h-5" />
+              {hasUnreadMessages && !isActive('/messages') && (
+                <div className="absolute top-2 right-2 h-2 w-2 bg-erasmatch-blue rounded-full"></div>
+              )}
             </Link>
             <Link to="/groups" className={`p-3 rounded-full transition-colors ${
               isActive('/groups') ? 'bg-blue-100 text-erasmatch-blue' : 'text-gray-500'
