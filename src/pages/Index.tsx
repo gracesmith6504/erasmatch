@@ -1,3 +1,4 @@
+
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
@@ -27,7 +28,7 @@ import { ShareButton } from "@/components/share/ShareButton";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
-  const { currentUser } = useAuth();
+  const { isAuthenticated, currentUserId, currentUserProfile } = useAuth();
   const navigate = useNavigate();
 
   // Activity feed data - simulated real-time activities
@@ -41,7 +42,7 @@ const Index = () => {
 
   // Redirect handler - go to students page if logged in, auth page if not
   const handleFindStudents = () => {
-    if (currentUser) {
+    if (isAuthenticated) {
       navigate("/students");
     } else {
       navigate("/auth?mode=signup");

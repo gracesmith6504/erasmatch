@@ -4,14 +4,14 @@ import { Button, ButtonProps } from "@/components/ui/button";
 import { Share2 } from "lucide-react";
 import { ShareModal } from "./ShareModal";
 
-interface ShareButtonProps extends ButtonProps {
-  variant?: "default" | "pill" | "ghost";
+interface ShareButtonProps extends Omit<ButtonProps, 'variant'> {
+  variant?: "default" | "ghost";
   showText?: boolean;
   city?: string;
 }
 
 export function ShareButton({ 
-  variant = "pill", 
+  variant = "default", 
   showText = false,
   city,
   className,
@@ -21,7 +21,7 @@ export function ShareButton({
   
   const getButtonStyle = () => {
     switch (variant) {
-      case "pill":
+      case "default":
         return "rounded-full bg-blue-100 hover:bg-blue-200 text-blue-700";
       case "ghost":
         return "bg-transparent hover:bg-gray-100";
