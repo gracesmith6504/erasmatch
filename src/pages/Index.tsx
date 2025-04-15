@@ -338,7 +338,7 @@ const Index = () => {
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">You're Not Arriving Alone</h2>
             <p className="max-w-3xl mx-auto text-xl text-gray-600">
-              Join your uni group chat the moment you sign up — and feel connected from day one.
+              You're not arriving alone. Join your uni group chat the moment you sign up — and feel connected from day one.
             </p>
           </div>
 
