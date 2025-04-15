@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Profile } from "@/types";
 import { useData } from "@/contexts/DataContext";
@@ -48,6 +47,7 @@ const Groups = () => {
     const fetchGroups = async () => {
       setIsLoading(true);
       try {
+        // Create slugs from university and city names
         const universitySlug = currentUserProfile?.university 
           ? slugify(currentUserProfile.university) 
           : null;
@@ -65,21 +65,10 @@ const Groups = () => {
           return;
         }
 
+        // Add debug logs
         console.log("🏫 University:", currentUserProfile?.university);
         console.log("🏙️ City:", currentUserProfile?.city);
-
-        const universitySlug = currentUserProfile?.university 
-        ? slugify(currentUserProfile.university) 
-        : null;
-
-        const citySlug = currentUserProfile?.city 
-        ? slugify(currentUserProfile.city) 
-        : null;
-
-        const slugsToSearch = [universitySlug, citySlug].filter(Boolean);
-
         console.log("🔍 Slugs to search:", slugsToSearch);
-
         
         // Fetch groups matching the slugs
         const { data: groups, error } = await supabase
@@ -87,13 +76,16 @@ const Groups = () => {
           .select("*")
           .in("slug", slugsToSearch);
 
+        console.log("Fetched groups:", groups);
+        console.log("Query error:", error);
+        
         if (error) {
           console.error("Error fetching groups:", error);
           toast.error("Failed to load your groups");
           return;
         }
 
-        if (groups) {
+        if (groups && groups.length > 0) {
           // Type assertion to ensure proper typing
           const typedGroups = groups.map(group => ({
             ...group,
@@ -121,6 +113,9 @@ const Groups = () => {
               toast.success(`Joined the ${group.name} group chat!`);
             }
           }
+        } else {
+          console.log("No matching groups found");
+          setGroupChats([]);
         }
       } catch (err) {
         console.error("Error in group fetching process:", err);
