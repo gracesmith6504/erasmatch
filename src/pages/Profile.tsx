@@ -120,7 +120,7 @@ const Profile = () => {
           <CardContent className="pt-5">
             <div className="flex flex-col space-y-4">
               <div className="text-center">
-                <h3 className="text-sm font-medium text-blue-800">Invite friends to your Erasmus group chat!</h3>
+                <h3 className="text-sm font-medium text-blue-800">Share your profile!</h3>
                 <p className="text-xs text-blue-600 mt-1 truncate">
                   https://erasmatch.com/u/{profile.ref_code}
                 
