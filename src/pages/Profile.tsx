@@ -2,16 +2,21 @@ import { useEffect, useState } from "react";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 import { ProfileProvider } from "@/components/profile/ProfileContext";
 import ProfileCompletionMeter from "@/components/profile/ProfileCompletionMeter";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Share2 } from "lucide-react";
 import { Profile as ProfileType } from "@/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { ShareButton } from "@/components/share/ShareButton";
 
 const Profile = () => {
   const { currentUserId } = useAuth();
   const [profile, setProfile] = useState<ProfileType | null>(null);
   const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
 
   const fetchProfile = async () => {
     if (!currentUserId) return;
@@ -66,6 +71,16 @@ const Profile = () => {
     }
   };
 
+  const handleCopyInviteLink = () => {
+    if (!profile?.ref_code) return;
+    
+    const inviteLink = `https://erasmatch.com/sign-up?ref=${profile.ref_code}`;
+    navigator.clipboard.writeText(inviteLink);
+    setCopied(true);
+    toast.success("Invite link copied to clipboard!");
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   if (loading) {
     return (
       <div className="max-w-3xl mx-auto py-8 px-4 sm:px-6">
@@ -99,6 +114,32 @@ const Profile = () => {
             : "Tell us about yourself to get matched with other exchange students"}
         </p>
       </div>
+      
+      {profile?.ref_code && (
+        <Card className="mb-6 border-blue-100 bg-blue-50">
+          <CardContent className="pt-5">
+            <div className="flex flex-col space-y-4">
+              <div className="text-center">
+                <h3 className="text-sm font-medium text-blue-800">Invite friends to your Erasmus group chat!</h3>
+                <p className="text-xs text-blue-600 mt-1 truncate">
+                  https://erasmatch.com/sign-up?ref={profile.ref_code}
+                </p>
+              </div>
+              <div className="flex justify-center space-x-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="bg-white hover:bg-blue-50 text-blue-700 border-blue-200"
+                  onClick={handleCopyInviteLink}
+                >
+                  {copied ? "Copied!" : "Copy Link"}
+                </Button>
+                <ShareButton city={profile.city || undefined} />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       
       <ProfileCompletionMeter profile={profile} />
       

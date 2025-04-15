@@ -1,3 +1,4 @@
+
 import { useState, FormEvent } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -27,6 +28,7 @@ const Auth = ({ onLogin }: AuthProps) => {
   const [signupCity, setSignupCity] = useState<string | undefined>(undefined);
   
   const activeTab = searchParams.get("mode") || "login";
+  const refCode = searchParams.get("ref");
 
   const handleTabChange = (value: string) => {
     setSearchParams({ mode: value });
@@ -79,7 +81,8 @@ const Auth = ({ onLogin }: AuthProps) => {
               id: data.user.id,
               name,
               email,
-              ref_code: refCode
+              ref_code: refCode,
+              invited_by: searchParams.get("ref") || null
             });
             
           if (updateError) {
