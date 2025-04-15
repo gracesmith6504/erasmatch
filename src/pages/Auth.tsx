@@ -73,6 +73,7 @@ const Auth = ({ onLogin }: AuthProps) => {
         
         if (data.user) {
           const refCode = await generateUniqueRefCode(name);
+          console.log("Generated ref code:", refCode, "from name:", name);
           
           const { error: updateError } = await supabase
             .from('profiles')
@@ -88,7 +89,6 @@ const Auth = ({ onLogin }: AuthProps) => {
             console.error("Error updating profile:", updateError);
           }
           
-          // Update the user's info and redirect directly to profile page
           onLogin(email);
           toast.success("Account created successfully!");
           navigate("/profile");

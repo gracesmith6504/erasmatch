@@ -2,6 +2,11 @@
 import { supabase } from "@/integrations/supabase/client";
 
 export const generateRefCode = (name: string): string => {
+  if (!name) {
+    // Fallback if no name is provided
+    return `user${Math.floor(100 + Math.random() * 900)}`;
+  }
+  
   // Take first word, convert to lowercase, remove special characters
   const cleanFirstName = name
     .split(' ')[0]
@@ -21,26 +26,30 @@ export const isRefCodeUnique = async (refCode: string): Promise<boolean> => {
     .eq('ref_code', refCode)
     .single();
 
-  if (error) {
+  if (error && error.code !== 'PGRST116') {
     console.error('Error checking ref_code uniqueness:', error);
     return false;
   }
 
+  // If no data was found, the code is unique
   return !data;
 };
 
 export const generateUniqueRefCode = async (name: string): Promise<string> => {
   let refCode = generateRefCode(name);
   let attempts = 0;
+  const maxAttempts = 10;
 
-  while (!(await isRefCodeUnique(refCode)) && attempts < 10) {
+  while (!(await isRefCodeUnique(refCode)) && attempts < maxAttempts) {
     refCode = generateRefCode(name);
     attempts++;
   }
 
-  if (attempts === 10) {
-    // Fallback to a more random generation if unique code can't be found
-    refCode = `${generateRefCode(name)}${Date.now()}`.slice(-10);
+  if (attempts === maxAttempts) {
+    // Fallback to a more unique generation if we couldn't find a unique code
+    const timestamp = Date.now().toString().slice(-6);
+    const namePrefix = name ? name.split(' ')[0].toLowerCase().replace(/[^a-z]/g, '') : 'user';
+    refCode = `${namePrefix}${timestamp}`;
   }
 
   return refCode;
