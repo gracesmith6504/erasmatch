@@ -122,7 +122,8 @@ const Profile = () => {
               <div className="text-center">
                 <h3 className="text-sm font-medium text-blue-800">Invite friends to your Erasmus group chat!</h3>
                 <p className="text-xs text-blue-600 mt-1 truncate">
-                  https://erasmatch.com/sign-up?ref={profile.ref_code}
+                  https://erasmatch.com/u/{profile.ref_code}
+                
                 </p>
               </div>
               <div className="flex justify-center space-x-2">
