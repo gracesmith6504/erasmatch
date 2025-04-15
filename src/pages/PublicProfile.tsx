@@ -37,7 +37,26 @@ const PublicProfile = () => {
           return;
         }
         
-        setProfile(data as Profile);
+        // Convert the data to Profile type with all required properties
+        const profileData: Profile = {
+          id: data.id,
+          name: data.name,
+          email: data.email,
+          university: data.university,
+          city: data.city,
+          semester: data.semester,
+          bio: data.bio,
+          avatar_url: data.avatar_url,
+          created_at: data.created_at,
+          home_university: data.home_university,
+          country: data.country || null, // Ensure country is included
+          personality_tags: data.personality_tags,
+          interests: data.interests || null,
+          course: data.course || null,
+          ref_code: data.ref_code || null,
+        };
+        
+        setProfile(profileData);
       } catch (err) {
         console.error('Error in fetch operation:', err);
         setError('An unexpected error occurred');
