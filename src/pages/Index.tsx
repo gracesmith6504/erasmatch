@@ -4,20 +4,16 @@ import { Button } from "@/components/ui/button";
 import { 
   MessageSquare, 
   Users, 
-  Globe, 
+  MapPin, 
   School, 
   ArrowRight, 
-  MapPin, 
-  GraduationCap, 
-  Languages,
-  Clock,
-  Sparkles,
-  Heart,
-  Camera,
   UserCheck,
   MessageCircle,
   UserPlus,
-  MapPinned
+  CheckCircle,
+  Globe,
+  Calendar,
+  Heart
 } from "lucide-react";
 import { 
   Carousel,
@@ -60,6 +56,15 @@ const Index = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Group chat data
+  const groupChats = [
+    { id: 1, name: "🎓 Trinity → Lisbon Chat", message: "8 new messages", image: "https://images.unsplash.com/photo-1562614460-e55cab877833?q=80&w=1074&auto=format&fit=crop" },
+    { id: 2, name: "🍕 Rome City Chat", message: "Weekend dinner plans 🍝", image: "https://images.unsplash.com/photo-1615724596420-37b0b9d013a9?q=80&w=1074&auto=format&fit=crop" },
+    { id: 3, name: "🎉 Barcelona Uni Chat", message: "3 new students joined", image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?q=80&w=1170&auto=format&fit=crop" },
+    { id: 4, name: "🇫🇷 Paris Exchange Group", message: "Planning welcome party!", image: "https://images.unsplash.com/photo-1522093007474-d86e9bf7ba6f?q=80&w=1064&auto=format&fit=crop" },
+    { id: 5, name: "🌊 Amsterdam Crew", message: "Weekend bike tour", image: "https://images.unsplash.com/photo-1459679749680-18eb1eb37418?q=80&w=1170&auto=format&fit=crop" },
+  ];
+
   return (
     <div className="animate-fade-in min-h-screen">
       {/* Hero Section with floating avatars */}
@@ -67,210 +72,157 @@ const Index = () => {
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1')] bg-cover bg-center opacity-5"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight mb-6 leading-tight text-gray-900">
-              Erasmus <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">Just Got Social</span>
-            </h1>
-            <p className="text-lg sm:text-xl md:text-2xl max-w-3xl mx-auto text-gray-600 mb-10 leading-relaxed">
-              Get advice, make friends, and never feel alone on your Erasmus journey.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link to="/auth?mode=signup">
-                <Button size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 w-full sm:w-auto">
-                  Find Students Near You
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <Link to="/universities">
-                <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-2 border-gray-300 text-gray-700 hover:bg-gray-50 transition-all duration-300 w-full sm:w-auto">
-                  Browse Universities
-                </Button>
-              </Link>
-            </div>
-          </div>
-
-          {/* Floating Student Avatar Bubbles */}
-          <div className="mt-16 relative h-72 md:h-96">
-            <div className="absolute top-1/4 left-[15%] animate-float-slow">
-              <div className="h-16 w-16 md:h-20 md:w-20 rounded-full bg-gradient-to-r from-blue-100 to-purple-100 flex items-center justify-center text-blue-600 font-semibold shadow-md hover:scale-110 transition-transform cursor-pointer">
-                <span>MG</span>
-                <span className="absolute -top-1 -right-1 text-lg">🇪🇸</span>
-              </div>
-            </div>
-            
-            <div className="absolute top-1/2 right-[20%] animate-float-medium">
-              <div className="h-16 w-16 md:h-20 md:w-20 rounded-full bg-gradient-to-r from-green-100 to-teal-100 flex items-center justify-center text-teal-600 font-semibold shadow-md hover:scale-110 transition-transform cursor-pointer">
-                <span>JP</span>
-                <span className="absolute -top-1 -right-1 text-lg">🇳🇱</span>
-              </div>
-            </div>
-            
-            <div className="absolute bottom-0 left-[30%] animate-float-fast">
-              <div className="h-16 w-16 md:h-20 md:w-20 rounded-full bg-gradient-to-r from-purple-100 to-pink-100 flex items-center justify-center text-purple-600 font-semibold shadow-md hover:scale-110 transition-transform cursor-pointer">
-                <span>SD</span>
-                <span className="absolute -top-1 -right-1 text-lg">🇩🇪</span>
-              </div>
-            </div>
-            
-            <div className="absolute top-[70%] right-[30%] animate-float-medium">
-              <div className="h-16 w-16 md:h-20 md:w-20 rounded-full bg-gradient-to-r from-orange-100 to-yellow-100 flex items-center justify-center text-orange-600 font-semibold shadow-md hover:scale-110 transition-transform cursor-pointer">
-                <span>TM</span>
-                <span className="absolute -top-1 -right-1 text-lg">🇵🇹</span>
-              </div>
-            </div>
-            
-            <div className="absolute top-[20%] right-[40%] animate-float-slow">
-              <div className="h-16 w-16 md:h-20 md:w-20 rounded-full bg-gradient-to-r from-pink-100 to-red-100 flex items-center justify-center text-pink-600 font-semibold shadow-md hover:scale-110 transition-transform cursor-pointer">
-                <span>LK</span>
-                <span className="absolute -top-1 -right-1 text-lg">🇫🇷</span>
-              </div>
-            </div>
-            
-            {/* Subtle connection lines */}
-            <svg className="absolute inset-0 w-full h-full" style={{ pointerEvents: 'none' }}>
-              <line x1="25%" y1="30%" x2="40%" y2="70%" stroke="#e0e7ff" strokeWidth="1" strokeDasharray="5,5" />
-              <line x1="75%" y1="40%" x2="40%" y2="70%" stroke="#e0e7ff" strokeWidth="1" strokeDasharray="5,5" />
-              <line x1="75%" y1="40%" x2="65%" y2="75%" stroke="#e0e7ff" strokeWidth="1" strokeDasharray="5,5" />
-            </svg>
-          </div>
-        </div>
-      </section>
-
-      {/* Social Proof Block */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="flex flex-col items-center text-center p-6 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 hover:shadow-md transition-shadow">
-              <div className="h-14 w-14 rounded-full bg-blue-100 flex items-center justify-center mb-4">
-                <School className="h-7 w-7 text-blue-600" />
-              </div>
-              <h3 className="font-semibold text-lg text-gray-800 mb-1">50+ Universities</h3>
-              <p className="text-gray-600">Trusted by students from top universities across Europe</p>
-            </div>
-            
-            <div className="flex flex-col items-center text-center p-6 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 hover:shadow-md transition-shadow">
-              <div className="h-14 w-14 rounded-full bg-purple-100 flex items-center justify-center mb-4">
-                <MessageSquare className="h-7 w-7 text-purple-600" />
-              </div>
-              <h3 className="font-semibold text-lg text-gray-800 mb-1">25+ Active Cities</h3>
-              <p className="text-gray-600">Connect with students in popular Erasmus destinations</p>
-            </div>
-            
-            <div className="flex flex-col items-center text-center p-6 rounded-xl bg-gradient-to-br from-pink-50 to-pink-100 hover:shadow-md transition-shadow">
-              <div className="h-14 w-14 rounded-full bg-pink-100 flex items-center justify-center mb-4">
-                <Heart className="h-7 w-7 text-pink-600" />
-              </div>
-              <h3 className="font-semibold text-lg text-gray-800 mb-1">By Students, For Students</h3>
-              <p className="text-gray-600">Created by former Erasmus students who understand your journey</p>
-            </div>
-          </div>
-          
-          {/* Testimonial Quote */}
-          <div className="mt-12 max-w-2xl mx-auto text-center">
-            <div className="relative">
-              <div className="text-5xl text-purple-300 absolute -top-6 left-0">"</div>
-              <p className="text-lg italic text-gray-700 px-8">
-                I joined before flying to Berlin — I already knew 3 people before landing. It made the first week so much easier!
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="text-left">
+              <h1 className="text-5xl sm:text-6xl font-bold tracking-tight mb-6 leading-tight text-gray-900">
+                Erasmus <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">Just Got Social</span>
+              </h1>
+              <p className="text-lg sm:text-xl max-w-xl text-gray-600 mb-8 leading-relaxed">
+                Get advice, make friends, and never feel alone on your Erasmus journey.
               </p>
-              <div className="text-5xl text-purple-300 absolute -bottom-10 right-0">"</div>
-            </div>
-            <div className="mt-6 flex items-center justify-center">
-              <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-300 to-purple-300 flex items-center justify-center text-white mr-3">
-                ES
-              </div>
-              <div className="text-left">
-                <p className="font-medium text-gray-900">Emma S.</p>
-                <p className="text-sm text-gray-500">University of Berlin 🇩🇪</p>
+              <div className="flex flex-wrap gap-4">
+                <Link to="/auth?mode=signup">
+                  <Button size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300">
+                    Find Students Near You
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </Link>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Live Activity Feed */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Live Activity</h2>
-            <p className="text-xl text-gray-600">See what's happening in the ErasMatch community right now</p>
-          </div>
-          
-          <div className="max-w-3xl mx-auto">
-            <div className="relative">
-              <div className="absolute top-0 left-0 w-full h-12 bg-gradient-to-b from-gray-50 to-transparent z-10"></div>
-              <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+            
+            <div className="relative h-80 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
+              <div className="absolute top-0 left-0 w-full h-12 bg-gradient-to-b from-blue-50 to-transparent z-10"></div>
+              <div className="overflow-auto h-full p-4">
                 {activities.map((activity, index) => (
                   <div 
                     key={activity.id} 
-                    className={`flex items-center gap-4 p-4 border-b border-gray-100 ${index === 0 ? 'animate-pulse-soft bg-blue-50' : ''}`}
+                    className={`flex items-center gap-4 p-4 mb-3 rounded-lg border border-gray-100 ${index === 0 ? 'animate-pulse-soft bg-blue-50' : 'bg-white'}`}
                   >
-                    <div className={`h-8 w-8 rounded-full flex items-center justify-center text-white ${index === 0 ? 'bg-blue-500' : 'bg-purple-500'}`}>
-                      {index === 0 ? <Sparkles className="h-4 w-4" /> : <Clock className="h-4 w-4" />}
+                    <div className={`h-12 w-12 rounded-full flex items-center justify-center text-white ${index === 0 ? 'bg-blue-500' : 'bg-purple-500'}`}>
+                      {activity.text.includes("matched") ? 
+                        <UserCheck className="h-6 w-6" /> : 
+                        activity.text.includes("joined") ? 
+                        <UserPlus className="h-6 w-6" /> : 
+                        <MessageCircle className="h-6 w-6" />
+                      }
                     </div>
                     <div className="flex-1">
-                      <p className="text-gray-800">{activity.text}</p>
+                      <p className="text-gray-800 font-medium">{activity.text}</p>
                       <p className="text-xs text-gray-500">{activity.time}</p>
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-gray-50 to-transparent z-10"></div>
+              <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-white to-transparent z-10"></div>
+            </div>
+          </div>
+
+          {/* Subtle connection lines */}
+          <svg className="absolute inset-0 w-full h-full opacity-20" style={{ pointerEvents: 'none' }}>
+            <line x1="25%" y1="30%" x2="40%" y2="70%" stroke="#e0e7ff" strokeWidth="1" strokeDasharray="5,5" />
+            <line x1="75%" y1="40%" x2="40%" y2="70%" stroke="#e0e7ff" strokeWidth="1" strokeDasharray="5,5" />
+            <line x1="75%" y1="40%" x2="65%" y2="75%" stroke="#e0e7ff" strokeWidth="1" strokeDasharray="5,5" />
+          </svg>
+        </div>
+      </section>
+
+      {/* Why ErasMatch */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Not just where you're going. Who you're going with.</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="p-6 rounded-xl border border-gray-100 bg-white shadow-sm hover:shadow-md transition-all">
+              <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 mb-4">
+                <UserCheck className="h-6 w-6" />
+              </div>
+              <h3 className="font-semibold text-lg text-gray-800 mb-2">Match with students</h3>
+              <p className="text-gray-600">Connect with others going to your city or university</p>
+            </div>
+
+            <div className="p-6 rounded-xl border border-gray-100 bg-white shadow-sm hover:shadow-md transition-all">
+              <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mb-4">
+                <MessageSquare className="h-6 w-6" />
+              </div>
+              <h3 className="font-semibold text-lg text-gray-800 mb-2">Join group chats</h3>
+              <p className="text-gray-600">Become part of city and university conversations</p>
+            </div>
+
+            <div className="p-6 rounded-xl border border-gray-100 bg-white shadow-sm hover:shadow-md transition-all">
+              <div className="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 mb-4">
+                <Calendar className="h-6 w-6" />
+              </div>
+              <h3 className="font-semibold text-lg text-gray-800 mb-2">Make plans</h3>
+              <p className="text-gray-600">Feel at home before you even arrive</p>
+            </div>
+
+            <div className="p-6 rounded-xl border border-gray-100 bg-white shadow-sm hover:shadow-md transition-all">
+              <div className="h-12 w-12 rounded-full bg-pink-100 flex items-center justify-center text-pink-600 mb-4">
+                <Globe className="h-6 w-6" />
+              </div>
+              <h3 className="font-semibold text-lg text-gray-800 mb-2">Stay connected</h3>
+              <p className="text-gray-600">Keep in touch throughout your exchange experience</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* How It Works */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">How ErasMatch Works</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">How It Works</h2>
             <p className="max-w-2xl mx-auto text-xl text-gray-600">
-              We support you throughout your entire Erasmus journey
+              Your journey to making Erasmus connections
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-blue-50 p-8 rounded-xl text-center transform transition duration-300 hover:-translate-y-1 hover:shadow-md">
-              <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-blue-600 mb-6">
-                <UserCheck className="h-8 w-8" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div className="text-center">
+              <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-blue-100 text-blue-600 mb-6">
+                <UserCheck className="h-10 w-10" />
+                <div className="absolute -right-2 -top-2 h-8 w-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-lg font-bold">1</div>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Match</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Create Your Profile</h3>
               <p className="text-gray-600">
-                See who's going to the same place and connect before you even arrive
+                Tell us where you're going and what you're into
               </p>
             </div>
 
-            <div className="bg-purple-50 p-8 rounded-xl text-center transform transition duration-300 hover:-translate-y-1 hover:shadow-md">
-              <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-purple-100 text-purple-600 mb-6">
-                <MessageCircle className="h-8 w-8" />
+            <div className="text-center">
+              <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-purple-100 text-purple-600 mb-6">
+                <Users className="h-10 w-10" />
+                <div className="absolute -right-2 -top-2 h-8 w-8 rounded-full bg-purple-500 text-white flex items-center justify-center text-lg font-bold">2</div>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Message</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Discover Students</h3>
               <p className="text-gray-600">
-                Start chats, break the ice, and plan your first meetups together
+                See who's going to your city or university
               </p>
             </div>
 
-            <div className="bg-pink-50 p-8 rounded-xl text-center transform transition duration-300 hover:-translate-y-1 hover:shadow-md">
-              <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-pink-100 text-pink-600 mb-6">
-                <UserPlus className="h-8 w-8" />
+            <div className="text-center">
+              <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-pink-100 text-pink-600 mb-6">
+                <MessageCircle className="h-10 w-10" />
+                <div className="absolute -right-2 -top-2 h-8 w-8 rounded-full bg-pink-500 text-white flex items-center justify-center text-lg font-bold">3</div>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Join Groups</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Start Connecting</h3>
               <p className="text-gray-600">
-                Stay connected with other Erasmus students in your city and university
+                Message, join chats, and make plans together
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Student Testimonials */}
-      <section className="py-20 bg-gray-50">
+      {/* Student Stories */}
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Student Stories</h2>
             <p className="max-w-2xl mx-auto text-xl text-gray-600">
-              Hear from students who found their community through ErasMatch
+              Real experiences from the ErasMatch community
             </p>
           </div>
 
@@ -287,15 +239,15 @@ const Index = () => {
                       ))}
                     </div>
                     <p className="text-gray-600 italic mb-6 text-lg">
-                      "I was nervous about going to Lisbon alone — now I already have friends there. We made a group chat and planned our first week together before any of us arrived."
+                      "I matched with 3 people before arriving in Amsterdam. We travelled together every weekend and became inseparable during our entire exchange."
                     </p>
                     <div className="flex items-center">
                       <div className="h-12 w-12 rounded-full bg-gradient-to-r from-blue-200 to-purple-200 flex items-center justify-center text-blue-600 font-semibold">
-                        MG
+                        JD
                       </div>
                       <div className="ml-4">
-                        <p className="font-medium text-gray-900">Maria González 🇵🇹</p>
-                        <p className="text-sm text-gray-500">Universidade de Lisboa</p>
+                        <p className="font-medium text-gray-900">Julia Dubois 🇫🇷</p>
+                        <p className="text-sm text-gray-500">University of Amsterdam</p>
                       </div>
                     </div>
                   </CardContent>
@@ -313,15 +265,15 @@ const Index = () => {
                       ))}
                     </div>
                     <p className="text-gray-600 italic mb-6 text-lg">
-                      "I connected with other students from my home university who were going to the same destination. We planned our journey together and now we're inseparable!"
+                      "I was nervous about going to Prague alone, but I already had a roommate through ErasMatch before arriving. It made the whole experience so much easier!"
                     </p>
                     <div className="flex items-center">
                       <div className="h-12 w-12 rounded-full bg-gradient-to-r from-green-200 to-teal-200 flex items-center justify-center text-green-600 font-semibold">
-                        TM
+                        MS
                       </div>
                       <div className="ml-4">
-                        <p className="font-medium text-gray-900">Thomas Müller 🇩🇪</p>
-                        <p className="text-sm text-gray-500">Technical University of Munich</p>
+                        <p className="font-medium text-gray-900">Marco Sanchez 🇪🇸</p>
+                        <p className="text-sm text-gray-500">Charles University Prague</p>
                       </div>
                     </div>
                   </CardContent>
@@ -339,15 +291,15 @@ const Index = () => {
                       ))}
                     </div>
                     <p className="text-gray-600 italic mb-6 text-lg">
-                      "The platform was super helpful! I chatted with several students who gave me useful tips about accommodation and courses. ErasMatch made Amsterdam feel like home from day one."
+                      "The city chat for Berlin was so active! I got amazing tips about housing and which courses to take. It really helped me prepare for my semester abroad."
                     </p>
                     <div className="flex items-center">
                       <div className="h-12 w-12 rounded-full bg-gradient-to-r from-purple-200 to-pink-200 flex items-center justify-center text-purple-600 font-semibold">
-                        SD
+                        LK
                       </div>
                       <div className="ml-4">
-                        <p className="font-medium text-gray-900">Sophie Dubois 🇳🇱</p>
-                        <p className="text-sm text-gray-500">University of Amsterdam</p>
+                        <p className="font-medium text-gray-900">Lena Kowalski 🇵🇱</p>
+                        <p className="text-sm text-gray-500">Humboldt University Berlin</p>
                       </div>
                     </div>
                   </CardContent>
@@ -368,50 +320,36 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Discover Cities */}
-      <section className="py-20 bg-white">
+      {/* Group Chats in Action */}
+      <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Discover by City</h2>
-            <p className="max-w-2xl mx-auto text-xl text-gray-600">
-              Find students and join chats in popular Erasmus destinations
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Real conversations, real connections.</h2>
+            <p className="max-w-3xl mx-auto text-xl text-gray-600">
+              Whether you're heading to Paris, Prague or Porto — there's already a chat waiting for you. Join, say hi, and start planning your Erasmus experience together.
             </p>
           </div>
 
           <div className="mt-12">
             <Carousel className="max-w-6xl mx-auto">
               <CarouselContent>
-                {[
-                  { name: "Barcelona", flag: "🇪🇸", users: 432, image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?q=80&w=1170&auto=format&fit=crop" },
-                  { name: "Lisbon", flag: "🇵🇹", users: 315, image: "https://images.unsplash.com/photo-1562614460-e55cab877833?q=80&w=1074&auto=format&fit=crop" },
-                  { name: "Berlin", flag: "🇩🇪", users: 289, image: "https://images.unsplash.com/photo-1528728329032-2972f65dfb3f?q=80&w=1170&auto=format&fit=crop" },
-                  { name: "Paris", flag: "🇫🇷", users: 267, image: "https://images.unsplash.com/photo-1522093007474-d86e9bf7ba6f?q=80&w=1064&auto=format&fit=crop" },
-                  { name: "Rome", flag: "🇮🇹", users: 254, image: "https://images.unsplash.com/photo-1615724596420-37b0b9d013a9?q=80&w=1074&auto=format&fit=crop" },
-                  { name: "Amsterdam", flag: "🇳🇱", users: 223, image: "https://images.unsplash.com/photo-1459679749680-18eb1eb37418?q=80&w=1170&auto=format&fit=crop" },
-                ].map(city => (
-                  <CarouselItem key={city.name} className="md:basis-1/2 lg:basis-1/3">
+                {groupChats.map(chat => (
+                  <CarouselItem key={chat.id} className="md:basis-1/2 lg:basis-1/3">
                     <div className="p-1">
                       <div className="relative group overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer">
                         <div className="h-48 overflow-hidden">
                           <img 
-                            src={city.image} 
-                            alt={city.name} 
+                            src={chat.image} 
+                            alt={chat.name} 
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                         </div>
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                         <div className="absolute bottom-0 left-0 w-full p-4 text-white">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <h3 className="text-xl font-bold flex items-center">
-                                {city.name} <span className="ml-1">{city.flag}</span>
-                              </h3>
-                              <div className="flex items-center text-sm mt-1">
-                                <Users className="h-4 w-4 mr-1 text-blue-300" />
-                                <span>{city.users} students</span>
-                              </div>
-                            </div>
-                            <Button size="sm" className="bg-white text-blue-600 hover:bg-blue-50">
+                          <div className="flex flex-col">
+                            <h3 className="text-lg font-bold">{chat.name}</h3>
+                            <p className="text-sm text-blue-100 mt-1">{chat.message}</p>
+                            <Button size="sm" className="mt-3 bg-white text-blue-600 hover:bg-blue-50 w-full">
                               Join Chat
                             </Button>
                           </div>
@@ -431,7 +369,7 @@ const Index = () => {
           <div className="text-center mt-10">
             <Link to="/students">
               <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white">
-                See All Cities <ArrowRight className="ml-2 h-4 w-4" />
+                Browse Group Chats <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
           </div>
@@ -447,11 +385,10 @@ const Index = () => {
             
             <div className="relative px-6 py-16 sm:px-12 lg:px-16 text-center">
               <h2 className="text-3xl font-bold text-white mb-4">
-                Ready to find your Erasmus community?
+                ErasMatch is free, private, and growing fast.
               </h2>
               <p className="text-xl text-white/90 max-w-2xl mx-auto mb-8">
                 ErasMatch is a safe space to meet, plan, and connect with real students before and during Erasmus.
-                It's free, private, and built for you.
               </p>
               
               <div className="flex flex-wrap justify-center gap-3 mb-10">
@@ -472,12 +409,12 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Trust Section */}
+      {/* Footer */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8">
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Helping Erasmus students feel at home, wherever they're going.
+              Helping Erasmus students feel connected, wherever they go.
             </p>
           </div>
           <div className="flex flex-wrap justify-center gap-8">
