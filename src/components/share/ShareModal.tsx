@@ -23,7 +23,7 @@ export function ShareModal({ isOpen, onClose, city, link }: ShareModalProps) {
 
   const shareText = city 
     ? `Hey! I'm on ErasMatch — meet other Erasmus students going to ${city} before you go. Join me: ${referralLink}`
-    : `Hey! I'm on ErasMatch — meet other Erasmus students going to the same place before you go. Join me: ${referralLink}`;
+    : `Hey! I'm on ErasMatch — meet other Erasmus students going to the same place. Join me: ${referralLink}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(referralLink);
