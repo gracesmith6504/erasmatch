@@ -1,3 +1,4 @@
+
 import { useState, FormEvent } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -6,14 +7,14 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type AuthProps = {
   onLogin: (email: string) => void;
 };
 
 const Auth = ({ onLogin }: AuthProps) => {
-  const [searchParams] = useSearchParams();
-  const mode = searchParams.get("mode") || "login";
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
@@ -21,12 +22,18 @@ const Auth = ({ onLogin }: AuthProps) => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  
+  const activeTab = searchParams.get("mode") || "login";
 
-  const isSignUp = mode === "signup";
+  const handleTabChange = (value: string) => {
+    setSearchParams({ mode: value });
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    const isSignUp = activeTab === "signup";
 
     if (isSignUp && !name) {
       toast.error("Please enter your name");
@@ -95,117 +102,128 @@ const Auth = ({ onLogin }: AuthProps) => {
       }
     } catch (error: any) {
       console.error("Auth error:", error);
-      toast.error(error.message || (isSignUp ? "Failed to create account" : "Login failed"));
+      toast.error(error.message || "Email or password not recognised.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <Link to="/" className="inline-block">
             <h1 className="text-3xl font-bold mb-2 text-erasmatch-blue">
               Eras<span className="text-erasmatch-green">Match</span>
             </h1>
           </Link>
-          <h2 className="text-2xl font-bold text-gray-900">
-            {isSignUp ? "Create your account" : "Welcome back"}
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            {isSignUp
-              ? "Join the Erasmus community"
-              : "Sign in to connect with other students"}
-          </p>
+          
+          <Tabs 
+            value={activeTab} 
+            onValueChange={handleTabChange} 
+            className="w-full mt-6"
+          >
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="login">Sign In</TabsTrigger>
+              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="login" className="mt-6">
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Welcome back</h2>
+                <p className="mt-2 text-sm text-gray-600">
+                  Sign in to connect with other students
+                </p>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="signup" className="mt-6">
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Create your account</h2>
+                <p className="mt-2 text-sm text-gray-600">
+                  Join Erasmus students heading to your destination
+                </p>
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {isSignUp && (
+        <div className="bg-white py-8 px-6 shadow-soft rounded-lg">
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            {activeTab === "signup" && (
+              <div>
+                <Label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                  Full Name
+                </Label>
+                <div className="mt-1">
+                  <Input
+                    id="name"
+                    name="name"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Your full name"
+                    required={activeTab === "signup"}
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+            )}
+
             <div>
-              <Label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                Full Name
+              <Label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email address
               </Label>
               <div className="mt-1">
                 <Input
-                  id="name"
-                  name="name"
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Your full name"
-                  required={isSignUp}
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  required
                   className="mt-1"
                 />
               </div>
             </div>
-          )}
 
-          <div>
-            <Label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email address
-            </Label>
-            <div className="mt-1">
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                required
-                className="mt-1"
-              />
+            <div>
+              <Label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                Password
+              </Label>
+              <div className="mt-1 relative">
+                <Input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  className="mt-1 pr-10"
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  onClick={() => setShowPassword(!showPassword)}
+                  tabIndex={-1}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4 text-gray-500" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-gray-500" />
+                  )}
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div>
-            <Label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
-            </Label>
-            <div className="mt-1 relative">
-              <Input
-                id="password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                className="mt-1 pr-10"
-              />
-              <button
-                type="button"
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                onClick={() => setShowPassword(!showPassword)}
-                tabIndex={-1}
-              >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4 text-gray-500" />
-                ) : (
-                  <Eye className="h-4 w-4 text-gray-500" />
-                )}
-              </button>
+            <div>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Processing..." : activeTab === "signup" ? "Create Account" : "Sign In"}
+              </Button>
             </div>
-          </div>
-
-          <div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Processing..." : isSignUp ? "Create Account" : "Sign In"}
-            </Button>
-          </div>
-        </form>
-
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
-            {isSignUp ? "Already have an account?" : "Don't have an account?"}
-            <Link
-              to={isSignUp ? "/auth?mode=login" : "/auth?mode=signup"}
-              className="ml-1 font-medium text-erasmatch-blue hover:underline"
-            >
-              {isSignUp ? "Sign in" : "Sign up"}
-            </Link>
-          </p>
+          </form>
         </div>
       </div>
     </div>
