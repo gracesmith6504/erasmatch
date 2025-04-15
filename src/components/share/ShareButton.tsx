@@ -8,6 +8,7 @@ interface ShareButtonProps extends Omit<ButtonProps, 'variant'> {
   variant?: "default" | "ghost";
   showText?: boolean;
   city?: string;
+  link: string; //new prop
 }
 
 export function ShareButton({ 
@@ -47,6 +48,7 @@ export function ShareButton({
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         city={city}
+        link={link}
       />
     </>
   );

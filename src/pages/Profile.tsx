@@ -135,7 +135,9 @@ const Profile = () => {
                 >
                   {copied ? "Copied!" : "Copy Link"}
                 </Button>
-                <ShareButton city={profile.city || undefined} />
+                <ShareButton city={profile.city || undefined} 
+                             link={`https://erasmatch.com/u/${profile.ref_code}`}
+                  />
               </div>
             </div>
           </CardContent>

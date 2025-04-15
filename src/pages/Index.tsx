@@ -78,7 +78,8 @@ const Index = () => {
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-end mb-4">
-            <ShareButton showText={true} />
+            <ShareButton showText={true}
+                          link="https://erasmatch.com"/>
           </div>
           
           <div className="grid md:grid-cols-2 gap-8 items-center">

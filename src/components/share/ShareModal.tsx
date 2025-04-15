@@ -10,6 +10,7 @@ type ShareModalProps = {
   isOpen: boolean;
   onClose: () => void;
   city?: string;
+  link: string; //new prop
 };
 
 export function ShareModal({ isOpen, onClose, city }: ShareModalProps) {
@@ -17,9 +18,7 @@ export function ShareModal({ isOpen, onClose, city }: ShareModalProps) {
   const [copied, setCopied] = useState(false);
 
   const APP_URL = "https://erasmatch.com";
-  const referralLink = currentUserProfile?.ref_code 
-    ? `${APP_URL}/sign-up?ref=${currentUserProfile.ref_code}` 
-    : APP_URL;
+  const referralLink = link;
 
   const shareText = city 
     ? `Hey! I'm on ErasMatch — meet other Erasmus students going to ${city} before you go. Join me: ${referralLink}`
