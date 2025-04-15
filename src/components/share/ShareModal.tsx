@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -10,15 +11,15 @@ type ShareModalProps = {
   isOpen: boolean;
   onClose: () => void;
   city?: string;
-  link: string; //new prop
+  link: string; // Ensure this prop is properly typed
 };
 
-export function ShareModal({ isOpen, onClose, city }: ShareModalProps) {
+export function ShareModal({ isOpen, onClose, city, link }: ShareModalProps) {
   const { currentUserProfile } = useAuth();
   const [copied, setCopied] = useState(false);
 
   const APP_URL = "https://erasmatch.com";
-  const referralLink = link;
+  const referralLink = link; // Use the link prop directly
 
   const shareText = city 
     ? `Hey! I'm on ErasMatch — meet other Erasmus students going to ${city} before you go. Join me: ${referralLink}`

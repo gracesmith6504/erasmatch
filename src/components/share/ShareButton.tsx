@@ -8,13 +8,14 @@ interface ShareButtonProps extends Omit<ButtonProps, 'variant'> {
   variant?: "default" | "ghost";
   showText?: boolean;
   city?: string;
-  link: string; //new prop
+  link: string; // This prop was added but not properly used
 }
 
 export function ShareButton({ 
   variant = "default", 
   showText = false,
   city,
+  link, // Add this prop to the destructured props
   className,
   ...props 
 }: ShareButtonProps) {
@@ -48,7 +49,7 @@ export function ShareButton({
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         city={city}
-        link={link}
+        link={link} // Pass the link prop to ShareModal
       />
     </>
   );
