@@ -404,6 +404,10 @@ export type Database = {
         Args: { user_id: string; group_slug: string }
         Returns: undefined
       }
+      slugify: {
+        Args: { input: string }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
