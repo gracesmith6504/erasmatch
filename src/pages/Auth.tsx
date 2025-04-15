@@ -1,3 +1,4 @@
+
 import { useState, FormEvent, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -99,7 +100,7 @@ const Auth = ({ onLogin }: AuthProps) => {
           if (groupSlug) {
             try {
               await supabase.rpc("join_group_by_slug", {
-                user_id: data.user.id,
+                p_user_id: data.user.id,
                 group_slug: groupSlug
               });
               
@@ -132,7 +133,7 @@ const Auth = ({ onLogin }: AuthProps) => {
         if (groupSlug && data.user) {
           try {
             await supabase.rpc("join_group_by_slug", {
-              user_id: data.user.id,
+              p_user_id: data.user.id,
               group_slug: groupSlug
             });
             

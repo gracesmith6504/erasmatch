@@ -112,7 +112,7 @@ const GroupPreview = () => {
     // User is authenticated, join the group directly
     try {
       await supabase.rpc("join_group_by_slug", {
-        user_id: currentUserId,
+        p_user_id: currentUserId,
         group_slug: slug
       });
       
