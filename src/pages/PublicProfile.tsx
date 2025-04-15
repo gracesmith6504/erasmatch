@@ -49,9 +49,9 @@ const PublicProfile = () => {
           avatar_url: data.avatar_url,
           created_at: data.created_at,
           home_university: data.home_university,
-          country: data.country || null, // Ensure country is included
+          country: null, // Profiles table doesn't have this field yet
           personality_tags: data.personality_tags,
-          interests: data.interests || null,
+          interests: null, // Profiles table doesn't have this field yet
           course: data.course || null,
           ref_code: data.ref_code || null,
         };
