@@ -118,6 +118,10 @@ export const CityPanel = ({
     console.log("Suggestion was used in city chat");
   };
   
+  const generateShareLink = () => {
+    return `https://erasmatch.com/city/${encodeURIComponent(cityName)}`;
+  };
+  
   return (
     <div className="flex flex-col h-full">
       <div className="p-4 border-b flex items-center justify-between">
@@ -139,7 +143,10 @@ export const CityPanel = ({
           </div>
         </div>
         
-        <ShareButton city={cityName} />
+        <ShareButton 
+          city={cityName} 
+          link={generateShareLink()} 
+        />
       </div>
       
       <div className="flex-1 overflow-y-auto p-4 flex flex-col">

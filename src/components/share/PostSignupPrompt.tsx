@@ -13,6 +13,14 @@ interface PostSignupPromptProps {
 export function PostSignupPrompt({ city, onContinue }: PostSignupPromptProps) {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   
+  // Generate a link to share
+  const generateShareLink = () => {
+    if (city) {
+      return `https://erasmatch.com/city/${encodeURIComponent(city)}`;
+    }
+    return "https://erasmatch.com";
+  };
+  
   return (
     <div className="max-w-md mx-auto px-4 py-8">
       <Card className="p-6 text-center space-y-6">
@@ -49,6 +57,7 @@ export function PostSignupPrompt({ city, onContinue }: PostSignupPromptProps) {
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
         city={city}
+        link={generateShareLink()}
       />
     </div>
   );
