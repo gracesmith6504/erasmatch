@@ -1,4 +1,6 @@
 
+import { supabase } from "@/integrations/supabase/client";
+
 export const generateRefCode = (name: string): string => {
   // Take first word, convert to lowercase, remove special characters
   const cleanFirstName = name
