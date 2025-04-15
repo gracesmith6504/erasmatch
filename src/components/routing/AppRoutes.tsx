@@ -7,6 +7,7 @@ import Index from "@/pages/Index";
 import Auth from "@/pages/Auth";
 import Profile from "@/pages/Profile";
 import ProfileView from "@/pages/ProfileView";
+import PublicProfile from "@/pages/PublicProfile";
 import Students from "@/pages/Students";
 import Locations from "@/pages/Universities";
 import UniversityHub from "@/pages/UniversityHub";
@@ -63,6 +64,10 @@ const AppRoutes = () => {
             onSendMessage={handleSendMessage}
           />
         } 
+      />
+      <Route 
+        path="/u/:refCode" 
+        element={<PublicProfile />} 
       />
       <Route 
         path="/students" 

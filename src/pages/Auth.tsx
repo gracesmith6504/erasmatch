@@ -1,4 +1,5 @@
-import { useState, FormEvent } from "react";
+
+import { useState, FormEvent, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -28,9 +29,13 @@ const Auth = ({ onLogin }: AuthProps) => {
   
   const activeTab = searchParams.get("mode") || "login";
   const refCode = searchParams.get("ref");
+  const returnTo = searchParams.get("returnTo");
 
   const handleTabChange = (value: string) => {
-    setSearchParams({ mode: value });
+    // Preserve other query parameters when changing tabs
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("mode", value);
+    setSearchParams(newParams);
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -91,8 +96,14 @@ const Auth = ({ onLogin }: AuthProps) => {
           
           onLogin(email);
           toast.success("Account created successfully!");
-          navigate("/profile");
-          return; // Exit early after redirection
+          
+          // Navigate to returnTo URL if provided, otherwise go to profile
+          if (returnTo) {
+            navigate(returnTo);
+          } else {
+            navigate("/profile");
+          }
+          return;
         } else {
           toast.info("Please check your email to confirm your registration");
         }
@@ -106,7 +117,13 @@ const Auth = ({ onLogin }: AuthProps) => {
         
         toast.success("Welcome back!");
         onLogin(email);
-        navigate("/");
+        
+        // Navigate to returnTo URL if provided, otherwise go to home
+        if (returnTo) {
+          navigate(returnTo);
+        } else {
+          navigate("/");
+        }
       }
     } catch (error: any) {
       console.error("Auth error:", error);
@@ -164,6 +181,11 @@ const Auth = ({ onLogin }: AuthProps) => {
                 <p className="mt-2 text-sm text-gray-600">
                   Join Erasmus students heading to your destination
                 </p>
+                {refCode && (
+                  <p className="mt-2 text-sm font-medium text-erasmatch-blue">
+                    You were invited by a friend!
+                  </p>
+                )}
               </div>
             </TabsContent>
           </Tabs>
