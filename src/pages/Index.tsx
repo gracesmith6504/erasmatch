@@ -56,15 +56,6 @@ const Index = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Group chat data
-  const groupChats = [
-    { id: 1, name: "🎓 Trinity → Lisbon Chat", message: "8 new messages", image: "https://images.unsplash.com/photo-1562614460-e55cab877833?q=80&w=1074&auto=format&fit=crop" },
-    { id: 2, name: "🍕 Rome City Chat", message: "Weekend dinner plans 🍝", image: "https://images.unsplash.com/photo-1615724596420-37b0b9d013a9?q=80&w=1074&auto=format&fit=crop" },
-    { id: 3, name: "🎉 Barcelona Uni Chat", message: "3 new students joined", image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?q=80&w=1170&auto=format&fit=crop" },
-    { id: 4, name: "🇫🇷 Paris Exchange Group", message: "Planning welcome party!", image: "https://images.unsplash.com/photo-1522093007474-d86e9bf7ba6f?q=80&w=1064&auto=format&fit=crop" },
-    { id: 5, name: "🌊 Amsterdam Crew", message: "Weekend bike tour", image: "https://images.unsplash.com/photo-1459679749680-18eb1eb37418?q=80&w=1170&auto=format&fit=crop" },
-  ];
-
   return (
     <div className="animate-fade-in min-h-screen">
       {/* Hero Section with floating avatars */}
@@ -320,58 +311,80 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Group Chats in Action */}
+      {/* Meet Students in Your Destination - REPLACED SECTION */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Real conversations, real connections.</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">You're Not Arriving Alone</h2>
             <p className="max-w-3xl mx-auto text-xl text-gray-600">
-              Whether you're heading to Paris, Prague or Porto — there's already a chat waiting for you. Join, say hi, and start planning your Erasmus experience together.
+              You're not arriving alone. Join your uni group chat the moment you sign up — and feel connected from day one.
             </p>
           </div>
 
-          <div className="mt-12">
-            <Carousel className="max-w-6xl mx-auto">
-              <CarouselContent>
-                {groupChats.map(chat => (
-                  <CarouselItem key={chat.id} className="md:basis-1/2 lg:basis-1/3">
-                    <div className="p-1">
-                      <div className="relative group overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer">
-                        <div className="h-48 overflow-hidden">
-                          <img 
-                            src={chat.image} 
-                            alt={chat.name} 
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
-                        </div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-                        <div className="absolute bottom-0 left-0 w-full p-4 text-white">
-                          <div className="flex flex-col">
-                            <h3 className="text-lg font-bold">{chat.name}</h3>
-                            <p className="text-sm text-blue-100 mt-1">{chat.message}</p>
-                            <Button size="sm" className="mt-3 bg-white text-blue-600 hover:bg-blue-50 w-full">
-                              Join Chat
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <div className="hidden md:block">
-                <CarouselPrevious />
-                <CarouselNext />
+          <div className="flex flex-col md:flex-row gap-8 items-center justify-center">
+            <div className="w-full max-w-md bg-white p-6 rounded-xl shadow-md">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center text-white text-lg font-bold">
+                    L
+                  </div>
+                  <h3 className="ml-3 font-bold text-lg">Lisbon Group Chat</h3>
+                </div>
+                <div className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                  12 online
+                </div>
               </div>
-            </Carousel>
-          </div>
-          
-          <div className="text-center mt-10">
-            <Link to="/students">
-              <Button className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white">
-                Browse Group Chats <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
+              
+              <div className="space-y-4">
+                {/* Blurred chat messages */}
+                <div className="flex gap-3">
+                  <div className="h-8 w-8 rounded-full bg-purple-100 flex-shrink-0"></div>
+                  <div className="bg-gray-100 rounded-lg p-3 max-w-[80%]">
+                    <div className="h-2 bg-gray-200 rounded w-40"></div>
+                    <div className="h-2 bg-gray-200 rounded w-24 mt-2"></div>
+                  </div>
+                </div>
+                
+                <div className="flex gap-3 justify-end">
+                  <div className="bg-blue-50 rounded-lg p-3 max-w-[80%]">
+                    <div className="h-2 bg-blue-100 rounded w-32"></div>
+                    <div className="h-2 bg-blue-100 rounded w-40 mt-2"></div>
+                  </div>
+                  <div className="h-8 w-8 rounded-full bg-blue-100 flex-shrink-0"></div>
+                </div>
+                
+                <div className="flex gap-3">
+                  <div className="h-8 w-8 rounded-full bg-green-100 flex-shrink-0"></div>
+                  <div className="bg-gray-100 rounded-lg p-3 max-w-[80%]">
+                    <div className="h-2 bg-gray-200 rounded w-36"></div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6 flex items-center">
+                <div className="flex -space-x-2">
+                  <div className="h-7 w-7 rounded-full bg-blue-500 border-2 border-white"></div>
+                  <div className="h-7 w-7 rounded-full bg-green-500 border-2 border-white"></div>
+                  <div className="h-7 w-7 rounded-full bg-purple-500 border-2 border-white"></div>
+                  <div className="h-7 w-7 rounded-full bg-yellow-500 border-2 border-white flex items-center justify-center text-xs text-white font-bold">+8</div>
+                </div>
+                <div className="ml-3 text-xs text-gray-500">💬 Currently active</div>
+              </div>
+            </div>
+            
+            <div className="text-center md:text-left md:max-w-md">
+              <h3 className="font-bold text-2xl text-gray-900 mb-4">Join your university group chat</h3>
+              <p className="text-gray-600 mb-6">
+                Connect with other Erasmus students headed to your destination. Share tips, ask questions, and make friends before you even arrive.
+              </p>
+              <div className="flex justify-center md:justify-start">
+                <Link to="/auth?mode=signup">
+                  <Button size="lg" className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white">
+                    Find Students Near You <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -401,7 +414,7 @@ const Index = () => {
               
               <Link to="/auth?mode=signup">
                 <Button size="lg" className="text-lg px-8 py-6 bg-white text-blue-600 hover:bg-blue-50 shadow-lg hover:shadow-xl transition-all duration-300">
-                  Create Your Free Account
+                  Find Students Near You
                 </Button>
               </Link>
             </div>
@@ -431,3 +444,4 @@ const Index = () => {
 };
 
 export default Index;
+
