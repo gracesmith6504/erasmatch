@@ -74,7 +74,7 @@ const Profile = () => {
   const handleCopyInviteLink = () => {
     if (!profile?.ref_code) return;
     
-    const inviteLink = `https://erasmatch.com/sign-up?ref=${profile.ref_code}`;
+    const inviteLink = `https://erasmatch.com/u/${profile.ref_code}`;
     navigator.clipboard.writeText(inviteLink);
     setCopied(true);
     toast.success("Invite link copied to clipboard!");
