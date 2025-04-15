@@ -89,9 +89,11 @@ const Auth = ({ onLogin }: AuthProps) => {
             console.error("Error updating profile:", updateError);
           }
           
-          setSignupCity(data.user.user_metadata?.city);
-          setShowPostSignup(true);
+          // Update the user's info and redirect directly to profile page
           onLogin(email);
+          toast.success("Account created successfully!");
+          navigate("/profile");
+          return; // Exit early after redirection
         } else {
           toast.info("Please check your email to confirm your registration");
         }
