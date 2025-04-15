@@ -1,5 +1,4 @@
-
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
   MessageSquare, 
@@ -24,8 +23,13 @@ import {
 } from "@/components/ui/carousel";
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { ShareButton } from "@/components/share/ShareButton";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
+
   // Activity feed data - simulated real-time activities
   const [activities, setActivities] = useState([
     { id: 1, text: "✨ Paula matched with Leo in Barcelona", time: "Just now" },
@@ -34,6 +38,15 @@ const Index = () => {
     { id: 4, text: "🇫🇷 Sofia and Thiago met in Paris", time: "10 minutes ago" },
     { id: 5, text: "🎓 Michael joined ERASMUS+ 2025", time: "15 minutes ago" }
   ]);
+
+  // Redirect handler - go to students page if logged in, auth page if not
+  const handleFindStudents = () => {
+    if (currentUser) {
+      navigate("/students");
+    } else {
+      navigate("/auth?mode=signup");
+    }
+  };
 
   // Simulate new activities appearing in real-time
   useEffect(() => {
@@ -63,6 +76,10 @@ const Index = () => {
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1')] bg-cover bg-center opacity-5"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-end mb-4">
+            <ShareButton showText={true} />
+          </div>
+          
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="text-left">
               <h1 className="text-5xl sm:text-6xl font-bold tracking-tight mb-6 leading-tight text-gray-900">
@@ -72,12 +89,14 @@ const Index = () => {
                 Get advice, make friends, and never feel alone on your Erasmus journey.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link to="/auth?mode=signup">
-                  <Button size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300">
-                    Find Students Near You
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
+                <Button 
+                  size="lg" 
+                  className="text-lg px-8 py-6 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                  onClick={handleFindStudents}
+                >
+                  Find Students Near You
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
               </div>
             </div>
             
@@ -378,11 +397,13 @@ const Index = () => {
                 Connect with other Erasmus students headed to your destination. Share tips, ask questions, and make friends before you even arrive.
               </p>
               <div className="flex justify-center md:justify-start">
-                <Link to="/auth?mode=signup">
-                  <Button size="lg" className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white">
-                    Find Students Near You <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
+                <Button 
+                  size="lg" 
+                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
+                  onClick={handleFindStudents}
+                >
+                  Find Students Near You <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
               </div>
             </div>
           </div>
@@ -412,11 +433,13 @@ const Index = () => {
                 <div className="px-4 py-2 bg-white/20 rounded-full backdrop-blur-sm text-white text-sm">+ 45 more</div>
               </div>
               
-              <Link to="/auth?mode=signup">
-                <Button size="lg" className="text-lg px-8 py-6 bg-white text-blue-600 hover:bg-blue-50 shadow-lg hover:shadow-xl transition-all duration-300">
-                  Find Students Near You
-                </Button>
-              </Link>
+              <Button 
+                size="lg" 
+                className="text-lg px-8 py-6 bg-white text-blue-600 hover:bg-blue-50 shadow-lg hover:shadow-xl transition-all duration-300"
+                onClick={handleFindStudents}
+              >
+                Find Students Near You
+              </Button>
             </div>
           </div>
         </div>
@@ -444,4 +467,3 @@ const Index = () => {
 };
 
 export default Index;
-

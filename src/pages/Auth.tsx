@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PostSignupPrompt } from "@/components/share/PostSignupPrompt";
 
 type AuthProps = {
   onLogin: (email: string) => void;
@@ -22,6 +23,8 @@ const Auth = ({ onLogin }: AuthProps) => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showPostSignup, setShowPostSignup] = useState(false);
+  const [signupCity, setSignupCity] = useState<string | undefined>(undefined);
   
   const activeTab = searchParams.get("mode") || "login";
 
@@ -81,9 +84,9 @@ const Auth = ({ onLogin }: AuthProps) => {
             console.error("Error updating profile:", updateError);
           }
           
-          toast.success("Account created successfully!");
+          // Show post-signup prompt instead of redirecting immediately
+          setShowPostSignup(true);
           onLogin(email);
-          navigate("/profile");
         } else {
           toast.info("Please check your email to confirm your registration");
         }
@@ -107,6 +110,19 @@ const Auth = ({ onLogin }: AuthProps) => {
       setLoading(false);
     }
   };
+
+  const handleContinueAfterSignup = () => {
+    navigate("/profile");
+  };
+
+  if (showPostSignup) {
+    return (
+      <PostSignupPrompt 
+        city={signupCity}
+        onContinue={handleContinueAfterSignup}
+      />
+    );
+  }
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">

@@ -1,6 +1,4 @@
-
 import { useState, useEffect } from "react";
-import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile } from "@/types";
 import { toast } from "sonner";
@@ -9,6 +7,7 @@ import { CityMessageList } from "./CityMessageList";
 import { CityInput } from "./CityInput";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { ShareButton } from "../share/ShareButton";
 
 type CityPanelProps = {
   cityName: string;
@@ -30,7 +29,6 @@ export const CityPanel = ({
   const [participants, setParticipants] = useState<Profile[]>([]);
   const [hasSentMessage, setHasSentMessage] = useState(false);
   
-  // Get profiles of students in this city
   useEffect(() => {
     const getCityParticipants = () => {
       const cityResidents = profiles.filter(
@@ -42,7 +40,6 @@ export const CityPanel = ({
     getCityParticipants();
   }, [cityName, profiles]);
   
-  // Fetch city messages
   useEffect(() => {
     const fetchMessages = async () => {
       try {
@@ -59,7 +56,6 @@ export const CityPanel = ({
         if (data) {
           setMessages(data);
           
-          // Check if user has sent any messages in this chat
           const userMessages = data.filter(msg => msg.sender_id === currentUserId);
           setHasSentMessage(userMessages.length > 0);
         }
@@ -70,7 +66,6 @@ export const CityPanel = ({
     
     fetchMessages();
     
-    // Subscribe to new messages in real-time
     const channel = supabase
       .channel("city_messages_changes")
       .on(
@@ -85,7 +80,6 @@ export const CityPanel = ({
           const newMessage = payload.new;
           setMessages((prevMessages) => [...prevMessages, newMessage]);
           
-          // If this is the current user's message, update the hasSentMessage state
           if (newMessage.sender_id === currentUserId) {
             setHasSentMessage(true);
           }
@@ -98,7 +92,6 @@ export const CityPanel = ({
     };
   }, [cityName, currentUserId]);
   
-  // Send city message
   const handleSendMessage = async (message: string) => {
     setIsSending(true);
     try {
@@ -127,7 +120,6 @@ export const CityPanel = ({
   
   return (
     <div className="flex flex-col h-full">
-      {/* City header */}
       <div className="p-4 border-b flex items-center justify-between">
         <div className="flex items-center">
           {isFullScreen && onBack && (
@@ -146,9 +138,10 @@ export const CityPanel = ({
             <CityParticipantsInfo count={participants.length} />
           </div>
         </div>
+        
+        <ShareButton city={cityName} />
       </div>
       
-      {/* Messages area */}
       <div className="flex-1 overflow-y-auto p-4 flex flex-col">
         <CityMessageList 
           messages={messages}
@@ -157,7 +150,6 @@ export const CityPanel = ({
         />
       </div>
       
-      {/* Message input */}
       <div className="p-4 border-t">
         <CityInput
           onSendMessage={handleSendMessage}
