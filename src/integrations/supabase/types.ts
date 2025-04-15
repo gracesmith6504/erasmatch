@@ -202,9 +202,10 @@ export type Database = {
           email: string | null
           home_university: string | null
           id: string
-          joined_university_chat: boolean
+          invited_by: string | null
           name: string | null
           personality_tags: string[] | null
+          ref_code: string | null
           semester: string | null
           university: string | null
         }
@@ -217,9 +218,10 @@ export type Database = {
           email?: string | null
           home_university?: string | null
           id: string
-          joined_university_chat?: boolean
+          invited_by?: string | null
           name?: string | null
           personality_tags?: string[] | null
+          ref_code?: string | null
           semester?: string | null
           university?: string | null
         }
@@ -232,9 +234,10 @@ export type Database = {
           email?: string | null
           home_university?: string | null
           id?: string
-          joined_university_chat?: boolean
+          invited_by?: string | null
           name?: string | null
           personality_tags?: string[] | null
+          ref_code?: string | null
           semester?: string | null
           university?: string | null
         }

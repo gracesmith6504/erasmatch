@@ -1,5 +1,5 @@
-
 import React, { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,19 +12,23 @@ type ShareModalProps = {
   city?: string;
 };
 
-const APP_URL = "https://erasmatch.com";
-
 export function ShareModal({ isOpen, onClose, city }: ShareModalProps) {
+  const { currentUserProfile } = useAuth();
   const [copied, setCopied] = useState(false);
 
+  const APP_URL = "https://erasmatch.com";
+  const referralLink = currentUserProfile?.ref_code 
+    ? `${APP_URL}/sign-up?ref=${currentUserProfile.ref_code}` 
+    : APP_URL;
+
   const shareText = city 
-    ? `Hey! I'm on ErasMatch — meet other Erasmus students going to ${city} before you go. Here's the link: ${APP_URL}`
-    : `Hey! I'm on ErasMatch — meet other Erasmus students going to the same place before you go. Here's the link: ${APP_URL}`;
+    ? `Hey! I'm on ErasMatch — meet other Erasmus students going to ${city} before you go. Join me: ${referralLink}`
+    : `Hey! I'm on ErasMatch — meet other Erasmus students going to the same place before you go. Join me: ${referralLink}`;
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(shareText);
+    navigator.clipboard.writeText(referralLink);
     setCopied(true);
-    toast.success("Invite message copied to clipboard!");
+    toast.success("Referral link copied to clipboard!");
     setTimeout(() => setCopied(false), 2000);
   };
 

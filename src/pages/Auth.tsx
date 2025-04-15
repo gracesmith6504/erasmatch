@@ -1,4 +1,3 @@
-
 import { useState, FormEvent } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -9,6 +8,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostSignupPrompt } from "@/components/share/PostSignupPrompt";
+import { generateUniqueRefCode } from '@/utils/refCodeGenerator';
 
 type AuthProps = {
   onLogin: (email: string) => void;
@@ -71,27 +71,28 @@ const Auth = ({ onLogin }: AuthProps) => {
         if (error) throw error;
         
         if (data.user) {
-          // Update the profile with name
+          const refCode = await generateUniqueRefCode(name);
+          
           const { error: updateError } = await supabase
             .from('profiles')
             .upsert({
               id: data.user.id,
               name,
-              email
+              email,
+              ref_code: refCode
             });
             
           if (updateError) {
             console.error("Error updating profile:", updateError);
           }
           
-          // Show post-signup prompt instead of redirecting immediately
+          setSignupCity(data.user.user_metadata?.city);
           setShowPostSignup(true);
           onLogin(email);
         } else {
           toast.info("Please check your email to confirm your registration");
         }
       } else {
-        // Login
         const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password
