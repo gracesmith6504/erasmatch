@@ -1,4 +1,3 @@
-
 import { useState, FormEvent, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -33,7 +32,6 @@ const Auth = ({ onLogin }: AuthProps) => {
   const groupSlug = searchParams.get("group");
 
   const handleTabChange = (value: string) => {
-    // Preserve other query parameters when changing tabs
     const newParams = new URLSearchParams(searchParams);
     newParams.set("mode", value);
     setSearchParams(newParams);
@@ -98,7 +96,6 @@ const Auth = ({ onLogin }: AuthProps) => {
           onLogin(email);
           toast.success("Account created successfully!");
           
-          // Join group if group slug is provided
           if (groupSlug) {
             try {
               await supabase.rpc("join_group_by_slug", {
@@ -112,7 +109,6 @@ const Auth = ({ onLogin }: AuthProps) => {
             }
           }
           
-          // Navigate to returnTo URL if provided, otherwise go to profile
           if (returnTo) {
             navigate(returnTo);
           } else {
@@ -133,7 +129,6 @@ const Auth = ({ onLogin }: AuthProps) => {
         toast.success("Welcome back!");
         onLogin(email);
         
-        // Join group if group slug is provided
         if (groupSlug && data.user) {
           try {
             await supabase.rpc("join_group_by_slug", {
@@ -147,7 +142,6 @@ const Auth = ({ onLogin }: AuthProps) => {
           }
         }
         
-        // Navigate to returnTo URL if provided, otherwise go to home
         if (returnTo) {
           navigate(returnTo);
         } else {
@@ -171,8 +165,6 @@ const Auth = ({ onLogin }: AuthProps) => {
       <PostSignupPrompt 
         city={signupCity}
         onContinue={handleContinueAfterSignup}
-        isOpen={showPostSignup}
-        onClose={() => setShowPostSignup(false)}
         link={`https://erasmatch.com/groups/${signupCity ? encodeURIComponent(signupCity) : ''}`}
       />
     );

@@ -52,8 +52,27 @@ const GroupPreview = () => {
             
           if (countError) throw countError;
           
+          // Validate the type field to ensure it matches our Group type
+          const validType = (type: string): "university" | "city" | "custom" => {
+            if (type === "university" || type === "city" || type === "custom") {
+              return type;
+            }
+            return "custom"; // Default fallback
+          };
+          
+          // Validate the visibility field
+          const validVisibility = (vis: string | null): "public" | "private" | "unlisted" => {
+            if (vis === "public" || vis === "private" || vis === "unlisted") {
+              return vis;
+            }
+            return "public"; // Default fallback
+          };
+          
           setGroup({
             ...groupData,
+            type: validType(groupData.type),
+            visibility: validVisibility(groupData.visibility),
+            created_at: groupData.created_at || new Date().toISOString(),
             member_count: count || 0
           });
           
