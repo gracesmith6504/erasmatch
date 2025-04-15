@@ -34,13 +34,13 @@ const Groups = () => {
   const { currentUserId } = useAuth();
   const isMobile = useIsMobile();
   
-  // Get the current user's profile - moved up before it's used
-  const currentUserProfile = profiles.find(profile => profile.id === currentUserId) || null;
-  
   const [groupChats, setGroupChats] = useState<Group[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedGroupChat, setSelectedGroupChat] = useState<string | null>(null);
   const [selectedCityChat, setSelectedCityChat] = useState<string | null>(null);
+  
+  // Get the current user's profile
+  const currentUserProfile = profiles.find(profile => profile.id === currentUserId) || null;
 
   useEffect(() => {
     if (!currentUserId) return;
@@ -48,18 +48,21 @@ const Groups = () => {
     const fetchGroups = async () => {
       setIsLoading(true);
       try {
-        const universitySlug = currentUserProfile?.university 
-          ? slugify(currentUserProfile.university) 
+        const universitySlug = currentUserProfile?.university?.trim()
+          ? slugify(currentUserProfile.university.trim()) 
           : null;
           
-        const citySlug = currentUserProfile?.city 
-          ? slugify(currentUserProfile.city) 
+        const citySlug = currentUserProfile?.city?.trim()
+          ? slugify(currentUserProfile.city.trim()) 
           : null;
 
         // Create an array of slugs to search for, filtering out nulls
-        const slugsToSearch = [universitySlug, citySlug].filter(Boolean);
+        const slugsToSearch = [universitySlug, citySlug].filter(Boolean) as string[];
+        
+        console.log("Slugs to search:", slugsToSearch);
         
         if (slugsToSearch.length === 0) {
+          console.log("No slugs to search, skipping query");
           setGroupChats([]);
           setIsLoading(false);
           return;
@@ -71,13 +74,16 @@ const Groups = () => {
           .select("*")
           .in("slug", slugsToSearch);
 
+        console.log("Fetched groups:", groups);
+        console.log("Query error:", error);
+
         if (error) {
           console.error("Error fetching groups:", error);
           toast.error("Failed to load your groups");
           return;
         }
 
-        if (groups) {
+        if (groups && groups.length > 0) {
           // Type assertion to ensure proper typing
           const typedGroups = groups.map(group => ({
             ...group,
@@ -105,6 +111,10 @@ const Groups = () => {
               toast.success(`Joined the ${group.name} group chat!`);
             }
           }
+        } else {
+          // No groups found
+          console.log("No matching groups found");
+          setGroupChats([]);
         }
       } catch (err) {
         console.error("Error in group fetching process:", err);
@@ -216,7 +226,7 @@ const Groups = () => {
         ) : (
           <div className="text-center p-8 bg-gray-50 rounded-lg">
             <p className="text-lg text-gray-600">
-              {currentUserProfile
+              {currentUserProfile?.university || currentUserProfile?.city
                 ? "No group chats found for your university or city."
                 : "Set your university and city in your profile to join group chats."}
             </p>
@@ -224,7 +234,7 @@ const Groups = () => {
               className="mt-4"
               onClick={() => window.location.href = "/profile"}
             >
-              {currentUserProfile ? "Update Profile" : "Complete Your Profile"}
+              Update Profile
             </Button>
           </div>
         )}

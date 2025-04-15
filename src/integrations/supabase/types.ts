@@ -401,7 +401,7 @@ export type Database = {
     }
     Functions: {
       join_group_by_slug: {
-        Args: { user_id: string; group_slug: string }
+        Args: { p_user_id: string; group_slug: string }
         Returns: undefined
       }
       slugify: {
