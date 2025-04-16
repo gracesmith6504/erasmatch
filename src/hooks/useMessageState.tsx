@@ -1,3 +1,4 @@
+
 import { useState, useMemo, useEffect } from "react";
 import { Message, Profile, ChatThread } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
@@ -55,7 +56,9 @@ export function useMessageState(
         created_at: lastMsg.created_at,
         sender_name: lastMsg.sender_id === currentUserId ? 
           (currentUserProfile?.name || 'You') : 
-          (partner.name || 'Unknown')
+          (partner.name || 'Unknown'),
+        sender_id: lastMsg.sender_id,
+        read_by: lastMsg.read_by
       } : null;
       
       return {
@@ -95,7 +98,8 @@ export function useMessageState(
           supabase
             .from('messages')
             .update({ 
-              read_by: supabase.fn.array_append('read_by', currentUserId) 
+              // Fix for array_append
+              read_by: [...(msg.read_by || []), currentUserId]
             })
             .eq('id', msg.id)
         );
@@ -118,10 +122,10 @@ export function useMessageState(
   const enhancedThreads = useMemo(() => {
     return threads.map(thread => ({
       ...thread,
-      hasUnreadMessages: thread.lastMessage 
-        ? thread.lastMessage.sender_id !== currentUserId && 
-          (!thread.lastMessage.read_by || 
-           !thread.lastMessage.read_by.includes(currentUserId))
+      hasUnreadMessages: thread.lastMessage ? 
+        (thread.lastMessage.sender_id !== currentUserId && 
+         (!thread.lastMessage.read_by || 
+          !thread.lastMessage.read_by.includes(currentUserId)))
         : false
     }));
   }, [threads, currentUserId]);
