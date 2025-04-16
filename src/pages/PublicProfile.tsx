@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
@@ -37,26 +36,7 @@ const PublicProfile = () => {
           return;
         }
         
-        // Convert the data to Profile type with all required properties
-        const profileData: Profile = {
-          id: data.id,
-          name: data.name,
-          email: data.email,
-          university: data.university,
-          city: data.city,
-          semester: data.semester,
-          bio: data.bio,
-          avatar_url: data.avatar_url,
-          created_at: data.created_at,
-          home_university: data.home_university,
-          country: null, // Profiles table doesn't have this field yet
-          personality_tags: data.personality_tags,
-          interests: null, // Profiles table doesn't have this field yet
-          course: data.course || null,
-          ref_code: data.ref_code || null,
-        };
-        
-        setProfile(profileData);
+        setProfile(data as Profile);
       } catch (err) {
         console.error('Error in fetch operation:', err);
         setError('An unexpected error occurred');
@@ -70,7 +50,6 @@ const PublicProfile = () => {
 
   const handleConnectClick = () => {
     if (!isAuthenticated && refCode) {
-      // Redirect to sign up with ref_code and return path
       navigate(`/auth?mode=signup&ref=${refCode}&returnTo=/u/${refCode}`);
     }
   };

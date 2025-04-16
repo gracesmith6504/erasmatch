@@ -25,7 +25,8 @@ const StudentCard = ({ profile }: StudentCardProps) => {
       </div>
       <CardContent className="pt-4 text-center">
         <h3 className="font-semibold text-lg text-gray-900 mt-4 flex items-center justify-center">
-          {profile.name || "Anonymous Student"} <span className="ml-2"><CountryFlag country={profile.country} /></span>
+          {profile.name || "Anonymous Student"} 
+          {profile.country && <span className="ml-2"><CountryFlag country={profile.country} /></span>}
         </h3>
         
         <PersonalityTags tags={profile.personality_tags} />

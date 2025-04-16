@@ -25,6 +25,8 @@ export interface Profile {
   last_active_at?: string | null;
   ref_code?: string | null;
   invited_by?: string | null;
+  country?: string | null;
+  interests?: string[] | null;
 }
 
 export interface LastMessage {

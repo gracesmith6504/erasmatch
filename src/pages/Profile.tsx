@@ -33,12 +33,7 @@ const Profile = () => {
       if (error) throw error;
       
       if (data) {
-        const profileData: ProfileType = {
-          ...data,
-          country: null,
-          interests: null,
-        };
-        setProfile(profileData);
+        setProfile(data as ProfileType);
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
