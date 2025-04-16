@@ -1,9 +1,9 @@
 
 import { ReactNode } from "react";
-import Navbar from "./Navbar";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
+import { Navbar } from "./navbar";
 
 type LayoutProps = {
   children: ReactNode;
