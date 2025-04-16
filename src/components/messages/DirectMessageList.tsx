@@ -21,7 +21,7 @@ export const DirectMessageList = ({
             content={message.content}
             timestamp={message.created_at}
             isCurrentUser={isCurrentUser}
-            isRead={!!message.read}
+            isRead={false} // Default to false since 'read' is not in the Message type
           />
         );
       })}
