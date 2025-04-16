@@ -24,26 +24,37 @@ export const handlePromptUsed = (): void => {
 /**
  * Handle sending a message with refresh handling
  */
+import { supabase } from "@/integrations/supabase/client";
+
 export function createMessageHandler(
   onSendMessage: (receiverId: string, content: string) => Promise<void>,
-  setMessagesSent: React.Dispatch<React.SetStateAction<number>>, 
+  setMessagesSent: React.Dispatch<React.SetStateAction<number>>,
   setRefreshKey: React.Dispatch<React.SetStateAction<number>>,
-  setActiveTab: (tab: any) => void
+  onPromptUsed: () => void
 ) {
-  return async function handleSendMessage(receiverId: string, content: string): Promise<void> {
+  return async (receiverId: string, content: string) => {
+    await onSendMessage(receiverId, content);
+
+    // ✅ Fire email notification in background
     try {
-      await onSendMessage(receiverId, content);
-      
-      // Force a refresh of threads by incrementing the counter
-      setMessagesSent((prev) => prev + 1);
-      
-      // Force a full component refresh
-      setRefreshKey((prev) => prev + 1);
-      
-      console.log("Message sent, refreshing state");
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (user) {
+        await supabase.functions.invoke("send-message-email", {
+          body: {
+            senderName: user.user_metadata?.name || "Someone",
+            recipientId: receiverId,
+            messageContent: content.slice(0, 100),
+          },
+        });
+      }
     } catch (error) {
-      console.error("Error in handleSendMessage:", error);
-      throw error;
+      console.warn("Failed to send email notification:", error);
     }
+
+    setMessagesSent(prev => prev + 1);
+    setRefreshKey(prev => prev + 1);
+    onPromptUsed();
   };
 }
+
