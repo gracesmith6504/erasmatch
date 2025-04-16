@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { Home, Users, MessageSquare, User } from "lucide-react";
+import { Home, Users, MessageSquare, User, MessageCircleDot } from "lucide-react";
 import { useNavigation } from "./useNavigation";
 
 interface MobileBottomNavProps {
@@ -8,7 +8,7 @@ interface MobileBottomNavProps {
 }
 
 export const MobileBottomNav = ({ isActive }: MobileBottomNavProps) => {
-  const { navigationItems } = useNavigation();
+  const { navigationItems, hasUnreadMessages } = useNavigation();
   
   return (
     <div className="md:hidden fixed bottom-6 left-0 right-0 z-50 flex justify-center">
@@ -21,7 +21,12 @@ export const MobileBottomNav = ({ isActive }: MobileBottomNavProps) => {
               isActive(item.path) ? 'bg-blue-100 text-erasmatch-blue' : 'text-gray-500'
             }`}
           >
-            <item.icon className="w-5 h-5" />
+            <div className="relative">
+              <item.icon className="w-5 h-5" />
+              {item.hasNotification && !isActive(item.path) && (
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-erasmatch-blue rounded-full"></div>
+              )}
+            </div>
           </Link>
         ))}
         <Link to="/profile" className={`p-3.5 rounded-full transition-colors ${

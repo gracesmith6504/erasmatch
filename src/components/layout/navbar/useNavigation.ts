@@ -1,9 +1,18 @@
 
 import { useLocation } from "react-router-dom";
-import { Home, MessageSquare, Users, User } from "lucide-react";
+import { Home, MessageSquare, Users, User, MessageCircleDot } from "lucide-react";
+import { useData } from "@/contexts/DataContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const useNavigation = () => {
   const location = useLocation();
+  const { messages } = useData();
+  const { currentUserId } = useAuth();
+
+  // Check if there are any unread messages
+  const hasUnreadMessages = messages.some(msg => 
+    msg.receiver_id === currentUserId && msg.read === false
+  );
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -23,7 +32,8 @@ export const useNavigation = () => {
     {
       name: "Messages",
       path: "/messages",
-      icon: MessageSquare,
+      icon: hasUnreadMessages ? MessageCircleDot : MessageSquare,
+      hasNotification: hasUnreadMessages,
     },
     {
       name: "Groups",
@@ -35,5 +45,6 @@ export const useNavigation = () => {
   return {
     isActive,
     navigationItems,
+    hasUnreadMessages,
   };
 };

@@ -59,6 +59,29 @@ export const DirectMessagePanel = ({
     scrollToBottom();
   }, [localMessages]);
 
+  // Mark messages as read when viewed
+  useEffect(() => {
+    const markMessagesAsRead = async () => {
+      const unreadMessages = messages.filter(
+        msg => msg.sender_id === thread.partner.id && 
+               msg.receiver_id === currentUserId && 
+               msg.read === false
+      );
+      
+      if (unreadMessages.length > 0) {
+        // Update all unread messages from this sender to read
+        await supabase
+          .from('messages')
+          .update({ read: true })
+          .eq('receiver_id', currentUserId)
+          .eq('sender_id', thread.partner.id)
+          .eq('read', false);
+      }
+    };
+    
+    markMessagesAsRead();
+  }, [messages, thread.partner.id, currentUserId]);
+
   const handleSendMessage = async () => {
     if (!thread || !newMessage.trim()) return;
     

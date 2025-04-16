@@ -49,6 +49,11 @@ export function useMessageState(
       
       const lastMsg = sortedMessages.length > 0 ? sortedMessages[0] : null;
       
+      // Check if there are any unread messages from this partner
+      const hasUnreadMessages = threadMessages.some(
+        m => m.sender_id === userId && m.receiver_id === currentUserId && m.read === false
+      );
+
       // Transform Message to the format required by ChatThread
       const lastMessage = lastMsg ? {
         content: lastMsg.content,
@@ -60,7 +65,8 @@ export function useMessageState(
       
       return {
         partner,
-        lastMessage
+        lastMessage,
+        hasUnreadMessages
       };
     }).filter(Boolean) as ChatThread[];
   }, [currentUserId, messages, profiles, messagesSent, refreshKey, currentUserProfile]);
