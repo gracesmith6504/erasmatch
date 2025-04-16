@@ -1,7 +1,7 @@
 
 import { ReactNode } from "react";
 import Navbar from "./Navbar";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -12,6 +12,7 @@ type LayoutProps = {
 const Layout = ({ children }: LayoutProps) => {
   const navigate = useNavigate();
   const { isAuthenticated, handleLogout } = useAuth();
+  const location = useLocation();
 
   const handleLogoutClick = () => {
     handleLogout();
@@ -23,11 +24,16 @@ const Layout = ({ children }: LayoutProps) => {
     navigate("/");
   };
 
+  // Check if we're on the messages page to adjust layout
+  const isMessagesPage = location.pathname === "/messages";
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogoutClick} />
       {/* Adjusted pt value to accommodate the navbar with better mobile spacing */}
-      <main className="flex-1 pt-16 md:pt-16 pb-20 md:pb-8">{children}</main>
+      <main className={`flex-1 pt-16 md:pt-16 ${!isMessagesPage ? 'pb-20 md:pb-8' : ''}`}>
+        {children}
+      </main>
       <footer className="bg-white border-t py-6 md:py-8 mt-8 md:mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-6 md:mb-8">

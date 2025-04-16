@@ -2,7 +2,6 @@
 import { Profile, ChatThread } from "@/types";
 import { DirectMessagePanel } from "./DirectMessagePanel";
 import { ThreadsList } from "./ThreadsList";
-import { Button } from "@/components/ui/button";
 import { getInitials } from "./utils/messageUtils";
 
 interface DesktopMessagesViewProps {
@@ -16,6 +15,7 @@ interface DesktopMessagesViewProps {
   isMobile: boolean;
   onSendMessage: (receiverId: string, content: string) => Promise<void>;
   onPromptUsed?: () => void;
+  onBack?: () => void;
 }
 
 export const DesktopMessagesView = ({
@@ -29,20 +29,23 @@ export const DesktopMessagesView = ({
   isMobile,
   onSendMessage,
   onPromptUsed = () => {},
+  onBack,
 }: DesktopMessagesViewProps) => {
   return (
     <div className="flex flex-1 bg-white rounded-lg shadow overflow-hidden">
-      {/* Thread list */}
-      <div className="w-full md:w-1/3 border-r flex flex-col">
-        <ThreadsList 
-          threads={threads} 
-          selectedThread={selectedThread} 
-          onSelectThread={setSelectedThread}
-          getInitials={getInitials}
-        />
-      </div>
+      {/* Thread list - hidden on mobile when thread selected */}
+      {(!isMobile || !selectedThread) && (
+        <div className="w-full md:w-1/3 border-r flex flex-col">
+          <ThreadsList 
+            threads={threads} 
+            selectedThread={selectedThread} 
+            onSelectThread={setSelectedThread}
+            getInitials={getInitials}
+          />
+        </div>
+      )}
       
-      {/* Conversation area */}
+      {/* Conversation area - full width on mobile */}
       {selectedThread ? (
         <DirectMessagePanel
           thread={selectedThread}
@@ -50,7 +53,7 @@ export const DesktopMessagesView = ({
           currentUserId={currentUserId}
           currentUserProfile={currentUserProfile}
           isMobile={isMobile}
-          onBack={() => setSelectedThread(null)}
+          onBack={onBack}
           onSendMessage={onSendMessage}
           onPromptUsed={onPromptUsed}
         />

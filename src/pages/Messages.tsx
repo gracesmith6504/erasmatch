@@ -31,6 +31,14 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
     }
   }, [searchParams]);
 
+  // Scroll to top when the page loads
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }, []);
+
   // Wrapper for onSendMessage to ensure proper state updates
   const handleSendMessage = async (receiverId: string, content: string): Promise<void> => {
     try {

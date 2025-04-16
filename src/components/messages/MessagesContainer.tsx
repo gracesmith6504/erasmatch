@@ -6,6 +6,7 @@ import { DesktopMessagesView } from "./DesktopMessagesView";
 import { useMessageState } from "@/hooks/useMessageState";
 import { useInitialUserSelection } from "@/hooks/useInitialUserSelection";
 import { createMessageHandler } from "./utils/messageUtils";
+import { useState, useEffect } from "react";
 
 interface MessagesContainerProps {
   messages: Message[];
@@ -23,6 +24,7 @@ export const MessagesContainer = ({
   initialSelectedUser = null,
 }: MessagesContainerProps) => {
   const isMobile = useIsMobile();
+  const [showMobileThreadList, setShowMobileThreadList] = useState(true);
   
   // Get message state from hook
   const {
@@ -37,6 +39,15 @@ export const MessagesContainer = ({
     threadMessages
   } = useMessageState(messages, profiles, currentUserId, initialSelectedUser);
 
+  // Toggle mobile thread list visibility based on selection
+  useEffect(() => {
+    if (isMobile && selectedThread) {
+      setShowMobileThreadList(false);
+    } else if (!selectedThread) {
+      setShowMobileThreadList(true);
+    }
+  }, [selectedThread, isMobile]);
+  
   // Handle initial user selection
   useInitialUserSelection(
     initialSelectedUser,
@@ -65,13 +76,22 @@ export const MessagesContainer = ({
     console.log("Prompt was used - will reset state after message is sent");
   };
 
-  // Show mobile view when no conversation selected on mobile
-  if (isMobile && !selectedThread) {
+  // Handler for going back to thread list on mobile
+  const handleBackToThreadList = () => {
+    setSelectedThread(null);
+    setShowMobileThreadList(true);
+  };
+
+  // Show mobile thread list when no conversation selected on mobile
+  if (isMobile && showMobileThreadList) {
     return (
       <MobileMessagesView
         threads={threads}
         selectedThread={selectedThread}
-        setSelectedThread={setSelectedThread}
+        setSelectedThread={(thread) => {
+          setSelectedThread(thread);
+          setShowMobileThreadList(false);
+        }}
         profiles={profiles}
         currentUserProfile={currentUserProfile}
       />
@@ -94,6 +114,7 @@ export const MessagesContainer = ({
         isMobile={isMobile}
         onSendMessage={handleSendMessage}
         onPromptUsed={handlePromptUsed}
+        onBack={isMobile ? handleBackToThreadList : undefined}
       />
     </div>
   );

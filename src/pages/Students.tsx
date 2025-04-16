@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Profile } from "@/types";
 import { useStudentsData } from "@/hooks/useStudentsData";
 import StudentLoadingSkeleton from "@/components/student/StudentLoadingSkeleton";
@@ -30,6 +30,14 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
   } = useStudentsData(profiles, currentUserId);
 
   const [activeTab, setActiveTab] = useState<"list" | "cities">("list");
+
+  // Scroll to top when the page loads
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }, []);
 
   // Rendering skeleton loaders during loading state
   if (loading) {

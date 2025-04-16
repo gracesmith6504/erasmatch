@@ -79,6 +79,12 @@ const StudentCard = ({ profile }: StudentCardProps) => {
     e.preventDefault();
     // Navigate to messages with user ID as URL parameter
     navigate(`/messages?user=${profile.id}`);
+    
+    // Ensure the page scrolls to top when navigating to messages
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   };
 
   const renderPersonalityTags = () => {
