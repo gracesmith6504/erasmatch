@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { ChatThread } from "@/types";
 import { format } from "date-fns";
@@ -46,7 +47,7 @@ export const ThreadsList = ({
                 <div className="font-medium">{thread.partner.name}</div>
                 {thread.lastMessage && (
                   <div className="text-sm text-gray-500 truncate">
-                    {thread.lastMessage.sender_id === selectedThread?.partner.id ? '' : 'You: '}
+                    {thread.lastMessage.sender_name === thread.partner.name ? '' : 'You: '}
                     {thread.lastMessage.content}
                   </div>
                 )}

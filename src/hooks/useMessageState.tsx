@@ -47,14 +47,23 @@ export function useMessageState(
         (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
       
-      const lastMessage = sortedMessages.length > 0 ? sortedMessages[0] : null;
+      const lastMsg = sortedMessages.length > 0 ? sortedMessages[0] : null;
+      
+      // Transform Message to the format required by ChatThread
+      const lastMessage = lastMsg ? {
+        content: lastMsg.content,
+        created_at: lastMsg.created_at,
+        sender_name: lastMsg.sender_id === currentUserId ? 
+          (currentUserProfile?.name || 'You') : 
+          (partner.name || 'Unknown')
+      } : null;
       
       return {
         partner,
         lastMessage
       };
     }).filter(Boolean) as ChatThread[];
-  }, [currentUserId, messages, profiles, messagesSent, refreshKey]);
+  }, [currentUserId, messages, profiles, messagesSent, refreshKey, currentUserProfile]);
 
   // Get messages for selected thread
   const threadMessages = useMemo(() => {

@@ -49,7 +49,15 @@ export const DataProvider = ({ children }: DataProviderProps) => {
       if (error) throw error;
       
       if (data) {
-        setProfiles(data as unknown as Profile[]);
+        // Ensure all profiles have the required fields
+        const processedProfiles = data.map(profile => ({
+          ...profile,
+          country: null,
+          interests: null,
+          personality_tags: profile.personality_tags || []
+        })) as Profile[];
+        
+        setProfiles(processedProfiles);
       }
     } catch (error) {
       console.error('Error fetching profiles:', error);
@@ -148,9 +156,19 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         setProfiles(prevProfiles => {
           const profileExists = prevProfiles.some(p => p.id === currentUserId);
           if (profileExists) {
-            return prevProfiles.map(p => p.id === currentUserId ? { ...p, ...data, country: null } as Profile : p);
+            return prevProfiles.map(p => p.id === currentUserId ? { 
+              ...p, 
+              ...data, 
+              country: null,
+              interests: null 
+            } as Profile : p);
           } else {
-            return [...prevProfiles, { ...data, country: null } as Profile];
+            return [...prevProfiles, { 
+              ...data, 
+              country: null,
+              interests: null,
+              personality_tags: data.personality_tags || []
+            } as Profile];
           }
         });
       }

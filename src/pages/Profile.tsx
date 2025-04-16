@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 import { ProfileProvider } from "@/components/profile/ProfileContext";
@@ -37,6 +36,7 @@ const Profile = () => {
         const profileData: ProfileType = {
           ...data,
           country: null,
+          interests: null,
         };
         setProfile(profileData);
       }
@@ -153,7 +153,6 @@ const Profile = () => {
         </ProfileProvider>
       </div>
       
-      {/* Delete Account Button */}
       <div className="mt-8 text-center">
         <DeleteAccountDialog userId={currentUserId} />
       </div>
