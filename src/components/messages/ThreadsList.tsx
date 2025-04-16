@@ -5,9 +5,10 @@ import { format } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { CircleDot } from "lucide-react";
 
 interface ThreadsListProps {
-  threads: ChatThread[];
+  threads: (ChatThread & { hasUnreadMessages?: boolean })[];
   selectedThread: ChatThread | null;
   onSelectThread: (thread: ChatThread) => void;
   getInitials: (name: string | null) => string;
@@ -32,7 +33,7 @@ export const ThreadsList = ({
         threads.map((thread) => (
           <div key={thread.partner.id}>
             <button
-              className={`w-full p-4 hover:bg-gray-50 text-left flex items-center ${
+              className={`w-full p-4 hover:bg-gray-50 text-left flex items-center relative ${
                 selectedThread?.partner.id === thread.partner.id ? 'bg-gray-100' : ''
               }`}
               onClick={() => onSelectThread(thread)}
@@ -43,8 +44,13 @@ export const ThreadsList = ({
                   {getInitials(thread.partner.name)}
                 </AvatarFallback>
               </Avatar>
-              <div className="overflow-hidden">
-                <div className="font-medium">{thread.partner.name}</div>
+              <div className="overflow-hidden flex-1">
+                <div className="font-medium flex items-center">
+                  {thread.partner.name}
+                  {thread.hasUnreadMessages && (
+                    <CircleDot className="h-3 w-3 text-blue-500 ml-2" />
+                  )}
+                </div>
                 {thread.lastMessage && (
                   <div className="text-sm text-gray-500 truncate">
                     {thread.lastMessage.sender_name === thread.partner.name ? '' : 'You: '}

@@ -1,6 +1,6 @@
-
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Message, Profile, ChatThread } from "@/types";
+import { supabase } from "@/integrations/supabase/client";
 
 export function useMessageState(
   messages: Message[],
@@ -77,6 +77,55 @@ export function useMessageState(
       .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
   }, [selectedThread, currentUserId, messages, messagesSent, refreshKey]);
 
+  // New function to mark messages as read when a thread is selected
+  const markThreadMessagesAsRead = async (partnerId: string) => {
+    if (!currentUserId) return;
+
+    try {
+      // Find unread messages from this partner to the current user
+      const unreadMessages = messages.filter(
+        m => m.sender_id === partnerId && 
+             m.receiver_id === currentUserId && 
+             (!m.read_by || !m.read_by.includes(currentUserId))
+      );
+
+      // Batch update these messages to mark as read
+      if (unreadMessages.length > 0) {
+        const updatePromises = unreadMessages.map(msg => 
+          supabase
+            .from('messages')
+            .update({ 
+              read_by: supabase.fn.array_append('read_by', currentUserId) 
+            })
+            .eq('id', msg.id)
+        );
+
+        await Promise.all(updatePromises);
+      }
+    } catch (error) {
+      console.error('Error marking messages as read:', error);
+    }
+  };
+
+  // Modify the effect or add a new effect to handle thread selection
+  useEffect(() => {
+    if (selectedThread) {
+      markThreadMessagesAsRead(selectedThread.partner.id);
+    }
+  }, [selectedThread, currentUserId]);
+
+  // Modify threads to include unread status
+  const enhancedThreads = useMemo(() => {
+    return threads.map(thread => ({
+      ...thread,
+      hasUnreadMessages: thread.lastMessage 
+        ? thread.lastMessage.sender_id !== currentUserId && 
+          (!thread.lastMessage.read_by || 
+           !thread.lastMessage.read_by.includes(currentUserId))
+        : false
+    }));
+  }, [threads, currentUserId]);
+
   return {
     selectedThread,
     setSelectedThread,
@@ -85,7 +134,8 @@ export function useMessageState(
     refreshKey,
     setRefreshKey,
     currentUserProfile,
-    threads,
-    threadMessages
+    threads: enhancedThreads,
+    threadMessages,
+    markThreadMessagesAsRead
   };
 }
