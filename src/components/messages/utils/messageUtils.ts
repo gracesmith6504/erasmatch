@@ -47,7 +47,7 @@ export function createMessageHandler(
           const result = await supabase.functions.invoke("send-message-email", {
             body: {
               senderName,
-              recipientId: receiverId,  // Fixed: Using receiverId instead of recipientId shorthand
+              recipientId: receiverId,
               messageContent,
             },
           });
