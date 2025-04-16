@@ -132,6 +132,27 @@
     .card, [class*="Card"] {
       @apply p-4 rounded-xl;
     }
+    
+    /* Enhanced homepage mobile styles */
+    .homepage-hero-mobile {
+      padding: 2rem 1rem 3rem;
+      text-align: center;
+    }
+    
+    /* Mobile CTA buttons */
+    .mobile-cta {
+      height: auto !important;
+      padding: 1rem 1.5rem !important;
+      border-radius: 0.75rem !important;
+      font-size: 1.125rem !important;
+      font-weight: 600 !important;
+      margin-bottom: 0.75rem !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 100% !important;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+    }
   }
 }
 
@@ -230,6 +251,25 @@
     .mobile-pb-20 {
       padding-bottom: 5rem !important;
     }
+    
+    /* New mobile homepage specific styles */
+    .mobile-cta-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    
+    .mobile-trust-signal {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid #f3f4f6;
+    }
   }
 }
 
@@ -322,5 +362,24 @@
   /* Card adjustments */
   .card-hover {
     @apply mobile-shadow-lg;
+  }
+  
+  /* Homepage hero section mobile specific styles */
+  section.relative.overflow-hidden.bg-gradient-to-r {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+  
+  /* Mobile hero heading */
+  section.relative.overflow-hidden.bg-gradient-to-r h1 {
+    font-size: 2.25rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  /* Mobile hero description */
+  section.relative.overflow-hidden.bg-gradient-to-r p.text-lg {
+    font-size: 1.125rem !important;
+    margin-bottom: 1.5rem !important;
   }
 }

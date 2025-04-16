@@ -13,7 +13,8 @@ import {
   CheckCircle,
   Globe,
   Calendar,
-  Heart
+  Heart,
+  Search
 } from "lucide-react";
 import { 
   Carousel,
@@ -26,10 +27,12 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ShareButton } from "@/components/share/ShareButton";
 import { useAuth } from "@/contexts/AuthContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Index = () => {
   const { isAuthenticated, currentUserId, currentUserProfile } = useAuth();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   // Activity feed data - simulated real-time activities
   const [activities, setActivities] = useState([
@@ -49,8 +52,27 @@ const Index = () => {
     }
   };
 
+  const handleJoinChats = () => {
+    if (isAuthenticated) {
+      navigate("/groups");
+    } else {
+      navigate("/auth?mode=signup");
+    }
+  };
+
+  const handlePlanning = () => {
+    if (isAuthenticated) {
+      navigate("/accommodation");
+    } else {
+      navigate("/auth?mode=signup");
+    }
+  };
+
   // Simulate new activities appearing in real-time
   useEffect(() => {
+    // Skip activity simulation on mobile
+    if (isMobile) return;
+    
     const possibleActivities = [
       { text: "✨ Mia matched with Alex in Berlin", time: "Just now" },
       { text: "🇵🇹 Carlos joined the Lisbon University Chat", time: "Just now" },
@@ -68,7 +90,7 @@ const Index = () => {
     }, 10000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [isMobile]);
 
   return (
     <div className="animate-fade-in min-h-screen">
@@ -79,18 +101,48 @@ const Index = () => {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-end mb-4">
             <ShareButton showText={true}
-                          link="https://erasmatch.com"/>
+                         link="https://erasmatch.com"/>
           </div>
           
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="text-left">
-              <h1 className="text-5xl sm:text-6xl font-bold tracking-tight mb-6 leading-tight text-gray-900">
+              <h1 className="text-4xl sm:text-6xl font-bold tracking-tight mb-6 leading-tight text-gray-900">
                 Erasmus <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">Just Got Social</span>
               </h1>
               <p className="text-lg sm:text-xl max-w-xl text-gray-600 mb-8 leading-relaxed">
                 Get advice, make friends, and never feel alone on your Erasmus journey.
               </p>
-              <div className="flex flex-wrap gap-4">
+              
+              {/* Mobile specific action buttons */}
+              <div className="flex flex-col space-y-4 md:hidden">
+                <Button 
+                  size="lg" 
+                  className="w-full text-base px-4 py-6 bg-blue-500 hover:bg-blue-600 text-white shadow-md flex items-center justify-center"
+                  onClick={handleFindStudents}
+                >
+                  <Search className="mr-2 h-5 w-5" />
+                  Explore Students
+                </Button>
+                <Button 
+                  size="lg" 
+                  className="w-full text-base px-4 py-6 bg-purple-500 hover:bg-purple-600 text-white shadow-md flex items-center justify-center"
+                  onClick={handleJoinChats}
+                >
+                  <MessageSquare className="mr-2 h-5 w-5" />
+                  Join Group Chats
+                </Button>
+                <Button 
+                  size="lg" 
+                  className="w-full text-base px-4 py-6 bg-green-500 hover:bg-green-600 text-white shadow-md flex items-center justify-center"
+                  onClick={handlePlanning}
+                >
+                  <Calendar className="mr-2 h-5 w-5" />
+                  Make Plans Together
+                </Button>
+              </div>
+              
+              {/* Desktop buttons */}
+              <div className="hidden md:flex flex-wrap gap-4">
                 <Button 
                   size="lg" 
                   className="text-lg px-8 py-6 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
@@ -100,9 +152,18 @@ const Index = () => {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </div>
+              
+              {/* Mobile trust signal */}
+              <div className="md:hidden text-center mt-8 text-sm text-gray-600">
+                <p className="flex items-center justify-center">
+                  <Heart className="text-pink-500 h-4 w-4 mr-1" />
+                  Trusted by Erasmus students in 18+ countries
+                </p>
+              </div>
             </div>
             
-            <div className="relative h-80 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
+            {/* Activity feed - only visible on desktop */}
+            <div className="relative h-80 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm hidden md:block">
               <div className="absolute top-0 left-0 w-full h-12 bg-gradient-to-b from-blue-50 to-transparent z-10"></div>
               <div className="overflow-auto h-full p-4">
                 {activities.map((activity, index) => (
@@ -130,7 +191,7 @@ const Index = () => {
           </div>
 
           {/* Subtle connection lines */}
-          <svg className="absolute inset-0 w-full h-full opacity-20" style={{ pointerEvents: 'none' }}>
+          <svg className="absolute inset-0 w-full h-full opacity-20 hidden md:block" style={{ pointerEvents: 'none' }}>
             <line x1="25%" y1="30%" x2="40%" y2="70%" stroke="#e0e7ff" strokeWidth="1" strokeDasharray="5,5" />
             <line x1="75%" y1="40%" x2="40%" y2="70%" stroke="#e0e7ff" strokeWidth="1" strokeDasharray="5,5" />
             <line x1="75%" y1="40%" x2="65%" y2="75%" stroke="#e0e7ff" strokeWidth="1" strokeDasharray="5,5" />
