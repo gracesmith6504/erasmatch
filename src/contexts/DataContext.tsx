@@ -8,6 +8,8 @@ type DataContextType = {
   profiles: Profile[];
   messages: Message[];
   handleSendMessage: (receiverId: string, content: string) => Promise<void>;
+  updateProfile: (profile: Partial<Profile>) => Promise<void>;
+  fetchProfile: () => Promise<void>;
 };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -100,12 +102,71 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     }
   };
 
+  // Function to update a user profile
+  const updateProfile = async (updatedProfile: Partial<Profile>): Promise<void> => {
+    if (!currentUserId) return;
+    
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update(updatedProfile)
+        .eq('id', currentUserId);
+      
+      if (error) throw error;
+      
+      // Update the profiles array with the updated profile
+      setProfiles(prevProfiles => 
+        prevProfiles.map(profile => 
+          profile.id === currentUserId 
+            ? { ...profile, ...updatedProfile } 
+            : profile
+        )
+      );
+      
+      return Promise.resolve();
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      return Promise.reject(error);
+    }
+  };
+
+  // Function to fetch a single profile
+  const fetchProfile = async (): Promise<void> => {
+    if (!currentUserId) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', currentUserId)
+        .single();
+
+      if (error) throw error;
+      
+      if (data) {
+        // Update the profiles array with the fetched profile
+        setProfiles(prevProfiles => {
+          const profileExists = prevProfiles.some(p => p.id === currentUserId);
+          if (profileExists) {
+            return prevProfiles.map(p => p.id === currentUserId ? { ...p, ...data, country: null } as Profile : p);
+          } else {
+            return [...prevProfiles, { ...data, country: null } as Profile];
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    }
+  };
+
   return (
     <DataContext.Provider
       value={{
         profiles,
         messages,
-        handleSendMessage
+        handleSendMessage,
+        updateProfile,
+        fetchProfile
       }}
     >
       {children}
