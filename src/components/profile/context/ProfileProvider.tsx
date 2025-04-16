@@ -101,6 +101,8 @@ export const ProfileProvider = ({
   // Update profile function that updates local state immediately
   const updateProfile = async (newData: Partial<ProfileType>) => {
     try {
+      console.log("Updating profile with new data:", newData);
+
       // Update backend
       await onProfileUpdate(newData);
       
@@ -117,6 +119,10 @@ export const ProfileProvider = ({
           return acc;
         }, {} as typeof prev)
       }));
+      
+      // Fetch the latest profile data to ensure everything is in sync
+      await fetchProfile();
+      console.log("Profile updated successfully");
       
     } catch (error: any) {
       console.error("Profile update error:", error);
@@ -149,7 +155,7 @@ export const ProfileProvider = ({
       });
       
       toast.success("Profile updated successfully");
-      navigate("/students");
+      navigate("/groups");
     } catch (error: any) {
       console.error("Profile update error:", error);
       toast.error("Failed to update profile: " + error.message);

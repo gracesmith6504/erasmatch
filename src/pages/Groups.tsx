@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useData } from "@/contexts/DataContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProfileContext } from "@/components/profile/ProfileContext";
@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, GraduationCap } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { supabase } from "@/integrations/supabase/client";
 
 const Groups = () => {
   const { profiles } = useData();
@@ -36,7 +37,10 @@ const Groups = () => {
     setSelectedCityChat(null);
   };
 
-  console.log("Groups rendering with profile:", currentUserProfile);
+  // Log when profile updates to verify we're getting fresh data
+  useEffect(() => {
+    console.log("Groups component received updated profile:", currentUserProfile);
+  }, [currentUserProfile]);
 
   // Show full-screen chat view when a chat is selected
   if (selectedGroupChat || selectedCityChat) {

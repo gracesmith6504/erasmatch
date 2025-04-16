@@ -6,7 +6,7 @@ import UniversityAutocomplete from "@/components/UniversityAutocomplete";
 import { MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 type UniversityDetailsProps = {
@@ -33,33 +33,30 @@ export const UniversityDetails = ({
   handleHomeUniversityChange
 }: UniversityDetailsProps) => {
   const navigate = useNavigate();
+  const [lastUniversity, setLastUniversity] = useState('');
 
-  // Handle realtime university changes to automatically update group chats
+  // Track university changes to prevent duplicate notifications
   useEffect(() => {
-    // When university changes and we have a valid university, show a toast notification
-    if (form.university && form.university.trim().length > 0) {
-      toast.success(`You've been added to the ${form.university} chat group`, {
-        description: "Check your messages to join the conversation",
-        action: {
-          label: "View Chat",
-          onClick: () => navigate('/messages')
-        }
-      });
+    if (form.university !== lastUniversity && form.university) {
+      setLastUniversity(form.university);
     }
-  }, [form.university, navigate]);
+  }, [form.university]);
 
-  // Enhanced handleUniversityChange function to better handle the change
+  // Enhanced handleUniversityChange function
   const enhancedUniversityChange = (university: string) => {
+    // Track that we're changing universities to update the group chats
+    const isChanging = university !== form.university && university.trim().length > 0;
+    
     // Call the original handler
     handleUniversityChange(university);
     
-    // If the university is valid, show a notification that you've joined the chat
-    if (university && university.trim().length > 0) {
+    // Show a notification only if we're actually changing to a new university
+    if (isChanging) {
       toast.success(`You've been added to the ${university} chat group`, {
-        description: "Check your messages to join the conversation",
+        description: "Navigate to Messages or Groups to join the conversation",
         action: {
-          label: "View Chat",
-          onClick: () => navigate('/messages')
+          label: "View Chats",
+          onClick: () => navigate('/groups')
         }
       });
     }
