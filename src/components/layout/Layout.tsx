@@ -17,19 +17,21 @@ const Layout = ({ children }: LayoutProps) => {
   const location = useLocation();
 
   useEffect(() => {
-  const updateActivity = async () => {
-    const user = await supabase.auth.getUser();
-    if (user) {
-      await supabase.from("profiles").update({
-        last_active_at: new Date().toISOString(),
-      }).eq("id", user.data.user.id);
-    }
-  };
+   const updateActivity = async () => {
+     const { data: { user } } = await supabase.auth.getUser();
+     if (user) {
+       await supabase
+         .from("profiles")
+         .update({ last_active_at: new Date().toISOString() })
+         .eq("id", user.id);
+     }
+   };
 
-  updateActivity();
-  const interval = setInterval(updateActivity, 60_000); // every 60 seconds
-  return () => clearInterval(interval);
-}, []);
+   updateActivity();
+   const interval = setInterval(updateActivity, 60000); // every 60 seconds
+   return () => clearInterval(interval);
+ }, []);
+
 
   const handleLogoutClick = () => {
     handleLogout();
