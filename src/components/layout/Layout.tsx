@@ -4,6 +4,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navbar } from "./navbar";
+import { useEffect } from "react";
+import { supabase } from "@/lib/supabaseClient";
 
 type LayoutProps = {
   children: ReactNode;
@@ -13,6 +15,21 @@ const Layout = ({ children }: LayoutProps) => {
   const navigate = useNavigate();
   const { isAuthenticated, handleLogout } = useAuth();
   const location = useLocation();
+
+  useEffect(() => {
+  const updateActivity = async () => {
+    const user = await supabase.auth.getUser();
+    if (user) {
+      await supabase.from("profiles").update({
+        last_active_at: new Date().toISOString(),
+      }).eq("id", user.data.user.id);
+    }
+  };
+
+  updateActivity();
+  const interval = setInterval(updateActivity, 60_000); // every 60 seconds
+  return () => clearInterval(interval);
+}, []);
 
   const handleLogoutClick = () => {
     handleLogout();
