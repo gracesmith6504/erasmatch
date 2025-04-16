@@ -24,6 +24,31 @@ export const handlePromptUsed = (): void => {
 /**
  * Handle sending a message with refresh handling
  */
+import { Profile } from "@/types";
+
+/**
+ * Get initials from a name
+ */
+export const getInitials = (name: string | null): string => {
+  if (!name) return "?";
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .substring(0, 2);
+};
+
+/**
+ * Handles prompt selection - reset state
+ */
+export const handlePromptUsed = (): void => {
+  console.log("Prompt was used - will reset state after message is sent");
+};
+
+/**
+ * Handle sending a message with refresh handling
+ */
 import { supabase } from "@/integrations/supabase/client";
 
 export function createMessageHandler(
@@ -57,4 +82,6 @@ export function createMessageHandler(
     onPromptUsed();
   };
 }
+
+
 
