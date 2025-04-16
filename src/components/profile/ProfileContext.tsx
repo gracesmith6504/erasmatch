@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, FormEvent } from "react";
+import React, { createContext, useContext, useState, FormEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Profile as ProfileType } from "@/types";

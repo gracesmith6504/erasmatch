@@ -1,7 +1,6 @@
 
 import { Button } from "@/components/ui/button";
 import { ProfileFormFields } from "./ProfileFormFields";
-import { useProfileForm } from "./useProfileForm";
 import { Loader2 } from "lucide-react";
 import { useProfileContext } from "./ProfileContext";
 

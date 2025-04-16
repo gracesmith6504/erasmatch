@@ -1,17 +1,14 @@
 
-import { useState, useEffect } from "react";
-import { Profile } from "@/types";
+import { useState } from "react";
 import { useData } from "@/contexts/DataContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProfileContext } from "@/components/profile/ProfileContext";
-import { GroupChatsList } from "@/components/messages/GroupChatsList";
-import { CityList } from "@/components/messages/CityList";
 import { GroupChatPanel } from "@/components/messages/GroupChatPanel";
 import { CityPanel } from "@/components/messages/CityPanel";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { MapPin, GraduationCap } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Groups = () => {
   const { profiles } = useData();
@@ -38,6 +35,8 @@ const Groups = () => {
     setSelectedGroupChat(null);
     setSelectedCityChat(null);
   };
+
+  console.log("Groups rendering with profile:", currentUserProfile);
 
   // Show full-screen chat view when a chat is selected
   if (selectedGroupChat || selectedCityChat) {
