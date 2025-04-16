@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Profile } from "@/types";
+import { Link } from "react-router-dom";
 
 interface MessageHeaderProps {
   isMobile: boolean;
@@ -34,15 +35,19 @@ export const MessageHeader = ({ isMobile, onBack, profile }: MessageHeaderProps)
         </Button>
       )}
       {profile && (
-        <>
-          <Avatar className="h-8 w-8 mr-3">
-            <AvatarImage src={profile.avatar_url || undefined} />
-            <AvatarFallback className="bg-erasmatch-light-accent">
-              {getInitials(profile.name)}
-            </AvatarFallback>
-          </Avatar>
+        <div className="flex items-center">
+          {profile.id && (
+            <Link to={`/profile/${profile.id}`} className="hover:opacity-80 transition-opacity">
+              <Avatar className="h-10 w-10 mr-3">
+                <AvatarImage src={profile.avatar_url || undefined} />
+                <AvatarFallback className="bg-erasmatch-light-accent">
+                  {getInitials(profile.name)}
+                </AvatarFallback>
+              </Avatar>
+            </Link>
+          )}
           <div className="font-medium">{profile.name}</div>
-        </>
+        </div>
       )}
     </div>
   );

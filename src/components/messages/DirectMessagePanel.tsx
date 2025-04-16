@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Message, Profile, ChatThread } from "@/types";
 import { MessageHeader } from "./MessageHeader";
 import { DirectMessageList } from "./DirectMessageList";
@@ -7,6 +7,7 @@ import { MessageInput } from "./MessageInput";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface DirectMessagePanelProps {
   thread: ChatThread;
@@ -32,25 +33,87 @@ export const DirectMessagePanel = ({
   const [newMessage, setNewMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [showSuggestedPrompts, setShowSuggestedPrompts] = useState(false);
+  const [localMessages, setLocalMessages] = useState<Message[]>([]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const formatMessageDate = (dateString: string) => {
     const date = new Date(dateString);
     return format(date, "MMM d, h:mm a");
   };
 
+  // Initialize local messages from props
+  useEffect(() => {
+    setLocalMessages(messages);
+  }, [messages]);
+
+  // Set up Supabase real-time subscription
+  useEffect(() => {
+    if (!currentUserId || !thread.partner.id) return;
+
+    // Subscribe to new messages between current user and thread partner
+    const channel = supabase
+      .channel('direct-messages')
+      .on('postgres_changes', 
+        { 
+          event: 'INSERT', 
+          schema: 'public', 
+          table: 'messages',
+          filter: `sender_id=eq.${thread.partner.id}`,
+        }, 
+        (payload) => {
+          // Only add the message if it's for the current user
+          const newMessage = payload.new as Message;
+          if (newMessage.receiver_id === currentUserId) {
+            setLocalMessages(prevMessages => [...prevMessages, newMessage]);
+            scrollToBottom();
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [currentUserId, thread.partner.id]);
+
   // Check if thread has no messages to show suggested prompts
   useEffect(() => {
-    setShowSuggestedPrompts(messages.length === 0);
-  }, [messages]);
+    setShowSuggestedPrompts(localMessages.length === 0);
+  }, [localMessages]);
+
+  // Scroll to bottom when messages change
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [localMessages]);
 
   const handleSendMessage = async () => {
     if (!thread || !newMessage.trim()) return;
     
     setIsSending(true);
     try {
+      // Create a temporary message to show immediately in the UI
+      const tempMessage: Message = {
+        id: `temp-${Date.now()}`,
+        sender_id: currentUserId,
+        receiver_id: thread.partner.id,
+        content: newMessage,
+        created_at: new Date().toISOString(),
+      };
+      
+      // Add the temporary message to local state
+      setLocalMessages(prev => [...prev, tempMessage]);
+      
+      // Send the message to the server
       await onSendMessage(thread.partner.id, newMessage);
       setNewMessage("");
       setShowSuggestedPrompts(false); // Hide prompts after sending a message
+      
+      // Scroll to the bottom after sending
+      scrollToBottom();
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {
@@ -88,10 +151,11 @@ export const DirectMessagePanel = ({
       
       <div className="flex-1 overflow-y-auto p-4 flex flex-col space-y-4 pb-20">
         <DirectMessageList 
-          messages={messages} 
+          messages={localMessages} 
           currentUserId={currentUserId}
           formatMessageDate={formatMessageDate}
         />
+        <div ref={messagesEndRef} />
       </div>
       
       <div className="sticky bottom-0 w-full bg-white border-t">
