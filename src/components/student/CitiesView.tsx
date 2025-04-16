@@ -15,9 +15,11 @@ const CitiesView = ({ profiles, currentUserId }: CitiesViewProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
 
-  // Filter out current user from profiles
+  // Filter out current user and deleted users from profiles
   const filteredProfiles = useMemo(() => {
-    return profiles.filter(profile => profile.id !== currentUserId);
+    return profiles.filter(profile => 
+      profile.id !== currentUserId && !profile.deleted_at
+    );
   }, [profiles, currentUserId]);
   
   // Get unique cities and count students in each

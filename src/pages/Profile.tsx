@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 import { ProfileProvider } from "@/components/profile/ProfileContext";
@@ -11,6 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ShareButton } from "@/components/share/ShareButton";
+import { DeleteAccountDialog } from "@/components/profile/DeleteAccountDialog";
 
 const Profile = () => {
   const { currentUserId } = useAuth();
@@ -123,7 +125,6 @@ const Profile = () => {
                 <h3 className="text-sm font-medium text-blue-800">Share your profile!</h3>
                 <p className="text-xs text-blue-600 mt-1 truncate">
                   https://erasmatch.com/u/{profile.ref_code}
-                
                 </p>
               </div>
               <div className="flex justify-center space-x-2">
@@ -135,9 +136,9 @@ const Profile = () => {
                 >
                   {copied ? "Copied!" : "Copy Link"}
                 </Button>
-                <ShareButton //city={profile.city || undefined} 
-                             link={`https://erasmatch.com/u/${profile.ref_code}`}
-                  />
+                <ShareButton 
+                  link={`https://erasmatch.com/u/${profile.ref_code}`}
+                />
               </div>
             </div>
           </CardContent>
@@ -150,6 +151,11 @@ const Profile = () => {
         <ProfileProvider profile={profile} onProfileUpdate={handleProfileUpdate} fetchProfile={fetchProfile}>
           <ProfileForm />
         </ProfileProvider>
+      </div>
+      
+      {/* Delete Account Button */}
+      <div className="mt-8 text-center">
+        <DeleteAccountDialog userId={currentUserId} />
       </div>
     </div>
   );

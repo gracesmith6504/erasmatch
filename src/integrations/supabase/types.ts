@@ -285,6 +285,7 @@ export type Database = {
           city: string | null
           course: string | null
           created_at: string
+          deleted_at: string | null
           email: string | null
           home_university: string | null
           id: string
@@ -301,6 +302,7 @@ export type Database = {
           city?: string | null
           course?: string | null
           created_at?: string
+          deleted_at?: string | null
           email?: string | null
           home_university?: string | null
           id: string
@@ -317,6 +319,7 @@ export type Database = {
           city?: string | null
           course?: string | null
           created_at?: string
+          deleted_at?: string | null
           email?: string | null
           home_university?: string | null
           id?: string

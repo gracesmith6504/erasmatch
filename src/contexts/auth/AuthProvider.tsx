@@ -61,6 +61,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const profileData = await fetchUserProfile(session.user.id);
 
         if (profileData) {
+          // Check if the user account is deleted
+          if (profileData.deleted_at) {
+            // If account is deleted, sign out
+            await supabase.auth.signOut();
+            setIsAuthenticated(false);
+            setCurrentUserId(null);
+            localStorage.removeItem('userId');
+            setCurrentUserEmail(null);
+            setCurrentUserProfile(null);
+            toast.error("This account has been deleted");
+            navigate("/auth?mode=login");
+            return;
+          }
+          
           setCurrentUserProfile(profileData);
         } else {
           // No profile found, create a new one with user metadata if available

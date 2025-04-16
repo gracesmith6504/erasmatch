@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Profile } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -12,6 +11,9 @@ interface StudentListProps {
 }
 
 const StudentList = ({ students }: StudentListProps) => {
+  // Filter out deleted users
+  const activeStudents = students.filter(student => !student.deleted_at);
+
   const getInitials = (name: string | null) => {
     if (!name) return "?";
     return name
@@ -46,7 +48,7 @@ const StudentList = ({ students }: StudentListProps) => {
     );
   };
 
-  if (students.length === 0) {
+  if (activeStudents.length === 0) {
     return (
       <div className="mt-4 p-6 bg-gray-50 border border-gray-100 rounded-xl text-center">
         <p className="text-gray-600">No students found for this destination yet.</p>
@@ -59,11 +61,11 @@ const StudentList = ({ students }: StudentListProps) => {
     <div className="mt-4 space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-900">Students at this university</h3>
-        <span className="text-sm text-gray-500">{students.length} student(s)</span>
+        <span className="text-sm text-gray-500">{activeStudents.length} student(s)</span>
       </div>
       
       <div className="grid grid-cols-1 gap-4">
-        {students.map((student) => (
+        {activeStudents.map((student) => (
           <div 
             key={student.id} 
             className="flex flex-col sm:flex-row items-center bg-white border border-gray-100 p-4 rounded-xl gap-4 hover:shadow-soft transition-all duration-300"

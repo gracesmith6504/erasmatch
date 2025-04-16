@@ -19,7 +19,8 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
       try {
         const { data, error } = await supabase
           .from('profiles')
-          .select('*');
+          .select('*')
+          .is('deleted_at', null);  // Filter out deleted users
         
         if (error) {
           throw error;
@@ -59,8 +60,8 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
 
   // Filter profiles based on university, city, and personality tag filters
   const filteredProfiles = loadedProfiles.filter(profile => {
-    // Skip current user
-    if (profile.id === currentUserId) return false;
+    // Skip current user and deleted users
+    if (profile.id === currentUserId || profile.deleted_at) return false;
 
     const uniMatch = !universityFilter || universityFilter === "all-universities" || profile.university === universityFilter;
     const cityMatch = !cityFilter || cityFilter === "all-cities" || profile.city === cityFilter;
