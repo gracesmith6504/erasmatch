@@ -16,7 +16,7 @@ interface DirectMessagePanelProps {
   isMobile: boolean;
   onBack?: () => void;
   onSendMessage: (receiverId: string, content: string) => void;
-  onPromptUsed?: () => void; // New prop to handle prompt selection
+  onPromptUsed?: () => void;
 }
 
 export const DirectMessagePanel = ({

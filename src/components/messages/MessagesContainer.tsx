@@ -43,8 +43,6 @@ export const MessagesContainer = ({
   useEffect(() => {
     if (isMobile && selectedThread) {
       setShowMobileThreadList(false);
-    } else if (!selectedThread) {
-      setShowMobileThreadList(true);
     }
   }, [selectedThread, isMobile]);
   
@@ -76,13 +74,12 @@ export const MessagesContainer = ({
     console.log("Prompt was used - will reset state after message is sent");
   };
 
-  // Handler for going back to thread list on mobile
+  // Handler for going back to thread list on mobile - only change thread list visibility
   const handleBackToThreadList = () => {
-    setSelectedThread(null);
     setShowMobileThreadList(true);
   };
 
-  // Show mobile thread list when no conversation selected on mobile
+  // Show mobile thread list when we want to display the thread list on mobile
   if (isMobile && showMobileThreadList) {
     return (
       <MobileMessagesView

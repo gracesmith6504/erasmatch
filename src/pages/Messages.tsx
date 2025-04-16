@@ -15,7 +15,6 @@ type MessagesProps = {
 const Messages = ({ messages, profiles, currentUserId, onSendMessage }: MessagesProps) => {
   const [searchParams] = useSearchParams();
   const [initialSelectedUser, setInitialSelectedUser] = useState<string | null>(null);
-  const [messageKey, setMessageKey] = useState(0); // Add key to force refresh
   const isMobile = useIsMobile();
   
   // Check for a user param in the URL (e.g., from StudentCard navigation)
@@ -43,8 +42,6 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
   const handleSendMessage = async (receiverId: string, content: string): Promise<void> => {
     try {
       await onSendMessage(receiverId, content);
-      // Force a refresh of the Messages component
-      setMessageKey(prev => prev + 1);
       return;
     } catch (error) {
       console.error("Error in Messages handleSendMessage:", error);
@@ -55,7 +52,6 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
   return (
     <div className={isMobile ? "h-[calc(100vh-64px)] overflow-hidden" : ""}>
       <MessagesContainer
-        key={messageKey} // Force a full re-render when messages are sent
         messages={messages}
         profiles={profiles}
         currentUserId={currentUserId}
