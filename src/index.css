@@ -278,12 +278,13 @@
     @apply my-4 mx-0;
   }
   
-  /* Better grid layouts on mobile */
+  /* Better grid layouts on mobile - FIXED to avoid circular dependency */
   .grid-cols-1.sm\:grid-cols-2, 
   .grid-cols-1.sm\:grid-cols-3, 
   .grid-cols-1.md\:grid-cols-2,
   .grid-cols-1.md\:grid-cols-3 {
-    @apply grid-cols-1 gap-6;
+    grid-template-columns: repeat(1, minmax(0, 1fr)); /* This replaces @apply grid-cols-1 */
+    gap: 1.5rem; /* This replaces @apply gap-6 */
   }
   
   /* More readable forms */
