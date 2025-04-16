@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Message, Profile } from "@/types";
 import { MessagesContainer } from "@/components/messages/MessagesContainer";
 import { useSearchParams } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type MessagesProps = {
   messages: Message[];
@@ -15,6 +16,7 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
   const [searchParams] = useSearchParams();
   const [initialSelectedUser, setInitialSelectedUser] = useState<string | null>(null);
   const [messageKey, setMessageKey] = useState(0); // Add key to force refresh
+  const isMobile = useIsMobile();
   
   // Check for a user param in the URL (e.g., from StudentCard navigation)
   useEffect(() => {
@@ -43,14 +45,16 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
   };
 
   return (
-    <MessagesContainer
-      key={messageKey} // Force a full re-render when messages are sent
-      messages={messages}
-      profiles={profiles}
-      currentUserId={currentUserId}
-      onSendMessage={handleSendMessage}
-      initialSelectedUser={initialSelectedUser}
-    />
+    <div className={isMobile ? "h-[calc(100vh-64px)] overflow-hidden" : ""}>
+      <MessagesContainer
+        key={messageKey} // Force a full re-render when messages are sent
+        messages={messages}
+        profiles={profiles}
+        currentUserId={currentUserId}
+        onSendMessage={handleSendMessage}
+        initialSelectedUser={initialSelectedUser}
+      />
+    </div>
   );
 };
 

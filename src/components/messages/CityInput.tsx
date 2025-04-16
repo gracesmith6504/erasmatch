@@ -47,7 +47,7 @@ export const CityInput = ({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="w-full space-y-4">
       {showPrompts && (
         <GroupMessageSuggestions
           chatType="city"
@@ -56,8 +56,9 @@ export const CityInput = ({
           onDismiss={handleDismissPrompts}
         />
       )}
-      <form onSubmit={handleSubmit} className="flex space-x-2">
+      <form onSubmit={handleSubmit} className="flex w-full space-x-2">
         <Input
+          className="flex-1"
           placeholder="Type a message to your city group..."
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}

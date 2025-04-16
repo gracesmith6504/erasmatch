@@ -45,8 +45,8 @@ const Groups = () => {
   // Show full-screen chat view when a chat is selected
   if (selectedGroupChat || selectedCityChat) {
     return (
-      <div className="max-w-7xl mx-auto h-[calc(100vh-128px)] py-4 px-2 sm:px-4 flex flex-col">
-        <div className="flex-1 bg-white rounded-lg shadow overflow-hidden">
+      <div className="h-[calc(100vh-64px)] flex flex-col">
+        <div className="flex-1 overflow-hidden">
           {selectedGroupChat ? (
             <GroupChatPanel 
               universityName={selectedGroupChat}

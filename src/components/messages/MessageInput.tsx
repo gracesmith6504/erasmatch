@@ -46,7 +46,7 @@ export const MessageInput = ({
   };
 
   return (
-    <div className="p-4 border-t">
+    <div className="p-4 border-t w-full sticky bottom-0 z-10 bg-white">
       {showSuggestedPrompts && (
         <SuggestedPrompts
           onSelectPrompt={handleSelectPrompt}
@@ -55,8 +55,9 @@ export const MessageInput = ({
           selectedUser={selectedUser}
         />
       )}
-      <form onSubmit={handleSubmit} className="flex space-x-2">
+      <form onSubmit={handleSubmit} className="flex w-full space-x-2">
         <Input
+          className="flex-1"
           placeholder="Type a message..."
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}

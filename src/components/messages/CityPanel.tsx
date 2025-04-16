@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Profile } from "@/types";
+import { Profile, GroupMessage } from "@/types";
 import { toast } from "sonner";
 import { CityParticipantsInfo } from "./CityParticipantsInfo";
 import { CityMessageList } from "./CityMessageList";
@@ -24,20 +25,20 @@ export const CityPanel = ({
   onBack,
   isFullScreen = false,
 }: CityPanelProps) => {
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<GroupMessage[]>([]);
   const [isSending, setIsSending] = useState(false);
   const [participants, setParticipants] = useState<Profile[]>([]);
   const [hasSentMessage, setHasSentMessage] = useState(false);
   
   useEffect(() => {
-    const getCityParticipants = () => {
-      const cityResidents = profiles.filter(
+    const getParticipants = () => {
+      const cityStudents = profiles.filter(
         (profile) => profile.city === cityName
       );
-      setParticipants(cityResidents);
+      setParticipants(cityStudents);
     };
     
-    getCityParticipants();
+    getParticipants();
   }, [cityName, profiles]);
   
   useEffect(() => {
@@ -54,7 +55,7 @@ export const CityPanel = ({
         }
         
         if (data) {
-          setMessages(data);
+          setMessages(data as GroupMessage[]);
           
           const userMessages = data.filter(msg => msg.sender_id === currentUserId);
           setHasSentMessage(userMessages.length > 0);
@@ -77,7 +78,7 @@ export const CityPanel = ({
           filter: `city_name=eq.${cityName}`,
         },
         (payload) => {
-          const newMessage = payload.new;
+          const newMessage = payload.new as GroupMessage;
           setMessages((prevMessages) => [...prevMessages, newMessage]);
           
           if (newMessage.sender_id === currentUserId) {
@@ -118,13 +119,9 @@ export const CityPanel = ({
     console.log("Suggestion was used in city chat");
   };
   
-  const generateShareLink = () => {
-    return `https://erasmatch.com/city/${encodeURIComponent(cityName)}`;
-  };
-  
   return (
     <div className="flex flex-col h-full">
-      <div className="p-4 border-b flex items-center justify-between">
+      <div className="p-4 border-b flex items-center justify-between bg-white">
         <div className="flex items-center">
           {isFullScreen && onBack && (
             <Button 
@@ -134,22 +131,20 @@ export const CityPanel = ({
               className="mr-2"
             >
               <ArrowLeft className="h-4 w-4 mr-1" />
-              Back to Groups
+              Back
             </Button>
           )}
           <div>
-            <h2 className="font-medium text-lg">🏙️ {cityName} Erasmus Chat</h2>
+            <h2 className="font-medium text-lg">📍 {cityName} Chat</h2>
             <CityParticipantsInfo count={participants.length} />
           </div>
         </div>
         
-        <ShareButton 
-          city={cityName} 
-          link={generateShareLink()} 
-        />
+        <ShareButton city={cityName}
+                     link={`https://erasmatch.com/city/${encodeURIComponent(cityName)}`}/>
       </div>
       
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col">
+      <div className="flex-1 overflow-y-auto p-4 flex flex-col bg-gray-50">
         <CityMessageList 
           messages={messages}
           profiles={profiles}
@@ -157,7 +152,7 @@ export const CityPanel = ({
         />
       </div>
       
-      <div className="p-4 border-t">
+      <div className="p-4 border-t bg-white sticky bottom-0 z-10">
         <CityInput
           onSendMessage={handleSendMessage}
           isSending={isSending}
