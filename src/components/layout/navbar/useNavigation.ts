@@ -1,6 +1,6 @@
 
 import { useLocation } from "react-router-dom";
-import { Home, MessageSquare, Users, User, MessageCircleDot } from "lucide-react";
+import { Home, MessageSquare, Users, User, MessageCircle } from "lucide-react";
 import { useData } from "@/contexts/DataContext";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -32,7 +32,7 @@ export const useNavigation = () => {
     {
       name: "Messages",
       path: "/messages",
-      icon: hasUnreadMessages ? MessageCircleDot : MessageSquare,
+      icon: hasUnreadMessages ? MessageCircle : MessageSquare,
       hasNotification: hasUnreadMessages,
     },
     {

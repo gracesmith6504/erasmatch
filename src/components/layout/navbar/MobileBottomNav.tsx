@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { Home, Users, MessageSquare, User, MessageCircleDot } from "lucide-react";
+import { Home, Users, MessageSquare, User, MessageCircle } from "lucide-react";
 import { useNavigation } from "./useNavigation";
 
 interface MobileBottomNavProps {
