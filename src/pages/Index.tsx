@@ -1,6 +1,5 @@
 
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { HeroSection } from "@/components/home/HeroSection";
@@ -33,7 +32,7 @@ const Index = () => {
     }
   };
 
-  // Redirecting to students page instead of accommodation
+  // Redirecting to students page
   const handlePlanning = () => {
     if (isAuthenticated) {
       navigate("/students"); // Changed from "/accommodation" to "/students"

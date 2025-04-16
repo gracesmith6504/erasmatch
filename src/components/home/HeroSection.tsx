@@ -4,6 +4,8 @@ import { ArrowRight, Search, MessageSquare, Calendar } from "lucide-react";
 import { ShareButton } from "@/components/share/ShareButton";
 import { ActivityFeed } from "./ActivityFeed";
 import { Heart } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 interface HeroSectionProps {
   handleFindStudents: () => void;
@@ -16,6 +18,17 @@ export const HeroSection = ({
   handleJoinChats, 
   handlePlanning 
 }: HeroSectionProps) => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  const handleAuthAction = () => {
+    if (isAuthenticated) {
+      navigate("/students");
+    } else {
+      navigate("/auth?mode=signup");
+    }
+  };
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-r from-blue-50 to-purple-50 py-20 sm:py-32">
       <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1')] bg-cover bg-center opacity-5"></div>
@@ -33,6 +46,21 @@ export const HeroSection = ({
             <p className="text-lg sm:text-xl max-w-xl text-gray-600 mb-8 leading-relaxed">
               Get advice, make friends, and never feel alone on your Erasmus journey.
             </p>
+            
+            {/* New primary CTA button */}
+            <div className="w-full mb-8">
+              <Button 
+                size="lg" 
+                className="w-full text-base px-4 py-6 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                onClick={handleAuthAction}
+              >
+                {isAuthenticated ? (
+                  <>👋 Explore Students</>
+                ) : (
+                  <>Create Your Erasmus Profile</>
+                )}
+              </Button>
+            </div>
             
             {/* Mobile specific action buttons */}
             <div className="flex flex-col space-y-4 md:hidden">
@@ -55,7 +83,7 @@ export const HeroSection = ({
               <Button 
                 size="lg" 
                 className="w-full text-base px-4 py-6 bg-green-500 hover:bg-green-600 text-white shadow-md flex items-center justify-center"
-                onClick={handleFindStudents} // Changed to use handleFindStudents instead of handlePlanning
+                onClick={handleFindStudents} 
               >
                 <Calendar className="mr-2 h-5 w-5" />
                 Find Travel Buddies
