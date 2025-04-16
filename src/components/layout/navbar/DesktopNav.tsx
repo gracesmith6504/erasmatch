@@ -12,7 +12,7 @@ interface DesktopNavProps {
 }
 
 export const DesktopNav = ({ isAuthenticated, isActive, onLogout }: DesktopNavProps) => {
-  const { navigationItems, hasUnreadMessages } = useNavigation();
+  const { navigationItems } = useNavigation();
   
   if (!isAuthenticated) {
     return (
@@ -43,12 +43,7 @@ export const DesktopNav = ({ isAuthenticated, isActive, onLogout }: DesktopNavPr
               inactiveClass="text-gray-700 hover:bg-gray-200"
               icon={item.icon}
             >
-              <div className="relative">
-                {item.name}
-                {item.hasNotification && !isActive(item.path) && (
-                  <div className="absolute -top-2 -right-3 w-2 h-2 bg-erasmatch-blue rounded-full"></div>
-                )}
-              </div>
+              {item.name}
             </NavigationLink>
           ))}
         </div>

@@ -37,7 +37,6 @@ export interface ChatThread {
     created_at: string;
     sender_name: string;
   } | null;
-  hasUnreadMessages?: boolean;
 }
 
 // Group Message

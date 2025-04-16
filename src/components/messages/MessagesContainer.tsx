@@ -69,12 +69,6 @@ export const MessagesContainer = ({
     () => {}
   );
 
-  // Handle messages being read
-  const handleMessagesRead = () => {
-    // Force refresh of the thread list to update unread status
-    setRefreshKey(prevKey => prevKey + 1);
-  };
-
   // Handle prompt selection - reset state
   const handlePromptUsed = () => {
     console.log("Prompt was used - will reset state after message is sent");
@@ -118,7 +112,6 @@ export const MessagesContainer = ({
         onSendMessage={handleSendMessage}
         onPromptUsed={handlePromptUsed}
         onBack={isMobile ? handleBackToThreadList : undefined}
-        onMessagesRead={handleMessagesRead}
       />
     </div>
   );

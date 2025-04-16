@@ -5,7 +5,6 @@ import { format } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 
 interface ThreadsListProps {
   threads: ChatThread[];
@@ -38,17 +37,12 @@ export const ThreadsList = ({
               }`}
               onClick={() => onSelectThread(thread)}
             >
-              <div className="relative">
-                <Avatar className="h-10 w-10 mr-3">
-                  <AvatarImage src={thread.partner.avatar_url || undefined} />
-                  <AvatarFallback className="bg-erasmatch-light-accent">
-                    {getInitials(thread.partner.name)}
-                  </AvatarFallback>
-                </Avatar>
-                {thread.hasUnreadMessages && (
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-erasmatch-blue rounded-full border-2 border-white"></div>
-                )}
-              </div>
+              <Avatar className="h-10 w-10 mr-3">
+                <AvatarImage src={thread.partner.avatar_url || undefined} />
+                <AvatarFallback className="bg-erasmatch-light-accent">
+                  {getInitials(thread.partner.name)}
+                </AvatarFallback>
+              </Avatar>
               <div className="overflow-hidden">
                 <div className="font-medium">{thread.partner.name}</div>
                 {thread.lastMessage && (

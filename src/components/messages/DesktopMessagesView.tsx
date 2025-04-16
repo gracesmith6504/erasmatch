@@ -16,7 +16,6 @@ interface DesktopMessagesViewProps {
   onSendMessage: (receiverId: string, content: string) => Promise<void>;
   onPromptUsed?: () => void;
   onBack?: () => void;
-  onMessagesRead?: () => void; // New prop
 }
 
 export const DesktopMessagesView = ({
@@ -31,7 +30,6 @@ export const DesktopMessagesView = ({
   onSendMessage,
   onPromptUsed = () => {},
   onBack,
-  onMessagesRead = () => {}, // Default to noop function
 }: DesktopMessagesViewProps) => {
   return (
     <div className="flex flex-1 bg-white rounded-lg shadow overflow-hidden">
@@ -58,7 +56,6 @@ export const DesktopMessagesView = ({
           onBack={onBack}
           onSendMessage={onSendMessage}
           onPromptUsed={onPromptUsed}
-          onMessagesRead={onMessagesRead}
         />
       ) : (
         <div className="hidden md:flex flex-col w-2/3 items-center justify-center p-4">
