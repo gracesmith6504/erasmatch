@@ -290,6 +290,7 @@ export type Database = {
           home_university: string | null
           id: string
           invited_by: string | null
+          last_active_at: string | null
           name: string | null
           personality_tags: string[] | null
           ref_code: string | null
@@ -307,6 +308,7 @@ export type Database = {
           home_university?: string | null
           id: string
           invited_by?: string | null
+          last_active_at?: string | null
           name?: string | null
           personality_tags?: string[] | null
           ref_code?: string | null
@@ -324,6 +326,7 @@ export type Database = {
           home_university?: string | null
           id?: string
           invited_by?: string | null
+          last_active_at?: string | null
           name?: string | null
           personality_tags?: string[] | null
           ref_code?: string | null
