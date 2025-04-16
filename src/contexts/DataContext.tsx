@@ -36,6 +36,27 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     if (isAuthenticated && currentUserId) {
       fetchProfiles();
       fetchUserMessages(currentUserId);
+      
+      // Set up real-time listener for message updates
+      const channel = supabase
+        .channel('user-messages')
+        .on('postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'messages',
+            filter: `receiver_id=eq.${currentUserId}`,
+          },
+          () => {
+            // Refetch messages when any message is updated
+            fetchUserMessages(currentUserId);
+          }
+        )
+        .subscribe();
+        
+      return () => {
+        supabase.removeChannel(channel);
+      };
     }
   }, [isAuthenticated, currentUserId]);
 

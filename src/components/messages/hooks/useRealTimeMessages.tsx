@@ -46,6 +46,22 @@ export function useRealTimeMessages({
           }
         }
       )
+      .on('postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages',
+        },
+        (payload) => {
+          // Update the message in the local state if it exists
+          const updatedMessage = payload.new as Message;
+          setLocalMessages(prevMessages => 
+            prevMessages.map(msg => 
+              msg.id === updatedMessage.id ? updatedMessage : msg
+            )
+          );
+        }
+      )
       .subscribe();
 
     return () => {

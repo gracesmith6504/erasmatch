@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Message, Profile, ChatThread } from "@/types";
 import { MessageHeader } from "./MessageHeader";
@@ -20,6 +19,7 @@ interface DirectMessagePanelProps {
   onBack?: () => void;
   onSendMessage: (receiverId: string, content: string) => void;
   onPromptUsed?: () => void;
+  onMessagesRead?: () => void;
 }
 
 export const DirectMessagePanel = ({
@@ -31,6 +31,7 @@ export const DirectMessagePanel = ({
   onBack,
   onSendMessage,
   onPromptUsed = () => {},
+  onMessagesRead = () => {},
 }: DirectMessagePanelProps) => {
   const [newMessage, setNewMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
@@ -69,18 +70,25 @@ export const DirectMessagePanel = ({
       );
       
       if (unreadMessages.length > 0) {
-        // Update all unread messages from this sender to read
-        await supabase
-          .from('messages')
-          .update({ read: true })
-          .eq('receiver_id', currentUserId)
-          .eq('sender_id', thread.partner.id)
-          .eq('read', false);
+        try {
+          // Update all unread messages from this sender to read
+          await supabase
+            .from('messages')
+            .update({ read: true })
+            .eq('receiver_id', currentUserId)
+            .eq('sender_id', thread.partner.id)
+            .eq('read', false);
+          
+          // Notify parent component that messages have been read
+          onMessagesRead();
+        } catch (error) {
+          console.error("Error marking messages as read:", error);
+        }
       }
     };
     
     markMessagesAsRead();
-  }, [messages, thread.partner.id, currentUserId]);
+  }, [messages, thread.partner.id, currentUserId, onMessagesRead]);
 
   const handleSendMessage = async () => {
     if (!thread || !newMessage.trim()) return;
@@ -102,7 +110,7 @@ export const DirectMessagePanel = ({
       // Send the message to the server
       await onSendMessage(thread.partner.id, newMessage);
       setNewMessage("");
-      setShowSuggestedPrompts(false); // Hide prompts after sending a message
+      setShowSuggestedPrompts(false);
       
       // Scroll to the bottom after sending
       scrollToBottom();
