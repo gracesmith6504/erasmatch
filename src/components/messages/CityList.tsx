@@ -1,19 +1,8 @@
-
 import { useState, useEffect } from "react";
 import { MapPin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Profile } from "@/types";
+import { Profile, CityChat } from "@/types";
 import { CityListItem } from "./CityListItem";
-
-type CityChat = {
-  city_name: string;
-  participants_count: number;
-  last_message?: {
-    content: string;
-    created_at: string;
-    sender_name: string;
-  } | null;
-};
 
 type CityListProps = {
   profiles: Profile[];

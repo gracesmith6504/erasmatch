@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Profile, GroupMessage } from "@/types";
+import { Profile, CityMessage } from "@/types";
 import { toast } from "sonner";
 import { CityParticipantsInfo } from "./CityParticipantsInfo";
 import { CityMessageList } from "./CityMessageList";
@@ -25,7 +25,7 @@ export const CityPanel = ({
   onBack,
   isFullScreen = false,
 }: CityPanelProps) => {
-  const [messages, setMessages] = useState<GroupMessage[]>([]);
+  const [messages, setMessages] = useState<CityMessage[]>([]);
   const [isSending, setIsSending] = useState(false);
   const [participants, setParticipants] = useState<Profile[]>([]);
   const [hasSentMessage, setHasSentMessage] = useState(false);
@@ -55,7 +55,7 @@ export const CityPanel = ({
         }
         
         if (data) {
-          setMessages(data as GroupMessage[]);
+          setMessages(data as CityMessage[]);
           
           const userMessages = data.filter(msg => msg.sender_id === currentUserId);
           setHasSentMessage(userMessages.length > 0);
@@ -78,7 +78,7 @@ export const CityPanel = ({
           filter: `city_name=eq.${cityName}`,
         },
         (payload) => {
-          const newMessage = payload.new as GroupMessage;
+          const newMessage = payload.new as CityMessage;
           setMessages((prevMessages) => [...prevMessages, newMessage]);
           
           if (newMessage.sender_id === currentUserId) {

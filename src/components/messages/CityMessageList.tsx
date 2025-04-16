@@ -1,9 +1,9 @@
 
-import { GroupMessage, Profile } from "@/types";
+import { CityMessage, Profile } from "@/types";
 import { GroupChatMessage } from "./GroupChatMessage";
 
 interface CityMessageListProps {
-  messages: GroupMessage[];
+  messages: CityMessage[];
   profiles: Profile[];
   currentUserId: string;
 }
