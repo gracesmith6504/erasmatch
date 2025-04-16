@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useProfileContext } from "./ProfileContext";
+import { useProfileContext } from "./context";
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
 
