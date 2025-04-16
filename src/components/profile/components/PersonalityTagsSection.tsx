@@ -96,6 +96,7 @@ export const PersonalityTagsSection = ({
 
         {/* Toggle button - only visible on mobile */}
         <Button
+          type="button" // ✅ prevent form submission
           variant="ghost"
           size="sm"
           onClick={() => setShowAllTags(!showAllTags)}
