@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { School, MapPin, CalendarClock, Home, Globe, Mail, BookOpen } from "lucide-react";
+import { School, MapPin, CalendarClock, Home, Globe, Mail, BookOpen, ChevronDown, ChevronUp } from "lucide-react";
 import { Profile } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
 import { getTagInfo, getTagBgColor } from "@/components/profile/constants";
@@ -18,6 +18,7 @@ const StudentCard = ({ profile }: StudentCardProps) => {
   const [universityCity, setUniversityCity] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [countryEmoji, setCountryEmoji] = useState<string>("🌍");
+  const [showAllTags, setShowAllTags] = useState(false);
   const navigate = useNavigate();
 
   // Country emoji mapping (simplified)
@@ -85,20 +86,59 @@ const StudentCard = ({ profile }: StudentCardProps) => {
       return null;
     }
 
+    // Define the default visible tags
+    const defaultVisibleTags = ["looking-to-meet", "weekend-trips", "clubbing"];
+    
+    // Try to show priority tags first, if they exist in the profile's tags
+    const priorityTags = profile.personality_tags.filter(tag => defaultVisibleTags.includes(tag));
+    
+    // If no priority tags, just show the first 3
+    const visibleTags = priorityTags.length > 0 ? priorityTags.slice(0, 3) : profile.personality_tags.slice(0, 3);
+    const hiddenTags = profile.personality_tags.filter(tag => !visibleTags.includes(tag));
+    const hasMoreTags = hiddenTags.length > 0;
+
     return (
-      <div className="flex flex-wrap justify-center gap-1 mt-2">
-        {profile.personality_tags.slice(0, 3).map((tag) => {
-          const tagInfo = getTagInfo(tag);
-          return (
-            <Badge key={tag} className={`${getTagBgColor(tag)} text-xs`}>
-              {tagInfo?.icon} {tagInfo?.label}
-            </Badge>
-          );
-        })}
-        {profile.personality_tags.length > 3 && (
-          <Badge className="bg-gray-100 text-gray-700 text-xs">
-            +{profile.personality_tags.length - 3} more
-          </Badge>
+      <div className="flex flex-col items-center mt-2">
+        {/* Always visible tags */}
+        <div className="flex flex-wrap justify-center gap-1">
+          {visibleTags.map((tag) => {
+            const tagInfo = getTagInfo(tag);
+            return (
+              <Badge key={tag} className={`${getTagBgColor(tag)} text-xs`}>
+                {tagInfo?.icon} {tagInfo?.label}
+              </Badge>
+            );
+          })}
+        </div>
+        
+        {/* Hidden tags - visible on desktop or when toggled */}
+        {hasMoreTags && (
+          <>
+            <div className={`${showAllTags ? 'flex' : 'hidden sm:flex'} flex-wrap justify-center gap-1 mt-1`}>
+              {hiddenTags.map((tag) => {
+                const tagInfo = getTagInfo(tag);
+                return (
+                  <Badge key={tag} className={`${getTagBgColor(tag)} text-xs`}>
+                    {tagInfo?.icon} {tagInfo?.label}
+                  </Badge>
+                );
+              })}
+            </div>
+            
+            {/* Toggle button - only visible on mobile */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowAllTags(!showAllTags)}
+              className="mt-1 text-xs text-blue-600 sm:hidden flex items-center p-0 h-6"
+            >
+              {showAllTags ? (
+                <>Show Less <ChevronUp className="ml-0.5 h-3 w-3" /></>
+              ) : (
+                <>View {hiddenTags.length} More <ChevronDown className="ml-0.5 h-3 w-3" /></>
+              )}
+            </Button>
+          </>
         )}
       </div>
     );

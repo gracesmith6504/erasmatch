@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { School, MapPin, X, User } from "lucide-react";
+import { School, MapPin, X, User, ChevronDown, ChevronUp } from "lucide-react";
 import { PERSONALITY_TAGS } from "@/components/profile/constants";
 
 interface StudentFiltersProps {
@@ -35,6 +34,8 @@ const StudentFilters = ({
   uniqueCities,
   resetFilters,
 }: StudentFiltersProps) => {
+  const [showAllTags, setShowAllTags] = useState(false);
+  
   // Check if any filter is active
   const isAnyFilterActive = universityFilter || cityFilter || personalityTagsFilter.length > 0;
   
@@ -65,6 +66,18 @@ const StudentFilters = ({
     const index = tag.length % colors.length;
     return colors[index];
   };
+
+  // Define the default visible tags
+  const defaultVisibleTags = ["looking-to-meet", "weekend-trips", "clubbing"];
+  
+  // Separate tags into priority (default visible) and others
+  const priorityTagsData = PERSONALITY_TAGS.filter(tag => 
+    defaultVisibleTags.includes(tag.value)
+  );
+  
+  const otherTagsData = PERSONALITY_TAGS.filter(tag => 
+    !defaultVisibleTags.includes(tag.value)
+  );
 
   return (
     <div className="bg-white shadow-sm rounded-xl p-6 mb-8 border border-gray-100">
@@ -116,7 +129,8 @@ const StudentFilters = ({
         </div>
         
         <div className="flex flex-wrap gap-2">
-          {PERSONALITY_TAGS.map((tag) => {
+          {/* Priority tags - always visible */}
+          {priorityTagsData.map((tag) => {
             const isSelected = personalityTagsFilter.includes(tag.value);
             return (
               <Badge
@@ -132,7 +146,41 @@ const StudentFilters = ({
               </Badge>
             );
           })}
+          
+          {/* Other tags - conditionally visible on mobile, always visible on desktop */}
+          <div className={`${showAllTags ? 'flex' : 'hidden sm:flex'} flex-wrap gap-2 w-full sm:w-auto`}>
+            {otherTagsData.map((tag) => {
+              const isSelected = personalityTagsFilter.includes(tag.value);
+              return (
+                <Badge
+                  key={tag.value}
+                  variant={isSelected ? "default" : "outline"}
+                  className={`cursor-pointer transition-all ${
+                    isSelected ? getTagColor(tag.value) : "hover:bg-gray-100"
+                  }`}
+                  onClick={() => handleTagToggle(tag.value)}
+                >
+                  {tag.icon} {tag.label}
+                  {isSelected && <X className="h-3 w-3 ml-1" />}
+                </Badge>
+              );
+            })}
+          </div>
         </div>
+        
+        {/* Toggle button - only visible on mobile */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowAllTags(!showAllTags)}
+          className="mt-2 text-sm text-blue-600 sm:hidden flex items-center"
+        >
+          {showAllTags ? (
+            <>Show Less <ChevronUp className="ml-1 h-4 w-4" /></>
+          ) : (
+            <>View More <ChevronDown className="ml-1 h-4 w-4" /></>
+          )}
+        </Button>
       </div>
 
       {/* Tag display for active filters */}

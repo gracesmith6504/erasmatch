@@ -55,10 +55,10 @@ export const HeroSection = ({
               <Button 
                 size="lg" 
                 className="w-full text-base px-4 py-6 bg-green-500 hover:bg-green-600 text-white shadow-md flex items-center justify-center"
-                onClick={handlePlanning}
+                onClick={handleFindStudents} // Changed to use handleFindStudents instead of handlePlanning
               >
                 <Calendar className="mr-2 h-5 w-5" />
-                Make Plans Together
+                Find Travel Buddies
               </Button>
             </div>
             

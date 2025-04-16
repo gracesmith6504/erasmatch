@@ -33,9 +33,10 @@ const Index = () => {
     }
   };
 
+  // We're no longer using the accommodation feature, redirect to students page instead
   const handlePlanning = () => {
     if (isAuthenticated) {
-      navigate("/accommodation");
+      navigate("/students"); // Changed from "/accommodation" to "/students"
     } else {
       navigate("/auth?mode=signup");
     }
