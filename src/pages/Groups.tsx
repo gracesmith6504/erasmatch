@@ -63,7 +63,7 @@ const Groups = () => {
       // Cast the data to Profile type, ensuring country field exists
       setProfile({
         ...data,
-        country: data.country || null, // Ensure country exists even if null
+        country: null, // Add country field as null since it doesn't exist in the database
       } as Profile);
       
       console.log("📝 Fresh profile loaded:", data);
