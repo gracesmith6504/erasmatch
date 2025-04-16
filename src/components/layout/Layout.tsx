@@ -42,7 +42,7 @@ const Layout = ({ children }: LayoutProps) => {
               <ul className="space-y-2 text-sm">
                 <li><a href="/" className="text-gray-500 hover:text-erasmatch-blue">Home</a></li>
                 <li><a href="/students" className="text-gray-500 hover:text-erasmatch-blue">Find Students</a></li>
-                <li><a href="/accommodation" className="text-gray-500 hover:text-erasmatch-blue">Accommodation</a></li>
+                <li><a href="/groups" className="text-gray-500 hover:text-erasmatch-blue">Your Group Chats</a></li>
               </ul>
             </div>
             <div>
