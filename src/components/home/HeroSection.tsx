@@ -48,19 +48,17 @@ export const HeroSection = ({
             </p>
             
             {/* New primary CTA button */}
-            <div className="w-full mb-8">
-              <Button 
-                size="lg" 
-                className="w-full text-base px-4 py-6 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
-                onClick={handleAuthAction}
-              >
-                {isAuthenticated ? (
-                  <>👋 Explore Students</>
-                ) : (
-                  <>Create Your Erasmus Profile</>
-                )}
-              </Button>
-            </div>
+            {!isAuthenticated && (
+              <div className="w-full mb-8">
+                <Button 
+                  size="lg" 
+                  className="w-full text-base px-4 py-6 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                  onClick={handleAuthAction}
+                >
+                🎉 Create Your Erasmus Profile
+          </Button>
+        </div>
+)}
             
             {/* Mobile specific action buttons */}
             <div className="flex flex-col space-y-4 md:hidden">
