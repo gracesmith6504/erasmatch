@@ -21,6 +21,7 @@ export const ProfileProvider = ({
 }: ProfileProviderProps) => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<ProfileType | null>(initialProfile);
+  const [initialUniversity, setInitialUniversity] = useState<string | null>(null);
   const [form, setForm] = useState({
     name: initialProfile?.name || "",
     email: initialProfile?.email || "",
@@ -51,6 +52,11 @@ export const ProfileProvider = ({
         personality_tags: initialProfile.personality_tags || [],
         course: initialProfile.course || "",
       });
+      
+      // Store initial university for comparison
+      if (initialProfile.university) {
+        setInitialUniversity(initialProfile.university);
+      }
     }
   }, [initialProfile]);
 
@@ -141,8 +147,8 @@ export const ProfileProvider = ({
     setLoading(true);
 
     try {
-      // Use the updateProfile function
-      await updateProfile({
+      // Prepare updated profile data
+      const updatedProfile = {
         name: form.name,
         university: form.university,
         semester: form.semester,
@@ -152,10 +158,30 @@ export const ProfileProvider = ({
         city: form.city,
         personality_tags: form.personality_tags,
         course: form.course,
-      });
+      };
+      
+      // Use the updateProfile function
+      await updateProfile(updatedProfile);
       
       toast.success("Profile updated successfully");
-      navigate("/groups");
+      
+      // Check if university has changed
+      if (updatedProfile.university && updatedProfile.university !== initialUniversity) {
+        // Show loading toast
+        toast.loading("Updating your group chats...");
+        
+        // Navigate to groups page with a slight delay to allow Supabase to sync
+        setTimeout(() => {
+          navigate("/groups");
+          // Force page reload after navigation
+          setTimeout(() => {
+            window.location.reload();
+          }, 200);
+        }, 300);
+      } else {
+        // No university change, just navigate
+        navigate("/groups");
+      }
     } catch (error: any) {
       console.error("Profile update error:", error);
       toast.error("Failed to update profile: " + error.message);
