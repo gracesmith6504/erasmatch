@@ -1,56 +1,30 @@
 
 import { Profile } from "@/types";
-
-/**
- * Get initials from a name
- */
-export const getInitials = (name: string | null): string => {
-  if (!name) return "?";
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .substring(0, 2);
-};
-
-/**
- * Handles prompt selection - reset state
- */
-export const handlePromptUsed = (): void => {
-  console.log("Prompt was used - will reset state after message is sent");
-};
-
-/**
- * Handle sending a message with refresh handling
- */
-import { Profile } from "@/types";
-
-/**
- * Get initials from a name
- */
-export const getInitials = (name: string | null): string => {
-  if (!name) return "?";
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .substring(0, 2);
-};
-
-/**
- * Handles prompt selection - reset state
- */
-export const handlePromptUsed = (): void => {
-  console.log("Prompt was used - will reset state after message is sent");
-};
-
-/**
- * Handle sending a message with refresh handling
- */
 import { supabase } from "@/integrations/supabase/client";
 
+/**
+ * Get initials from a name
+ */
+export const getInitials = (name: string | null): string => {
+  if (!name) return "?";
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .substring(0, 2);
+};
+
+/**
+ * Handles prompt selection - reset state
+ */
+export const handlePromptUsed = (): void => {
+  console.log("Prompt was used - will reset state after message is sent");
+};
+
+/**
+ * Handle sending a message with refresh handling
+ */
 export function createMessageHandler(
   onSendMessage: (receiverId: string, content: string) => Promise<void>,
   setMessagesSent: React.Dispatch<React.SetStateAction<number>>,
@@ -82,6 +56,3 @@ export function createMessageHandler(
     onPromptUsed();
   };
 }
-
-
-
