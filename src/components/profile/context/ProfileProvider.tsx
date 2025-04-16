@@ -179,8 +179,8 @@ export const ProfileProvider = ({
           }, 200);
         }, 300);
       } else {
-        // No university change, just navigate
-        navigate("/groups");
+        // No university change, navigate to students page instead
+        navigate("/students");
       }
     } catch (error: any) {
       console.error("Profile update error:", error);

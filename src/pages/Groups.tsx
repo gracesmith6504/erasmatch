@@ -71,23 +71,23 @@ const Groups = () => {
 
   // Cards view for listing available groups
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold text-center mb-8">Join Group Chats</h1>
+    <div className="max-w-7xl mx-auto py-6 md:py-8 px-4 sm:px-6 lg:px-8">
+      <h1 className="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8">Join Group Chats</h1>
       
-      <div className="space-y-6">
+      <div className="space-y-4 md:space-y-6">
         {/* University Card */}
         {currentUserProfile?.university && (
           <Card 
             className="rounded-3xl overflow-hidden cursor-pointer hover:shadow-lg transition-shadow" 
             onClick={() => handleSelectGroupChat(currentUserProfile.university!)}
           >
-            <div className="bg-gradient-to-r from-purple-700 to-indigo-500 text-white p-8 relative">
+            <div className="bg-gradient-to-r from-purple-700 to-indigo-500 text-white p-6 md:p-8 relative">
               <div className="absolute top-4 right-4 bg-white/20 px-2 py-1 rounded-full text-xs font-medium flex items-center">
                 {profiles.filter(p => p.university === currentUserProfile.university).length} students
               </div>
-              <GraduationCap className="w-16 h-16 mb-4 opacity-70 absolute right-8 top-8" />
-              <h2 className="text-5xl font-bold mb-2">Your University</h2>
-              <p className="text-2xl opacity-90 mb-4">
+              <GraduationCap className="w-12 h-12 md:w-16 md:h-16 mb-4 opacity-70 absolute right-6 md:right-8 top-6 md:top-8" />
+              <h2 className="text-4xl md:text-5xl font-bold mb-2">Your University</h2>
+              <p className="text-xl md:text-2xl opacity-90 mb-4">
                 Chat with students at<br/>{currentUserProfile.university}
               </p>
             </div>
@@ -100,13 +100,13 @@ const Groups = () => {
             className="rounded-3xl overflow-hidden cursor-pointer hover:shadow-lg transition-shadow" 
             onClick={() => handleSelectCityChat(currentUserProfile.city!)}
           >
-            <div className="bg-gradient-to-r from-blue-600 to-blue-400 text-white p-8 relative">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-400 text-white p-6 md:p-8 relative">
               <div className="absolute top-4 right-4 bg-white/20 px-2 py-1 rounded-full text-xs font-medium flex items-center">
                 {profiles.filter(p => p.city === currentUserProfile.city).length} students
               </div>
-              <MapPin className="w-16 h-16 mb-4 opacity-70 absolute right-8 top-8" />
-              <h2 className="text-5xl font-bold mb-2">Your City</h2>
-              <p className="text-2xl opacity-90 mb-4">
+              <MapPin className="w-12 h-12 md:w-16 md:h-16 mb-4 opacity-70 absolute right-6 md:right-8 top-6 md:top-8" />
+              <h2 className="text-4xl md:text-5xl font-bold mb-2">Your City</h2>
+              <p className="text-xl md:text-2xl opacity-90 mb-4">
                 Group chat for<br/>{currentUserProfile.city}
               </p>
             </div>
@@ -114,12 +114,12 @@ const Groups = () => {
         )}
         
         {!currentUserProfile?.university && !currentUserProfile?.city && (
-          <div className="text-center p-8 bg-gray-50 rounded-lg">
+          <div className="text-center p-6 md:p-8 bg-gray-50 rounded-xl">
             <p className="text-lg text-gray-600">
               Set your university and city in your profile to join group chats.
             </p>
             <Button 
-              className="mt-4"
+              className="mt-4 py-2.5 md:py-2"
               onClick={() => window.location.href = "/profile"}
             >
               Update Profile

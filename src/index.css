@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
@@ -93,6 +94,45 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+  
+  /* Mobile improvement base styles */
+  @media (max-width: 768px) {
+    html {
+      font-size: 16px; /* Slightly larger base font size for mobile */
+    }
+    
+    h1 {
+      @apply text-2xl mb-4;
+    }
+    
+    h2 {
+      @apply text-xl mb-3;
+    }
+    
+    /* Improve button tap targets */
+    button, a.button, [role="button"], a[href]:not(.inline-link), .clickable {
+      @apply min-h-10 py-2.5 px-4;
+    }
+    
+    /* Improve form elements */
+    input, select, textarea {
+      @apply py-2.5 px-4 text-base;
+    }
+    
+    /* Add more vertical spacing */
+    .space-y-4 {
+      @apply space-y-5;
+    }
+    
+    .space-y-6 {
+      @apply space-y-8;
+    }
+    
+    /* Card improvements */
+    .card, [class*="Card"] {
+      @apply p-4 rounded-xl;
+    }
+  }
 }
 
 @layer utilities {
@@ -120,6 +160,76 @@
   }
   .animate-pulse-soft {
     animation: pulse-soft 2s ease-in-out infinite;
+  }
+  
+  /* Mobile-specific utilities */
+  @media (max-width: 768px) {
+    .mobile-full-width {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+    
+    .mobile-stack {
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    
+    .mobile-stack > * {
+      width: 100% !important;
+      margin-bottom: 0.75rem !important;
+    }
+    
+    .mobile-stack > *:last-child {
+      margin-bottom: 0 !important;
+    }
+    
+    .mobile-centered {
+      text-align: center !important;
+      justify-content: center !important;
+    }
+    
+    .mobile-p-6 {
+      padding: 1.5rem !important;
+    }
+    
+    .mobile-my-4 {
+      margin-top: 1rem !important;
+      margin-bottom: 1rem !important;
+    }
+    
+    .mobile-text-lg {
+      font-size: 1.125rem !important;
+      line-height: 1.75rem !important;
+    }
+    
+    .mobile-text-xl {
+      font-size: 1.25rem !important;
+      line-height: 1.75rem !important;
+    }
+    
+    .mobile-gap-4 {
+      gap: 1rem !important;
+    }
+    
+    .mobile-px-4 {
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+    }
+    
+    .mobile-py-3 {
+      padding-top: 0.75rem !important;
+      padding-bottom: 0.75rem !important;
+    }
+    
+    .mobile-shadow-lg {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+    }
+    
+    .mobile-pb-20 {
+      padding-bottom: 5rem !important;
+    }
   }
 }
 
@@ -154,4 +264,62 @@
 
 .auth-card {
   @apply bg-white py-8 px-4 shadow-soft sm:rounded-lg sm:px-10 w-full max-w-md space-y-8;
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 768px) {
+  /* Enhanced mobile card styling */
+  .card, .bg-white {
+    @apply rounded-xl shadow-soft;
+  }
+  
+  /* Enhanced spacing for StudentCard */
+  .StudentCard {
+    @apply my-4 mx-0;
+  }
+  
+  /* Better grid layouts on mobile */
+  .grid-cols-1.sm\:grid-cols-2, 
+  .grid-cols-1.sm\:grid-cols-3, 
+  .grid-cols-1.md\:grid-cols-2,
+  .grid-cols-1.md\:grid-cols-3 {
+    @apply grid-cols-1 gap-6;
+  }
+  
+  /* More readable forms */
+  form input, 
+  form select, 
+  form textarea {
+    @apply text-base py-3 px-4 rounded-xl;
+  }
+  
+  /* Better layout for the nav buttons */
+  .bottom-4.fixed {
+    @apply bottom-6;
+  }
+  
+  /* More space for tap targets */
+  .p-3 {
+    @apply p-4;
+  }
+  
+  /* Better footer on mobile */
+  footer .grid-cols-1.md\:grid-cols-3 {
+    @apply space-y-8;
+  }
+  
+  /* Main content padding */
+  main {
+    @apply px-4 mobile-pb-20;
+  }
+  
+  /* Typography enhancements */
+  h1 {
+    @apply mobile-text-xl font-bold;
+  }
+  
+  /* Card adjustments */
+  .card-hover {
+    @apply mobile-shadow-lg;
+  }
 }

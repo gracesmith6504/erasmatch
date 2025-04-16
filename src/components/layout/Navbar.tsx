@@ -46,10 +46,10 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
+          <div className="flex justify-between h-16 md:h-16 items-center">
             <div className="flex items-center">
               <Link to="/" className="flex-shrink-0 flex items-center">
-                <span className="text-xl font-bold gradient-text animate-pulse-soft">
+                <span className="text-xl md:text-xl font-bold gradient-text animate-pulse-soft">
                   Eras<span className="text-erasmatch-green">Match</span> 
                 </span>
               </Link>
@@ -138,7 +138,8 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
             <div className="flex items-center md:hidden">
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-erasmatch-blue focus:outline-none"
+                className="inline-flex items-center justify-center p-3 rounded-md text-gray-700 hover:text-erasmatch-blue focus:outline-none"
+                aria-label="Toggle menu"
               >
                 {isOpen ? (
                   <X className="block h-6 w-6" />
@@ -151,10 +152,10 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
         </div>
 
         <div className={`md:hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-screen' : 'max-h-0 overflow-hidden'}`}>
-          <div className="px-4 pt-2 pb-3 space-y-1 bg-white shadow-md rounded-b-lg">
+          <div className="px-4 pt-2 pb-3 space-y-2 bg-white shadow-md rounded-b-lg">
             {isAuthenticated ? (
             <>
-              <Link to="/" className={`block px-3 py-2.5 rounded-lg text-base font-medium ${
+              <Link to="/" className={`block px-4 py-3 rounded-lg text-base font-medium ${
                 isActive('/') 
                   ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple' 
                   : 'text-gray-700 hover:bg-gray-50'
@@ -164,7 +165,7 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                   Home
                 </div>
               </Link>
-              <Link to="/students" className={`block px-3 py-2.5 rounded-lg text-base font-medium ${
+              <Link to="/students" className={`block px-4 py-3 rounded-lg text-base font-medium ${
                 isActive('/students') 
                   ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple' 
                   : 'text-gray-700 hover:bg-gray-50'
@@ -174,7 +175,7 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                   Students
                 </div>
               </Link>
-              <Link to="/messages" className={`block px-3 py-2.5 rounded-lg text-base font-medium ${
+              <Link to="/messages" className={`block px-4 py-3 rounded-lg text-base font-medium ${
                 isActive('/messages') 
                   ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple' 
                   : 'text-gray-700 hover:bg-gray-50'
@@ -184,7 +185,7 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                   Messages
                 </div>
               </Link>
-              <Link to="/groups" className={`block px-3 py-2.5 rounded-lg text-base font-medium ${
+              <Link to="/groups" className={`block px-4 py-3 rounded-lg text-base font-medium ${
                 isActive('/groups') 
                   ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple' 
                   : 'text-gray-700 hover:bg-gray-50'
@@ -194,7 +195,7 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                   Groups
                 </div>
               </Link>
-              <Link to="/profile" className={`block px-3 py-2.5 rounded-lg text-base font-medium ${
+              <Link to="/profile" className={`block px-4 py-3 rounded-lg text-base font-medium ${
                 isActive('/profile') 
                   ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple' 
                   : 'text-gray-700 hover:bg-gray-50'
@@ -206,7 +207,7 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
               </Link>
               <button 
                 onClick={onLogout}
-                className="w-full text-left block px-3 py-2.5 rounded-lg text-base font-medium text-gray-700 hover:text-red-600 hover:bg-red-50"
+                className="w-full text-left block px-4 py-3 rounded-lg text-base font-medium text-gray-700 hover:text-red-600 hover:bg-red-50"
               >
                 <div className="flex items-center">
                   <LogOut className="w-5 h-5 mr-3" />
@@ -217,10 +218,10 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
           ) : (
             <div className="flex flex-col space-y-2 pt-2 pb-2">
               <Link to="/auth?mode=login" className="w-full">
-                <Button variant="outline" className="w-full button-hover">Log In</Button>
+                <Button variant="outline" className="w-full button-hover py-3 text-base">Log In</Button>
               </Link>
               <Link to="/auth?mode=signup" className="w-full">
-                <Button className="w-full button-hover bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple border-0 text-white">
+                <Button className="w-full button-hover py-3 text-base bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple border-0 text-white">
                   Sign Up
                 </Button>
               </Link>
@@ -232,29 +233,29 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
       
       {/* Mobile Bottom Navigation for authenticated users */}
       {isAuthenticated && (
-        <div className="md:hidden fixed bottom-4 left-0 right-0 z-50 flex justify-center">
-          <div className="bg-white shadow-lg rounded-full flex items-center px-2 py-1 space-x-1 border">
-            <Link to="/" className={`p-3 rounded-full transition-colors ${
+        <div className="md:hidden fixed bottom-6 left-0 right-0 z-50 flex justify-center">
+          <div className="bg-white shadow-xl rounded-full flex items-center px-3 py-2 space-x-2 border">
+            <Link to="/" className={`p-3.5 rounded-full transition-colors ${
               isActive('/') ? 'bg-blue-100 text-erasmatch-blue' : 'text-gray-500'
             }`}>
               <Home className="w-5 h-5" />
             </Link>
-            <Link to="/students" className={`p-3 rounded-full transition-colors ${
+            <Link to="/students" className={`p-3.5 rounded-full transition-colors ${
               isActive('/students') ? 'bg-blue-100 text-erasmatch-blue' : 'text-gray-500'
             }`}>
               <Users className="w-5 h-5" />
             </Link>
-            <Link to="/messages" className={`p-3 rounded-full transition-colors ${
+            <Link to="/messages" className={`p-3.5 rounded-full transition-colors ${
               isActive('/messages') ? 'bg-blue-100 text-erasmatch-blue' : 'text-gray-500'
             }`}>
               <MessageSquare className="w-5 h-5" />
             </Link>
-            <Link to="/groups" className={`p-3 rounded-full transition-colors ${
+            <Link to="/groups" className={`p-3.5 rounded-full transition-colors ${
               isActive('/groups') ? 'bg-blue-100 text-erasmatch-blue' : 'text-gray-500'
             }`}>
               <Users className="w-5 h-5" />
             </Link>
-            <Link to="/profile" className={`p-3 rounded-full transition-colors ${
+            <Link to="/profile" className={`p-3.5 rounded-full transition-colors ${
               isActive('/profile') ? 'bg-blue-100 text-erasmatch-blue' : 'text-gray-500'
             }`}>
               <User className="w-5 h-5" />
