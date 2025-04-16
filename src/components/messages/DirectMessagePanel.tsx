@@ -4,10 +4,12 @@ import { Message, Profile, ChatThread } from "@/types";
 import { MessageHeader } from "./MessageHeader";
 import { DirectMessageList } from "./DirectMessageList";
 import { MessageInput } from "./MessageInput";
-import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useRealTimeMessages } from "./hooks/useRealTimeMessages";
+import MessageEmptyState from "./MessageEmptyState";
+import MessageBubble from "./MessageBubble";
 
 interface DirectMessagePanelProps {
   thread: ChatThread;
@@ -33,48 +35,15 @@ export const DirectMessagePanel = ({
   const [newMessage, setNewMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [showSuggestedPrompts, setShowSuggestedPrompts] = useState(false);
-  const [localMessages, setLocalMessages] = useState<Message[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const formatMessageDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return format(date, "MMM d, h:mm a");
-  };
-
-  // Initialize local messages from props
-  useEffect(() => {
-    setLocalMessages(messages);
-  }, [messages]);
-
-  // Set up Supabase real-time subscription
-  useEffect(() => {
-    if (!currentUserId || !thread.partner.id) return;
-
-    // Subscribe to new messages between current user and thread partner
-    const channel = supabase
-      .channel('direct-messages')
-      .on('postgres_changes', 
-        { 
-          event: 'INSERT', 
-          schema: 'public', 
-          table: 'messages',
-          filter: `sender_id=eq.${thread.partner.id}`,
-        }, 
-        (payload) => {
-          // Only add the message if it's for the current user
-          const newMessage = payload.new as Message;
-          if (newMessage.receiver_id === currentUserId) {
-            setLocalMessages(prevMessages => [...prevMessages, newMessage]);
-            scrollToBottom();
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [currentUserId, thread.partner.id]);
+  // Use our custom hook for real-time message subscription
+  const { localMessages, setLocalMessages } = useRealTimeMessages({
+    messages,
+    currentUserId,
+    partnerId: thread.partner.id,
+    scrollToBottom
+  });
 
   // Check if thread has no messages to show suggested prompts
   useEffect(() => {
@@ -82,9 +51,9 @@ export const DirectMessagePanel = ({
   }, [localMessages]);
 
   // Scroll to bottom when messages change
-  const scrollToBottom = () => {
+  function scrollToBottom() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  }
 
   useEffect(() => {
     scrollToBottom();
@@ -123,7 +92,7 @@ export const DirectMessagePanel = ({
 
   return (
     <div className="flex flex-col w-full h-full relative">
-      {/* Custom back button for mobile */}
+      {/* Mobile back button */}
       {isMobile && onBack && (
         <div className="sticky top-0 z-10 bg-white border-b">
           <div className="p-2 flex items-center">
@@ -140,24 +109,27 @@ export const DirectMessagePanel = ({
         </div>
       )}
 
-      {/* Standard header (used on desktop) */}
-      {(!isMobile || !onBack) && (
-        <MessageHeader 
-          isMobile={isMobile} 
-          onBack={onBack} 
-          profile={thread.partner} 
-        />
-      )}
+      {/* Enhanced message header with clickable avatar */}
+      <MessageHeader 
+        isMobile={isMobile} 
+        onBack={onBack} 
+        profile={thread.partner} 
+      />
       
+      {/* Messages container */}
       <div className="flex-1 overflow-y-auto p-4 flex flex-col space-y-4 pb-20">
-        <DirectMessageList 
-          messages={localMessages} 
-          currentUserId={currentUserId}
-          formatMessageDate={formatMessageDate}
-        />
+        {localMessages.length === 0 ? (
+          <MessageEmptyState />
+        ) : (
+          <DirectMessageList 
+            messages={localMessages} 
+            currentUserId={currentUserId}
+          />
+        )}
         <div ref={messagesEndRef} />
       </div>
       
+      {/* Input area */}
       <div className="sticky bottom-0 w-full bg-white border-t">
         <MessageInput 
           onSendMessage={handleSendMessage}
