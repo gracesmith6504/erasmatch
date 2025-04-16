@@ -1,6 +1,7 @@
 
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
+import { ProfileProvider } from "@/components/profile/ProfileContext";
 
 // Pages
 import Index from "@/pages/Index";
@@ -33,8 +34,13 @@ const AppRoutes = () => {
   
   const { 
     profiles, 
-    handleSendMessage 
+    handleSendMessage,
+    updateProfile,
+    fetchProfile
   } = useData();
+
+  // Find current user profile
+  const currentUserProfile = profiles.find(p => p.id === currentUserId) || null;
 
   return (
     <Routes>
@@ -51,7 +57,13 @@ const AppRoutes = () => {
         path="/profile" 
         element={
           <ProtectedRoute>
-            <Profile />
+            <ProfileProvider 
+              profile={currentUserProfile} 
+              onProfileUpdate={updateProfile}
+              fetchProfile={fetchProfile}
+            >
+              <Profile />
+            </ProfileProvider>
           </ProtectedRoute>
         } 
       />
@@ -103,7 +115,13 @@ const AppRoutes = () => {
         path="/groups" 
         element={
           <ProtectedRoute>
-            <Groups />
+            <ProfileProvider 
+              profile={currentUserProfile} 
+              onProfileUpdate={updateProfile}
+              fetchProfile={fetchProfile}
+            >
+              <Groups />
+            </ProfileProvider>
           </ProtectedRoute>
         } 
       />

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Profile } from "@/types";
 import { useData } from "@/contexts/DataContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useProfileContext } from "@/components/profile/ProfileContext";
 import { GroupChatsList } from "@/components/messages/GroupChatsList";
 import { CityList } from "@/components/messages/CityList";
 import { GroupChatPanel } from "@/components/messages/GroupChatPanel";
@@ -15,13 +16,11 @@ import { MapPin, GraduationCap } from "lucide-react";
 const Groups = () => {
   const { profiles } = useData();
   const { currentUserId } = useAuth();
+  const { profile: currentUserProfile } = useProfileContext();
   const isMobile = useIsMobile();
   
   const [selectedGroupChat, setSelectedGroupChat] = useState<string | null>(null);
   const [selectedCityChat, setSelectedCityChat] = useState<string | null>(null);
-  
-  // Get the current user's profile
-  const currentUserProfile = profiles.find(profile => profile.id === currentUserId) || null;
   
   const handleSelectGroupChat = (universityName: string) => {
     console.log("Selecting group chat:", universityName);

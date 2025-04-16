@@ -20,12 +20,14 @@ type ProfileFormState = {
 
 type ProfileContextType = {
   form: ProfileFormState;
+  profile: ProfileType | null;
   loading: boolean;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleSelectChange: (name: string, value: string | null | string[]) => void;
   handleUniversityChange: (university: string) => void;
   handleHomeUniversityChange: (university: string) => void;
   handleSubmit: (e: FormEvent) => Promise<void>;
+  updateProfile: (newData: Partial<ProfileType>) => Promise<void>;
 };
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
@@ -45,39 +47,41 @@ type ProfileProviderProps = {
   children: React.ReactNode;
 };
 
-export const ProfileProvider = ({ profile, onProfileUpdate, fetchProfile, children }: ProfileProviderProps) => {
+export const ProfileProvider = ({ profile: initialProfile, onProfileUpdate, fetchProfile, children }: ProfileProviderProps) => {
   const navigate = useNavigate();
+  const [profile, setProfile] = useState<ProfileType | null>(initialProfile);
   const [form, setForm] = useState({
-    name: profile?.name || "",
-    email: profile?.email || "",
-    university: profile?.university || "",
-    semester: profile?.semester || "",
-    bio: profile?.bio || "",
-    avatar_url: profile?.avatar_url || null,
-    home_university: profile?.home_university || "",
-    city: profile?.city || null,
-    personality_tags: profile?.personality_tags || [],
-    course: profile?.course || "",
+    name: initialProfile?.name || "",
+    email: initialProfile?.email || "",
+    university: initialProfile?.university || "",
+    semester: initialProfile?.semester || "",
+    bio: initialProfile?.bio || "",
+    avatar_url: initialProfile?.avatar_url || null,
+    home_university: initialProfile?.home_university || "",
+    city: initialProfile?.city || null,
+    personality_tags: initialProfile?.personality_tags || [],
+    course: initialProfile?.course || "",
   });
   const [loading, setLoading] = useState(false);
 
   // Update form state when profile changes
   React.useEffect(() => {
-    if (profile) {
+    if (initialProfile) {
+      setProfile(initialProfile);
       setForm({
-        name: profile.name || "",
-        email: profile.email || "",
-        university: profile.university || "",
-        semester: profile.semester || "",
-        bio: profile.bio || "",
-        avatar_url: profile.avatar_url || null,
-        home_university: profile.home_university || "",
-        city: profile.city || null,
-        personality_tags: profile.personality_tags || [],
-        course: profile.course || "",
+        name: initialProfile.name || "",
+        email: initialProfile.email || "",
+        university: initialProfile.university || "",
+        semester: initialProfile.semester || "",
+        bio: initialProfile.bio || "",
+        avatar_url: initialProfile.avatar_url || null,
+        home_university: initialProfile.home_university || "",
+        city: initialProfile.city || null,
+        personality_tags: initialProfile.personality_tags || [],
+        course: initialProfile.course || "",
       });
     }
-  }, [profile]);
+  }, [initialProfile]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -123,6 +127,32 @@ export const ProfileProvider = ({ profile, onProfileUpdate, fetchProfile, childr
     setForm((prev) => ({ ...prev, home_university }));
   };
 
+  // New updateProfile function that updates local state immediately
+  const updateProfile = async (newData: Partial<ProfileType>) => {
+    try {
+      // Update backend
+      await onProfileUpdate(newData);
+      
+      // Update local state immediately without waiting for backend sync
+      setProfile((prev) => prev ? { ...prev, ...newData } : null);
+      
+      // Update form state if needed
+      setForm(prev => ({
+        ...prev,
+        ...Object.entries(newData).reduce((acc, [key, value]) => {
+          if (key in prev) {
+            acc[key as keyof typeof prev] = value as any;
+          }
+          return acc;
+        }, {} as typeof prev)
+      }));
+      
+    } catch (error: any) {
+      console.error("Profile update error:", error);
+      throw error; // Re-throw to let caller handle
+    }
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     
@@ -134,8 +164,8 @@ export const ProfileProvider = ({ profile, onProfileUpdate, fetchProfile, childr
     setLoading(true);
 
     try {
-      // Update profile using the onProfileUpdate function from props
-      await onProfileUpdate({
+      // Use the new updateProfile function
+      await updateProfile({
         name: form.name,
         university: form.university,
         semester: form.semester,
@@ -159,12 +189,14 @@ export const ProfileProvider = ({ profile, onProfileUpdate, fetchProfile, childr
 
   const value = {
     form,
+    profile,
     loading,
     handleChange,
     handleSelectChange,
     handleUniversityChange,
     handleHomeUniversityChange,
-    handleSubmit
+    handleSubmit,
+    updateProfile
   };
 
   return (
