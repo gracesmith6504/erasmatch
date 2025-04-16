@@ -60,7 +60,12 @@ const Groups = () => {
         return;
       }
 
-      setProfile(data as Profile);
+      // Cast the data to Profile type, ensuring country field exists
+      setProfile({
+        ...data,
+        country: data.country || null, // Ensure country exists even if null
+      } as Profile);
+      
       console.log("📝 Fresh profile loaded:", data);
     };
 
