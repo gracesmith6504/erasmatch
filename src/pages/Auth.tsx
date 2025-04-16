@@ -30,9 +30,9 @@ const Auth = ({ onLogin }: AuthProps) => {
   const activeTab = searchParams.get("mode") || "login";
   const refCode = searchParams.get("ref");
   const returnTo = searchParams.get("returnTo");
+  const groupSlug = searchParams.get("group");
 
   const handleTabChange = (value: string) => {
-    // Preserve other query parameters when changing tabs
     const newParams = new URLSearchParams(searchParams);
     newParams.set("mode", value);
     setSearchParams(newParams);
@@ -97,7 +97,19 @@ const Auth = ({ onLogin }: AuthProps) => {
           onLogin(email);
           toast.success("Account created successfully!");
           
-          // Navigate to returnTo URL if provided, otherwise go to profile
+          if (groupSlug) {
+            try {
+              await supabase.rpc("join_group_by_slug", {
+                p_user_id: data.user.id,
+                group_slug: groupSlug
+              });
+              
+              toast.success("You've been added to the group chat!");
+            } catch (groupError) {
+              console.error("Error joining group:", groupError);
+            }
+          }
+          
           if (returnTo) {
             navigate(returnTo);
           } else {
@@ -118,7 +130,19 @@ const Auth = ({ onLogin }: AuthProps) => {
         toast.success("Welcome back!");
         onLogin(email);
         
-        // Navigate to returnTo URL if provided, otherwise go to home
+        if (groupSlug && data.user) {
+          try {
+            await supabase.rpc("join_group_by_slug", {
+              p_user_id: data.user.id,
+              group_slug: groupSlug
+            });
+            
+            toast.success("You've been added to the group chat!");
+          } catch (groupError) {
+            console.error("Error joining group:", groupError);
+          }
+        }
+        
         if (returnTo) {
           navigate(returnTo);
         } else {
@@ -142,6 +166,7 @@ const Auth = ({ onLogin }: AuthProps) => {
       <PostSignupPrompt 
         city={signupCity}
         onContinue={handleContinueAfterSignup}
+        link={`https://erasmatch.com/groups/${signupCity ? encodeURIComponent(signupCity) : ''}`}
       />
     );
   }

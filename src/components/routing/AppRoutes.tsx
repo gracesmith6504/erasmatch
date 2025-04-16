@@ -13,6 +13,7 @@ import Locations from "@/pages/Universities";
 import UniversityHub from "@/pages/UniversityHub";
 import Messages from "@/pages/Messages";
 import Groups from "@/pages/Groups";
+import GroupPreview from "@/pages/GroupPreview"; // Add the new page import
 import NotFound from "@/pages/NotFound";
 import ForumCities from "@/pages/ForumCities";
 import CityForum from "@/pages/CityForum";
@@ -106,6 +107,11 @@ const AppRoutes = () => {
             <Groups />
           </ProtectedRoute>
         } 
+      />
+      {/* Add new route for group preview */}
+      <Route 
+        path="/groups/:slug" 
+        element={<GroupPreview />} 
       />
       <Route 
         path="/accommodation" 
