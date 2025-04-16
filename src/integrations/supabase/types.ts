@@ -100,51 +100,6 @@ export type Database = {
           },
         ]
       }
-      group_members: {
-        Row: {
-          group_id: string | null
-          id: string
-          is_active: boolean | null
-          joined_at: string | null
-          notifications_enabled: boolean | null
-          role: string | null
-          user_id: string | null
-        }
-        Insert: {
-          group_id?: string | null
-          id?: string
-          is_active?: boolean | null
-          joined_at?: string | null
-          notifications_enabled?: boolean | null
-          role?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          group_id?: string | null
-          id?: string
-          is_active?: boolean | null
-          joined_at?: string | null
-          notifications_enabled?: boolean | null
-          role?: string | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "group_members_group_id_fkey"
-            columns: ["group_id"]
-            isOneToOne: false
-            referencedRelation: "groups"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "group_members_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       group_messages: {
         Row: {
           content: string
@@ -171,47 +126,6 @@ export type Database = {
           {
             foreignKeyName: "group_messages_sender_id_fkey"
             columns: ["sender_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      groups: {
-        Row: {
-          created_at: string | null
-          creator_id: string | null
-          description: string | null
-          id: string
-          name: string
-          slug: string
-          type: string
-          visibility: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          creator_id?: string | null
-          description?: string | null
-          id?: string
-          name: string
-          slug: string
-          type: string
-          visibility?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          creator_id?: string | null
-          description?: string | null
-          id?: string
-          name?: string
-          slug?: string
-          type?: string
-          visibility?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "groups_creator_id_fkey"
-            columns: ["creator_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -400,14 +314,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      join_group_by_slug: {
-        Args: { p_user_id: string; group_slug: string }
-        Returns: undefined
-      }
-      slugify: {
-        Args: { input: string }
-        Returns: string
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never

@@ -1,180 +1,130 @@
+
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Profile } from "@/types";
+import { useData } from "@/contexts/DataContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { GroupChatsList } from "@/components/messages/GroupChatsList";
+import { CityList } from "@/components/messages/CityList";
+import { GroupChatPanel } from "@/components/messages/GroupChatPanel";
+import { CityPanel } from "@/components/messages/CityPanel";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { MapPin, GraduationCap } from "lucide-react";
-import { toast } from "sonner";
-import { GroupChatPanel } from "@/components/messages/GroupChatPanel";
-import { CityPanel } from "@/components/messages/CityPanel";
-
-const slugify = (text: string = "") =>
-  text.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-
-type Group = {
-  id: string;
-  name: string;
-  slug: string;
-  type: "city" | "university" | "custom";
-};
 
 const Groups = () => {
+  const { profiles } = useData();
   const { currentUserId } = useAuth();
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [groupChats, setGroupChats] = useState<Group[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
+  const isMobile = useIsMobile();
+  
+  const [selectedGroupChat, setSelectedGroupChat] = useState<string | null>(null);
+  const [selectedCityChat, setSelectedCityChat] = useState<string | null>(null);
+  
+  // Get the current user's profile
+  const currentUserProfile = profiles.find(profile => profile.id === currentUserId) || null;
+  
+  const handleSelectGroupChat = (universityName: string) => {
+    console.log("Selecting group chat:", universityName);
+    setSelectedGroupChat(universityName || null);
+    setSelectedCityChat(null);
+  };
 
-  useEffect(() => {
-    if (!currentUserId) return;
-
-    const fetchData = async () => {
-      setIsLoading(true);
-
-      try {
-        // 1. Get current user profile
-        const { data: profileData, error: profileError } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", currentUserId)
-          .single();
-
-        if (profileError || !profileData) {
-          toast.error("Could not load your profile");
-          return;
-        }
-
-        setProfile(profileData);
-
-        const universitySlug = profileData.university ? slugify(profileData.university) : null;
-        const citySlug = profileData.city ? slugify(profileData.city) : null;
-
-        const slugs = [universitySlug, citySlug].filter(Boolean);
-        console.log("🔍 Slugs to query:", slugs);
-
-        const { data: groups, error: groupError } = await supabase
-          .from("groups")
-          .select("*")
-          .in("slug", slugs);
-
-        if (groupError) {
-          toast.error("Error loading groups");
-          return;
-        }
-
-        setGroupChats(groups);
-
-        // 3. Auto-join user to each group if not already in
-        for (const group of groups) {
-          const { data: exists } = await supabase
-            .from("group_members")
-            .select("*")
-            .eq("group_id", group.id)
-            .eq("user_id", currentUserId)
-            .maybeSingle();
-
-          if (!exists) {
-            await supabase.from("group_members").insert({
-              group_id: group.id,
-              user_id: currentUserId,
-            });
-            toast.success(`Joined ${group.name} group`);
-          }
-        }
-
-      } catch (err) {
-        console.error("Error:", err);
-        toast.error("Something went wrong");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [currentUserId]);
-
-  const handleSelectGroup = (group: Group) => {
-    setSelectedGroup(group);
+  const handleSelectCityChat = (cityName: string) => {
+    console.log("Selecting city chat:", cityName);
+    setSelectedCityChat(cityName || null);
+    setSelectedGroupChat(null);
   };
 
   const handleBack = () => {
-    setSelectedGroup(null);
+    setSelectedGroupChat(null);
+    setSelectedCityChat(null);
   };
 
-  if (selectedGroup) {
+  // Show full-screen chat view when a chat is selected
+  if (selectedGroupChat || selectedCityChat) {
     return (
       <div className="max-w-7xl mx-auto h-[calc(100vh-128px)] py-4 px-2 sm:px-4 flex flex-col">
         <div className="flex-1 bg-white rounded-lg shadow overflow-hidden">
-          {selectedGroup.type === "university" ? (
-            <GroupChatPanel
-              universityName={selectedGroup.name}
+          {selectedGroupChat ? (
+            <GroupChatPanel 
+              universityName={selectedGroupChat}
               currentUserId={currentUserId!}
-              profiles={profile ? [profile] : []}
+              profiles={profiles}
               onBack={handleBack}
               isFullScreen={true}
             />
-          ) : (
+          ) : selectedCityChat ? (
             <CityPanel
-              cityName={selectedGroup.name}
+              cityName={selectedCityChat}
               currentUserId={currentUserId!}
-              profiles={profile ? [profile] : []}
+              profiles={profiles}
               onBack={handleBack}
               isFullScreen={true}
             />
-          )}
+          ) : null}
         </div>
       </div>
     );
   }
 
+  // Cards view for listing available groups
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold text-center mb-8">Your Group Chats</h1>
-
-      {isLoading ? (
-        <div className="space-y-6">
-          {[1, 2].map((i) => (
-            <div key={i} className="rounded-3xl overflow-hidden animate-pulse bg-gray-200 h-48" />
-          ))}
-        </div>
-      ) : groupChats.length > 0 ? (
-        <div className="space-y-6">
-          {groupChats.map((group) => (
-            <Card
-              key={group.id}
-              onClick={() => handleSelectGroup(group)}
-              className="rounded-3xl overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
-            >
-              <div className={`p-8 text-white relative ${
-                group.type === "university"
-                  ? "bg-gradient-to-r from-purple-700 to-indigo-500"
-                  : "bg-gradient-to-r from-blue-600 to-blue-400"
-              }`}>
-                <div className="absolute top-4 right-4 bg-white/20 px-2 py-1 rounded-full text-xs font-medium">
-                  {group.type === "university" ? "University Chat" : "City Chat"}
-                </div>
-                {group.type === "university" ? (
-                  <GraduationCap className="w-16 h-16 mb-4 opacity-70 absolute right-8 top-8" />
-                ) : (
-                  <MapPin className="w-16 h-16 mb-4 opacity-70 absolute right-8 top-8" />
-                )}
-                <h2 className="text-5xl font-bold mb-2">
-                  {group.type === "university" ? "Your University" : "Your City"}
-                </h2>
-                <p className="text-2xl opacity-90 mb-4">{group.name}</p>
+      <h1 className="text-3xl font-bold text-center mb-8">Join Group Chats</h1>
+      
+      <div className="space-y-6">
+        {/* University Card */}
+        {currentUserProfile?.university && (
+          <Card 
+            className="rounded-3xl overflow-hidden cursor-pointer hover:shadow-lg transition-shadow" 
+            onClick={() => handleSelectGroupChat(currentUserProfile.university!)}
+          >
+            <div className="bg-gradient-to-r from-purple-700 to-indigo-500 text-white p-8 relative">
+              <div className="absolute top-4 right-4 bg-white/20 px-2 py-1 rounded-full text-xs font-medium flex items-center">
+                {profiles.filter(p => p.university === currentUserProfile.university).length} students
               </div>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <div className="text-center p-8 bg-gray-50 rounded-lg">
-          <p className="text-lg text-gray-600">No group chats found for your university or city.</p>
-          <Button className="mt-4" onClick={() => window.location.href = "/profile"}>
-            Update Profile
-          </Button>
-        </div>
-      )}
+              <GraduationCap className="w-16 h-16 mb-4 opacity-70 absolute right-8 top-8" />
+              <h2 className="text-5xl font-bold mb-2">Your University</h2>
+              <p className="text-2xl opacity-90 mb-4">
+                Chat with students at<br/>{currentUserProfile.university}
+              </p>
+            </div>
+          </Card>
+        )}
+        
+        {/* City Card */}
+        {currentUserProfile?.city && (
+          <Card 
+            className="rounded-3xl overflow-hidden cursor-pointer hover:shadow-lg transition-shadow" 
+            onClick={() => handleSelectCityChat(currentUserProfile.city!)}
+          >
+            <div className="bg-gradient-to-r from-blue-600 to-blue-400 text-white p-8 relative">
+              <div className="absolute top-4 right-4 bg-white/20 px-2 py-1 rounded-full text-xs font-medium flex items-center">
+                {profiles.filter(p => p.city === currentUserProfile.city).length} students
+              </div>
+              <MapPin className="w-16 h-16 mb-4 opacity-70 absolute right-8 top-8" />
+              <h2 className="text-5xl font-bold mb-2">Your City</h2>
+              <p className="text-2xl opacity-90 mb-4">
+                Group chat for<br/>{currentUserProfile.city}
+              </p>
+            </div>
+          </Card>
+        )}
+        
+        {!currentUserProfile?.university && !currentUserProfile?.city && (
+          <div className="text-center p-8 bg-gray-50 rounded-lg">
+            <p className="text-lg text-gray-600">
+              Set your university and city in your profile to join group chats.
+            </p>
+            <Button 
+              className="mt-4"
+              onClick={() => window.location.href = "/profile"}
+            >
+              Update Profile
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
