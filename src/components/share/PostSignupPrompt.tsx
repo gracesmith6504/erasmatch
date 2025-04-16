@@ -8,18 +8,11 @@ import { ShareModal } from "./ShareModal";
 interface PostSignupPromptProps {
   city?: string;
   onContinue: () => void;
+  link: string;
 }
 
-export function PostSignupPrompt({ city, onContinue }: PostSignupPromptProps) {
+export function PostSignupPrompt({ city, onContinue, link }: PostSignupPromptProps) {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  
-  // Generate a link to share
-  const generateShareLink = () => {
-    if (city) {
-      return `https://erasmatch.com/city/${encodeURIComponent(city)}`;
-    }
-    return "https://erasmatch.com";
-  };
   
   return (
     <div className="max-w-md mx-auto px-4 py-8">
@@ -57,7 +50,7 @@ export function PostSignupPrompt({ city, onContinue }: PostSignupPromptProps) {
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
         city={city}
-        link={generateShareLink()}
+        link={link}
       />
     </div>
   );
