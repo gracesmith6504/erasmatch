@@ -38,6 +38,12 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
     return location.pathname === path;
   };
 
+  const handleLogout = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent default form submission
+    onLogout();
+    setIsOpen(false); // Close mobile menu after logout
+  };
+
   return (
     <>
       <nav 
@@ -125,7 +131,8 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                   </Link>
                   <Button 
                     variant="ghost" 
-                    onClick={onLogout} 
+                    onClick={handleLogout}
+                    type="button" 
                     className="p-2 rounded-full hover:bg-red-100 hover:text-red-600"
                     size="icon"
                   >
@@ -206,7 +213,8 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                 </div>
               </Link>
               <button 
-                onClick={onLogout}
+                onClick={handleLogout}
+                type="button"
                 className="w-full text-left block px-4 py-3 rounded-lg text-base font-medium text-gray-700 hover:text-red-600 hover:bg-red-50"
               >
                 <div className="flex items-center">

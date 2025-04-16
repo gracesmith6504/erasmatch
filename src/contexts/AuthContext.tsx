@@ -2,6 +2,8 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile } from "@/types";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -34,6 +36,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
   const [currentUserProfile, setCurrentUserProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Initialize and listen for auth changes
   useEffect(() => {
@@ -140,9 +143,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
-      // Auth listener will handle the state changes
+      
+      // Show success toast
+      toast.success("You've been logged out");
+      
+      // Redirect to login page
+      navigate("/auth?mode=login");
+      
+      // Auth listener will handle state changes but force a reload to ensure UI updates
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
     } catch (error) {
       console.error('Error signing out:', error);
+      toast.error("Failed to log out. Please try again.");
     }
   };
 
