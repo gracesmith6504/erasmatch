@@ -44,6 +44,31 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
     return <StudentLoadingSkeleton />;
   }
 
+
+
+  const getCompletionPercentage = (profile: Profile) => {
+  const fields = [
+    profile.name,
+    profile.email,
+    profile.university,
+    profile.avatar_url,
+    profile.bio,
+    profile.semester,
+    profile.home_university,
+    profile.city,
+    profile.country,
+    profile.interests
+  ];
+
+  const filled = fields.filter(Boolean).length;
+  return Math.round((filled / fields.length) * 100);
+};
+
+const sortedProfiles = [...filteredProfiles].sort(
+  (a, b) => getCompletionPercentage(b) - getCompletionPercentage(a)
+);
+
+  
   return (
     <div className="max-w-7xl mx-auto py-4 sm:py-6 md:py-8 px-4 sm:px-6 lg:px-8 animate-fade-in overflow-x-hidden w-full">
       <h1 className="text-xl sm:text-2xl font-bold gradient-text mb-4">Find Erasmus Students</h1>
@@ -73,10 +98,10 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
             resetFilters={resetFilters}
           />
 
-          <StudentCardGrid 
-            filteredProfiles={filteredProfiles} 
-            resetFilters={resetFilters} 
-          />
+         <StudentCardGrid 
+          filteredProfiles={sortedProfiles} 
+          resetFilters={resetFilters} 
+        />
         </TabsContent>
         
         <TabsContent value="cities" className="mt-0 w-full">
