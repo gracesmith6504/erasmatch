@@ -31,15 +31,38 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
 
   const [activeTab, setActiveTab] = useState<"list" | "cities">("list");
 
-  // Scroll to top when the page loads
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  // Rendering skeleton loaders during loading state
+  const getCompletionPercentage = (profile: Profile) => {
+    const fields = [
+      profile.name,
+      profile.email,
+      profile.university,
+      profile.avatar_url,
+      profile.bio,
+      profile.semester,
+      profile.home_university,
+      profile.city,
+      profile.country,
+      profile.interests
+    ];
+
+    const filled = fields.filter(Boolean).length;
+    return Math.round((filled / fields.length) * 100);
+  };
+
+  const sortedProfiles = [...filteredProfiles].sort((a, b) => {
+    const hasPhotoA = Boolean(a.avatar_url);
+    const hasPhotoB = Boolean(b.avatar_url);
+
+    if (hasPhotoA && !hasPhotoB) return -1;
+    if (!hasPhotoA && hasPhotoB) return 1;
+
+    return getCompletionPercentage(b) - getCompletionPercentage(a);
+  });
+
   if (loading) {
     return <StudentLoadingSkeleton />;
   }
@@ -59,7 +82,7 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
             <span>By City</span>
           </TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="list" className="mt-0 w-full">
           <StudentFilters
             universityFilter={universityFilter}
@@ -74,13 +97,13 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
           />
 
           <StudentCardGrid 
-            filteredProfiles={filteredProfiles} 
+            filteredProfiles={sortedProfiles} 
             resetFilters={resetFilters} 
           />
         </TabsContent>
-        
+
         <TabsContent value="cities" className="mt-0 w-full">
-          <CitiesView profiles={filteredProfiles} currentUserId={currentUserId} />
+          <CitiesView profiles={sortedProfiles} currentUserId={currentUserId} />
         </TabsContent>
       </Tabs>
     </div>
