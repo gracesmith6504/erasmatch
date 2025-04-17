@@ -100,51 +100,6 @@ export type Database = {
           },
         ]
       }
-      group_members: {
-        Row: {
-          group_id: string | null
-          id: string
-          is_active: boolean | null
-          joined_at: string | null
-          notifications_enabled: boolean | null
-          role: string | null
-          user_id: string | null
-        }
-        Insert: {
-          group_id?: string | null
-          id?: string
-          is_active?: boolean | null
-          joined_at?: string | null
-          notifications_enabled?: boolean | null
-          role?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          group_id?: string | null
-          id?: string
-          is_active?: boolean | null
-          joined_at?: string | null
-          notifications_enabled?: boolean | null
-          role?: string | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "group_members_group_id_fkey"
-            columns: ["group_id"]
-            isOneToOne: false
-            referencedRelation: "groups"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "group_members_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       group_messages: {
         Row: {
           content: string
@@ -176,80 +131,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      groups: {
-        Row: {
-          created_at: string | null
-          creator_id: string | null
-          description: string | null
-          id: string
-          name: string
-          slug: string
-          type: string
-          visibility: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          creator_id?: string | null
-          description?: string | null
-          id?: string
-          name: string
-          slug: string
-          type: string
-          visibility?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          creator_id?: string | null
-          description?: string | null
-          id?: string
-          name?: string
-          slug?: string
-          type?: string
-          visibility?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "groups_creator_id_fkey"
-            columns: ["creator_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      listings: {
-        Row: {
-          city: string | null
-          created_at: string
-          id: string
-          image_url: string | null
-          platform: string | null
-          price: string | null
-          room_type: string | null
-          source_url: string | null
-        }
-        Insert: {
-          city?: string | null
-          created_at?: string
-          id?: string
-          image_url?: string | null
-          platform?: string | null
-          price?: string | null
-          room_type?: string | null
-          source_url?: string | null
-        }
-        Update: {
-          city?: string | null
-          created_at?: string
-          id?: string
-          image_url?: string | null
-          platform?: string | null
-          price?: string | null
-          room_type?: string | null
-          source_url?: string | null
-        }
-        Relationships: []
       }
       messages: {
         Row: {
@@ -332,33 +213,6 @@ export type Database = {
           ref_code?: string | null
           semester?: string | null
           university?: string | null
-        }
-        Relationships: []
-      }
-      prompt_logs: {
-        Row: {
-          created_at: string
-          id: string
-          prompt_text: string
-          receiver_id: string
-          sender_id: string
-          type: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          prompt_text: string
-          receiver_id: string
-          sender_id: string
-          type: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          prompt_text?: string
-          receiver_id?: string
-          sender_id?: string
-          type?: string
         }
         Relationships: []
       }
