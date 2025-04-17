@@ -30,11 +30,14 @@ export function UniversitySearchResults({
               selectedValue === university.name ? "opacity-100" : "opacity-0"
             )}
           />
-          <div>
-            <p>{university.name}</p>
-            {university.city && university.country && (
+          <div className="flex flex-col">
+            <p className="font-medium">{university.name}</p>
+            {(university.city || university.country) && (
               <p className="text-xs text-muted-foreground">
-                {university.city}, {university.country}
+                {[
+                  university.city, 
+                  university.country
+                ].filter(Boolean).join(", ")}
               </p>
             )}
           </div>

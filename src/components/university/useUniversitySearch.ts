@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { University } from "./types";
@@ -55,39 +56,76 @@ export function useUniversitySearch() {
       return;
     }
 
+    // Filter universities based on name, city or country
     const filtered = allUniversities.filter((uni) => {
-      return (
-        uni.name.toLowerCase().includes(lowerQuery) ||
-        (uni.city && uni.city.toLowerCase().includes(lowerQuery)) ||
-        (uni.country && uni.country.toLowerCase().includes(lowerQuery))
-      );
+      const nameMatch = uni.name.toLowerCase().includes(lowerQuery);
+      const cityMatch = uni.city && uni.city.toLowerCase().includes(lowerQuery);
+      const countryMatch = uni.country && uni.country.toLowerCase().includes(lowerQuery);
+      
+      return nameMatch || cityMatch || countryMatch;
     });
 
+    // Sort results by relevance
     const sorted = sortUniversityResults(filtered, lowerQuery);
     setUniversities(sorted);
   };
 
   const sortUniversityResults = (results: University[], query: string): University[] => {
     return [...results].sort((a, b) => {
-      const queryIn = (field: string | null) =>
-        field?.toLowerCase().includes(query) ? 1 : 0;
-
-      const aScore =
-        (a.name.toLowerCase() === query ? 100 : 0) +
-        (a.name.toLowerCase().startsWith(query) ? 50 : 0) +
-        queryIn(a.name) * 30 +
-        queryIn(a.city) * 20 +
-        queryIn(a.country) * 10;
-
-      const bScore =
-        (b.name.toLowerCase() === query ? 100 : 0) +
-        (b.name.toLowerCase().startsWith(query) ? 50 : 0) +
-        queryIn(b.name) * 30 +
-        queryIn(b.city) * 20 +
-        queryIn(b.country) * 10;
-
-      return bScore - aScore;
+      // Calculate relevance scores based on match type
+      // Prioritize: exact name match > name starts with > name includes > city > country
+      
+      const aNameLower = a.name.toLowerCase();
+      const bNameLower = b.name.toLowerCase();
+      
+      // Score calculation for each university
+      const aScore = calculateRelevanceScore(a, query);
+      const bScore = calculateRelevanceScore(b, query);
+      
+      return bScore - aScore; // Higher score first
     });
+  };
+  
+  const calculateRelevanceScore = (university: University, query: string): number => {
+    const nameLower = university.name.toLowerCase();
+    const cityLower = university.city?.toLowerCase() || '';
+    const countryLower = university.country?.toLowerCase() || '';
+    
+    let score = 0;
+    
+    // Exact name match (highest priority)
+    if (nameLower === query) {
+      score += 1000;
+    }
+    
+    // Name starts with query (high priority)
+    if (nameLower.startsWith(query)) {
+      score += 500;
+    }
+    
+    // Name includes query (medium priority)
+    if (nameLower.includes(query)) {
+      score += 200;
+    }
+    
+    // City match (lower priority)
+    if (cityLower.includes(query)) {
+      score += 100;
+    }
+    
+    // Country match (lowest priority)
+    if (countryLower.includes(query)) {
+      score += 50;
+    }
+    
+    // Additional factor: position of match in name (earlier = better)
+    const nameMatchPos = nameLower.indexOf(query);
+    if (nameMatchPos !== -1) {
+      // Inverted position (earlier match = higher score)
+      score += Math.max(0, 50 - nameMatchPos);
+    }
+    
+    return score;
   };
 
   return {
