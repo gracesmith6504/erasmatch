@@ -1,3 +1,4 @@
+
 import { useState, useRef } from "react";
 import { Label } from "@/components/ui/label";
 import { UniversityDropdown } from "./university/UniversityDropdown";
@@ -20,7 +21,7 @@ const UniversityAutocomplete = ({
 }: UniversityAutocompleteProps) => {
   const [manualEntry, setManualEntry] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
-  const { universities: unsortedUniversities, isLoading, searchQuery, handleSearch } = useUniversitySearch();
+  const { universities, isLoading, searchQuery, handleSearch } = useUniversitySearch();
 
   const handleManualEntry = () => {
     setManualEntry(true);
@@ -30,8 +31,6 @@ const UniversityAutocomplete = ({
     onChange(e.target.value);
   };
   
-  const universities = getSortedUniversities(unsortedUniversities, label);
-
   return (
     <div className="space-y-2">
       <Label htmlFor="university" className="block text-sm font-medium text-gray-700">
@@ -60,41 +59,6 @@ const UniversityAutocomplete = ({
       )}
     </div>
   );
-};
-
-const getSortedUniversities = (universities: University[], label: string): University[] => {
-  const sorted = [...universities];
-  
-  if (label !== "Home University") {
-    return sorted.sort((a, b) => a.name.localeCompare(b.name));
-  }
-  
-  const irishUniversities = [
-    "Trinity College Dublin",
-    "University College Dublin",
-    "Technological University Dublin (TU Dublin)",
-    "Dublin City University (DCU)",
-    "University of Galway",
-    "University College Cork",
-    "University of Limerick",
-    "Maynooth University",
-    "Queen's University Belfast"
-  ];
-  
-  return sorted.sort((a, b) => {
-    const aIsIrish = irishUniversities.indexOf(a.name);
-    const bIsIrish = irishUniversities.indexOf(b.name);
-    
-    if (aIsIrish !== -1 && bIsIrish !== -1) {
-      return aIsIrish - bIsIrish;
-    }
-    
-    if (aIsIrish !== -1) return -1;
-    
-    if (bIsIrish !== -1) return 1;
-    
-    return a.name.localeCompare(b.name);
-  });
 };
 
 export default UniversityAutocomplete;

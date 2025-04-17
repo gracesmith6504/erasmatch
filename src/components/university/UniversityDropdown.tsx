@@ -75,8 +75,8 @@ export function UniversityDropdown({
         <Command>
           <CommandInput 
             placeholder="Search university..." 
-            onValueChange={onSearchChange}
             value={searchQuery}
+            onValueChange={onSearchChange}
           />
           <CommandList>
             <CommandEmpty>

@@ -48,6 +48,7 @@ export function useUniversitySearch() {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
+    console.log("Search query:", query); // Debug: log the search query
 
     const lowerQuery = query.trim().toLowerCase();
 
@@ -65,6 +66,8 @@ export function useUniversitySearch() {
       return nameMatch || cityMatch || countryMatch;
     });
 
+    console.log("Filtered universities:", filtered.length); // Debug: log filtered count
+
     // Sort results by relevance
     const sorted = sortUniversityResults(filtered, lowerQuery);
     setUniversities(sorted);
@@ -72,13 +75,6 @@ export function useUniversitySearch() {
 
   const sortUniversityResults = (results: University[], query: string): University[] => {
     return [...results].sort((a, b) => {
-      // Calculate relevance scores based on match type
-      // Prioritize: exact name match > name starts with > name includes > city > country
-      
-      const aNameLower = a.name.toLowerCase();
-      const bNameLower = b.name.toLowerCase();
-      
-      // Score calculation for each university
       const aScore = calculateRelevanceScore(a, query);
       const bScore = calculateRelevanceScore(b, query);
       
