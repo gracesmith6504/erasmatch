@@ -33,7 +33,16 @@ export const ProfileAvatar = ({
   return (
     <div className="relative">
       <Avatar className="w-24 h-24 rounded-full mx-auto text-xl font-bold bg-indigo-100 text-indigo-700 flex items-center justify-center">
-        <AvatarImage src={avatarUrl || undefined} alt={name || "Profile"} />
+        <AvatarImage
+          src={avatarUrl || undefined}
+          alt={name || "Profile"}
+          className="w-full h-full object-cover"
+          width={96}
+          height={96}
+          loading="lazy"
+          decoding="async"
+        />
+
         <AvatarFallback className="flex items-center justify-center">
           {getInitials(name)}
         </AvatarFallback>
