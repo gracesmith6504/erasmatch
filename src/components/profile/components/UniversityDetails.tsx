@@ -70,6 +70,7 @@ export const UniversityDetails = ({
           onChange={handleHomeUniversityChange}
           label="Home University"
           required={true}
+          prioritizeIrish={true}
         />
       </div>
 

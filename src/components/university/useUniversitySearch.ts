@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { University } from "./types";
 
-export function useUniversitySearch() {
+export function useUniversitySearch(prioritizeIrish = false) {
   const [allUniversities, setAllUniversities] = useState<University[]>([]);
   const [universities, setUniversities] = useState<University[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -31,16 +31,20 @@ export function useUniversitySearch() {
 
       const typedData = data.map((uni) => ({
         id: uni.id,
-        name: uni.name,
-        city: uni.city,
-        country: uni.country,
+        name: uni.name || "",
+        city: uni.city || null,
+        country: uni.country || null,
       })) as University[];
 
       console.log("Fetched universities:", typedData.length);
-      console.log("Sample university:", typedData.length > 0 ? typedData[0] : "None");
       
-      setAllUniversities(typedData);
-      setUniversities(typedData); // show all by default
+      // Sort universities alphabetically by name
+      const sortedData = [...typedData].sort((a, b) => 
+        a.name.localeCompare(b.name)
+      );
+      
+      setAllUniversities(sortedData);
+      setUniversities(sortedData); // show all by default, sorted alphabetically
     } catch (error) {
       console.error("Error in fetchUniversities:", error);
       setAllUniversities([]);
@@ -57,6 +61,7 @@ export function useUniversitySearch() {
     const lowerQuery = query.trim().toLowerCase();
 
     if (!lowerQuery) {
+      // When no search query, show all universities sorted alphabetically
       setUniversities(allUniversities);
       return;
     }
@@ -67,25 +72,34 @@ export function useUniversitySearch() {
       const cityMatch = uni.city?.toLowerCase().includes(lowerQuery) || false;
       const countryMatch = uni.country?.toLowerCase().includes(lowerQuery) || false;
       
-      // Log each match for debugging
-      if (cityMatch) {
-        console.log(`City match for "${query}":`, uni.name, uni.city);
-      }
-      
       return nameMatch || cityMatch || countryMatch;
     });
 
     console.log(`Found ${filtered.length} matches for "${query}"`);
 
     // Sort results by relevance
-    const sorted = sortUniversityResults(filtered, lowerQuery);
+    const sorted = sortUniversityResults(filtered, lowerQuery, prioritizeIrish);
     setUniversities(sorted);
   };
 
-  const sortUniversityResults = (results: University[], query: string): University[] => {
+  const sortUniversityResults = (results: University[], query: string, prioritizeIrish: boolean): University[] => {
     return [...results].sort((a, b) => {
+      // If prioritizing Irish universities for home university dropdown
+      if (prioritizeIrish) {
+        const aIsIrish = a.country?.toLowerCase() === "ireland";
+        const bIsIrish = b.country?.toLowerCase() === "ireland";
+        
+        if (aIsIrish && !bIsIrish) return -1;
+        if (!aIsIrish && bIsIrish) return 1;
+      }
+      
       const aScore = calculateRelevanceScore(a, query);
       const bScore = calculateRelevanceScore(b, query);
+      
+      // If scores are equal, sort alphabetically by name
+      if (bScore === aScore) {
+        return a.name.localeCompare(b.name);
+      }
       
       return bScore - aScore; // Higher score first
     });

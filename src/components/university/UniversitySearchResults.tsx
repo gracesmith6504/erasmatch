@@ -15,8 +15,6 @@ export function UniversitySearchResults({
   selectedValue, 
   onSelect 
 }: UniversitySearchResultsProps) {
-  console.log("Rendering search results with", universities.length, "universities");
-  
   if (universities.length === 0) {
     return (
       <CommandGroup>

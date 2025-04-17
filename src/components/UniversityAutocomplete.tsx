@@ -11,17 +11,19 @@ type UniversityAutocompleteProps = {
   onChange: (value: string) => void;
   label?: string;
   required?: boolean;
+  prioritizeIrish?: boolean;
 };
 
 const UniversityAutocomplete = ({ 
   value, 
   onChange,
   label = "University", 
-  required = false 
+  required = false,
+  prioritizeIrish = false
 }: UniversityAutocompleteProps) => {
   const [manualEntry, setManualEntry] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
-  const { universities, isLoading, searchQuery, handleSearch } = useUniversitySearch();
+  const { universities, isLoading, searchQuery, handleSearch } = useUniversitySearch(prioritizeIrish);
 
   const handleManualEntry = () => {
     setManualEntry(true);
@@ -30,8 +32,6 @@ const UniversityAutocomplete = ({
   const handleManualInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value);
   };
-  
-  console.log("UniversityAutocomplete rendering with", universities.length, "universities");
   
   return (
     <div className="space-y-2">
