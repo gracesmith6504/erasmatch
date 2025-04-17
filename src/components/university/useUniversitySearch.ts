@@ -48,56 +48,43 @@ export function useUniversitySearch() {
     }
   };
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    
-    const fetchWithQuery = async () => {
-      try {
-        setIsLoading(true);
-        
-        if (!query || query.trim() === '') {
-          await fetchUniversities();
-          return;
-        }
-        
-        // Use textSearch to match across multiple columns
-        const { data, error } = await supabase
-          .from('universities')
-          .select('id, name, city, country')
-          .or(`name.ilike.*${query}*,city.ilike.*${query}*,country.ilike.*${query}*`)
-          .limit(50);
-          
-        if (error) {
-          console.error("Error searching universities:", error);
-          setUniversities([]);
-          return;
-        }
-        
-        if (data) {
-          // Cast the data to University type
-          const typedData = data.map(uni => ({
-            id: uni.id,
-            name: uni.name,
-            city: uni.city,
-            country: uni.country
-          })) as University[];
-          
-          // Sort results to prioritize matches in university name, then city, then country
-          const sortedResults = sortUniversityResults(typedData, query);
-          setUniversities(sortedResults);
-        } else {
-          setUniversities([]);
-        }
-      } catch (error) {
-        console.error("Error in search operation:", error);
-        setUniversities([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchWithQuery();
-  };
+const handleSearch = async (query: string) => {
+  setSearchQuery(query);
+  
+  try {
+    setIsLoading(true);
+
+    if (!query || query.trim() === '') {
+      await fetchUniversities();
+      return;
+    }
+
+    // Always fetch all universities once (or already loaded)
+    if (universities.length === 0) {
+      await fetchUniversities();
+    }
+
+    const lowerQuery = query.trim().toLowerCase();
+
+    // Local filter: match across name, city, country
+    const filtered = universities.filter((uni) => {
+      return (
+        uni.name.toLowerCase().includes(lowerQuery) ||
+        uni.city?.toLowerCase().includes(lowerQuery) ||
+        uni.country?.toLowerCase().includes(lowerQuery)
+      );
+    });
+
+    const sorted = sortUniversityResults(filtered, lowerQuery);
+    setUniversities(sorted);
+  } catch (error) {
+    console.error("Error in local search:", error);
+    setUniversities([]);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   // Helper function to sort results by relevance
   const sortUniversityResults = (universities: University[], query: string): University[] => {
