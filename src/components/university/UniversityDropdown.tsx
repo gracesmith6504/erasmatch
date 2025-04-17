@@ -9,7 +9,6 @@ import {
   CommandEmpty,
   CommandGroup,
   CommandInput,
-  CommandItem,
   CommandList,
 } from "@/components/ui/command";
 import { University } from "./types";
@@ -71,6 +70,7 @@ export function UniversityDropdown({
         className="w-full p-0" 
         ref={popoverRef}
         align="start"
+        side="bottom"
         sideOffset={4}
       >
         <Command>
@@ -92,7 +92,7 @@ export function UniversityDropdown({
                     onClick={onManualEntry}
                     className="mt-2"
                   >
-                    University not listed? Tap here to enter manually
+                    University not listed? Enter manually
                   </Button>
                 </div>
               )}

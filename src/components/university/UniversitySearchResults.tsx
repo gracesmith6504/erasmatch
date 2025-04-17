@@ -40,7 +40,7 @@ export function UniversitySearchResults({
               selectedValue === university.name ? "opacity-100" : "opacity-0"
             )}
           />
-          <div className="flex flex-col">
+          <div className="flex flex-col w-full">
             <p className="font-medium">{university.name}</p>
             {(university.city || university.country) && (
               <p className="text-xs text-muted-foreground">

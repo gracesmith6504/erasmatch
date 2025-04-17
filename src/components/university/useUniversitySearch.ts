@@ -3,6 +3,19 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { University } from "./types";
 
+// List of Irish universities to prioritize for the "Home University" dropdown
+const IRISH_UNIVERSITIES = [
+  "Trinity College Dublin",
+  "University College Dublin",
+  "Technological University Dublin",
+  "Dublin City University",
+  "University of Galway",
+  "University College Cork",
+  "University of Limerick",
+  "Maynooth University",
+  "Queen's University Belfast"
+];
+
 export function useUniversitySearch(prioritizeIrish = false) {
   const [allUniversities, setAllUniversities] = useState<University[]>([]);
   const [universities, setUniversities] = useState<University[]>([]);
@@ -44,7 +57,13 @@ export function useUniversitySearch(prioritizeIrish = false) {
       );
       
       setAllUniversities(sortedData);
-      setUniversities(sortedData); // show all by default, sorted alphabetically
+      
+      // Initial list - sorted with Irish universities first if prioritizeIrish is true
+      const initialList = prioritizeIrish 
+        ? sortUniversitiesByIrishFirst(sortedData) 
+        : sortedData;
+      
+      setUniversities(initialList);
     } catch (error) {
       console.error("Error in fetchUniversities:", error);
       setAllUniversities([]);
@@ -56,38 +75,66 @@ export function useUniversitySearch(prioritizeIrish = false) {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    console.log("Searching for:", query);
     
-    const lowerQuery = query.trim().toLowerCase();
-
-    if (!lowerQuery) {
-      // When no search query, show all universities sorted alphabetically
-      setUniversities(allUniversities);
+    const trimmedQuery = query.trim().toLowerCase();
+    
+    if (!trimmedQuery) {
+      // When no search query, show all universities
+      // If prioritizing Irish universities, sort them first
+      const defaultList = prioritizeIrish 
+        ? sortUniversitiesByIrishFirst(allUniversities) 
+        : [...allUniversities];
+      
+      setUniversities(defaultList);
       return;
     }
 
     // Filter universities based on name, city or country
     const filtered = allUniversities.filter((uni) => {
-      const nameMatch = uni.name?.toLowerCase().includes(lowerQuery) || false;
-      const cityMatch = uni.city?.toLowerCase().includes(lowerQuery) || false;
-      const countryMatch = uni.country?.toLowerCase().includes(lowerQuery) || false;
+      const nameMatch = uni.name?.toLowerCase().includes(trimmedQuery) || false;
+      const cityMatch = uni.city?.toLowerCase().includes(trimmedQuery) || false;
+      const countryMatch = uni.country?.toLowerCase().includes(trimmedQuery) || false;
       
       return nameMatch || cityMatch || countryMatch;
     });
 
     console.log(`Found ${filtered.length} matches for "${query}"`);
 
-    // Sort results by relevance
-    const sorted = sortUniversityResults(filtered, lowerQuery, prioritizeIrish);
+    // Sort results by relevance, considering Irish universities if needed
+    const sorted = sortUniversityResults(filtered, trimmedQuery, prioritizeIrish);
     setUniversities(sorted);
+  };
+  
+  const sortUniversitiesByIrishFirst = (universities: University[]): University[] => {
+    return [...universities].sort((a, b) => {
+      const aIsIrish = isIrishUniversity(a);
+      const bIsIrish = isIrishUniversity(b);
+      
+      if (aIsIrish && !bIsIrish) return -1;
+      if (!aIsIrish && bIsIrish) return 1;
+      
+      // If both or neither are Irish, sort alphabetically
+      return a.name.localeCompare(b.name);
+    });
+  };
+  
+  const isIrishUniversity = (university: University): boolean => {
+    return IRISH_UNIVERSITIES.includes(university.name) || 
+           university.country?.toLowerCase() === "ireland" ||
+           university.city?.toLowerCase() === "dublin" ||
+           university.city?.toLowerCase() === "galway" ||
+           university.city?.toLowerCase() === "cork" ||
+           university.city?.toLowerCase() === "limerick" ||
+           university.city?.toLowerCase() === "maynooth" ||
+           university.city?.toLowerCase() === "belfast";
   };
 
   const sortUniversityResults = (results: University[], query: string, prioritizeIrish: boolean): University[] => {
     return [...results].sort((a, b) => {
-      // If prioritizing Irish universities for home university dropdown
+      // If prioritizing Irish universities
       if (prioritizeIrish) {
-        const aIsIrish = a.country?.toLowerCase() === "ireland";
-        const bIsIrish = b.country?.toLowerCase() === "ireland";
+        const aIsIrish = isIrishUniversity(a);
+        const bIsIrish = isIrishUniversity(b);
         
         if (aIsIrish && !bIsIrish) return -1;
         if (!aIsIrish && bIsIrish) return 1;
@@ -112,40 +159,24 @@ export function useUniversitySearch(prioritizeIrish = false) {
     
     let score = 0;
     
-    // Exact name match (highest priority)
-    if (nameLower === query) {
-      score += 1000;
-    }
+    // Exact match scenarios (highest priority)
+    if (nameLower === query) score += 1000;
+    if (cityLower === query) score += 800;
+    if (countryLower === query) score += 700;
     
-    // Name starts with query (high priority)
-    if (nameLower.startsWith(query)) {
-      score += 500;
-    }
+    // Starts with query (high priority)
+    if (nameLower.startsWith(query)) score += 500;
+    if (cityLower.startsWith(query)) score += 400;
+    if (countryLower.startsWith(query)) score += 350;
     
-    // Name includes query (medium priority)
-    if (nameLower.includes(query)) {
-      score += 200;
-    }
-    
-    // Exact city match (high city priority)
-    if (cityLower === query) {
-      score += 400;
-    }
-    
-    // City includes query (medium city priority)
-    if (cityLower.includes(query)) {
-      score += 300;
-    }
-    
-    // Country match (lower priority)
-    if (countryLower.includes(query)) {
-      score += 100;
-    }
+    // Contains query (medium priority)
+    if (nameLower.includes(query)) score += 200;
+    if (cityLower.includes(query)) score += 150;
+    if (countryLower.includes(query)) score += 100;
     
     // Additional factor: position of match in name (earlier = better)
     const nameMatchPos = nameLower.indexOf(query);
     if (nameMatchPos !== -1) {
-      // Inverted position (earlier match = higher score)
       score += Math.max(0, 50 - nameMatchPos);
     }
     
