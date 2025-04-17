@@ -24,16 +24,6 @@ export const useProfileForm = () => {
     useWebWorker: true,
   };
 
-  try {
-    file = await imageCompression(file, options);
-  } catch (compressionError) {
-    console.error("Compression failed", compressionError);
-    setUploadStatus({
-      uploading: false,
-      error: "Image compression failed.",
-    });
-    return;
-}
 
     // Check file size (limit to 5MB)
     if (file.size > 5 * 1024 * 1024) {
