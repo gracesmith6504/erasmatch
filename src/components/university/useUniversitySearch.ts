@@ -92,8 +92,8 @@ export function useUniversitySearch(prioritizeIrish = false) {
     // Filter universities based on name, city or country
     const filtered = allUniversities.filter((uni) => {
       const nameMatch = uni.name?.toLowerCase().includes(trimmedQuery) || false;
-      const cityMatch = uni.city?.toLowerCase()?.includes(trimmedQuery) || false;
-      const countryMatch = uni.country?.toLowerCase()?.includes(trimmedQuery) || false;
+      const cityMatch = uni.city?.toLowerCase?.()?.includes(trimmedQuery) || false;
+      const countryMatch = uni.country?.toLowerCase?.()?.includes(trimmedQuery) || false;
       
       return nameMatch || cityMatch || countryMatch;
     });
@@ -153,7 +153,9 @@ export function useUniversitySearch(prioritizeIrish = false) {
   };
   
   const calculateRelevanceScore = (university: University, query: string): number => {
-    const nameLower = university.name?.toLowerCase() || '';
+    if (!university || !university.name) return 0;
+    
+    const nameLower = university.name.toLowerCase();
     const cityLower = university.city?.toLowerCase() || '';
     const countryLower = university.country?.toLowerCase() || '';
     
