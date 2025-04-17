@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { Message, Profile, ChatThread } from "@/types";
 import { MessageHeader } from "./MessageHeader";
@@ -9,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useRealTimeMessages } from "./hooks/useRealTimeMessages";
 import MessageEmptyState from "./MessageEmptyState";
 import MessageBubble from "./MessageBubble";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DirectMessagePanelProps {
   thread: ChatThread;

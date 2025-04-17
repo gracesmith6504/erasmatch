@@ -4,6 +4,8 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Profile } from "@/types";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface SuggestedPromptsProps {
   onSelectPrompt: (prompt: string) => void;
@@ -28,6 +30,8 @@ export const SuggestedPrompts: React.FC<SuggestedPromptsProps> = ({
   currentUser,
   selectedUser,
 }) => {
+  const isMobile = useIsMobile();
+  
   // Generate personalized prompts based on user similarities
   const prompts = useMemo(() => {
     const suggestions: string[] = [];
@@ -89,19 +93,39 @@ export const SuggestedPrompts: React.FC<SuggestedPromptsProps> = ({
         <p className="text-sm text-gray-600">Not sure what to say? Try one of these!</p>
       </div>
       
-      <div className="flex flex-wrap gap-2">
-        {prompts.map((prompt, index) => (
-          <Button
-            key={index}
-            variant="outline"
-            size="sm"
-            className="text-sm bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 rounded-full transition-all"
-            onClick={() => handleSelectPrompt(prompt)}
-          >
-            {prompt}
-          </Button>
-        ))}
-      </div>
+      {isMobile ? (
+        // Mobile scrollable container for suggested prompts
+        <ScrollArea className="w-full px-1" orientation="horizontal">
+          <div className="flex gap-2 pb-1 pr-4">
+            {prompts.map((prompt, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                size="sm"
+                className="text-sm bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 rounded-full transition-all whitespace-nowrap flex-shrink-0"
+                onClick={() => handleSelectPrompt(prompt)}
+              >
+                {prompt}
+              </Button>
+            ))}
+          </div>
+        </ScrollArea>
+      ) : (
+        // Desktop layout with wrapping prompts
+        <div className="flex flex-wrap gap-2">
+          {prompts.map((prompt, index) => (
+            <Button
+              key={index}
+              variant="outline"
+              size="sm"
+              className="text-sm bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 rounded-full transition-all"
+              onClick={() => handleSelectPrompt(prompt)}
+            >
+              {prompt}
+            </Button>
+          ))}
+        </div>
+      )}
     </Card>
   );
 };

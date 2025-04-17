@@ -1,6 +1,9 @@
 
 import { X } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface GroupMessageSuggestionProps {
   chatType: "city" | "university";
@@ -29,6 +32,7 @@ export const GroupMessageSuggestions = ({
 }: GroupMessageSuggestionProps) => {
   // Default fallback prompt for both chat types
   const fallbackPrompt = "hey 👋 just saying hi before things get busy";
+  const isMobile = useIsMobile();
   
   // Define suggestions based on chat type
   const [prompts] = useState(() => {
@@ -68,17 +72,36 @@ export const GroupMessageSuggestions = ({
           <X className="h-4 w-4" />
         </button>
       </div>
-      <div className="space-y-2">
-        {prompts.map((prompt, index) => (
-          <button
-            key={index}
-            className="w-full text-left p-2 bg-gray-50 hover:bg-gray-100 rounded-md text-sm transition-colors"
-            onClick={() => onSelectPrompt(prompt)}
-          >
-            {prompt}
-          </button>
-        ))}
-      </div>
+      
+      {isMobile ? (
+        // Mobile scrollable container for suggested prompts
+        <ScrollArea className="w-full px-1" orientation="horizontal">
+          <div className="flex gap-2 pb-1 pr-4">
+            {prompts.map((prompt, index) => (
+              <button
+                key={index}
+                className="text-left p-2 bg-gray-50 hover:bg-gray-100 rounded-md text-sm transition-colors whitespace-nowrap flex-shrink-0 border border-gray-200"
+                onClick={() => onSelectPrompt(prompt)}
+              >
+                {prompt}
+              </button>
+            ))}
+          </div>
+        </ScrollArea>
+      ) : (
+        // Desktop layout with stacked prompts
+        <div className="space-y-2">
+          {prompts.map((prompt, index) => (
+            <button
+              key={index}
+              className="w-full text-left p-2 bg-gray-50 hover:bg-gray-100 rounded-md text-sm transition-colors"
+              onClick={() => onSelectPrompt(prompt)}
+            >
+              {prompt}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
