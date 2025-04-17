@@ -45,6 +45,8 @@ export function UniversityDropdown({
     setOpen(false);
   };
 
+  console.log("UniversityDropdown rendering with", universities.length, "universities");
+  
   // Position the popover properly on mobile
   useEffect(() => {
     if (open && popoverRef.current) {
@@ -71,14 +73,16 @@ export function UniversityDropdown({
         className="w-full p-0" 
         ref={popoverRef}
         align="start"
+        sideOffset={4}
       >
         <Command>
           <CommandInput 
-            placeholder="Search university..." 
+            placeholder="Search university, city or country..." 
             value={searchQuery}
             onValueChange={onSearchChange}
+            className="bg-white"
           />
-          <CommandList>
+          <CommandList className="max-h-[300px] overflow-y-auto">
             <CommandEmpty>
               {isLoading ? (
                 <p className="py-6 text-center text-sm">Loading...</p>

@@ -31,6 +31,8 @@ const UniversityAutocomplete = ({
     onChange(e.target.value);
   };
   
+  console.log("UniversityAutocomplete rendering with", universities.length, "universities");
+  
   return (
     <div className="space-y-2">
       <Label htmlFor="university" className="block text-sm font-medium text-gray-700">

@@ -16,6 +16,7 @@ export function useUniversitySearch() {
   const fetchUniversities = async () => {
     try {
       setIsLoading(true);
+      console.log("Fetching universities...");
 
       const { data, error } = await supabase
         .from("universities")
@@ -35,6 +36,9 @@ export function useUniversitySearch() {
         country: uni.country,
       })) as University[];
 
+      console.log("Fetched universities:", typedData.length);
+      console.log("Sample university:", typedData.length > 0 ? typedData[0] : "None");
+      
       setAllUniversities(typedData);
       setUniversities(typedData); // show all by default
     } catch (error) {
@@ -48,6 +52,7 @@ export function useUniversitySearch() {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
+    console.log("Searching for:", query);
     
     const lowerQuery = query.trim().toLowerCase();
 
@@ -58,12 +63,19 @@ export function useUniversitySearch() {
 
     // Filter universities based on name, city or country
     const filtered = allUniversities.filter((uni) => {
-      const nameMatch = uni.name.toLowerCase().includes(lowerQuery);
-      const cityMatch = uni.city && uni.city.toLowerCase().includes(lowerQuery);
-      const countryMatch = uni.country && uni.country.toLowerCase().includes(lowerQuery);
+      const nameMatch = uni.name?.toLowerCase().includes(lowerQuery) || false;
+      const cityMatch = uni.city?.toLowerCase().includes(lowerQuery) || false;
+      const countryMatch = uni.country?.toLowerCase().includes(lowerQuery) || false;
+      
+      // Log each match for debugging
+      if (cityMatch) {
+        console.log(`City match for "${query}":`, uni.name, uni.city);
+      }
       
       return nameMatch || cityMatch || countryMatch;
     });
+
+    console.log(`Found ${filtered.length} matches for "${query}"`);
 
     // Sort results by relevance
     const sorted = sortUniversityResults(filtered, lowerQuery);
@@ -80,7 +92,7 @@ export function useUniversitySearch() {
   };
   
   const calculateRelevanceScore = (university: University, query: string): number => {
-    const nameLower = university.name.toLowerCase();
+    const nameLower = university.name?.toLowerCase() || '';
     const cityLower = university.city?.toLowerCase() || '';
     const countryLower = university.country?.toLowerCase() || '';
     
@@ -101,14 +113,19 @@ export function useUniversitySearch() {
       score += 200;
     }
     
-    // City match (lower priority)
-    if (cityLower.includes(query)) {
-      score += 100;
+    // Exact city match (high city priority)
+    if (cityLower === query) {
+      score += 400;
     }
     
-    // Country match (lowest priority)
+    // City includes query (medium city priority)
+    if (cityLower.includes(query)) {
+      score += 300;
+    }
+    
+    // Country match (lower priority)
     if (countryLower.includes(query)) {
-      score += 50;
+      score += 100;
     }
     
     // Additional factor: position of match in name (earlier = better)

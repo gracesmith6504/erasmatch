@@ -15,6 +15,18 @@ export function UniversitySearchResults({
   selectedValue, 
   onSelect 
 }: UniversitySearchResultsProps) {
+  console.log("Rendering search results with", universities.length, "universities");
+  
+  if (universities.length === 0) {
+    return (
+      <CommandGroup>
+        <div className="p-2 text-sm text-center text-gray-500">
+          No matching universities found
+        </div>
+      </CommandGroup>
+    );
+  }
+  
   return (
     <CommandGroup>
       {universities.map((university) => (
