@@ -72,8 +72,8 @@ const getSortedUniversities = (universities: University[], label: string): Unive
   const irishUniversities = [
     "Trinity College Dublin",
     "University College Dublin",
-    "Dublin City University (DCU)",
     "Technological University Dublin (TU Dublin)",
+    "Dublin City University (DCU)",
     "University of Galway",
     "University College Cork",
     "University of Limerick",
