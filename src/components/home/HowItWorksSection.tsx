@@ -16,7 +16,7 @@ export const HowItWorksSection = () => {
           <div className="text-center">
             <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-blue-100 text-blue-600 mb-6">
               <UserCheck className="h-10 w-10" />
-              <div className="absolute -right-2 -top-2 h-8 w-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-lg font-bold">1</div>
+              {/*<div className="absolute -right-2 -top-2 h-8 w-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-lg font-bold">1</div>*/}
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-3">Create Your Profile</h3>
             <p className="text-gray-600">
