@@ -63,7 +63,7 @@ export function useUniversitySearch(prioritizeIrish = false) {
         ? sortUniversitiesByIrishFirst(sortedData) 
         : sortedData;
       
-      setUniversities(initialList);
+      setUniversities(initialList.slice(0, 10)); // Just show first 10 initially for better performance
     } catch (error) {
       console.error("Error in fetchUniversities:", error);
       setAllUniversities([]);
@@ -79,21 +79,21 @@ export function useUniversitySearch(prioritizeIrish = false) {
     const trimmedQuery = query.trim().toLowerCase();
     
     if (!trimmedQuery) {
-      // When no search query, show all universities
+      // When no search query, show all universities or just top 10
       // If prioritizing Irish universities, sort them first
       const defaultList = prioritizeIrish 
         ? sortUniversitiesByIrishFirst(allUniversities) 
         : [...allUniversities];
       
-      setUniversities(defaultList);
+      setUniversities(defaultList.slice(0, 10));
       return;
     }
 
     // Filter universities based on name, city or country
     const filtered = allUniversities.filter((uni) => {
       const nameMatch = uni.name?.toLowerCase().includes(trimmedQuery) || false;
-      const cityMatch = uni.city?.toLowerCase().includes(trimmedQuery) || false;
-      const countryMatch = uni.country?.toLowerCase().includes(trimmedQuery) || false;
+      const cityMatch = uni.city?.toLowerCase()?.includes(trimmedQuery) || false;
+      const countryMatch = uni.country?.toLowerCase()?.includes(trimmedQuery) || false;
       
       return nameMatch || cityMatch || countryMatch;
     });
@@ -166,13 +166,13 @@ export function useUniversitySearch(prioritizeIrish = false) {
     
     // Starts with query (high priority)
     if (nameLower.startsWith(query)) score += 500;
-    if (cityLower.startsWith(query)) score += 400;
-    if (countryLower.startsWith(query)) score += 350;
+    if (cityLower?.startsWith(query)) score += 400;
+    if (countryLower?.startsWith(query)) score += 350;
     
     // Contains query (medium priority)
     if (nameLower.includes(query)) score += 200;
-    if (cityLower.includes(query)) score += 150;
-    if (countryLower.includes(query)) score += 100;
+    if (cityLower?.includes(query)) score += 150;
+    if (countryLower?.includes(query)) score += 100;
     
     // Additional factor: position of match in name (earlier = better)
     const nameMatchPos = nameLower.indexOf(query);

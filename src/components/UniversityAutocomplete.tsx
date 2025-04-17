@@ -4,7 +4,6 @@ import { Label } from "@/components/ui/label";
 import { UniversityDropdown } from "./university/UniversityDropdown";
 import { ManualUniversityEntry } from "./university/ManualUniversityEntry";
 import { useUniversitySearch } from "./university/useUniversitySearch";
-import { University } from "./university/types";
 
 type UniversityAutocompleteProps = {
   value: string;
