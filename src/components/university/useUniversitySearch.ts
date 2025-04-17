@@ -48,8 +48,7 @@ export function useUniversitySearch() {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    console.log("Search query:", query); // Debug: log the search query
-
+    
     const lowerQuery = query.trim().toLowerCase();
 
     if (!lowerQuery) {
@@ -65,8 +64,6 @@ export function useUniversitySearch() {
       
       return nameMatch || cityMatch || countryMatch;
     });
-
-    console.log("Filtered universities:", filtered.length); // Debug: log filtered count
 
     // Sort results by relevance
     const sorted = sortUniversityResults(filtered, lowerQuery);
@@ -128,7 +125,6 @@ export function useUniversitySearch() {
     universities,
     isLoading,
     searchQuery,
-    setSearchQuery,
     handleSearch,
   };
 }
