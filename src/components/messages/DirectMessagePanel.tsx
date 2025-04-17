@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Message, Profile, ChatThread } from "@/types";
 import { MessageHeader } from "./MessageHeader";
@@ -37,7 +36,6 @@ export const DirectMessagePanel = ({
   const [showSuggestedPrompts, setShowSuggestedPrompts] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Use our custom hook for real-time message subscription
   const { localMessages, setLocalMessages } = useRealTimeMessages({
     messages,
     currentUserId,
@@ -45,12 +43,10 @@ export const DirectMessagePanel = ({
     scrollToBottom
   });
 
-  // Check if thread has no messages to show suggested prompts
   useEffect(() => {
     setShowSuggestedPrompts(localMessages.length === 0);
   }, [localMessages]);
 
-  // Scroll to bottom when messages change
   function scrollToBottom() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }
@@ -64,7 +60,6 @@ export const DirectMessagePanel = ({
     
     setIsSending(true);
     try {
-      // Create a temporary message to show immediately in the UI
       const tempMessage: Message = {
         id: `temp-${Date.now()}`,
         sender_id: currentUserId,
@@ -73,15 +68,12 @@ export const DirectMessagePanel = ({
         created_at: new Date().toISOString(),
       };
       
-      // Add the temporary message to local state
       setLocalMessages(prev => [...prev, tempMessage]);
       
-      // Send the message to the server
       await onSendMessage(thread.partner.id, newMessage);
       setNewMessage("");
-      setShowSuggestedPrompts(false); // Hide prompts after sending a message
+      setShowSuggestedPrompts(false);
       
-      // Scroll to the bottom after sending
       scrollToBottom();
     } catch (error) {
       console.error("Error sending message:", error);
@@ -92,7 +84,6 @@ export const DirectMessagePanel = ({
 
   return (
     <div className="flex flex-col w-full h-full relative">
-      {/* Mobile back button */}
       {isMobile && onBack && (
         <div className="sticky top-0 z-10 bg-white border-b">
           <div className="p-2 flex items-center">
@@ -109,14 +100,12 @@ export const DirectMessagePanel = ({
         </div>
       )}
 
-      {/* Enhanced message header with clickable avatar */}
       <MessageHeader 
         isMobile={isMobile} 
         onBack={onBack} 
         profile={thread.partner} 
       />
       
-      {/* Messages container */}
       <div className="flex-1 overflow-y-auto p-4 flex flex-col space-y-4 pb-20">
         {localMessages.length === 0 ? (
           <MessageEmptyState />
@@ -129,7 +118,6 @@ export const DirectMessagePanel = ({
         <div ref={messagesEndRef} />
       </div>
       
-      {/* Input area */}
       <div className="sticky bottom-0 w-full bg-white border-t">
         <MessageInput 
           onSendMessage={handleSendMessage}

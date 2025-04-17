@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
@@ -64,6 +65,15 @@ const PublicProfile = () => {
       .substring(0, 2);
   };
 
+  // Function to get a secondary display text (instead of email)
+  const getSecondaryInfo = (profile: Profile) => {
+    if (profile.city) return profile.city;
+    if (profile.university) return profile.university;
+    if (profile.home_university) return profile.home_university;
+    if (profile.course) return profile.course;
+    return "Erasmus Student";
+  };
+
   if (loading) {
     return (
       <div className="max-w-2xl mx-auto py-8 px-4 sm:px-6">
@@ -114,7 +124,7 @@ const PublicProfile = () => {
         
         <div className="pt-5 px-6 text-center">
           <h1 className="text-2xl font-bold text-gray-900">{profile.name || "Erasmus Student"}</h1>
-          <p className="text-sm text-gray-500 mt-1">{profile.email}</p>
+          <p className="text-sm text-gray-500 mt-1">{getSecondaryInfo(profile)}</p>
           
           {profile.university && (
             <Badge variant="outline" className="mt-2 bg-indigo-50 text-indigo-700 border-indigo-200">

@@ -21,6 +21,23 @@ export const ProfileHeader = ({ profile, isOwnProfile }: ProfileHeaderProps) => 
       .substring(0, 2);
   };
 
+  // Get secondary info to display instead of email for non-owners
+  const getSecondaryInfo = () => {
+    if (isOwnProfile) {
+      return profile.email;
+    } else if (profile.city) {
+      return profile.city;
+    } else if (profile.university) {
+      return profile.university;
+    } else if (profile.home_university) {
+      return profile.home_university;
+    } else if (profile.course) {
+      return profile.course;
+    } else {
+      return "Erasmus Student";
+    }
+  };
+
   return (
     <div className="text-center px-4 pt-6 pb-4 bg-indigo-50 rounded-b-2xl">
       <Avatar className="w-24 h-24 rounded-full mx-auto text-xl font-bold bg-indigo-200 text-white flex items-center justify-center">
@@ -31,7 +48,7 @@ export const ProfileHeader = ({ profile, isOwnProfile }: ProfileHeaderProps) => 
       </Avatar>
       
       <h1 className="text-lg font-semibold mt-2">{profile.name}</h1>
-      <p className="text-sm text-gray-500">{profile.email}</p>
+      <p className="text-sm text-gray-500">{getSecondaryInfo()}</p>
       
       {isOwnProfile && (
         <div className="mt-4">

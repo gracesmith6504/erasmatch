@@ -36,7 +36,7 @@ export const NameDisplay = ({ name, email, handleChange }: NameDisplayProps) => 
             className="text-center text-lg font-semibold border-none focus:ring-0 bg-transparent"
           />
           <Button 
-            type="button" // ✅ prevents accidental form submit
+            type="button"
             variant="ghost" 
             size="sm" 
             className="absolute right-0 text-gray-500 hover:text-gray-700"
@@ -51,7 +51,7 @@ export const NameDisplay = ({ name, email, handleChange }: NameDisplayProps) => 
             {name || "Your full name"}
           </h2>
           <Button 
-            type="button" // ✅ prevents accidental form submit
+            type="button"
             variant="ghost" 
             size="sm" 
             className="ml-2 text-gray-500 hover:text-gray-700"
@@ -62,6 +62,7 @@ export const NameDisplay = ({ name, email, handleChange }: NameDisplayProps) => 
         </div>
       )}
       
+      {/* Only show email on user's own profile */}
       <div className="text-sm text-center text-gray-500">
         {email}
       </div>

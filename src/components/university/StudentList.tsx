@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Profile } from "@/types";
 import { Button } from "@/components/ui/button";
