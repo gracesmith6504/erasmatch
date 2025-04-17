@@ -27,7 +27,7 @@ export const HowItWorksSection = () => {
           <div className="text-center">
             <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-purple-100 text-purple-600 mb-6">
               <Users className="h-10 w-10" />
-              <div className="absolute -right-2 -top-2 h-8 w-8 rounded-full bg-purple-500 text-white flex items-center justify-center text-lg font-bold">2</div>
+              {/* <div className="absolute -right-2 -top-2 h-8 w-8 rounded-full bg-purple-500 text-white flex items-center justify-center text-lg font-bold">2</div>*/}
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-3">Discover Students</h3>
             <p className="text-gray-600">
