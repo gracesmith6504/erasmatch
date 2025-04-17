@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 import { ProfileProvider } from "@/components/profile/ProfileContext";
@@ -80,7 +81,7 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="max-w-3xl mx-auto py-8 px-4 sm:px-6">
+      <div className="max-w-3xl mx-auto py-8 px-4 sm:px-6 overflow-x-hidden">
         <Skeleton className="h-10 w-3/4 mb-4" />
         <Skeleton className="h-6 w-1/2 mb-8" />
         <Skeleton className="h-4 w-full mb-2" />
@@ -99,7 +100,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto py-8 px-4 sm:px-6">
+    <div className="max-w-3xl mx-auto py-8 px-4 sm:px-6 overflow-x-hidden">
       <div className="mb-6 animate-fade-in">
         <h1 className="text-2xl font-bold gradient-text flex items-center">
           {profile?.name ? `${profile.name}'s Profile` : "Complete Your Profile"}
@@ -142,7 +143,7 @@ const Profile = () => {
       
       <ProfileCompletionMeter profile={profile} />
       
-      <div className="bg-white shadow rounded-lg p-6 animate-fade-in">
+      <div className="bg-white shadow rounded-lg p-6 animate-fade-in overflow-hidden">
         <ProfileProvider profile={profile} onProfileUpdate={handleProfileUpdate} fetchProfile={fetchProfile}>
           <ProfileForm />
         </ProfileProvider>

@@ -19,7 +19,7 @@ export const MobileMessagesView = ({
   currentUserProfile,
 }: MobileMessagesViewProps) => {
   return (
-    <div className="max-w-full w-full overflow-x-hidden px-4 py-6">
+    <div className="w-full overflow-hidden px-4 py-6">
       <h1 className="text-xl font-bold text-gray-900 mb-4">Messages</h1>
       
       <div className="bg-white rounded-lg shadow overflow-hidden">
