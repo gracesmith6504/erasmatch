@@ -13,8 +13,26 @@ export const useProfileForm = () => {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(context.form.avatar_url);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    let file = e.target.files?.[0];
     if (!file) return;
+
+// Compress + resize
+    const options = {
+    maxSizeMB: 1,
+    maxWidthOrHeight: 1024,
+    useWebWorker: true,
+  };
+
+  try {
+    file = await imageCompression(file, options);
+  } catch (compressionError) {
+    console.error("Compression failed", compressionError);
+    setUploadStatus({
+      uploading: false,
+      error: "Image compression failed.",
+    });
+    return;
+}
 
     // Check file size (limit to 5MB)
     if (file.size > 5 * 1024 * 1024) {
