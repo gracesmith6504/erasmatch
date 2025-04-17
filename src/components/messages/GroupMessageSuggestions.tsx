@@ -75,7 +75,7 @@ export const GroupMessageSuggestions = ({
       
       {isMobile ? (
         // Mobile scrollable container for suggested prompts
-        <ScrollArea className="w-full px-1" orientation="horizontal">
+        <ScrollArea className="w-full px-1">
           <div className="flex gap-2 pb-1 pr-4">
             {prompts.map((prompt, index) => (
               <button
