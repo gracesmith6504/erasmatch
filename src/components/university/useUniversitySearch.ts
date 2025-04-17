@@ -64,7 +64,7 @@ export function useUniversitySearch() {
         const { data, error } = await supabase
           .from('universities')
           .select('id, name, city, country')
-          .or(`name.ilike.%${query}%,city.ilike.%${query}%,country.ilike.%${query}%`)
+          .or(`name.ilike.*${query}*,city.ilike.*${query}*,country.ilike.*${query}*`)
           .limit(50);
           
         if (error) {
