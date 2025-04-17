@@ -20,7 +20,11 @@ export const MobileNav = ({
   const { navigationItems } = useNavigation();
   
   return (
-    <div className={`md:hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-screen' : 'max-h-0 overflow-hidden'}`}>
+    <div 
+      className={`md:hidden transition-all duration-300 ease-in-out overflow-hidden ${
+        isOpen ? 'max-h-screen' : 'max-h-0'
+      }`}
+    >
       <div className="px-4 pt-2 pb-3 space-y-2 bg-white shadow-md rounded-b-lg">
         {isAuthenticated ? (
           <>

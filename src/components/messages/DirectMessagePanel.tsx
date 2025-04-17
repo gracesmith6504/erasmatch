@@ -85,7 +85,7 @@ export const DirectMessagePanel = ({
   };
 
   return (
-    <div className="flex flex-col w-full h-full relative">
+    <div className="flex flex-col w-full h-full relative overflow-x-hidden">
       {isMobile && onBack && (
         <div className="sticky top-0 z-10 bg-white border-b">
           <div className="p-2 flex items-center">

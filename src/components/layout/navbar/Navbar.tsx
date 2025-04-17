@@ -37,6 +37,24 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
     };
   }, []);
 
+  // Remove any notification elements that might be present
+  useEffect(() => {
+    const removeNotificationBadges = () => {
+      // This looks for any pink circles/notifications that might be appearing
+      const notifications = document.querySelectorAll('.notification-badge, .notification-dot');
+      notifications.forEach(badge => {
+        badge.remove();
+      });
+    };
+
+    // Run initially and whenever route changes
+    removeNotificationBadges();
+    
+    return () => {
+      removeNotificationBadges();
+    };
+  }, [navigate]);
+
   const handleLogout = (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent default form submission
     onLogout();

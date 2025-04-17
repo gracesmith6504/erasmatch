@@ -91,7 +91,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground overflow-x-hidden;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
@@ -181,6 +181,15 @@
   }
   .animate-pulse-soft {
     animation: pulse-soft 2s ease-in-out infinite;
+  }
+  
+  /* Hide scrollbars but maintain scroll functionality */
+  .hide-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
   }
   
   /* Mobile-specific utilities */

@@ -2,7 +2,6 @@
 import { Profile } from "@/types";
 import { ThreadsList } from "./ThreadsList";
 import { getInitials } from "./utils/messageUtils";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 interface MobileMessagesViewProps {
   threads: any[];
@@ -20,8 +19,8 @@ export const MobileMessagesView = ({
   currentUserProfile,
 }: MobileMessagesViewProps) => {
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Messages</h1>
+    <div className="max-w-full w-full overflow-x-hidden px-4 py-6">
+      <h1 className="text-xl font-bold text-gray-900 mb-4">Messages</h1>
       
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <ThreadsList 

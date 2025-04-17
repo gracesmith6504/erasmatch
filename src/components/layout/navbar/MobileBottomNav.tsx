@@ -12,7 +12,7 @@ export const MobileBottomNav = ({ isActive }: MobileBottomNavProps) => {
   
   return (
     <div className="md:hidden fixed bottom-6 left-0 right-0 z-50 flex justify-center">
-      <div className="bg-white shadow-xl rounded-full flex items-center px-3 py-2 space-x-2 border">
+      <div className="bg-white shadow-xl rounded-full flex items-center px-3 py-2 space-x-2 border max-w-[95%] mx-auto">
         {navigationItems.map((item) => (
           <Link 
             key={item.path}

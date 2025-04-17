@@ -3,7 +3,6 @@ import { X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface GroupMessageSuggestionProps {
   chatType: "city" | "university";
@@ -62,7 +61,7 @@ export const GroupMessageSuggestions = ({
   });
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 mb-4 shadow-md border border-gray-100">
+    <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 mb-4 shadow-md border border-gray-100 w-full max-w-full overflow-hidden">
       <div className="flex justify-between items-start mb-2">
         <h3 className="font-medium text-sm text-gray-700">Start the conversation</h3>
         <button 
@@ -74,20 +73,20 @@ export const GroupMessageSuggestions = ({
       </div>
       
       {isMobile ? (
-        // Mobile scrollable container for suggested prompts
-        <ScrollArea className="w-full px-1">
-          <div className="flex gap-2 pb-1 pr-4">
+        // Mobile scrollable container for suggested prompts with improved overflow handling
+        <div className="overflow-x-auto pb-1 hide-scrollbar">
+          <div className="flex gap-2 pr-4 w-max">
             {prompts.map((prompt, index) => (
               <button
                 key={index}
-                className="text-left p-2 bg-gray-50 hover:bg-gray-100 rounded-md text-sm transition-colors whitespace-nowrap flex-shrink-0 border border-gray-200"
+                className="text-left p-2 bg-gray-50 hover:bg-gray-100 rounded-md text-sm transition-colors whitespace-normal flex-shrink-0 border border-gray-200 max-w-[90vw]"
                 onClick={() => onSelectPrompt(prompt)}
               >
-                {prompt}
+                <span className="line-clamp-2">{prompt}</span>
               </button>
             ))}
           </div>
-        </ScrollArea>
+        </div>
       ) : (
         // Desktop layout with stacked prompts
         <div className="space-y-2">

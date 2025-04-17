@@ -50,7 +50,7 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
   };
 
   return (
-    <div className={isMobile ? "h-[calc(100vh-64px)] overflow-hidden" : ""}>
+    <div className="h-[calc(100vh-64px)] overflow-hidden w-full max-w-full">
       <MessagesContainer
         messages={messages}
         profiles={profiles}

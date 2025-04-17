@@ -47,13 +47,13 @@ const Layout = ({ children }: LayoutProps) => {
   const isMessagesPage = location.pathname === "/messages";
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gray-50 overflow-x-hidden w-full max-w-full">
       <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogoutClick} />
       {/* Adjusted pt value to accommodate the navbar with better mobile spacing */}
-      <main className={`flex-1 pt-16 md:pt-16 ${!isMessagesPage ? 'pb-20 md:pb-8' : ''}`}>
+      <main className={`flex-1 pt-16 md:pt-16 w-full max-w-full overflow-x-hidden ${!isMessagesPage ? 'pb-20 md:pb-8' : ''}`}>
         {children}
       </main>
-      <footer className="bg-white border-t py-6 md:py-8 mt-8 md:mt-12">
+      <footer className="bg-white border-t py-6 md:py-8 mt-8 md:mt-12 w-full max-w-full overflow-x-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-6 md:mb-8">
             <div>
@@ -62,7 +62,7 @@ const Layout = ({ children }: LayoutProps) => {
                 Connecting Erasmus students worldwide for better exchange experiences.
               </p>
             </div>
-            <div>
+            <div className="mt-6 md:mt-0">
               <h3 className="text-sm font-semibold mb-3 md:mb-4 text-gray-700">Quick Links</h3>
               <ul className="space-y-2 text-sm">
                 <li><a href="/" className="text-gray-500 hover:text-erasmatch-blue">Home</a></li>
@@ -70,7 +70,7 @@ const Layout = ({ children }: LayoutProps) => {
                 <li><a href="/groups" className="text-gray-500 hover:text-erasmatch-blue">Your Group Chats</a></li>
               </ul>
             </div>
-            <div>
+            <div className="mt-6 md:mt-0">
               <h3 className="text-sm font-semibold mb-3 md:mb-4 text-gray-700">Connect</h3>
               <ul className="space-y-2 text-sm">
                 <li><a href="#" className="text-gray-500 hover:text-erasmatch-blue">About Us</a></li>

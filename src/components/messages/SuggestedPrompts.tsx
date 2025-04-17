@@ -79,7 +79,7 @@ export const SuggestedPrompts: React.FC<SuggestedPromptsProps> = ({
   };
 
   return (
-    <Card className="p-3 mb-2 relative rounded-lg shadow-sm border-gray-200 bg-white/70 backdrop-blur-sm">
+    <Card className="p-3 mb-2 relative rounded-lg shadow-sm border-gray-200 bg-white/70 backdrop-blur-sm w-full max-w-full overflow-hidden">
       <Button 
         variant="ghost" 
         size="sm" 
@@ -94,22 +94,22 @@ export const SuggestedPrompts: React.FC<SuggestedPromptsProps> = ({
       </div>
       
       {isMobile ? (
-        // Mobile scrollable container for suggested prompts
-        <ScrollArea className="w-full px-1">
-          <div className="flex gap-2 pb-1 pr-4">
+        // Mobile scrollable container for suggested prompts with improved overflow handling
+        <div className="overflow-x-auto pb-1 hide-scrollbar">
+          <div className="flex gap-2 pr-4 w-max">
             {prompts.map((prompt, index) => (
               <Button
                 key={index}
                 variant="outline"
                 size="sm"
-                className="text-sm bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 rounded-full transition-all whitespace-nowrap flex-shrink-0"
+                className="text-sm bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 rounded-full transition-all whitespace-normal flex-shrink-0 max-w-[90vw]"
                 onClick={() => handleSelectPrompt(prompt)}
               >
-                {prompt}
+                <span className="line-clamp-2">{prompt}</span>
               </Button>
             ))}
           </div>
-        </ScrollArea>
+        </div>
       ) : (
         // Desktop layout with wrapping prompts
         <div className="flex flex-wrap gap-2">
