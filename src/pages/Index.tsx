@@ -35,7 +35,7 @@ const Index = () => {
   // Redirecting to students page
   const handlePlanning = () => {
     if (isAuthenticated) {
-      navigate("/students"); // Changed from "/accommodation" to "/students"
+      navigate("/students");
     } else {
       navigate("/auth?mode=signup");
     }

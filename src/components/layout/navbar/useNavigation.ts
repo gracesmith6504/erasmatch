@@ -1,6 +1,6 @@
 
 import { useLocation } from "react-router-dom";
-import { Home, MessageSquare, Users, User } from "lucide-react";
+import { Home, MessageSquare, Users } from "lucide-react";
 
 export const useNavigation = () => {
   const location = useLocation();
@@ -29,7 +29,7 @@ export const useNavigation = () => {
       name: "Groups",
       path: "/groups",
       icon: Users,
-    },
+    }
   ];
 
   return {

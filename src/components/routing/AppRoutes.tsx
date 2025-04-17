@@ -10,16 +10,9 @@ import Profile from "@/pages/Profile";
 import ProfileView from "@/pages/ProfileView";
 import PublicProfile from "@/pages/PublicProfile";
 import Students from "@/pages/Students";
-import Locations from "@/pages/Universities";
-import UniversityHub from "@/pages/UniversityHub";
 import Messages from "@/pages/Messages";
 import Groups from "@/pages/Groups";
 import NotFound from "@/pages/NotFound";
-import ForumCities from "@/pages/ForumCities";
-import CityForum from "@/pages/CityForum";
-import ForumPostDetail from "@/pages/ForumPostDetail";
-import NewForumPost from "@/pages/NewForumPost";
-import Accommodation from "@/pages/Accommodation";
 
 // Contexts
 import { useAuth } from "@/contexts/AuthContext";
@@ -91,14 +84,6 @@ const AppRoutes = () => {
         } 
       />
       <Route 
-        path="/universities" 
-        element={<Locations />} 
-      />
-      <Route 
-        path="/university-hub/:id" 
-        element={<UniversityHub />} 
-      />
-      <Route 
         path="/messages" 
         element={
           <ProtectedRoute>
@@ -125,22 +110,6 @@ const AppRoutes = () => {
           </ProtectedRoute>
         } 
       />
-      <Route 
-        path="/accommodation" 
-        element={<Accommodation />} 
-      />
-      {/* Forum Routes */}
-      <Route path="/forum" element={<ForumCities />} />
-      <Route path="/forum/:city" element={<CityForum />} />
-      <Route 
-        path="/forum/:city/new" 
-        element={
-          <ProtectedRoute>
-            <NewForumPost />
-          </ProtectedRoute>
-        } 
-      />
-      <Route path="/forum/post/:postId" element={<ForumPostDetail />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
