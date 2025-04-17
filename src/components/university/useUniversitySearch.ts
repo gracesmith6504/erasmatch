@@ -1,124 +1,92 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { University } from "./types";
 
 export function useUniversitySearch() {
+  const [allUniversities, setAllUniversities] = useState<University[]>([]);
   const [universities, setUniversities] = useState<University[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    // Initial fetch when component mounts
     fetchUniversities();
   }, []);
 
-  const fetchUniversities = async (query = "") => {
+  const fetchUniversities = async () => {
     try {
       setIsLoading(true);
-      
+
       const { data, error } = await supabase
-        .from('universities')
-        .select('id, name, city, country');
-      
+        .from("universities")
+        .select("id, name, city, country");
+
       if (error) {
         console.error("Error fetching universities:", error);
+        setAllUniversities([]);
         setUniversities([]);
         return;
       }
-      
-      if (data) {
-        // Cast the data to University type after ensuring it has the correct structure
-        const typedData = data.map(uni => ({
-          id: uni.id,
-          name: uni.name,
-          city: uni.city,
-          country: uni.country
-        })) as University[];
-        
-        setUniversities(typedData);
-      } else {
-        setUniversities([]);
-      }
+
+      const typedData = data.map((uni) => ({
+        id: uni.id,
+        name: uni.name,
+        city: uni.city,
+        country: uni.country,
+      })) as University[];
+
+      setAllUniversities(typedData);
+      setUniversities(typedData); // show all by default
     } catch (error) {
-      console.error("Error in fetch operation:", error);
+      console.error("Error in fetchUniversities:", error);
+      setAllUniversities([]);
       setUniversities([]);
     } finally {
       setIsLoading(false);
     }
   };
 
-const handleSearch = async (query: string) => {
-  setSearchQuery(query);
-  
-  try {
-    setIsLoading(true);
-
-    if (!query || query.trim() === '') {
-      await fetchUniversities();
-      return;
-    }
-
-    // Always fetch all universities once (or already loaded)
-    if (universities.length === 0) {
-      await fetchUniversities();
-    }
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
 
     const lowerQuery = query.trim().toLowerCase();
 
-    // Local filter: match across name, city, country
-    const filtered = universities.filter((uni) => {
+    if (!lowerQuery) {
+      setUniversities(allUniversities);
+      return;
+    }
+
+    const filtered = allUniversities.filter((uni) => {
       return (
         uni.name.toLowerCase().includes(lowerQuery) ||
-        uni.city?.toLowerCase().includes(lowerQuery) ||
-        uni.country?.toLowerCase().includes(lowerQuery)
+        (uni.city && uni.city.toLowerCase().includes(lowerQuery)) ||
+        (uni.country && uni.country.toLowerCase().includes(lowerQuery))
       );
     });
 
     const sorted = sortUniversityResults(filtered, lowerQuery);
     setUniversities(sorted);
-  } catch (error) {
-    console.error("Error in local search:", error);
-    setUniversities([]);
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
+  const sortUniversityResults = (results: University[], query: string): University[] => {
+    return [...results].sort((a, b) => {
+      const queryIn = (field: string | null) =>
+        field?.toLowerCase().includes(query) ? 1 : 0;
 
-  // Helper function to sort results by relevance
-  const sortUniversityResults = (universities: University[], query: string): University[] => {
-    const lowerQuery = query.toLowerCase().trim();
-    
-    return [...universities].sort((a, b) => {
-      // Priority 1: Exact match in name
-      if (a.name.toLowerCase() === lowerQuery && b.name.toLowerCase() !== lowerQuery) return -1;
-      if (b.name.toLowerCase() === lowerQuery && a.name.toLowerCase() !== lowerQuery) return 1;
-      
-      // Priority 2: Name starts with query
-      if (a.name.toLowerCase().startsWith(lowerQuery) && !b.name.toLowerCase().startsWith(lowerQuery)) return -1;
-      if (b.name.toLowerCase().startsWith(lowerQuery) && !a.name.toLowerCase().startsWith(lowerQuery)) return 1;
-      
-      // Priority 3: Name contains query
-      const aNameContains = a.name.toLowerCase().includes(lowerQuery);
-      const bNameContains = b.name.toLowerCase().includes(lowerQuery);
-      if (aNameContains && !bNameContains) return -1;
-      if (bNameContains && !aNameContains) return 1;
-      
-      // Priority 4: City match
-      const aCityMatches = a.city && a.city.toLowerCase().includes(lowerQuery);
-      const bCityMatches = b.city && b.city.toLowerCase().includes(lowerQuery);
-      if (aCityMatches && !bCityMatches) return -1;
-      if (bCityMatches && !aCityMatches) return 1;
-      
-      // Priority 5: Country match
-      const aCountryMatches = a.country && a.country.toLowerCase().includes(lowerQuery);
-      const bCountryMatches = b.country && b.country.toLowerCase().includes(lowerQuery);
-      if (aCountryMatches && !bCountryMatches) return -1;
-      if (bCountryMatches && !aCountryMatches) return 1;
-      
-      // Default: sort alphabetically by name
-      return a.name.localeCompare(b.name);
+      const aScore =
+        (a.name.toLowerCase() === query ? 100 : 0) +
+        (a.name.toLowerCase().startsWith(query) ? 50 : 0) +
+        queryIn(a.name) * 30 +
+        queryIn(a.city) * 20 +
+        queryIn(a.country) * 10;
+
+      const bScore =
+        (b.name.toLowerCase() === query ? 100 : 0) +
+        (b.name.toLowerCase().startsWith(query) ? 50 : 0) +
+        queryIn(b.name) * 30 +
+        queryIn(b.city) * 20 +
+        queryIn(b.country) * 10;
+
+      return bScore - aScore;
     });
   };
 
@@ -127,6 +95,6 @@ const handleSearch = async (query: string) => {
     isLoading,
     searchQuery,
     setSearchQuery,
-    handleSearch
+    handleSearch,
   };
 }
