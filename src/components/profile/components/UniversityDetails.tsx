@@ -23,7 +23,7 @@ type UniversityDetailsProps = {
   handleHomeUniversityChange: (university: string) => void;
 };
 
-const SEMESTERS = ["Fall 2024", "Spring 2025", "Fall 2025", "Spring 2026"];
+const SEMESTERS = ["Spring 2025", "Fall 2025", "Spring 2026", "Full Academic Year 2025–26"];
 
 export const UniversityDetails = ({
   form,
