@@ -112,10 +112,10 @@ const Profile = () => {
             : "Tell us about yourself to get matched with other exchange students"}
         </p>
       </div>
-
-      {profile && profile.ref_code && (
+      
+      {profile?.ref_code && (
         <Card className="mb-6 border-blue-100 bg-blue-50">
-          <CardContent className="pt-6">
+          <CardContent className="pt-5">
             <div className="flex flex-col space-y-4">
               <div className="text-center">
                 <h3 className="text-sm font-medium text-blue-800">Share your profile!</h3>
@@ -134,7 +134,6 @@ const Profile = () => {
                 </Button>
                 <ShareButton 
                   link={`https://erasmatch.com/u/${profile.ref_code}`}
-                  city={profile.city || undefined}
                 />
               </div>
             </div>
