@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 import { ProfileProvider } from "@/components/profile/ProfileContext";
@@ -134,6 +133,7 @@ const Profile = () => {
                 </Button>
                 <ShareButton 
                   link={`https://erasmatch.com/u/${profile.ref_code}`}
+                  city={profile.city || undefined}
                 />
               </div>
             </div>

@@ -140,8 +140,10 @@ export const GroupChatPanel = ({
           </div>
         </div>
         
-        <ShareButton city={universityName}
-                     link={`https://erasmatch.com`}/>
+        <ShareButton 
+          city={universityName}
+          link={`https://erasmatch.com/universities/${encodeURIComponent(universityName)}`}
+        />
       </div>
       
       <div className="flex-1 overflow-y-auto p-4 flex flex-col bg-gray-50">
