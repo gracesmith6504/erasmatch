@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useProfileContext } from "./context";
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
-import imageCompression from "browser-image-compression";
+
 
 export const useProfileForm = () => {
   const context = useProfileContext();
