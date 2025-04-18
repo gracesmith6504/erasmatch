@@ -106,7 +106,7 @@ const sortedProfiles = [...filteredProfiles].sort((a, b) => {
           />
 
           <StudentCardGrid 
-            filteredProfiles={filteredProfiles} 
+            filteredProfiles={sortedProfiles} 
             resetFilters={resetFilters} 
           />
         </TabsContent>

@@ -55,8 +55,11 @@ export const HeroSection = ({
                   className="w-full text-base px-4 py-6 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
                   onClick={handleAuthAction}
                 >
-                🎉 Create Your Erasmus Profile
-          </Button>
+                Join Now!
+                </Button>
+                <p className="mt-2 text-sm text-gray-600">
+                Already a member? <Link to="/auth?mode=login" className="underline text-erasmatch-blue">Log in</Link>
+                </p>
         </div>
 )}
             
