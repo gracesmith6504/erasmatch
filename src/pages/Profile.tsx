@@ -112,7 +112,7 @@ const Profile = () => {
         </p>
       </div>
       
-      {profile?.ref_code && (
+      {profile && profile.ref_code && (
         <Card className="mb-6 border-blue-100 bg-blue-50">
           <CardContent className="pt-5">
             <div className="flex flex-col space-y-4">
