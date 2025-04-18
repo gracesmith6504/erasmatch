@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 import { ProfileProvider } from "@/components/profile/ProfileContext";
@@ -111,10 +112,10 @@ const Profile = () => {
             : "Tell us about yourself to get matched with other exchange students"}
         </p>
       </div>
-      
+
       {profile && profile.ref_code && (
         <Card className="mb-6 border-blue-100 bg-blue-50">
-          <CardContent className="pt-5">
+          <CardContent className="pt-6">
             <div className="flex flex-col space-y-4">
               <div className="text-center">
                 <h3 className="text-sm font-medium text-blue-800">Share your profile!</h3>
