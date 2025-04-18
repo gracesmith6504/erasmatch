@@ -1,12 +1,10 @@
-
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Search, MessageSquare, Calendar } from "lucide-react";
 import { ShareButton } from "@/components/share/ShareButton";
 import { ActivityFeed } from "./ActivityFeed";
 import { Heart } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 interface HeroSectionProps {
   handleFindStudents: () => void;
