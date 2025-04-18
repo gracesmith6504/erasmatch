@@ -6,6 +6,7 @@ import { ActivityFeed } from "./ActivityFeed";
 import { Heart } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 interface HeroSectionProps {
   handleFindStudents: () => void;
