@@ -90,6 +90,7 @@ export function useUniversitySearch(prioritizeIrish = false) {
     }
 
     // Filter universities based on name, city or country
+    // Using optional chaining and nullish coalescing to safely handle null/undefined values
     const filtered = allUniversities.filter((uni) => {
       const nameMatch = uni.name?.toLowerCase().includes(trimmedQuery) || false;
       const cityMatch = uni.city?.toLowerCase?.()?.includes(trimmedQuery) || false;
@@ -168,13 +169,13 @@ export function useUniversitySearch(prioritizeIrish = false) {
     
     // Starts with query (high priority)
     if (nameLower.startsWith(query)) score += 500;
-    if (cityLower?.startsWith(query)) score += 400;
-    if (countryLower?.startsWith(query)) score += 350;
+    if (cityLower.startsWith(query)) score += 400;
+    if (countryLower.startsWith(query)) score += 350;
     
     // Contains query (medium priority)
     if (nameLower.includes(query)) score += 200;
-    if (cityLower?.includes(query)) score += 150;
-    if (countryLower?.includes(query)) score += 100;
+    if (cityLower.includes(query)) score += 150;
+    if (countryLower.includes(query)) score += 100;
     
     // Additional factor: position of match in name (earlier = better)
     const nameMatchPos = nameLower.indexOf(query);
