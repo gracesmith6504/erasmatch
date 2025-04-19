@@ -13,66 +13,70 @@ export function useUniversitySearch(prioritizeIrish?: boolean) {
   }, []);
 
   const fetchUniversities = async () => {
-    try {
-      setIsLoading(true);
-      const { data, error } = await supabase
-        .from("universities")
-        .select("id, name, city, country")
-        .order("name");
+    setIsLoading(true);
+    const { data, error } = await supabase
+      .from("universities")
+      .select("id, name, city, country")
+      .order("name");
 
-      if (error) throw error;
-
-      const typedData = data.map((uni) => ({
-        id: uni.id,
-        name: uni.name || "",
-        city: uni.city || null,
-        country: uni.country || null,
-      })) as University[];
-
-      setAllUniversities(typedData);
-      const defaultList = prioritizeIrish
-        ? sortIrishFirst(typedData)
-        : typedData;
-
-      setUniversities(defaultList.slice(0, 10));
-    } catch (error) {
-      console.error("Error fetching universities:", error);
+    if (error) {
+      console.error("Failed to fetch universities:", error);
       setAllUniversities([]);
       setUniversities([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    const trimmedQuery = query.trim().toLowerCase();
-
-    if (!trimmedQuery) {
-      const defaultList = prioritizeIrish
-        ? sortIrishFirst(allUniversities)
-        : allUniversities;
-      setUniversities(defaultList.slice(0, 10));
       return;
     }
 
-    const filtered = allUniversities.filter((uni) => {
-      return uni.name.toLowerCase().includes(trimmedQuery) ||
-             (uni.city?.toLowerCase().includes(trimmedQuery) ?? false) ||
-             (uni.country?.toLowerCase().includes(trimmedQuery) ?? false);
-    });
+    const cleaned = data.map((uni) => ({
+      id: uni.id,
+      name: uni.name || "",
+      city: uni.city || "",
+      country: uni.country || "",
+    })) as University[];
 
-    setUniversities(filtered); // Show all matches while typing
+    setAllUniversities(cleaned);
+    setUniversities(
+      prioritizeIrish
+        ? prioritizeIrishUnis(cleaned).slice(0, 10)
+        : cleaned.slice(0, 10)
+    );
+    setIsLoading(false);
   };
 
-  const sortIrishFirst = (universities: University[]) => {
-    return [...universities].sort((a, b) => {
-      const aIsIrish = a.country?.toLowerCase() === "ireland";
-      const bIsIrish = b.country?.toLowerCase() === "ireland";
+  const handleSearch = (query: string) => {
+    const trimmedQuery = query.trim().toLowerCase();
+    setSearchQuery(query);
+
+    if (!trimmedQuery) {
+      setUniversities(
+        prioritizeIrish
+          ? prioritizeIrishUnis(allUniversities).slice(0, 10)
+          : allUniversities.slice(0, 10)
+      );
+      return;
+    }
+
+    const filtered = allUniversities.filter((uni) =>
+      [uni.name, uni.city, uni.country]
+        .filter(Boolean)
+        .some((field) => field.toLowerCase().includes(trimmedQuery))
+    );
+
+    setUniversities(filtered); // show all matches
+  };
+
+  const prioritizeIrishUnis = (list: University[]) => {
+    return [...list].sort((a, b) => {
+      const isIrish = (u: University) =>
+        u.country.toLowerCase() === "ireland" ||
+        ["dublin", "galway", "cork", "maynooth", "limerick", "belfast"].includes(
+          u.city.toLowerCase()
+        );
+
+      const aIsIrish = isIrish(a);
+      const bIsIrish = isIrish(b);
 
       if (aIsIrish && !bIsIrish) return -1;
       if (!aIsIrish && bIsIrish) return 1;
-
       return a.name.localeCompare(b.name);
     });
   };
