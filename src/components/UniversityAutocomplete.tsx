@@ -13,34 +13,31 @@ type UniversityAutocompleteProps = {
   prioritizeIrish?: boolean;
 };
 
-const UniversityAutocomplete = ({
-  value,
+const UniversityAutocomplete = ({ 
+  value, 
   onChange,
-  label = "University",
+  label = "University", 
   required = false,
-  prioritizeIrish = false,
+  prioritizeIrish = false
 }: UniversityAutocompleteProps) => {
   const [manualEntry, setManualEntry] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
-  const {
-    universities,
-    isLoading,
-    searchQuery,
-    handleSearch, // 🔍 Ensure this is connected
-  } = useUniversitySearch(prioritizeIrish);
+  const { universities, isLoading, searchQuery, handleSearch } = useUniversitySearch(prioritizeIrish);
 
-  const handleManualEntry = () => setManualEntry(true);
+  const handleManualEntry = () => {
+    setManualEntry(true);
+  };
 
   const handleManualInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value);
   };
-
+  
   return (
     <div className="space-y-2">
       <Label htmlFor="university" className="block text-sm font-medium text-gray-700">
-        {label} {required && <span className="text-red-500 ml-1">*</span>}
+        {label}{required && <span className="text-red-500 ml-1">*</span>}
       </Label>
-
+      
       {!manualEntry ? (
         <UniversityDropdown
           value={value}
@@ -49,7 +46,7 @@ const UniversityAutocomplete = ({
           universities={universities}
           isLoading={isLoading}
           searchQuery={searchQuery}
-          onSearchChange={handleSearch} // ✅ THIS MUST BE SET
+          onSearchChange={handleSearch}
           popoverRef={popoverRef}
           required={required}
         />

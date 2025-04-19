@@ -7,6 +7,7 @@ import { MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 type UniversityDetailsProps = {
   form: {
