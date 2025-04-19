@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { University } from "./types";
@@ -66,7 +67,7 @@ export function useUniversitySearch(prioritizeIrish?: boolean) {
       return;
     }
 
-    // Simple filtering on name, city, or country
+    // Simple case-insensitive filtering on name, city, or country
     const filtered = allUniversities.filter((uni) => {
       return uni.name.toLowerCase().includes(trimmedQuery) ||
              (uni.city?.toLowerCase()?.includes(trimmedQuery) || false) ||
