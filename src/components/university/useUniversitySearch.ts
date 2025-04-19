@@ -63,7 +63,8 @@ export function useUniversitySearch(prioritizeIrish = false) {
         ? sortUniversitiesByIrishFirst(sortedData) 
         : sortedData;
       
-      setUniversities(initialList.slice(0, 10)); // Just show first 10 initially for better performance
+      // Only limit initial results when there's no search query
+      setUniversities(initialList.slice(0, 10));
     } catch (error) {
       console.error("Error in fetchUniversities:", error);
       setAllUniversities([]);
@@ -85,6 +86,7 @@ export function useUniversitySearch(prioritizeIrish = false) {
         ? sortUniversitiesByIrishFirst(allUniversities) 
         : [...allUniversities];
       
+      // Only limit results when there's no search query
       setUniversities(defaultList.slice(0, 10));
       return;
     }
@@ -102,6 +104,7 @@ export function useUniversitySearch(prioritizeIrish = false) {
     console.log(`Found ${filtered.length} matches for "${query}"`);
 
     // Sort results by relevance, considering Irish universities if needed
+    // IMPORTANT: No slice here - show all matching results
     const sorted = sortUniversityResults(filtered, trimmedQuery, prioritizeIrish);
     setUniversities(sorted);
   };
