@@ -51,12 +51,14 @@ export function UniversityDropdown({
           role="combobox"
           aria-expanded={open}
           className={cn(
-            "w-full justify-between",
+            "w-full justify-between min-h-[40px]",
             required && !value ? "border-red-300" : ""
           )}
           aria-required={required}
         >
-          {value || "Select university..."}
+          <span className="truncate">
+            {value || "Select university..."}
+          </span>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
