@@ -1,9 +1,8 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { University } from "./types";
 
-export function useUniversitySearch() {
+export function useUniversitySearch(prioritizeIrish?: boolean) {
   const [allUniversities, setAllUniversities] = useState<University[]>([]);
   const [universities, setUniversities] = useState<University[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -39,9 +38,25 @@ export function useUniversitySearch() {
       console.log("Fetched universities:", typedData.length);
       
       // Sort universities alphabetically by name
-      const sortedData = [...typedData].sort((a, b) => 
+      let sortedData = [...typedData].sort((a, b) => 
         a.name.localeCompare(b.name)
       );
+      
+      // If prioritizeIrish is true, prioritize Irish universities
+      if (prioritizeIrish) {
+        sortedData = sortedData.sort((a, b) => {
+          // Check if either university is Irish
+          const aIsIrish = a.country?.toLowerCase() === 'ireland';
+          const bIsIrish = b.country?.toLowerCase() === 'ireland';
+          
+          // If a is Irish and b is not, a comes first
+          if (aIsIrish && !bIsIrish) return -1;
+          // If b is Irish and a is not, b comes first
+          if (!aIsIrish && bIsIrish) return 1;
+          // Otherwise, maintain alphabetical order
+          return 0;
+        });
+      }
       
       setAllUniversities(sortedData);
       setUniversities(sortedData.slice(0, 10)); // Show first 10 initially
