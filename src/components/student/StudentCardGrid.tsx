@@ -34,17 +34,25 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters }: StudentCardGridProp
   const handlePrevious = () => {
     if (currentPage > 1) {
       setCurrentPage(prev => prev - 1);
+      // Scroll to top of grid after page change
+      setTimeout(() => {
+        document.getElementById("student-grid")?.scrollIntoView({ behavior: "smooth" });
+      }, 0);
     }
   };
 
   const handleNext = () => {
     if (currentPage < totalPages) {
       setCurrentPage(prev => prev + 1);
+      // Scroll to top of grid after page change
+      setTimeout(() => {
+        document.getElementById("student-grid")?.scrollIntoView({ behavior: "smooth" });
+      }, 0);
     }
   };
 
   return (
-    <>
+    <div id="student-grid">
       {/* Results count */}
       <div className="mb-4 md:mb-6 text-sm text-gray-600">
         Showing <span className="font-medium text-gray-900">{filteredProfiles.length}</span> students
@@ -104,7 +112,7 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters }: StudentCardGridProp
           </Pagination>
         </>
       )}
-    </>
+    </div>
   );
 };
 
