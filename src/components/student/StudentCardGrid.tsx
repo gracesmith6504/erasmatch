@@ -1,16 +1,37 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import { Profile } from "@/types";
 import StudentCard from "./StudentCard";
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationItem, 
+  PaginationPrevious, 
+  PaginationNext 
+} from "@/components/ui/pagination";
 
 interface StudentCardGridProps {
   filteredProfiles: Profile[];
   resetFilters: () => void;
 }
 
+const ITEMS_PER_PAGE = 20;
+
 const StudentCardGrid = ({ filteredProfiles, resetFilters }: StudentCardGridProps) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(filteredProfiles.length / ITEMS_PER_PAGE);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filteredProfiles.length]);
+
+  // Calculate the current page's profiles
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const currentProfiles = filteredProfiles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
   return (
     <>
       {/* Results count */}
@@ -30,14 +51,39 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters }: StudentCardGridProp
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredProfiles.map((profile) => (
-            <StudentCard key={profile.id} profile={profile} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-8">
+            {currentProfiles.map((profile) => (
+              <StudentCard key={profile.id} profile={profile} />
+            ))}
+          </div>
+
+          <Pagination className="mb-8">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => setCurrentPage(prev => prev - 1)}
+                  disabled={currentPage === 1}
+                />
+              </PaginationItem>
+              <PaginationItem>
+                <span className="px-4 py-2 text-sm text-gray-700">
+                  Page {currentPage} of {totalPages}
+                </span>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => setCurrentPage(prev => prev + 1)}
+                  disabled={currentPage === totalPages}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </>
       )}
     </>
   );
 };
 
 export default StudentCardGrid;
+
