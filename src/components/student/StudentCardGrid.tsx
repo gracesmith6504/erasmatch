@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
@@ -10,6 +9,7 @@ import {
   PaginationItem
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface StudentCardGridProps {
   filteredProfiles: Profile[];
@@ -21,39 +21,40 @@ const ITEMS_PER_PAGE = 20;
 const StudentCardGrid = ({ filteredProfiles, resetFilters }: StudentCardGridProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(filteredProfiles.length / ITEMS_PER_PAGE);
+  const isMobile = useIsMobile();
 
-  // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
   }, [filteredProfiles.length]);
 
-  // Calculate the current page's profiles
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentProfiles = filteredProfiles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  const scrollToGrid = () => {
+    const grid = document.getElementById("student-grid");
+    if (grid) {
+      const yOffset = isMobile ? -80 : -120;
+      const y = grid.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+  };
 
   const handlePrevious = () => {
     if (currentPage > 1) {
       setCurrentPage(prev => prev - 1);
-      // Scroll to top of grid after page change
-      setTimeout(() => {
-        document.getElementById("student-grid")?.scrollIntoView({ behavior: "smooth" });
-      }, 0);
+      setTimeout(scrollToGrid, 0);
     }
   };
 
   const handleNext = () => {
     if (currentPage < totalPages) {
       setCurrentPage(prev => prev + 1);
-      // Scroll to top of grid after page change
-      setTimeout(() => {
-        document.getElementById("student-grid")?.scrollIntoView({ behavior: "smooth" });
-      }, 0);
+      setTimeout(scrollToGrid, 0);
     }
   };
 
   return (
     <div id="student-grid">
-      {/* Results count */}
       <div className="mb-4 md:mb-6 text-sm text-gray-600">
         Showing <span className="font-medium text-gray-900">{filteredProfiles.length}</span> students
       </div>
