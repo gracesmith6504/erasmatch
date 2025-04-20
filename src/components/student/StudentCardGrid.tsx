@@ -1,16 +1,15 @@
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { Profile } from "@/types";
 import StudentCard from "./StudentCard";
 import { 
   Pagination, 
   PaginationContent, 
-  PaginationItem, 
-  PaginationPrevious, 
-  PaginationNext 
+  PaginationItem
 } from "@/components/ui/pagination";
+import { cn } from "@/lib/utils";
 
 interface StudentCardGridProps {
   filteredProfiles: Profile[];
@@ -31,6 +30,18 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters }: StudentCardGridProp
   // Calculate the current page's profiles
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentProfiles = filteredProfiles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  const handlePrevious = () => {
+    if (currentPage > 1) {
+      setCurrentPage(prev => prev - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(prev => prev + 1);
+    }
+  };
 
   return (
     <>
@@ -61,10 +72,16 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters }: StudentCardGridProp
           <Pagination className="mb-8">
             <PaginationContent>
               <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => setCurrentPage(prev => prev - 1)}
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className={cn("gap-1", currentPage === 1 ? "opacity-50 cursor-not-allowed" : "")}
+                  onClick={handlePrevious}
                   disabled={currentPage === 1}
-                />
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  <span>Previous</span>
+                </Button>
               </PaginationItem>
               <PaginationItem>
                 <span className="px-4 py-2 text-sm text-gray-700">
@@ -72,10 +89,16 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters }: StudentCardGridProp
                 </span>
               </PaginationItem>
               <PaginationItem>
-                <PaginationNext
-                  onClick={() => setCurrentPage(prev => prev + 1)}
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className={cn("gap-1", currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "")}
+                  onClick={handleNext}
                   disabled={currentPage === totalPages}
-                />
+                >
+                  <span>Next</span>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
               </PaginationItem>
             </PaginationContent>
           </Pagination>
@@ -86,4 +109,3 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters }: StudentCardGridProp
 };
 
 export default StudentCardGrid;
-
