@@ -29,12 +29,19 @@ const Profile = () => {
         .from('profiles')
         .select('*')
         .eq('id', currentUserId)
-        .single();
+        .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching profile:', error);
+        toast.error("Failed to load profile data");
+        throw error;
+      }
       
       if (data) {
+        console.log("Profile data loaded:", data);
         setProfile(data as ProfileType);
+      } else {
+        console.warn("No profile found for user:", currentUserId);
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -43,24 +50,34 @@ const Profile = () => {
     }
   };
 
+  // Fetch profile when component mounts or currentUserId changes
   useEffect(() => {
-    fetchProfile();
+    if (currentUserId) {
+      fetchProfile();
+    }
   }, [currentUserId]);
 
   const handleProfileUpdate = async (updatedProfile: Partial<ProfileType>) => {
-    if (!currentUserId || !profile) return;
+    if (!currentUserId || !profile) return Promise.reject("No user or profile data");
     
     try {
+      console.log("Updating profile with:", updatedProfile);
+      
       const { error } = await supabase
         .from('profiles')
         .update(updatedProfile)
         .eq('id', currentUserId);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase update error:', error);
+        throw error;
+      }
       
+      // Immediately update local state
       setProfile({ ...profile, ...updatedProfile });
       
-      fetchProfile();
+      // Refetch to ensure we have latest data
+      await fetchProfile();
       
       return Promise.resolve();
     } catch (error) {

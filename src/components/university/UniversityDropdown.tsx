@@ -40,6 +40,7 @@ export function UniversityDropdown({
   const [open, setOpen] = useState(false);
 
   const handleSelect = (universityName: string) => {
+    console.log("University selected:", universityName);
     onChange(universityName);
     setOpen(false);
   };
@@ -75,7 +76,7 @@ export function UniversityDropdown({
       >
         <Command>
           <CommandInput 
-            placeholder="Search by name,city or country..." 
+            placeholder="Search by name, city or country..." 
             value={searchQuery}
             onValueChange={onSearchChange}
             className="bg-white"
