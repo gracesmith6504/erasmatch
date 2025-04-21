@@ -4,6 +4,7 @@ import { Profile } from "@/types";
 
 export const fetchUserProfile = async (userId: string): Promise<Profile | null> => {
   try {
+    console.log("Fetching profile for user:", userId);
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
@@ -11,9 +12,11 @@ export const fetchUserProfile = async (userId: string): Promise<Profile | null> 
       .maybeSingle();
 
     if (error) {
+      console.error('Error in fetchUserProfile:', error);
       throw error;
     }
 
+    console.log("Profile data retrieved:", data);
     return data as unknown as Profile;
   } catch (error) {
     console.error('Error fetching user profile:', error);
@@ -42,14 +45,17 @@ export const createUserProfile = async (
   };
   
   try {
+    console.log("Creating new profile:", newProfile);
     const { error } = await supabase
       .from('profiles')
       .upsert(newProfile);
       
     if (error) {
+      console.error("Error creating profile:", error);
       throw error;
     }
     
+    console.log("New profile created successfully");
     return newProfile as Profile;
   } catch (error) {
     console.error("Error creating profile:", error);
@@ -62,13 +68,18 @@ export const updateUserProfile = async (
   updatedProfile: Partial<Profile>
 ): Promise<boolean> => {
   try {
+    console.log("Updating profile in authUtils:", userId, updatedProfile);
     const { error } = await supabase
       .from('profiles')
       .update(updatedProfile)
       .eq('id', userId);
     
-    if (error) throw error;
+    if (error) {
+      console.error("Error updating profile in authUtils:", error);
+      throw error;
+    }
     
+    console.log("Profile updated successfully in authUtils");
     return true;
   } catch (error) {
     console.error('Error updating profile:', error);
