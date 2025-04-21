@@ -37,7 +37,7 @@ export const ProfileProvider = ({
   const [loading, setLoading] = useState(false);
 
   // Update form state when profile changes
-  useEffect(() => {
+  React.useEffect(() => {
     if (initialProfile) {
       setProfile(initialProfile);
       setForm({
@@ -84,7 +84,7 @@ export const ProfileProvider = ({
         .from('universities')
         .select('city')
         .eq('name', university)
-        .maybeSingle();
+        .single();
       
       if (error) {
         console.error('Error fetching university city:', error);

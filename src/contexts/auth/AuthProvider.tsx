@@ -37,9 +37,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     // Set up auth listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log("Auth state changed:", event, session?.user?.id);
-        await handleAuthChange(session);
+      (event, session) => {
+        handleAuthChange(session);
       }
     );
 
@@ -76,10 +75,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             return;
           }
           
-          console.log("Profile data loaded in auth context:", profileData);
           setCurrentUserProfile(profileData);
         } else {
-          console.log("No profile found, creating new one");
           // No profile found, create a new one with user metadata if available
           const userData = session.user.user_metadata || {};
           const defaultName = userData.name || userData.full_name || null;
@@ -134,20 +131,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const handleProfileUpdate = async (updatedProfile: Partial<Profile>) => {
-    if (!currentUserId) return Promise.reject("No user ID available");
+    if (!currentUserId) return Promise.resolve();
 
     try {
-      console.log("Updating profile in auth context:", updatedProfile);
       const success = await updateUserProfile(currentUserId, updatedProfile);
       
       if (success && currentUserProfile) {
         // Update the local state with the updated profile
-        const updatedUserProfile = {
+        setCurrentUserProfile({
           ...currentUserProfile,
           ...updatedProfile,
-        };
-        console.log("Updated profile in auth context:", updatedUserProfile);
-        setCurrentUserProfile(updatedUserProfile);
+        });
       }
       
       return Promise.resolve();
