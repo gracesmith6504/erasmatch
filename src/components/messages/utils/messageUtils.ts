@@ -24,7 +24,7 @@ export const handlePromptUsed = (): void => {
 };
 
 /**
- * Handle sending a message with refresh handling and email notifications
+ * Handle sending a message with refresh handling
  */
 export function createMessageHandler(
   onSendMessage: (receiverId: string, content: string) => Promise<void>,
@@ -33,77 +33,37 @@ export function createMessageHandler(
   onPromptUsed: () => void
 ) {
   return async (receiverId: string, content: string) => {
-    try {
-      // Send the message first
-      await onSendMessage(receiverId, content);
+    // Send the message first
+    await onSendMessage(receiverId, content);
 
-      // ✅ Send email notification in background
-      console.log("🔔 Sending notification email...");
+    // ✅ Fire email notification in background
+    try {
+      console.log("🔔 Attempting to send notification email...");
       
       // Get the current user
       const { data: { user } } = await supabase.auth.getUser();
 
-      if (!user) {
-        throw new Error("No authenticated user found");
+      if (user) {
+        // Extract sender name from user metadata or fallback to email
+        const senderName = user.user_metadata?.name || user.email || "Someone";
+        
+        // Prepare message content (truncate if too long)
+        const messageContent = content.slice(0, 100) + (content.length > 100 ? "..." : "");
+        
+        // Call the edge function
+        const result = await supabase.functions.invoke("send-message-email", {
+          body: {
+            senderName,
+            recipientId: receiverId,
+            messageContent,
+          },
+        });
+        
+        console.log("📡 Email function result:", result);
       }
-
-      // Get sender's profile for their display name
-      const { data: senderProfile, error: senderError } = await supabase
-        .from('profiles')
-        .select('name, email')
-        .eq('id', user.id)
-        .maybeSingle();
-
-      if (senderError) {
-        console.error("Error fetching sender profile:", senderError);
-        throw new Error(`Could not fetch sender profile: ${senderError.message}`);
-      }
-
-      // Get recipient's profile for their email
-      const { data: recipientProfile, error: recipientError } = await supabase
-        .from('profiles')
-        .select('name, email')
-        .eq('id', receiverId)
-        .maybeSingle();
-
-      if (recipientError) {
-        console.error("Error fetching recipient profile:", recipientError);
-        throw new Error(`Could not fetch recipient profile: ${recipientError.message}`);
-      }
-
-      if (!senderProfile || !recipientProfile) {
-        throw new Error("Could not find required user profiles");
-      }
-
-      if (!recipientProfile.email) {
-        throw new Error("Recipient has no email address in their profile");
-      }
-
-      // Prepare message preview (truncate if too long)
-      const messagePreview = content.length > 100 
-        ? `${content.slice(0, 100)}...` 
-        : content;
-      
-      // Call the edge function to send email
-      const result = await supabase.functions.invoke("send-message-email", {
-        body: {
-          senderName: senderProfile.name || user.email || "Someone",
-          recipientEmail: recipientProfile.email,
-          recipientName: recipientProfile.name || "there",
-          messagePreview
-        },
-      });
-      
-      if (result.error) {
-        console.error("Email notification error:", result.error);
-        throw new Error(`Failed to send notification: ${result.error}`);
-      }
-      
-      console.log("📧 Email notification sent successfully");
-      
     } catch (error) {
-      console.error("❌ Error in message handler:", error);
-      toast.error(`Message sent but notification email failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error("❌ Function returned an error:", error);
+      toast.error("Failed to send notification email");
     }
 
     // Update UI state
