@@ -42,21 +42,18 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
   const handleSendMessage = async (receiverId: string, content: string): Promise<void> => {
     try {
       await onSendMessage(receiverId, content);
+      return;
     } catch (error) {
       console.error("Error in Messages handleSendMessage:", error);
       throw error;
     }
   };
 
-  if (!messages || !profiles) {
-    console.log("Messages or profiles data missing:", { messages: !!messages, profiles: !!profiles });
-  }
-
   return (
     <div className="h-[calc(100vh-64px)] overflow-hidden w-full max-w-full">
       <MessagesContainer
-        messages={messages || []}
-        profiles={profiles || []}
+        messages={messages}
+        profiles={profiles}
         currentUserId={currentUserId}
         onSendMessage={handleSendMessage}
         initialSelectedUser={initialSelectedUser}
