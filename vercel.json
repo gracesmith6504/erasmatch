@@ -32,7 +32,7 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!_next|static|favicon.ico|.*\\.\\w+$).*)"
+      "source": "/((?!_next|static|favicon.ico|.*\\.\\w+$).*)",
       "destination": "/"
     }
   ]
