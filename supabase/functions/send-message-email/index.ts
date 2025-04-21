@@ -2,7 +2,9 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+// Make sure the API key is correctly loaded from environment variables
+const resendApiKey = Deno.env.get("RESEND_API_KEY");
+const resend = new Resend(resendApiKey);
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -23,9 +25,20 @@ serve(async (req) => {
   }
 
   try {
+    // Log the API key presence (not the actual key for security)
+    console.log(`RESEND_API_KEY available: ${!!resendApiKey}`);
+    
+    if (!resendApiKey) {
+      throw new Error("RESEND_API_KEY environment variable is not set");
+    }
+
     const { senderName, recipientEmail, recipientName, messagePreview }: EmailRequest = await req.json();
 
-    console.log(`Sending email notification to ${recipientEmail}`);
+    console.log(`Sending email notification to ${recipientEmail} from ${senderName}`);
+
+    if (!recipientEmail) {
+      throw new Error("Recipient email is required");
+    }
 
     const { data, error } = await resend.emails.send({
       from: "ErasMatch <notifications@erasmatch.com>",
