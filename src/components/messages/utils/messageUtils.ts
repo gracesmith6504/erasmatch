@@ -48,21 +48,35 @@ export function createMessageHandler(
       }
 
       // Get sender's profile for their display name
-      const { data: senderProfile } = await supabase
+      const { data: senderProfile, error: senderError } = await supabase
         .from('profiles')
         .select('name, email')
         .eq('id', user.id)
         .maybeSingle();
 
+      if (senderError) {
+        console.error("Error fetching sender profile:", senderError);
+        throw new Error(`Could not fetch sender profile: ${senderError.message}`);
+      }
+
       // Get recipient's profile for their email
-      const { data: recipientProfile } = await supabase
+      const { data: recipientProfile, error: recipientError } = await supabase
         .from('profiles')
         .select('name, email')
         .eq('id', receiverId)
         .maybeSingle();
 
+      if (recipientError) {
+        console.error("Error fetching recipient profile:", recipientError);
+        throw new Error(`Could not fetch recipient profile: ${recipientError.message}`);
+      }
+
       if (!senderProfile || !recipientProfile) {
-        throw new Error("Could not find user profiles");
+        throw new Error("Could not find required user profiles");
+      }
+
+      if (!recipientProfile.email) {
+        throw new Error("Recipient has no email address in their profile");
       }
 
       // Prepare message preview (truncate if too long)
@@ -81,14 +95,15 @@ export function createMessageHandler(
       });
       
       if (result.error) {
-        throw new Error(result.error.message);
+        console.error("Email notification error:", result.error);
+        throw new Error(`Failed to send notification: ${result.error}`);
       }
       
       console.log("📧 Email notification sent successfully");
       
     } catch (error) {
       console.error("❌ Error in message handler:", error);
-      toast.error("Message sent but notification email failed");
+      toast.error(`Message sent but notification email failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
 
     // Update UI state
