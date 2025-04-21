@@ -30,8 +30,8 @@ export function UniversitySearchResults({
       {universities.map((university) => (
         <CommandItem
           key={university.id}
-          value={`${university.name} ${university.city || ''} ${university.country || ''}`}
-          onSelect={() => onSelect(university.name)}
+          value={university.name}
+          onSelect={onSelect}
           className="py-3"
         >
           <Check
