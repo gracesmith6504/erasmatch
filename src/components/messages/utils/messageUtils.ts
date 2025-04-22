@@ -34,9 +34,21 @@ export function createMessageHandler(
 ) {
   return async (receiverId: string, content: string) => {
     try {
-      console.log("Sending message to:", receiverId);
+      console.log("Sending message to:", receiverId, "with content:", content);
       
-      // Send the message first
+      if (!receiverId) {
+        console.error("Error: No receiver ID provided");
+        toast.error("Failed to send message: No receiver specified");
+        return Promise.reject(new Error("No receiver ID provided"));
+      }
+      
+      if (!content.trim()) {
+        console.error("Error: Empty message content");
+        toast.error("Cannot send empty message");
+        return Promise.reject(new Error("Empty message content"));
+      }
+      
+      // Send the message
       await onSendMessage(receiverId, content);
       
       // Log success

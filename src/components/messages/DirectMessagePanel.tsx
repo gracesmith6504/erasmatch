@@ -73,16 +73,21 @@ export const DirectMessagePanel = ({
       // Add temporary message to UI immediately
       setLocalMessages(prev => [...prev, tempMessage]);
       
-      // Send actual message to backend
-      await onSendMessage(thread.partner.id, newMessage);
+      // Get message content before clearing
+      const messageToSend = newMessage.trim();
       
-      // Clear input field after successful send
+      // Clear input field before sending to avoid delay
       setNewMessage("");
-      setShowSuggestedPrompts(false);
       
+      // Send actual message to backend
+      await onSendMessage(thread.partner.id, messageToSend);
+      
+      setShowSuggestedPrompts(false);
       scrollToBottom();
     } catch (error) {
       console.error("Error sending message:", error);
+      // Don't add the message back to input as it may be too large
+      // but you could do that if you wanted to
     } finally {
       setIsSending(false);
     }

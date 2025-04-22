@@ -21,6 +21,7 @@ export function useRealTimeMessages({
   // Initialize local messages from props
   useEffect(() => {
     if (messages.length > 0) {
+      console.log("Initializing local messages:", messages.length);
       // Filter messages to only include those between current user and partner
       const filteredMessages = messages.filter(
         msg => (msg.sender_id === currentUserId && msg.receiver_id === partnerId) || 
@@ -42,6 +43,8 @@ export function useRealTimeMessages({
   useEffect(() => {
     if (!currentUserId || !partnerId) return;
 
+    console.log("Setting up real-time subscription for messages between", currentUserId, "and", partnerId);
+
     // Subscribe to new messages between current user and thread partner
     const channel = supabase
       .channel('direct-messages')
@@ -50,14 +53,25 @@ export function useRealTimeMessages({
           event: 'INSERT', 
           schema: 'public', 
           table: 'messages',
-          filter: `sender_id=eq.${partnerId}`,
         }, 
         (payload) => {
-          // Only add the message if it's for the current user
           const newMessage = payload.new as Message;
-          if (newMessage.receiver_id === currentUserId) {
-            console.log("Received new message:", newMessage);
-            setLocalMessages(prevMessages => [...prevMessages, newMessage]);
+          console.log("Received realtime message:", newMessage);
+          
+          // Only add the message if it's relevant to this conversation
+          if ((newMessage.sender_id === currentUserId && newMessage.receiver_id === partnerId) || 
+              (newMessage.sender_id === partnerId && newMessage.receiver_id === currentUserId)) {
+            console.log("Adding message to conversation:", newMessage);
+            
+            // Check if message with the same ID already exists (to avoid duplicates)
+            setLocalMessages(prevMessages => {
+              const messageExists = prevMessages.some(msg => msg.id === newMessage.id);
+              if (messageExists) {
+                return prevMessages;
+              } else {
+                return [...prevMessages, newMessage];
+              }
+            });
             scrollToBottom();
           }
         }
@@ -65,6 +79,7 @@ export function useRealTimeMessages({
       .subscribe();
 
     return () => {
+      console.log("Cleaning up realtime subscription");
       supabase.removeChannel(channel);
     };
   }, [currentUserId, partnerId, scrollToBottom]);
