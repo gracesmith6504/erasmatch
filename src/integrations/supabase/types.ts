@@ -202,7 +202,7 @@ export type Database = {
     }
     Functions: {
       join_group_by_slug: {
-        Args: { p_user_id: string; group_slug: string }
+        Args: Record<PropertyKey, never>
         Returns: undefined
       }
       slugify: {

@@ -1,19 +1,60 @@
-
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { Profile } from "@/types";
 import StudentCard from "./StudentCard";
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationItem
+} from "@/components/ui/pagination";
+import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface StudentCardGridProps {
   filteredProfiles: Profile[];
   resetFilters: () => void;
 }
 
+const ITEMS_PER_PAGE = 20;
+
 const StudentCardGrid = ({ filteredProfiles, resetFilters }: StudentCardGridProps) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(filteredProfiles.length / ITEMS_PER_PAGE);
+  const isMobile = useIsMobile();
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filteredProfiles.length]);
+
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const currentProfiles = filteredProfiles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  const scrollToGrid = () => {
+    const grid = document.getElementById("student-grid");
+    if (grid) {
+      const yOffset = isMobile ? -80 : -120;
+      const y = grid.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentPage > 1) {
+      setCurrentPage(prev => prev - 1);
+      setTimeout(scrollToGrid, 0);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(prev => prev + 1);
+      setTimeout(scrollToGrid, 0);
+    }
+  };
+
   return (
-    <>
-      {/* Results count */}
+    <div id="student-grid">
       <div className="mb-4 md:mb-6 text-sm text-gray-600">
         Showing <span className="font-medium text-gray-900">{filteredProfiles.length}</span> students
       </div>
@@ -30,13 +71,49 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters }: StudentCardGridProp
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredProfiles.map((profile) => (
-            <StudentCard key={profile.id} profile={profile} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-8">
+            {currentProfiles.map((profile) => (
+              <StudentCard key={profile.id} profile={profile} />
+            ))}
+          </div>
+
+          <Pagination className="mb-8">
+            <PaginationContent>
+              <PaginationItem>
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className={cn("gap-1", currentPage === 1 ? "opacity-50 cursor-not-allowed" : "")}
+                  onClick={handlePrevious}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  <span>Previous</span>
+                </Button>
+              </PaginationItem>
+              <PaginationItem>
+                <span className="px-4 py-2 text-sm text-gray-700">
+                  Page {currentPage} of {totalPages}
+                </span>
+              </PaginationItem>
+              <PaginationItem>
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className={cn("gap-1", currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "")}
+                  onClick={handleNext}
+                  disabled={currentPage === totalPages}
+                >
+                  <span>Next</span>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </>
       )}
-    </>
+    </div>
   );
 };
 
