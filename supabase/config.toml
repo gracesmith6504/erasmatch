@@ -1,1 +1,5 @@
+
 project_id = "ceoflcktscennfmmdrvp"
+
+[functions.send_message]
+verify_jwt = true
