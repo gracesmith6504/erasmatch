@@ -7,7 +7,7 @@ import { toast } from "sonner";
 export const useProfileView = (
   profile: Profile | undefined,
   currentUserId: string | null,
-  onSendMessage: (receiverId: string, content: string) => void
+  onSendMessage: (receiverId: string, content: string) => Promise<void>
 ) => {
   const [universityCity, setUniversityCity] = useState<string | null>(null);
   const [isLoadingCity, setIsLoadingCity] = useState(false);

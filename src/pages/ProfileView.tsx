@@ -12,7 +12,7 @@ import { useProfileView } from "@/hooks/useProfileView";
 type ProfileViewProps = {
   profiles: Profile[];
   currentUserId: string | null;
-  onSendMessage: (receiverId: string, content: string) => void;
+  onSendMessage: (receiverId: string, content: string) => Promise<void>;
 };
 
 const ProfileView = ({ profiles, currentUserId, onSendMessage }: ProfileViewProps) => {

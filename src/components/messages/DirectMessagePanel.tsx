@@ -19,7 +19,7 @@ interface DirectMessagePanelProps {
   currentUserProfile: Profile | null;
   isMobile: boolean;
   onBack?: () => void;
-  onSendMessage: (receiverId: string, content: string) => void;
+  onSendMessage: (receiverId: string, content: string) => Promise<void>;
   onPromptUsed?: () => void;
 }
 
@@ -70,9 +70,13 @@ export const DirectMessagePanel = ({
         created_at: new Date().toISOString(),
       };
       
+      // Add temporary message to UI immediately
       setLocalMessages(prev => [...prev, tempMessage]);
       
+      // Send actual message to backend
       await onSendMessage(thread.partner.id, newMessage);
+      
+      // Clear input field after successful send
       setNewMessage("");
       setShowSuggestedPrompts(false);
       
