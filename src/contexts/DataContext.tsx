@@ -3,7 +3,6 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 import { supabase } from "@/integrations/supabase/client";
 import { Profile, Message } from "@/types";
 import { useAuth } from "./AuthContext";
-import { toast } from "sonner";
 
 type DataContextType = {
   profiles: Profile[];
@@ -104,24 +103,6 @@ export const DataProvider = ({ children }: DataProviderProps) => {
       if (data) {
         // Update local messages state
         setMessages(prev => [data as Message, ...prev]);
-        
-        // Send email notification via edge function
-        try {
-          // Find current user profile
-          const currentUserProfile = profiles.find(p => p.id === currentUserId);
-          
-          await supabase.functions.invoke("send-message-email", {
-            body: {
-              sender_id: currentUserId,
-              receiver_id: receiverId,
-              content: content,
-              senderName: currentUserProfile?.name || "Someone"
-            },
-          });
-        } catch (notificationError) {
-          console.error("Email notification error:", notificationError);
-          // Don't throw error here to ensure message flow continues even if notification fails
-        }
       }
     } catch (error) {
       console.error('Error sending message:', error);

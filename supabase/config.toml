@@ -1,5 +1,1 @@
-
 project_id = "ceoflcktscennfmmdrvp"
-
-[functions.send-message-email]
-verify_jwt = false
