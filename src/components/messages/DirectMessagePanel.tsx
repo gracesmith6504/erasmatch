@@ -11,6 +11,7 @@ import { useRealTimeMessages } from "./hooks/useRealTimeMessages";
 import MessageEmptyState from "./MessageEmptyState";
 import MessageBubble from "./MessageBubble";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { toast } from "sonner";
 
 interface DirectMessagePanelProps {
   thread: ChatThread;
@@ -70,15 +71,23 @@ export const DirectMessagePanel = ({
         created_at: new Date().toISOString(),
       };
       
+      // First update UI optimistically
       setLocalMessages(prev => [...prev, tempMessage]);
       
+      // Then attempt to send the message
       await onSendMessage(thread.partner.id, newMessage);
+      
+      // Clear the input and hide prompts on success
       setNewMessage("");
       setShowSuggestedPrompts(false);
       
       scrollToBottom();
     } catch (error) {
       console.error("Error sending message:", error);
+      toast.error("Failed to send message. Please try again.");
+      
+      // Remove the temporary message if sending failed
+      setLocalMessages(prev => prev.filter(msg => msg.id !== `temp-${Date.now()}`));
     } finally {
       setIsSending(false);
     }

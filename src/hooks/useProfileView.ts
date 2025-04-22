@@ -7,7 +7,7 @@ import { toast } from "sonner";
 export const useProfileView = (
   profile: Profile | undefined,
   currentUserId: string | null,
-  onSendMessage: (receiverId: string, content: string) => void
+  onSendMessage: (receiverId: string, content: string) => Promise<void>
 ) => {
   const [universityCity, setUniversityCity] = useState<string | null>(null);
   const [isLoadingCity, setIsLoadingCity] = useState(false);
@@ -49,7 +49,7 @@ export const useProfileView = (
       setIsMessageDialogOpen(false);
       toast.success("Message sent successfully");
     } catch (error: any) {
-      toast.error("Failed to send message: " + error.message);
+      toast.error("Failed to send message: " + (error.message || "Unknown error"));
       console.error("Message sending error:", error);
     } finally {
       setIsSending(false);
