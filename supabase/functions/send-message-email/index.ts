@@ -1,5 +1,6 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.7";
 import { Resend } from "npm:resend@2.0.0";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
@@ -11,10 +12,11 @@ const corsHeaders = {
 };
 
 interface MessageNotification {
-  message_id: string;
+  message_id?: string;
   sender_id: string;
   receiver_id: string;
   content: string;
+  senderName?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -24,44 +26,42 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { message_id, sender_id, receiver_id, content }: MessageNotification = await req.json();
-    console.log("Received message notification request:", { message_id, sender_id, receiver_id });
+    const { sender_id, receiver_id, content, senderName }: MessageNotification = await req.json();
+    console.log("Received message notification request:", { sender_id, receiver_id });
 
     // Create Supabase client with service role key to bypass RLS
     const supabaseUrl = 'https://ceoflcktscennfmmdrvp.supabase.co';
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
     const supabaseAdmin = createClient(supabaseUrl, supabaseKey);
 
-    // Get sender and receiver profiles
-    const { data: profiles, error: profilesError } = await supabaseAdmin
+    // Get receiver profile (we already have sender info from the frontend)
+    const { data: receiverProfile, error: profileError } = await supabaseAdmin
       .from('profiles')
-      .select('id, name, email')
-      .in('id', [sender_id, receiver_id]);
+      .select('name, email')
+      .eq('id', receiver_id)
+      .single();
 
-    if (profilesError) {
-      throw new Error(`Error fetching profiles: ${profilesError.message}`);
+    if (profileError) {
+      throw new Error(`Error fetching receiver profile: ${profileError.message}`);
     }
 
-    const sender = profiles.find(p => p.id === sender_id);
-    const receiver = profiles.find(p => p.id === receiver_id);
-
-    if (!sender || !receiver || !receiver.email) {
-      throw new Error('Could not find sender or receiver profiles');
+    if (!receiverProfile || !receiverProfile.email) {
+      throw new Error('Could not find receiver profile or email');
     }
 
     const truncatedContent = content.length > 100 ? 
       content.substring(0, 100) + '...' : 
       content;
 
-    console.log("Sending email to:", receiver.email);
+    console.log("Sending email to:", receiverProfile.email);
     const emailResponse = await resend.emails.send({
       from: "ErasMatch Team <team@erasmatch.com>",
-      to: [receiver.email],
+      to: [receiverProfile.email],
       subject: "You received a message on ErasMatch",
       html: `
         <h1>New Message on ErasMatch</h1>
-        <p>Hi ${receiver.name || 'there'},</p>
-        <p>You got a message from ${sender.name || 'another user'}:</p>
+        <p>Hi ${receiverProfile.name || 'there'},</p>
+        <p>You got a message from ${senderName || 'another user'}:</p>
         <p style="padding: 15px; background-color: #f5f5f5; border-radius: 5px;">
           "${truncatedContent}"
         </p>
