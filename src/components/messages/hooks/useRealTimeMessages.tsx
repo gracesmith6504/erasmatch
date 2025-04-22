@@ -20,8 +20,23 @@ export function useRealTimeMessages({
 
   // Initialize local messages from props
   useEffect(() => {
-    setLocalMessages(messages);
-  }, [messages]);
+    if (messages.length > 0) {
+      // Filter messages to only include those between current user and partner
+      const filteredMessages = messages.filter(
+        msg => (msg.sender_id === currentUserId && msg.receiver_id === partnerId) || 
+               (msg.sender_id === partnerId && msg.receiver_id === currentUserId)
+      );
+      
+      // Sort messages by creation time (oldest first)
+      const sortedMessages = [...filteredMessages].sort(
+        (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      );
+      
+      setLocalMessages(sortedMessages);
+    } else {
+      setLocalMessages([]);
+    }
+  }, [messages, currentUserId, partnerId]);
 
   // Set up Supabase real-time subscription
   useEffect(() => {
@@ -41,6 +56,7 @@ export function useRealTimeMessages({
           // Only add the message if it's for the current user
           const newMessage = payload.new as Message;
           if (newMessage.receiver_id === currentUserId) {
+            console.log("Received new message:", newMessage);
             setLocalMessages(prevMessages => [...prevMessages, newMessage]);
             scrollToBottom();
           }
