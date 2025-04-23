@@ -61,7 +61,7 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
   // Filter profiles based on university, city, and personality tag filters
   const filteredProfiles = loadedProfiles.filter(profile => {
     // Skip current user and deleted users
-    if (profile.id === currentUserId || profile.deleted_at) return false;
+    if (profile.id === currentUserId || profile.deleted_at || !profile.home_university) return false;
 
     const uniMatch = !universityFilter || universityFilter === "all-universities" || profile.university === universityFilter;
     const cityMatch = !cityFilter || cityFilter === "all-cities" || profile.city === cityFilter;
