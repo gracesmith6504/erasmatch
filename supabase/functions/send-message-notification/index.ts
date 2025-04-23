@@ -25,7 +25,7 @@ serve(async (req) => {
     const { to, senderName, messageContent }: EmailRequest = await req.json()
 
     const emailResponse = await resend.emails.send({
-      from: "ErasMatch <notifications@erasmatch.app>",
+      from: "ErasMatch <team@erasmatch.com>",
       to: [to],
       subject: `New message from ${senderName}`,
       html: `
