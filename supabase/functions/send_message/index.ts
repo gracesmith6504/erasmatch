@@ -34,13 +34,14 @@ serve(async (req) => {
       )
     }
 
-    // Insert the message
+    // Insert the message directly without any trigger dependencies
     const { data, error } = await supabaseClient
       .from('messages')
       .insert({
         sender_id: sender,
         receiver_id: receiver,
-        content: message_text
+        content: message_text,
+        read_by: []
       })
       .select()
       .single()
