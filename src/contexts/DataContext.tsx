@@ -83,63 +83,67 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     }
   };
 
-  const handleSendMessage = async (receiverId: string, content: string): Promise<void> => {
-    if (!currentUserId) return;
+ const handleSendMessage = async (receiverId: string, content: string): Promise<void> => {
+  if (!currentUserId) return;
 
-    try {
-      // Send message via Supabase
-      const { data: messageData, error: messageError } = await supabase
-        .from('messages')
-        .insert({
-          sender_id: currentUserId,
-          receiver_id: receiverId,
-          content
-        })
-        .select()
-        .single();
-      
-      if (messageError) throw messageError;
+  try {
+    // Insert the new message
+    const { data: messageData, error: messageError } = await supabase
+      .from('messages')
+      .insert({
+        sender_id: currentUserId,
+        receiver_id: receiverId,
+        content
+      })
+      .select()
+      .single();
 
-      // Get receiver's profile to get their email
-      const { data: receiverProfile, error: profileError } = await supabase
-        .from('profiles')
-        .select('email, name')
-        .eq('id', receiverId)
-        .single();
+    if (messageError) throw messageError;
 
-      if (profileError) throw profileError;
+    // Get receiver's profile (for their email)
+    const { data: receiverProfile, error: receiverError } = await supabase
+      .from('profiles')
+      .select('email, name')
+      .eq('id', receiverId)
+      .single();
 
-      // Get sender's name for the email
-      const { data: senderProfile } = await supabase
-        .from('profiles')
-        .select('name')
-        .eq('id', currentUserId)
-        .single();
+    if (receiverError) throw receiverError;
 
-      if (receiverProfile?.email) {
-        // Send email notification
-        const response = await supabase.functions.invoke('send-message-notification', {
-          body: {
-            to: receiverProfile.email,
-            senderName: senderProfile?.name || 'Someone',
-            messageContent: content
-          }
-        });
+    // Get sender's name and avatar
+    const { data: senderProfile, error: senderError } = await supabase
+      .from('profiles')
+      .select('name, avatar_url')
+      .eq('id', currentUserId)
+      .single();
 
-        if (response.error) {
-          console.error('Error sending email notification:', response.error);
+    if (senderError) throw senderError;
+
+    // Send email if receiver has an email
+    if (receiverProfile?.email) {
+      const response = await supabase.functions.invoke('send-message-notification', {
+        body: {
+          to: receiverProfile.email,
+          senderName: senderProfile?.name || 'Someone',
+          senderAvatarUrl: senderProfile?.avatar_url || null,
+          messageContent: content
         }
-      }
+      });
 
-      if (messageData) {
-        // Update local messages state
-        setMessages(prev => [messageData as Message, ...prev]);
+      if (response.error) {
+        console.error('Error sending email notification:', response.error);
       }
-    } catch (error) {
-      console.error('Error sending message:', error);
-      throw error;
     }
-  };
+
+    // Update local messages state
+    if (messageData) {
+      setMessages(prev => [messageData as Message, ...prev]);
+    }
+  } catch (error) {
+    console.error('Error sending message:', error);
+    throw error;
+  }
+};
+
 
   // Function to update a user profile
   const updateProfile = async (updatedProfile: Partial<Profile>): Promise<void> => {
