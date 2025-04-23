@@ -128,25 +128,28 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     try {
       console.log("Sending message to", receiverId, "with content:", content);
       
-      // Use the edge function to send the message
-      const { data, error } = await supabase.functions.invoke("send_message", {
-        body: {
-          sender: currentUserId,
-          receiver: receiverId,
-          message_text: content
-        }
-      });
+      // Insert directly into the messages table
+      const { data, error } = await supabase
+        .from('messages')
+        .insert({
+          sender_id: currentUserId,
+          receiver_id: receiverId,
+          content: content,
+          read_by: []
+        })
+        .select()
+        .single();
       
       if (error) {
-        console.error('Error calling send_message function:', error);
+        console.error('Error sending message:', error);
         toast.error("Failed to send message");
         throw error;
       }
 
-      if (data && data.message) {
-        console.log("Message sent successfully:", data.message);
+      if (data) {
+        console.log("Message sent successfully:", data);
         // Update local messages state - add to beginning of array
-        setMessages(prev => [data.message as Message, ...prev]);
+        setMessages(prev => [data as Message, ...prev]);
       }
       
       return Promise.resolve();
