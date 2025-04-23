@@ -16,7 +16,7 @@ interface StudentCardGridProps {
   resetFilters: () => void;
 }
 
-const ITEMS_PER_PAGE = 20;
+const ITEMS_PER_PAGE = 40;
 
 const StudentCardGrid = ({ filteredProfiles, resetFilters }: StudentCardGridProps) => {
   const [currentPage, setCurrentPage] = useState(1);
