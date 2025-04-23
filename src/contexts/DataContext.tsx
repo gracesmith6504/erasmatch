@@ -128,14 +128,15 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     try {
       console.log("Sending message to", receiverId, "with content:", content);
       
-      // Insert directly into the messages table
+      // Skip any database triggers by directly inserting the message
       const { data, error } = await supabase
         .from('messages')
         .insert({
           sender_id: currentUserId,
           receiver_id: receiverId,
-          content: content,
-          read_by: []
+          content: content
+          // We don't need to set read_by here as an empty array is the default
+          // created_at will be automatically set by Supabase
         })
         .select()
         .single();
