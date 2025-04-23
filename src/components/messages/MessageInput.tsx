@@ -34,7 +34,6 @@ export const MessageInput = ({
     if (newMessage.trim() && !isSending) {
       try {
         await onSendMessage();
-        // Message sent successfully, clear the input
       } catch (error) {
         console.error("Error sending message:", error);
       }

@@ -33,37 +33,42 @@ export function createMessageHandler(
   onPromptUsed: () => void
 ) {
   return async (receiverId: string, content: string) => {
-    try {
-      console.log("Sending message to:", receiverId, "with content:", content);
-      
-      if (!receiverId) {
-        console.error("Error: No receiver ID provided");
-        toast.error("Failed to send message: No receiver specified");
-        return Promise.reject(new Error("No receiver ID provided"));
-      }
-      
-      if (!content.trim()) {
-        console.error("Error: Empty message content");
-        toast.error("Cannot send empty message");
-        return Promise.reject(new Error("Empty message content"));
-      }
-      
-      // Send the message using the edge function
-      await onSendMessage(receiverId, content);
-      
-      // Log success
-      console.log("Message sent successfully to:", receiverId);
+    // Send the message first
+    await onSendMessage(receiverId, content);
 
-      // Update UI state
-      setMessagesSent(prev => prev + 1);
-      setRefreshKey(prev => prev + 1);
-      onPromptUsed();
+    // ✅ Fire email notification in background
+    try {
+      console.log("🔔 Attempting to send notification email...");
       
-      return Promise.resolve();
+      // Get the current user
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (user) {
+        // Extract sender name from user metadata or fallback to email
+        const senderName = user.user_metadata?.name || user.email || "Someone";
+        
+        // Prepare message content (truncate if too long)
+        const messageContent = content.slice(0, 100) + (content.length > 100 ? "..." : "");
+        
+        // Call the edge function
+        const result = await supabase.functions.invoke("send-message-email", {
+          body: {
+            senderName,
+            recipientId: receiverId,
+            messageContent,
+          },
+        });
+        
+        console.log("📡 Email function result:", result);
+      }
     } catch (error) {
-      console.error("Error in messageHandler:", error);
-      toast.error(`Failed to send message: ${error.message || 'Unknown error'}`);
-      throw error;
+      console.error("❌ Function returned an error:", error);
+      toast.error("Failed to send notification email");
     }
+
+    // Update UI state
+    setMessagesSent(prev => prev + 1);
+    setRefreshKey(prev => prev + 1);
+    onPromptUsed();
   };
 }
