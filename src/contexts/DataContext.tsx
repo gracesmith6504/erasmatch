@@ -88,7 +88,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
 
     try {
       // Send message via Supabase
-      const { data, error } = await supabase
+      const { data: messageData, error: messageError } = await supabase
         .from('messages')
         .insert({
           sender_id: currentUserId,
@@ -98,11 +98,42 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         .select()
         .single();
       
-      if (error) throw error;
+      if (messageError) throw messageError;
 
-      if (data) {
+      // Get receiver's profile to get their email
+      const { data: receiverProfile, error: profileError } = await supabase
+        .from('profiles')
+        .select('email, name')
+        .eq('id', receiverId)
+        .single();
+
+      if (profileError) throw profileError;
+
+      // Get sender's name for the email
+      const { data: senderProfile } = await supabase
+        .from('profiles')
+        .select('name')
+        .eq('id', currentUserId)
+        .single();
+
+      if (receiverProfile?.email) {
+        // Send email notification
+        const response = await supabase.functions.invoke('send-message-notification', {
+          body: {
+            to: receiverProfile.email,
+            senderName: senderProfile?.name || 'Someone',
+            messageContent: content
+          }
+        });
+
+        if (response.error) {
+          console.error('Error sending email notification:', response.error);
+        }
+      }
+
+      if (messageData) {
         // Update local messages state
-        setMessages(prev => [data as Message, ...prev]);
+        setMessages(prev => [messageData as Message, ...prev]);
       }
     } catch (error) {
       console.error('Error sending message:', error);
