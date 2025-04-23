@@ -7,7 +7,7 @@ import { toast } from "sonner";
 export const useProfileView = (
   profile: Profile | undefined,
   currentUserId: string | null,
-  onSendMessage: (receiverId: string, content: string) => Promise<void>
+  onSendMessage: (receiverId: string, content: string) => void
 ) => {
   const [universityCity, setUniversityCity] = useState<string | null>(null);
   const [isLoadingCity, setIsLoadingCity] = useState(false);
@@ -44,22 +44,13 @@ export const useProfileView = (
     
     setIsSending(true);
     try {
-      console.log("Sending message from ProfileView to:", profile.id, "content:", messageContent);
-      
-      // Use the content before clearing it
-      const contentToSend = messageContent.trim();
-      
-      // Clear message content early
+      await onSendMessage(profile.id, messageContent);
       setMessageContent("");
-      
-      await onSendMessage(profile.id, contentToSend);
-      
       setIsMessageDialogOpen(false);
       toast.success("Message sent successfully");
     } catch (error: any) {
-      toast.error(`Failed to send message: ${error?.message || "Unknown error"}`);
+      toast.error("Failed to send message: " + error.message);
       console.error("Message sending error:", error);
-      // Don't restore message content as the dialog will be closed anyway
     } finally {
       setIsSending(false);
     }

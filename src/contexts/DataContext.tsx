@@ -3,7 +3,6 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 import { supabase } from "@/integrations/supabase/client";
 import { Profile, Message } from "@/types";
 import { useAuth } from "./AuthContext";
-import { toast } from "sonner";
 
 type DataContextType = {
   profiles: Profile[];
@@ -11,7 +10,6 @@ type DataContextType = {
   handleSendMessage: (receiverId: string, content: string) => Promise<void>;
   updateProfile: (profile: Partial<Profile>) => Promise<void>;
   fetchProfile: () => Promise<void>;
-  refreshMessages: () => Promise<void>;
 };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -40,31 +38,6 @@ export const DataProvider = ({ children }: DataProviderProps) => {
       fetchUserMessages(currentUserId);
     }
   }, [isAuthenticated, currentUserId]);
-
-  // Subscribe to new messages for real-time updates
-  useEffect(() => {
-    if (!currentUserId) return;
-
-    const channel = supabase
-      .channel('messages-channel')
-      .on('postgres_changes', 
-        { 
-          event: 'INSERT', 
-          schema: 'public', 
-          table: 'messages',
-          filter: `receiver_id=eq.${currentUserId}`
-        }, 
-        payload => {
-          const newMessage = payload.new as Message;
-          setMessages(prevMessages => [newMessage, ...prevMessages]);
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [currentUserId]);
 
   // Function to fetch all profiles
   const fetchProfiles = async () => {
@@ -100,63 +73,39 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
         .order('created_at', { ascending: false });
       
-      if (error) {
-        console.error('Error fetching messages:', error);
-        toast.error("Failed to load messages");
-        return;
-      }
+      if (error) throw error;
       
       if (userMessages) {
-        console.log('Fetched messages:', userMessages.length);
         setMessages(userMessages as Message[]);
       }
     } catch (error) {
       console.error('Error fetching messages:', error);
-      toast.error("Failed to load messages");
     }
   };
 
-  // Function to refresh messages
-  const refreshMessages = async (): Promise<void> => {
-    if (!currentUserId) return;
-    await fetchUserMessages(currentUserId);
-  };
-
   const handleSendMessage = async (receiverId: string, content: string): Promise<void> => {
-    if (!currentUserId) return Promise.reject(new Error("User not authenticated"));
+    if (!currentUserId) return;
 
     try {
-      console.log("Sending message to", receiverId, "with content:", content);
-      
-      // Skip any database triggers by directly inserting the message
+      // Send message via Supabase
       const { data, error } = await supabase
         .from('messages')
         .insert({
           sender_id: currentUserId,
           receiver_id: receiverId,
-          content: content
-          // We don't need to set read_by here as an empty array is the default
-          // created_at will be automatically set by Supabase
+          content
         })
         .select()
         .single();
       
-      if (error) {
-        console.error('Error sending message:', error);
-        toast.error("Failed to send message");
-        throw error;
-      }
+      if (error) throw error;
 
       if (data) {
-        console.log("Message sent successfully:", data);
-        // Update local messages state - add to beginning of array
+        // Update local messages state
         setMessages(prev => [data as Message, ...prev]);
       }
-      
-      return Promise.resolve();
     } catch (error) {
       console.error('Error sending message:', error);
-      toast.error(`Failed to send message: ${error.message || 'Unknown error'}`);
       throw error;
     }
   };
@@ -235,8 +184,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         messages,
         handleSendMessage,
         updateProfile,
-        fetchProfile,
-        refreshMessages
+        fetchProfile
       }}
     >
       {children}
