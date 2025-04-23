@@ -48,7 +48,7 @@ export function createMessageHandler(
         return Promise.reject(new Error("Empty message content"));
       }
       
-      // Send the message
+      // Send the message using the edge function
       await onSendMessage(receiverId, content);
       
       // Log success
@@ -62,7 +62,7 @@ export function createMessageHandler(
       return Promise.resolve();
     } catch (error) {
       console.error("Error in messageHandler:", error);
-      toast.error("Failed to send message");
+      toast.error(`Failed to send message: ${error.message || 'Unknown error'}`);
       throw error;
     }
   };

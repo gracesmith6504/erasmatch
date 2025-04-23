@@ -6,11 +6,10 @@ import { DirectMessageList } from "./DirectMessageList";
 import { MessageInput } from "./MessageInput";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useRealTimeMessages } from "./hooks/useRealTimeMessages";
 import MessageEmptyState from "./MessageEmptyState";
-import MessageBubble from "./MessageBubble";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { toast } from "sonner";
 
 interface DirectMessagePanelProps {
   thread: ChatThread;
@@ -84,10 +83,13 @@ export const DirectMessagePanel = ({
       
       setShowSuggestedPrompts(false);
       scrollToBottom();
+      
+      // No need to add the message again as it will come through the real-time subscription
     } catch (error) {
       console.error("Error sending message:", error);
-      // Don't add the message back to input as it may be too large
-      // but you could do that if you wanted to
+      toast.error(`Failed to send message: ${error.message || 'Unknown error'}`);
+      // Remove the temporary message if sending failed
+      setLocalMessages(prev => prev.filter(m => m.id !== `temp-${Date.now()}`));
     } finally {
       setIsSending(false);
     }

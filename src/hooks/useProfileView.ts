@@ -45,15 +45,21 @@ export const useProfileView = (
     setIsSending(true);
     try {
       console.log("Sending message from ProfileView to:", profile.id, "content:", messageContent);
-      await onSendMessage(profile.id, messageContent);
       
-      // Clear message content on successful send
+      // Use the content before clearing it
+      const contentToSend = messageContent.trim();
+      
+      // Clear message content early
       setMessageContent("");
+      
+      await onSendMessage(profile.id, contentToSend);
+      
       setIsMessageDialogOpen(false);
       toast.success("Message sent successfully");
     } catch (error: any) {
-      toast.error("Failed to send message: " + (error?.message || "Unknown error"));
+      toast.error(`Failed to send message: ${error?.message || "Unknown error"}`);
       console.error("Message sending error:", error);
+      // Don't restore message content as the dialog will be closed anyway
     } finally {
       setIsSending(false);
     }

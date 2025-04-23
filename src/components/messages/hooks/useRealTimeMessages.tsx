@@ -66,12 +66,30 @@ export function useRealTimeMessages({
             // Check if message with the same ID already exists (to avoid duplicates)
             setLocalMessages(prevMessages => {
               const messageExists = prevMessages.some(msg => msg.id === newMessage.id);
+              
+              // If there's a temporary message with the same content, replace it
+              const hasTempMessage = prevMessages.some(
+                msg => msg.id.startsWith('temp-') && 
+                       msg.sender_id === newMessage.sender_id && 
+                       msg.content === newMessage.content
+              );
+              
               if (messageExists) {
                 return prevMessages;
+              } else if (hasTempMessage) {
+                // Replace temp message with real one
+                return prevMessages.map(msg => 
+                  (msg.id.startsWith('temp-') && 
+                   msg.sender_id === newMessage.sender_id && 
+                   msg.content === newMessage.content) 
+                    ? newMessage 
+                    : msg
+                );
               } else {
                 return [...prevMessages, newMessage];
               }
             });
+            
             scrollToBottom();
           }
         }
