@@ -14,23 +14,19 @@ interface StudentCardProps {
 
 const StudentCard = ({ profile }: StudentCardProps) => {
   return (
-    <Card className="overflow-hidden card-hover border-gray-100 group rounded-xl shadow-soft transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-      <div className="h-28 bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute top-4 right-4 w-12 h-12 bg-white/10 rounded-full blur-xl"></div>
-        <div className="absolute bottom-2 left-8 w-8 h-8 bg-white/20 rounded-full blur-md"></div>
-      </div>
-      <div className="-mt-16 flex justify-center">
+    <Card className="overflow-hidden card-hover border-gray-100 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group">
+      <div className="h-24 bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple"></div>
+      <div className="-mt-12 flex justify-center">
         <StudentAvatar 
           avatarUrl={profile.avatar_url}
           name={profile.name}
-          className="h-32 w-32 border-4 border-white shadow-md ring-2 ring-white/30"
+          className="h-24 w-24"
         />
       </div>
       <CardContent className="pt-4 text-center">
-        <h3 className="font-display font-semibold text-lg text-gray-900 mt-3 flex items-center justify-center group-hover:text-erasmatch-blue transition-colors duration-200">
+        <h3 className="font-semibold text-lg text-gray-900 mt-4 flex items-center justify-center">
           {profile.name || "Anonymous Student"} 
-          {profile.country && <span className="ml-2 animate-fade-in"><CountryFlag country={profile.country} /></span>}
+          {profile.country && <span className="ml-2"><CountryFlag country={profile.country} /></span>}
         </h3>
         
         <PersonalityTags tags={profile.personality_tags} />
@@ -42,7 +38,7 @@ const StudentCard = ({ profile }: StudentCardProps) => {
           semester={profile.semester}
         />
       </CardContent>
-      <CardFooter className="pt-1 flex justify-center space-x-2 pb-4">
+      <CardFooter className="pt-1 flex justify-center space-x-2">
         <StudentCardActions studentId={profile.id} />
       </CardFooter>
     </Card>
