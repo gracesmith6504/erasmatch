@@ -77,7 +77,7 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                   <img 
                       src="https://ceoflcktscennfmmdrvp.supabase.co/storage/v1/object/public/public-assets//ErasMatch_Logo_512x512.png" 
                       alt="ErasMatch Logo" 
-                      className="h-[120px] md:h-[180px] lg:h-[240px] w-auto" 
+                      className="h-[240px] w-auto" 
                       />
                   </a>
 
