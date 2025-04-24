@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { DesktopNav } from "./DesktopNav";
@@ -24,86 +23,75 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 10);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
-  // Remove any notification elements that might be present
   useEffect(() => {
     const removeNotificationBadges = () => {
-      // This looks for any pink circles/notifications that might be appearing
-      const notifications = document.querySelectorAll('.notification-badge, .notification-dot');
-      notifications.forEach(badge => {
-        badge.remove();
-      });
+      const notifications = document.querySelectorAll(
+        ".notification-badge, .notification-dot"
+      );
+      notifications.forEach((badge) => badge.remove());
     };
 
-    // Run initially and whenever route changes
     removeNotificationBadges();
-    
-    return () => {
-      removeNotificationBadges();
-    };
+    return () => removeNotificationBadges();
   }, [navigate]);
 
   const handleLogout = (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
     onLogout();
-    setIsOpen(false); // Close mobile menu after logout
+    setIsOpen(false);
   };
 
   return (
     <>
-      <nav 
+      <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled ? 'bg-white/90 backdrop-blur-md shadow-sm' : 'bg-white'
+          scrolled ? "bg-white/90 backdrop-blur-md shadow-sm" : "bg-white"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 md:h-16 items-center">
-            {/* Logo section */}
-            <div className="flex items-center h-16">
+          <div className="flex justify-between items-center h-[80px] md:h-[88px] lg:h-[96px]">
+            {/* Logo */}
+            <div className="flex items-center">
               <a href="/" className="flex items-center">
-              <img 
-              src="https://ceoflcktscennfmmdrvp.supabase.co/storage/v1/object/public/public-assets/ErasMatch_Logo_512x512.png" 
-              alt="ErasMatch Logo" 
-              className="h-[48px] w-auto" 
+                <img
+                  src="https://ceoflcktscennfmmdrvp.supabase.co/storage/v1/object/public/public-assets/Erasmatch-logo-navbar-240px-transparent.png"
+                  alt="ErasMatch Logo"
+                  className="h-[48px] md:h-[64px] lg:h-[72px] w-auto"
                 />
               </a>
-          </div>
+            </div>
 
-            
-            {/* Desktop navigation */}
-            <DesktopNav 
-              isAuthenticated={isAuthenticated} 
-              isActive={isActive} 
-              onLogout={handleLogout} 
+            {/* Desktop Nav */}
+            <DesktopNav
+              isAuthenticated={isAuthenticated}
+              isActive={isActive}
+              onLogout={handleLogout}
             />
-            
-            {/* Mobile navigation toggle */}
+
+            {/* Mobile Nav Toggle */}
             <MobileNavToggle isOpen={isOpen} setIsOpen={setIsOpen} />
           </div>
         </div>
 
-        {/* Mobile dropdown menu */}
-        <MobileNav 
-          isOpen={isOpen} 
-          isAuthenticated={isAuthenticated} 
-          isActive={isActive} 
-          onLogout={handleLogout} 
+        {/* Mobile Dropdown Nav */}
+        <MobileNav
+          isOpen={isOpen}
+          isAuthenticated={isAuthenticated}
+          isActive={isActive}
+          onLogout={handleLogout}
         />
       </nav>
-      
-      {/* Mobile Bottom Navigation */}
+
+      {/* Bottom Nav */}
       {isAuthenticated && <MobileBottomNav isActive={isActive} />}
     </>
   );
