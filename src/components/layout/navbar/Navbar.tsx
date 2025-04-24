@@ -65,7 +65,7 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
                 <img
                   src="https://ceoflcktscennfmmdrvp.supabase.co/storage/v1/object/public/public-assets//erasmatch-logo-navbar-96px-transparent.png"
                   alt="ErasMatch Logo"
-                  className="h-[48px] md:h-[64px] lg:h-[72px] w-auto"
+                 // className="h-[48px] md:h-[64px] lg:h-[72px] w-auto"
                 />
               </a>
             </div>
