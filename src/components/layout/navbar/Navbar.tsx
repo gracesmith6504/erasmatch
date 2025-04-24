@@ -71,18 +71,16 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 md:h-16 items-center">
             {/* Logo section */}
-            <div className="flex items-center">
-              <a href="/" className="flex-shrink-0 flex items-center">
-                  <a href="/" className="flex items-center space-x-2">
-                  <img 
-                      src="https://ceoflcktscennfmmdrvp.supabase.co/storage/v1/object/public/public-assets//ErasMatch_Logo_512x512.png" 
-                      alt="ErasMatch Logo" 
-                      className="h-[72px] w-auto" 
-                      />
-                  </a>
-
+            <div className="flex items-center h-16">
+              <a href="/" className="flex items-center">
+              <img 
+              src="https://ceoflcktscennfmmdrvp.supabase.co/storage/v1/object/public/public-assets/ErasMatch_Logo_512x512.png" 
+              alt="ErasMatch Logo" 
+              className="h-[48px] w-auto" 
+                />
               </a>
-            </div>
+          </div>
+
             
             {/* Desktop navigation */}
             <DesktopNav 
