@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Profile } from "@/types";
-import { Upload } from "lucide-react";
+import { Upload, MessageSquare, UserPlus } from "lucide-react";
 
 type ProfileHeaderProps = {
   profile: Profile;
@@ -39,27 +39,44 @@ export const ProfileHeader = ({ profile, isOwnProfile }: ProfileHeaderProps) => 
   };
 
   return (
-    <div className="text-center px-4 pt-6 pb-4 bg-indigo-50 rounded-b-2xl">
-      <Avatar className="w-24 h-24 rounded-full mx-auto text-xl font-bold bg-indigo-200 text-white flex items-center justify-center">
-        <AvatarImage src={profile.avatar_url || undefined} alt={profile.name || "Profile"} />
-        <AvatarFallback>
-          {getInitials(profile.name)}
-        </AvatarFallback>
-      </Avatar>
+    <div className="relative">
+      {/* Background header gradient */}
+      <div className="h-36 bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple rounded-b-3xl"></div>
       
-      <h1 className="text-lg font-semibold mt-2">{profile.name}</h1>
-      <p className="text-sm text-gray-500">{getSecondaryInfo()}</p>
-      
-      {isOwnProfile && (
-        <div className="mt-4">
+      {/* Profile content */}
+      <div className="px-4 pb-6 -mt-16 flex flex-col items-center relative z-10">
+        <Avatar className="w-32 h-32 rounded-full border-4 border-white shadow-md bg-white">
+          <AvatarImage src={profile.avatar_url || undefined} alt={profile.name || "Profile"} />
+          <AvatarFallback className="bg-gradient-to-br from-erasmatch-blue to-erasmatch-purple text-white text-xl font-bold">
+            {getInitials(profile.name)}
+          </AvatarFallback>
+        </Avatar>
+        
+        <h1 className="text-xl font-semibold mt-4 font-display">{profile.name || "Anonymous Student"}</h1>
+        <p className="text-sm text-gray-500 mb-2">{getSecondaryInfo()}</p>
+        
+        {isOwnProfile ? (
           <Link to="/profile">
-            <Button variant="outline" className="text-sm bg-white border border-indigo-200 text-indigo-600 px-3 py-1 rounded-full hover:bg-indigo-100 transition">
-              <Upload className="h-4 w-4 mr-1" />
+            <Button variant="outline" className="mt-2 bg-white border border-gray-200 text-erasmatch-blue hover:bg-gray-50">
+              <Upload className="h-4 w-4 mr-2" />
               Edit Profile
             </Button>
           </Link>
-        </div>
-      )}
+        ) : (
+          <div className="flex gap-2 mt-2">
+            <Link to={`/messages?user=${profile.id}`}>
+              <Button variant="gradient" size="sm">
+                <MessageSquare className="h-4 w-4 mr-1" />
+                Message
+              </Button>
+            </Link>
+            <Button variant="outline" size="sm" className="bg-white border border-gray-200">
+              <UserPlus className="h-4 w-4 mr-1" />
+              Connect
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
