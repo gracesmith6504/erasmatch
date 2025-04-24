@@ -1,12 +1,8 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Message, Profile, ChatThread } from "@/types";
 import { MessageHeader } from "./MessageHeader";
 import { DirectMessageList } from "./DirectMessageList";
 import { MessageInput } from "./MessageInput";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useRealTimeMessages } from "./hooks/useRealTimeMessages";
 import MessageEmptyState from "./MessageEmptyState";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -85,22 +81,6 @@ export const DirectMessagePanel = ({
 
   return (
     <div className="flex flex-col w-full h-full relative">
-      {isMobile && onBack && (
-        <div className="sticky top-0 z-10 bg-white border-b">
-          <div className="p-2 flex items-center">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={onBack}
-              className="flex items-center text-gray-600"
-            >
-              <ChevronLeft className="h-4 w-4 mr-1" />
-              <span>Back to students</span>
-            </Button>
-          </div>
-        </div>
-      )}
-
       <MessageHeader 
         isMobile={isMobile} 
         onBack={onBack} 
