@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Profile } from "@/types";
-import { Upload, MessageSquare, UserPlus } from "lucide-react";
+import { Upload } from "lucide-react";
 
 type ProfileHeaderProps = {
   profile: Profile;
@@ -39,49 +39,27 @@ export const ProfileHeader = ({ profile, isOwnProfile }: ProfileHeaderProps) => 
   };
 
   return (
-    <div className="relative">
-      {/* Background header gradient with decorative elements */}
-      <div className="h-40 bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple rounded-b-3xl relative overflow-hidden">
-        {/* Decorative circles */}
-        <div className="absolute top-6 right-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
-        <div className="absolute bottom-10 left-1/4 w-12 h-12 bg-white/10 rounded-full blur-lg"></div>
-        <div className="absolute top-1/2 left-1/3 w-8 h-8 bg-white/10 rounded-full blur-md"></div>
-      </div>
+    <div className="text-center px-4 pt-6 pb-4 bg-indigo-50 rounded-b-2xl">
+      <Avatar className="w-24 h-24 rounded-full mx-auto text-xl font-bold bg-indigo-200 text-white flex items-center justify-center">
+        <AvatarImage src={profile.avatar_url || undefined} alt={profile.name || "Profile"} />
+        <AvatarFallback>
+          {getInitials(profile.name)}
+        </AvatarFallback>
+      </Avatar>
       
-      {/* Profile content */}
-      <div className="px-4 pb-6 -mt-20 flex flex-col items-center relative z-10">
-        <Avatar className="w-36 h-36 rounded-full border-4 border-white shadow-lg bg-white ring-4 ring-white/30 transition-all hover:shadow-xl">
-          <AvatarImage src={profile.avatar_url || undefined} alt={profile.name || "Profile"} />
-          <AvatarFallback className="bg-gradient-to-br from-erasmatch-blue to-erasmatch-purple text-white text-2xl font-bold">
-            {getInitials(profile.name)}
-          </AvatarFallback>
-        </Avatar>
-        
-        <h1 className="text-2xl font-semibold mt-5 font-display">{profile.name || "Anonymous Student"}</h1>
-        <p className="text-sm text-gray-500 mb-3">{getSecondaryInfo()}</p>
-        
-        {isOwnProfile ? (
+      <h1 className="text-lg font-semibold mt-2">{profile.name}</h1>
+      <p className="text-sm text-gray-500">{getSecondaryInfo()}</p>
+      
+      {isOwnProfile && (
+        <div className="mt-4">
           <Link to="/profile">
-            <Button variant="soft" className="mt-2 border border-gray-200 text-erasmatch-blue hover:bg-blue-50">
-              <Upload className="h-4 w-4 mr-2" />
+            <Button variant="outline" className="text-sm bg-white border border-indigo-200 text-indigo-600 px-3 py-1 rounded-full hover:bg-indigo-100 transition">
+              <Upload className="h-4 w-4 mr-1" />
               Edit Profile
             </Button>
           </Link>
-        ) : (
-          <div className="flex gap-3 mt-2">
-            <Link to={`/messages?user=${profile.id}`}>
-              <Button variant="gradient" size="sm" className="shadow-md hover:shadow-lg transition-all">
-                <MessageSquare className="h-4 w-4 mr-1" />
-                Message
-              </Button>
-            </Link>
-            <Button variant="soft" size="sm" className="bg-white border border-gray-200">
-              <UserPlus className="h-4 w-4 mr-1" />
-              Connect
-            </Button>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

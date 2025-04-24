@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Message, Profile, ChatThread } from "@/types";
 import { MessageHeader } from "./MessageHeader";
@@ -81,7 +80,7 @@ export const DirectMessagePanel = ({
   };
 
   return (
-    <div className="flex flex-col w-full h-full relative bg-gray-50">
+    <div className="flex flex-col w-full h-full relative">
       <MessageHeader 
         isMobile={isMobile} 
         onBack={onBack} 
@@ -102,7 +101,7 @@ export const DirectMessagePanel = ({
         </div>
       </ScrollArea>
       
-      <div className="sticky bottom-0 w-full bg-white border-t shadow-sm">
+      <div className="sticky bottom-0 w-full bg-white border-t">
         <MessageInput 
           onSendMessage={handleSendMessage}
           isSending={isSending}

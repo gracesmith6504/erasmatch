@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Montserrat:wght@400;500;600;700;800&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -15,16 +16,16 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
  
-    --primary: 246 80% 60%;
+    --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
  
-    --secondary: 240 5.9% 96.1%;
+    --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
  
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
  
-    --accent: 262 83% 58%;
+    --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
  
     --destructive: 0 84.2% 60.2%;
@@ -32,9 +33,9 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 246 80% 60%;
+    --ring: 222.2 84% 4.9%;
  
-    --radius: 0.75rem;
+    --radius: 0.5rem;
     
     /* Sidebar */
     --sidebar-background: 0 0% 100%;
@@ -47,7 +48,7 @@
     --sidebar-ring: 0 0% 25%;
 
     /* ErasMatch colors */
-    --erasmatch-blue: 246 80% 60%;
+    --erasmatch-blue: 225 100% 60%;
     --erasmatch-purple: 265 100% 60%;
     --erasmatch-green: 150 100% 40%;
     --erasmatch-orange: 35 100% 60%;
@@ -94,10 +95,7 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-display tracking-tight;
-  }
-  
+  /* Mobile improvement base styles */
   @media (max-width: 768px) {
     html {
       font-size: 16px; /* Slightly larger base font size for mobile */
@@ -111,14 +109,17 @@
       @apply text-xl mb-3;
     }
     
+    /* Improve button tap targets */
     button, a.button, [role="button"], a[href]:not(.inline-link), .clickable {
       @apply min-h-10 py-2.5 px-4;
     }
     
+    /* Improve form elements */
     input, select, textarea {
       @apply py-2.5 px-4 text-base;
     }
     
+    /* Add more vertical spacing */
     .space-y-4 {
       @apply space-y-5;
     }
@@ -127,15 +128,18 @@
       @apply space-y-8;
     }
     
+    /* Card improvements */
     .card, [class*="Card"] {
       @apply p-4 rounded-xl;
     }
     
+    /* Enhanced homepage mobile styles */
     .homepage-hero-mobile {
       padding: 2rem 1rem 3rem;
       text-align: center;
     }
     
+    /* Mobile CTA buttons */
     .mobile-cta {
       height: auto !important;
       padding: 1rem 1.5rem !important;
@@ -154,26 +158,18 @@
 
 @layer utilities {
   .button-hover {
-    @apply transition-all duration-200 ease-in-out;
+    transition: all 0.2s ease-in-out;
   }
   .button-hover:hover {
-    @apply transform -translate-y-1 shadow-elevated;
+    transform: translateY(-2px);
   }
   .shadow-soft {
-    @apply shadow-[0_10px_25px_rgba(0,0,0,0.05)];
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
   }
   .gradient-text {
-    @apply bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent;
   }
-  .card-hover {
-    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
-  }
-  .glass {
-    @apply bg-white/70 backdrop-blur-md border border-white/20;
-  }
-  .animated-underline {
-    @apply relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-erasmatch-blue hover:after:w-full after:transition-all after:duration-300;
-  }
+  /* Floating animations */
   .animate-float-slow {
     animation: float 6s ease-in-out infinite;
   }
@@ -187,6 +183,7 @@
     animation: pulse-soft 2s ease-in-out infinite;
   }
   
+  /* Hide scrollbars but maintain scroll functionality */
   .hide-scrollbar {
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
@@ -195,89 +192,93 @@
     display: none; /* Chrome, Safari and Opera */
   }
   
-  .mobile-full-width {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-  }
-  
-  .mobile-stack {
-    display: flex !important;
-    flex-direction: column !important;
-  }
-  
-  .mobile-stack > * {
-    width: 100% !important;
-    margin-bottom: 0.75rem !important;
-  }
-  
-  .mobile-stack > *:last-child {
-    margin-bottom: 0 !important;
-  }
-  
-  .mobile-centered {
-    text-align: center !important;
-    justify-content: center !important;
-  }
-  
-  .mobile-p-6 {
-    padding: 1.5rem !important;
-  }
-  
-  .mobile-my-4 {
-    margin-top: 1rem !important;
-    margin-bottom: 1rem !important;
-  }
-  
-  .mobile-text-lg {
-    font-size: 1.125rem !important;
-    line-height: 1.75rem !important;
-  }
-  
-  .mobile-text-xl {
-    font-size: 1.25rem !important;
-    line-height: 1.75rem !important;
-  }
-  
-  .mobile-gap-4 {
-    gap: 1rem !important;
-  }
-  
-  .mobile-px-4 {
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-  }
-  
-  .mobile-py-3 {
-    padding-top: 0.75rem !important;
-    padding-bottom: 0.75rem !important;
-  }
-  
-  .mobile-shadow-lg {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
-  }
-  
-  .mobile-pb-20 {
-    padding-bottom: 5rem !important;
-  }
-  
-  .mobile-cta-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    margin: 1.5rem 0;
-  }
-  
-  .mobile-trust-signal {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.875rem;
-    color: #6b7280;
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid #f3f4f6;
+  /* Mobile-specific utilities */
+  @media (max-width: 768px) {
+    .mobile-full-width {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+    
+    .mobile-stack {
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    
+    .mobile-stack > * {
+      width: 100% !important;
+      margin-bottom: 0.75rem !important;
+    }
+    
+    .mobile-stack > *:last-child {
+      margin-bottom: 0 !important;
+    }
+    
+    .mobile-centered {
+      text-align: center !important;
+      justify-content: center !important;
+    }
+    
+    .mobile-p-6 {
+      padding: 1.5rem !important;
+    }
+    
+    .mobile-my-4 {
+      margin-top: 1rem !important;
+      margin-bottom: 1rem !important;
+    }
+    
+    .mobile-text-lg {
+      font-size: 1.125rem !important;
+      line-height: 1.75rem !important;
+    }
+    
+    .mobile-text-xl {
+      font-size: 1.25rem !important;
+      line-height: 1.75rem !important;
+    }
+    
+    .mobile-gap-4 {
+      gap: 1rem !important;
+    }
+    
+    .mobile-px-4 {
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+    }
+    
+    .mobile-py-3 {
+      padding-top: 0.75rem !important;
+      padding-bottom: 0.75rem !important;
+    }
+    
+    .mobile-shadow-lg {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+    }
+    
+    .mobile-pb-20 {
+      padding-bottom: 5rem !important;
+    }
+    
+    /* New mobile homepage specific styles */
+    .mobile-cta-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    
+    .mobile-trust-signal {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid #f3f4f6;
+    }
   }
 }
 
@@ -307,23 +308,26 @@
 
 /* Auth Page Styles */
 .auth-container {
-  @apply min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-purple-50 py-12 px-4 sm:px-6 lg:px-8;
+  @apply min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8;
 }
 
 .auth-card {
-  @apply bg-white py-8 px-4 shadow-soft sm:rounded-xl sm:px-10 w-full max-w-md space-y-8;
+  @apply bg-white py-8 px-4 shadow-soft sm:rounded-lg sm:px-10 w-full max-w-md space-y-8;
 }
 
 /* Mobile-specific improvements */
 @media (max-width: 768px) {
+  /* Enhanced mobile card styling */
   .card, .bg-white {
     @apply rounded-xl shadow-soft;
   }
   
+  /* Enhanced spacing for StudentCard */
   .StudentCard {
     @apply my-4 mx-0;
   }
   
+  /* Better grid layouts on mobile - FIXED to avoid circular dependency */
   .grid-cols-1.sm\:grid-cols-2, 
   .grid-cols-1.sm\:grid-cols-3, 
   .grid-cols-1.md\:grid-cols-2,
@@ -332,47 +336,57 @@
     gap: 1.5rem;
   }
   
+  /* More readable forms */
   form input, 
   form select, 
   form textarea {
     @apply text-base py-3 px-4 rounded-xl;
   }
   
+  /* Better layout for the nav buttons */
   .bottom-4.fixed {
     @apply bottom-6;
   }
   
+  /* More space for tap targets */
   .p-3 {
     @apply p-4;
   }
   
+  /* Better footer on mobile */
   footer .grid-cols-1.md\:grid-cols-3 {
     @apply space-y-8;
   }
   
+  /* Main content padding */
   main {
     @apply px-4 mobile-pb-20;
   }
   
+  /* Typography enhancements */
   h1 {
     @apply mobile-text-xl font-bold;
   }
   
+  /* Card adjustments */
   .card-hover {
     @apply mobile-shadow-lg;
   }
   
+  /* Homepage hero section mobile specific styles */
   section.relative.overflow-hidden.bg-gradient-to-r {
     padding-top: 3rem;
     padding-bottom: 3rem;
   }
   
+  /* Mobile hero heading */
   section.relative.overflow-hidden.bg-gradient-to-r h1 {
     font-size: 2.25rem !important;
     line-height: 1.2 !important;
     margin-bottom: 1rem !important;
   }
   
+  /* Mobile hero description */
   section.relative.overflow-hidden.bg-gradient-to-r p.text-lg {
     font-size: 1.125rem !important;
     margin-bottom: 1.5rem !important;

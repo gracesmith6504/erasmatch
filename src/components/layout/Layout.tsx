@@ -1,4 +1,3 @@
-
 import { ReactNode } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
@@ -45,29 +44,23 @@ const Layout = ({ children }: LayoutProps) => {
 
   // Check if we're on the messages page to adjust layout
   const isMessagesPage = location.pathname === "/messages";
-  // Check if we're on the home page
-  const isHomePage = location.pathname === "/";
-  // Check if we're on a profile page
-  const isProfilePage = location.pathname.startsWith("/profile/");
 
   return (
-    <div className={`flex flex-col min-h-screen ${isHomePage ? 'bg-gradient-to-br from-blue-50/60 to-purple-50/60' : 'bg-gray-50'} overflow-x-hidden w-full max-w-full ${isMessagesPage ? 'overflow-hidden' : ''} transition-all duration-300`}>
+    <div className={`flex flex-col min-h-screen bg-gray-50 overflow-x-hidden w-full max-w-full ${isMessagesPage ? 'overflow-hidden' : ''}`}>
       <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogoutClick} />
       
       {/* Adjusted container based on page type */}
-      <main className={`flex-1 pt-16 md:pt-16 w-full max-w-full overflow-x-hidden ${!isMessagesPage ? 'pb-20 md:pb-8' : ''} ${isProfilePage ? 'bg-gradient-to-br from-blue-50/40 to-purple-50/40' : ''}`}>
-        <div className="animate-fade-in">
-          {children}
-        </div>
+      <main className={`flex-1 pt-16 md:pt-16 w-full max-w-full overflow-x-hidden ${!isMessagesPage ? 'pb-20 md:pb-8' : ''}`}>
+        {children}
       </main>
       
       {/* Only show footer on non-message pages */}
       {!isMessagesPage && (
-        <footer className="bg-white border-t py-6 md:py-8 mt-8 md:mt-12 w-full max-w-full overflow-x-hidden shadow-soft">
+        <footer className="bg-white border-t py-6 md:py-8 mt-8 md:mt-12 w-full max-w-full overflow-x-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-6 md:mb-8">
               <div>
-                <h3 className="text-lg font-semibold mb-3 md:mb-4 gradient-text font-display">ErasMatch</h3>
+                <h3 className="text-lg font-semibold mb-3 md:mb-4 gradient-text">ErasMatch</h3>
                 <p className="text-sm text-gray-500">
                   Connecting Erasmus students worldwide for better exchange experiences.
                 </p>
@@ -75,17 +68,17 @@ const Layout = ({ children }: LayoutProps) => {
               <div className="mt-6 md:mt-0">
                 <h3 className="text-sm font-semibold mb-3 md:mb-4 text-gray-700">Quick Links</h3>
                 <ul className="space-y-2 text-sm">
-                  <li><a href="/" className="text-gray-500 hover:text-erasmatch-blue animated-underline">Home</a></li>
-                  <li><a href="/students" className="text-gray-500 hover:text-erasmatch-blue animated-underline">Find Students</a></li>
-                  <li><a href="/groups" className="text-gray-500 hover:text-erasmatch-blue animated-underline">Your Group Chats</a></li>
+                  <li><a href="/" className="text-gray-500 hover:text-erasmatch-blue">Home</a></li>
+                  <li><a href="/students" className="text-gray-500 hover:text-erasmatch-blue">Find Students</a></li>
+                  <li><a href="/groups" className="text-gray-500 hover:text-erasmatch-blue">Your Group Chats</a></li>
                 </ul>
               </div>
               <div className="mt-6 md:mt-0">
                 <h3 className="text-sm font-semibold mb-3 md:mb-4 text-gray-700">Connect</h3>
                 <ul className="space-y-2 text-sm">
-                  <li><a href="#" className="text-gray-500 hover:text-erasmatch-blue animated-underline">About Us</a></li>
-                  <li><a href="#" className="text-gray-500 hover:text-erasmatch-blue animated-underline">Contact</a></li>
-                  <li><a href="#" className="text-gray-500 hover:text-erasmatch-blue animated-underline">Privacy Policy</a></li>
+                  <li><a href="#" className="text-gray-500 hover:text-erasmatch-blue">About Us</a></li>
+                  <li><a href="#" className="text-gray-500 hover:text-erasmatch-blue">Contact</a></li>
+                  <li><a href="#" className="text-gray-500 hover:text-erasmatch-blue">Privacy Policy</a></li>
                 </ul>
               </div>
             </div>
