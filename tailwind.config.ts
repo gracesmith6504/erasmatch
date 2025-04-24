@@ -96,6 +96,8 @@ export default {
 				'card': '0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02)',
 				'button': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
 				'elevated': '0 10px 30px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+				'hover': '0 10px 40px -12px rgba(0, 0, 0, 0.25)',
+				'card-hover': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
 			},
 			keyframes: {
 				'accordion-down': {
@@ -127,7 +129,15 @@ export default {
 				"bounce-subtle": {
 					"0%, 100%": { transform: "translateY(0)" },
 					"50%": { transform: "translateY(-5px)" }
-				}
+				},
+				"float": {
+					"0%, 100%": { transform: "translateY(0)" },
+					"50%": { transform: "translateY(-8px)" }
+				},
+				"scale": {
+					"0%, 100%": { transform: "scale(1)" },
+					"50%": { transform: "scale(1.05)" }
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -135,7 +145,9 @@ export default {
 				"fade-in": "fade-in 0.3s ease-out",
 				"slide-in-right": "slide-in-right 0.3s ease-out",
 				"pulse-soft": "pulse-soft 1.5s ease-in-out infinite",
-				"bounce-subtle": "bounce-subtle 2s ease-in-out infinite"
+				"bounce-subtle": "bounce-subtle 2s ease-in-out infinite",
+				"float": "float 3s ease-in-out infinite",
+				"scale": "scale 3s ease-in-out infinite",
 			}
 		}
 	},
