@@ -75,7 +75,7 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
               <a href="/" className="flex-shrink-0 flex items-center">
                   <a href="/" className="flex items-center space-x-2">
                   <img 
-                      src="https://ceoflcktscennfmmdrvp.supabase.co/storage/v1/object/public/public-assets//ErasMatch_Logo_512x512.png" 
+                      src="https://ceoflcktscennfmmdrvp.supabase.co/storage/v1/object/public/public-assets//erasmatch-logo-navbar-96px-transparent.png" 
                       alt="ErasMatch Logo" 
                       className="h-10 md:h-12 w-auto" 
                       />
