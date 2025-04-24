@@ -7,6 +7,7 @@ import { useMessageState } from "@/hooks/useMessageState";
 import { useInitialUserSelection } from "@/hooks/useInitialUserSelection";
 import { createMessageHandler } from "./utils/messageUtils";
 import { useState, useEffect } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface MessagesContainerProps {
   messages: Message[];
@@ -82,23 +83,25 @@ export const MessagesContainer = ({
   // Show mobile thread list when we want to display the thread list on mobile
   if (isMobile && showMobileThreadList) {
     return (
-      <MobileMessagesView
-        threads={threads}
-        selectedThread={selectedThread}
-        setSelectedThread={(thread) => {
-          setSelectedThread(thread);
-          setShowMobileThreadList(false);
-        }}
-        profiles={profiles}
-        currentUserProfile={currentUserProfile}
-      />
+      <ScrollArea className="h-full w-full">
+        <MobileMessagesView
+          threads={threads}
+          selectedThread={selectedThread}
+          setSelectedThread={(thread) => {
+            setSelectedThread(thread);
+            setShowMobileThreadList(false);
+          }}
+          profiles={profiles}
+          currentUserProfile={currentUserProfile}
+        />
+      </ScrollArea>
     );
   }
 
   // Show desktop view or conversation on mobile
   return (
-    <div className={`h-full flex flex-col overflow-hidden w-full ${!isMobile ? 'max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8' : ''}`}>
-      {!isMobile && <h1 className="text-2xl font-bold text-gray-900 mb-6">Messages</h1>}
+    <div className="h-full flex flex-col overflow-hidden w-full">
+      {!isMobile && <h1 className="text-2xl font-bold text-gray-900 px-4 py-6">Messages</h1>}
       
       <DesktopMessagesView
         threads={threads}

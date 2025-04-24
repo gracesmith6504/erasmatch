@@ -9,8 +9,7 @@ import { ChevronLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useRealTimeMessages } from "./hooks/useRealTimeMessages";
 import MessageEmptyState from "./MessageEmptyState";
-import MessageBubble from "./MessageBubble";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface DirectMessagePanelProps {
   thread: ChatThread;
@@ -85,7 +84,7 @@ export const DirectMessagePanel = ({
   };
 
   return (
-    <div className="flex flex-col w-full h-full relative overflow-x-hidden">
+    <div className="flex flex-col w-full h-full relative">
       {isMobile && onBack && (
         <div className="sticky top-0 z-10 bg-white border-b">
           <div className="p-2 flex items-center">
@@ -108,17 +107,19 @@ export const DirectMessagePanel = ({
         profile={thread.partner} 
       />
       
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col space-y-4 pb-20">
-        {localMessages.length === 0 ? (
-          <MessageEmptyState />
-        ) : (
-          <DirectMessageList 
-            messages={localMessages} 
-            currentUserId={currentUserId}
-          />
-        )}
-        <div ref={messagesEndRef} />
-      </div>
+      <ScrollArea className="flex-1">
+        <div className="p-4 flex flex-col space-y-4">
+          {localMessages.length === 0 ? (
+            <MessageEmptyState />
+          ) : (
+            <DirectMessageList 
+              messages={localMessages} 
+              currentUserId={currentUserId}
+            />
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+      </ScrollArea>
       
       <div className="sticky bottom-0 w-full bg-white border-t">
         <MessageInput 

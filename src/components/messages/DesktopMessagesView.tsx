@@ -3,6 +3,7 @@ import { Profile, ChatThread } from "@/types";
 import { DirectMessagePanel } from "./DirectMessagePanel";
 import { ThreadsList } from "./ThreadsList";
 import { getInitials } from "./utils/messageUtils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface DesktopMessagesViewProps {
   threads: ChatThread[];
@@ -32,16 +33,18 @@ export const DesktopMessagesView = ({
   onBack,
 }: DesktopMessagesViewProps) => {
   return (
-    <div className="flex flex-1 bg-white rounded-lg shadow overflow-hidden">
+    <div className="flex flex-1 bg-white rounded-lg shadow overflow-hidden h-full">
       {/* Thread list - hidden on mobile when thread selected */}
       {(!isMobile || !selectedThread) && (
-        <div className="w-full md:w-1/3 border-r flex flex-col">
-          <ThreadsList 
-            threads={threads} 
-            selectedThread={selectedThread} 
-            onSelectThread={setSelectedThread}
-            getInitials={getInitials}
-          />
+        <div className="w-full md:w-1/3 border-r flex flex-col h-full overflow-hidden">
+          <ScrollArea className="h-full">
+            <ThreadsList 
+              threads={threads} 
+              selectedThread={selectedThread} 
+              onSelectThread={setSelectedThread}
+              getInitials={getInitials}
+            />
+          </ScrollArea>
         </div>
       )}
       
