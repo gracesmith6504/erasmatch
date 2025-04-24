@@ -47,19 +47,23 @@ const Layout = ({ children }: LayoutProps) => {
   const isMessagesPage = location.pathname === "/messages";
   // Check if we're on the home page
   const isHomePage = location.pathname === "/";
+  // Check if we're on a profile page
+  const isProfilePage = location.pathname.startsWith("/profile/");
 
   return (
-    <div className={`flex flex-col min-h-screen ${isHomePage ? 'bg-gradient-to-br from-blue-50/50 to-purple-50/50' : 'bg-gray-50'} overflow-x-hidden w-full max-w-full ${isMessagesPage ? 'overflow-hidden' : ''}`}>
+    <div className={`flex flex-col min-h-screen ${isHomePage ? 'bg-gradient-to-br from-blue-50/60 to-purple-50/60' : 'bg-gray-50'} overflow-x-hidden w-full max-w-full ${isMessagesPage ? 'overflow-hidden' : ''} transition-all duration-300`}>
       <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogoutClick} />
       
       {/* Adjusted container based on page type */}
-      <main className={`flex-1 pt-16 md:pt-16 w-full max-w-full overflow-x-hidden ${!isMessagesPage ? 'pb-20 md:pb-8' : ''}`}>
-        {children}
+      <main className={`flex-1 pt-16 md:pt-16 w-full max-w-full overflow-x-hidden ${!isMessagesPage ? 'pb-20 md:pb-8' : ''} ${isProfilePage ? 'bg-gradient-to-br from-blue-50/40 to-purple-50/40' : ''}`}>
+        <div className="animate-fade-in">
+          {children}
+        </div>
       </main>
       
       {/* Only show footer on non-message pages */}
       {!isMessagesPage && (
-        <footer className="bg-white border-t py-6 md:py-8 mt-8 md:mt-12 w-full max-w-full overflow-x-hidden shadow-sm">
+        <footer className="bg-white border-t py-6 md:py-8 mt-8 md:mt-12 w-full max-w-full overflow-x-hidden shadow-soft">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-6 md:mb-8">
               <div>
