@@ -11,7 +11,7 @@ export const MobileNavToggle = ({ isOpen, setIsOpen }: MobileNavToggleProps) => 
     <div className="flex items-center md:hidden">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center justify-center p-3 rounded-md text-gray-700 hover:text-erasmatch-blue focus:outline-none"
+        className="inline-flex items-center justify-center p-3 rounded-md text-gray-700 hover:text-erasmatch-green focus:outline-none transition-colors duration-300"
         aria-label="Toggle menu"
       >
         {isOpen ? (

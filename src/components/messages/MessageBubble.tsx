@@ -30,10 +30,10 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
       className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-2`}
     >
       <div
-        className={`max-w-[70%] rounded-2xl px-4 py-2 ${
+        className={`max-w-[70%] rounded-2xl px-4 py-2 transition-all duration-300 shadow-sm hover:shadow-md ${
           isCurrentUser 
-            ? 'message-bubble-out bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple text-white rounded-tr-none' 
-            : 'message-bubble-in bg-gray-100 text-gray-900 rounded-tl-none'
+            ? 'message-bubble-out bg-gradient-to-r from-erasmatch-dark to-erasmatch-green text-white rounded-tr-none' 
+            : 'message-bubble-in bg-white border border-gray-100 text-gray-900 rounded-tl-none'
         }`}
       >
         <div className="whitespace-pre-wrap break-words">{content}</div>

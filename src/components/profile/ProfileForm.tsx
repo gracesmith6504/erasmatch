@@ -15,7 +15,9 @@ export function ProfileForm() {
         <Button 
           type="submit" 
           disabled={loading} 
-          className="min-w-[140px] bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple hover:from-erasmatch-purple hover:to-erasmatch-blue transition-all duration-300"
+          variant="gradient"
+          size="lg"
+          className="min-w-[140px] shadow-button hover:shadow-lg"
         >
           {loading ? (
             <>

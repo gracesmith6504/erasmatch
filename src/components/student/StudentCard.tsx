@@ -14,13 +14,13 @@ interface StudentCardProps {
 
 const StudentCard = ({ profile }: StudentCardProps) => {
   return (
-    <Card className="overflow-hidden card-hover border-gray-100 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group">
-      <div className="h-24 bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple"></div>
+    <Card className="overflow-hidden card-hover border-gray-100 transition-all duration-300 hover:shadow-hover hover:-translate-y-1 group rounded-xl">
+      <div className="h-24 bg-gradient-to-r from-erasmatch-dark to-erasmatch-green"></div>
       <div className="-mt-12 flex justify-center">
         <StudentAvatar 
           avatarUrl={profile.avatar_url}
           name={profile.name}
-          className="h-24 w-24"
+          className="h-24 w-24 animate-pulse-glow"
         />
       </div>
       <CardContent className="pt-4 text-center">

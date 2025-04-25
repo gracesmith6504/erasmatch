@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Search, MessageSquare, Calendar } from "lucide-react";
 import { ShareButton } from "@/components/share/ShareButton";
@@ -29,7 +30,7 @@ export const HeroSection = ({
   };
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-r from-blue-50 to-purple-50 py-20 sm:py-32">
+    <section className="relative overflow-hidden bg-gradient-to-r from-gray-50 to-green-50 py-20 sm:py-32">
       <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1')] bg-cover bg-center opacity-5"></div>
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -40,7 +41,7 @@ export const HeroSection = ({
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div className="text-left">
             <h1 className="text-4xl sm:text-6xl font-bold tracking-tight mb-6 leading-tight text-gray-900">
-              Erasmus <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">Just Got Social</span>
+              Erasmus <span className="bg-gradient-to-r from-erasmatch-dark to-erasmatch-green bg-clip-text text-transparent">Just Got Social</span>
             </h1>
             <p className="text-lg sm:text-xl max-w-xl text-gray-600 mb-8 leading-relaxed">
               Get advice, make friends, and never feel alone on your Erasmus journey.
@@ -51,22 +52,24 @@ export const HeroSection = ({
               <div className="w-full mb-8">
                 <Button 
                   size="lg" 
-                  className="w-full text-base px-4 py-6 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                  variant="gradient"
+                  className="w-full text-base px-4 py-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse-glow"
                   onClick={handleAuthAction}
                 >
                 Join Now!
                 </Button>
                 <p className="mt-2 text-sm text-gray-600">
-                Already a member? <Link to="/auth?mode=login" className="underline text-erasmatch-blue">Log in</Link>
+                Already a member? <Link to="/auth?mode=login" className="underline text-erasmatch-green hover:text-erasmatch-darkgreen transition-colors">Log in</Link>
                 </p>
-        </div>
-)}
+              </div>
+            )}
             
             {/* Mobile specific action buttons */}
             <div className="flex flex-col space-y-4 md:hidden">
               <Button 
                 size="lg" 
-                className="w-full text-base px-4 py-6 bg-blue-500 hover:bg-blue-600 text-white shadow-md flex items-center justify-center"
+                variant="dark"
+                className="w-full text-base px-4 py-6 text-white shadow-md flex items-center justify-center"
                 onClick={handleFindStudents}
               >
                 <Search className="mr-2 h-5 w-5" />
@@ -74,7 +77,7 @@ export const HeroSection = ({
               </Button>
               <Button 
                 size="lg" 
-                className="w-full text-base px-4 py-6 bg-purple-500 hover:bg-purple-600 text-white shadow-md flex items-center justify-center"
+                className="w-full text-base px-4 py-6 bg-erasmatch-purple hover:bg-erasmatch-purple/90 text-white shadow-md flex items-center justify-center"
                 onClick={handleJoinChats}
               >
                 <MessageSquare className="mr-2 h-5 w-5" />
@@ -82,7 +85,7 @@ export const HeroSection = ({
               </Button>
               <Button 
                 size="lg" 
-                className="w-full text-base px-4 py-6 bg-green-500 hover:bg-green-600 text-white shadow-md flex items-center justify-center"
+                className="w-full text-base px-4 py-6 bg-erasmatch-green hover:bg-erasmatch-green/90 text-white shadow-md flex items-center justify-center"
                 onClick={handleFindStudents} 
               >
                 <Calendar className="mr-2 h-5 w-5" />
@@ -94,7 +97,8 @@ export const HeroSection = ({
             <div className="hidden md:flex flex-wrap gap-4">
               <Button 
                 size="lg" 
-                className="text-lg px-8 py-6 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                variant="gradient"
+                className="text-lg px-8 py-6 text-white shadow-lg hover:shadow-xl transition-all duration-300"
                 onClick={handleFindStudents}
               >
                 Find Students Near You
@@ -117,9 +121,9 @@ export const HeroSection = ({
 
         {/* Subtle connection lines */}
         <svg className="absolute inset-0 w-full h-full opacity-20 hidden md:block" style={{ pointerEvents: 'none' }}>
-          <line x1="25%" y1="30%" x2="40%" y2="70%" stroke="#e0e7ff" strokeWidth="1" strokeDasharray="5,5" />
-          <line x1="75%" y1="40%" x2="40%" y2="70%" stroke="#e0e7ff" strokeWidth="1" strokeDasharray="5,5" />
-          <line x1="75%" y1="40%" x2="65%" y2="75%" stroke="#e0e7ff" strokeWidth="1" strokeDasharray="5,5" />
+          <line x1="25%" y1="30%" x2="40%" y2="70%" stroke="#10B981" strokeWidth="1" strokeDasharray="5,5" />
+          <line x1="75%" y1="40%" x2="40%" y2="70%" stroke="#10B981" strokeWidth="1" strokeDasharray="5,5" />
+          <line x1="75%" y1="40%" x2="65%" y2="75%" stroke="#10B981" strokeWidth="1" strokeDasharray="5,5" />
         </svg>
       </div>
     </section>
