@@ -1,8 +1,8 @@
 import { Profile } from "@/types";
 import { ThreadsList } from "./ThreadsList";
 import { getInitials } from "./utils/messageUtils";
-import { MobileBottomNav } from "src/components/layout/navbar/MobileBottomNav.tsx";
-import { useNavigation } from "@/components/useNavigation";
+import { MobileBottomNav } from "../layout/navbar/MobileBottomNav";
+import { useNavigation } from "../layout/navbar/useNavigation";
 
 interface MobileMessagesViewProps {
   threads: any[];
@@ -34,7 +34,7 @@ export const MobileMessagesView = ({
         />
       </div>
 
-      {/* Hide bottom nav when a thread is selected */}
+      {/* Hide bottom nav when a message thread is open */}
       {!selectedThread && (
         <MobileBottomNav isActive={isActive} />
       )}
