@@ -33,7 +33,7 @@ const ProfileCompletionMeter: React.FC<ProfileCompletionMeterProps> = ({ profile
   const getColorClass = () => {
     if (completionPercentage < 30) return 'bg-red-500';
     if (completionPercentage < 70) return 'bg-yellow-500';
-    return 'bg-gradient-to-r from-erasmatch-blue via-erasmatch-purple to-erasmatch-green';
+    return 'bg-gradient-to-r from-erasmatch-dark via-erasmatch-darkgreen to-erasmatch-green';
   };
   
   const getNextStep = () => {
@@ -47,15 +47,15 @@ const ProfileCompletionMeter: React.FC<ProfileCompletionMeterProps> = ({ profile
   const nextStep = getNextStep();
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 mb-8 animate-fade-in">
+    <div className="bg-white/80 backdrop-blur-md p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 mb-8 animate-fade-in">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-base font-medium text-gray-700">Profile Completion</h3>
-        <span className="text-base font-semibold bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple bg-clip-text text-transparent">
+        <h3 className="text-base font-semibold text-gray-700">Profile Completion</h3>
+        <span className="text-base font-bold bg-gradient-to-r from-erasmatch-dark to-erasmatch-green bg-clip-text text-transparent">
           {completionPercentage}%
         </span>
       </div>
       
-      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+      <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
         <div 
           className={`h-full rounded-full transition-all duration-700 ${getColorClass()}`} 
           style={{ width: `${completionPercentage}%` }}
@@ -75,16 +75,16 @@ const ProfileCompletionMeter: React.FC<ProfileCompletionMeterProps> = ({ profile
       
       {completionPercentage >= 70 && (
         <div className="mt-4 flex flex-wrap gap-2">
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 shadow-sm transition-all duration-300 hover:scale-105">
             🧳 City Explorer
           </span>
           {completionPercentage >= 90 && (
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 shadow-sm transition-all duration-300 hover:scale-105">
               🏆 Profile Champion
             </span>
           )}
           {profile.university && (
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 shadow-sm transition-all duration-300 hover:scale-105">
               🎓 Erasmus Scholar
             </span>
           )}
