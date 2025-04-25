@@ -34,10 +34,6 @@ export const MobileMessagesView = ({
         />
       </div>
 
-      {/* Hide bottom nav when a message thread is open */}
-      {!selectedThread && (
-        <MobileBottomNav isActive={isActive} />
-      )}
     </div>
   );
 };
