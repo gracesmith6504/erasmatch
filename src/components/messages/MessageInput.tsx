@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SuggestedPrompts } from "./SuggestedPrompts";
 import { Profile } from "@/types";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface MessageInputProps {
   onSendMessage: () => Promise<void>;
@@ -29,6 +30,8 @@ export const MessageInput = ({
   currentUser,
   selectedUser,
 }: MessageInputProps) => {
+  const isMobile = useIsMobile();
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newMessage.trim() && !isSending) {

@@ -1,11 +1,11 @@
-import { ReactNode, useEffect } from "react";
+
+import { ReactNode } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navbar } from "./navbar";
+import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { MobileBottomNav } from "@/components/layout/navbar/MobileBottomNav";
-import { useNavigation } from "@/components/layout/navbar/useNavigation";
 
 type LayoutProps = {
   children: ReactNode;
@@ -13,28 +13,25 @@ type LayoutProps = {
 
 const Layout = ({ children }: LayoutProps) => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { isAuthenticated, handleLogout } = useAuth();
-  const { isActive } = useNavigation();
-
-  // Hide mobile nav on /messages or any sub-path like /messages/123
-  const hideMobileNav = location.pathname.startsWith("/messages");
+  const location = useLocation();
 
   useEffect(() => {
-    const updateActivity = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase
-          .from("profiles")
-          .update({ last_active_at: new Date().toISOString() })
-          .eq("id", user.id);
-      }
-    };
+   const updateActivity = async () => {
+     const { data: { user } } = await supabase.auth.getUser();
+     if (user) {
+       await supabase
+         .from("profiles")
+         .update({ last_active_at: new Date().toISOString() })
+         .eq("id", user.id);
+     }
+   };
 
-    updateActivity();
-    const interval = setInterval(updateActivity, 60000); // every 60 seconds
-    return () => clearInterval(interval);
-  }, []);
+   updateActivity();
+   const interval = setInterval(updateActivity, 60000); // every 60 seconds
+   return () => clearInterval(interval);
+ }, []);
+
 
   const handleLogoutClick = () => {
     handleLogout();
@@ -52,16 +49,12 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <div className={`flex flex-col min-h-screen bg-gray-50 overflow-x-hidden w-full max-w-full ${isMessagesPage ? 'overflow-hidden' : ''}`}>
       <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogoutClick} />
-
+      
+      {/* Adjusted container based on page type */}
       <main className={`flex-1 pt-16 md:pt-16 w-full max-w-full overflow-x-hidden ${!isMessagesPage ? 'pb-20 md:pb-8' : ''}`}>
         {children}
       </main>
-
-      {/* ✅ Show Mobile Nav only if authenticated and not in messages */}
-      {isAuthenticated && !hideMobileNav && (
-        <MobileBottomNav isActive={isActive} />
-      )}
-
+      
       {/* Only show footer on non-message pages */}
       {!isMessagesPage && (
         <footer className="bg-white border-t py-6 md:py-8 mt-8 md:mt-12 w-full max-w-full overflow-x-hidden">
