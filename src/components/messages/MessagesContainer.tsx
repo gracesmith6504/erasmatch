@@ -1,4 +1,4 @@
-
+import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Message, Profile } from "@/types";
 import { MobileMessagesView } from "./MobileMessagesView";
@@ -6,8 +6,9 @@ import { DesktopMessagesView } from "./DesktopMessagesView";
 import { useMessageState } from "@/hooks/useMessageState";
 import { useInitialUserSelection } from "@/hooks/useInitialUserSelection";
 import { createMessageHandler } from "./utils/messageUtils";
-import { useState, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { MobileBottomNav } from "@/components/layout/navbar/MobileBottomNav";
+import { useNavigation } from "@/components/layout/navbar/useNavigation";
 
 interface MessagesContainerProps {
   messages: Message[];
@@ -25,9 +26,9 @@ export const MessagesContainer = ({
   initialSelectedUser = null,
 }: MessagesContainerProps) => {
   const isMobile = useIsMobile();
+  const { isActive } = useNavigation();
   const [showMobileThreadList, setShowMobileThreadList] = useState(true);
-  
-  // Get message state from hook
+
   const {
     selectedThread,
     setSelectedThread,
@@ -40,14 +41,12 @@ export const MessagesContainer = ({
     threadMessages
   } = useMessageState(messages, profiles, currentUserId, initialSelectedUser);
 
-  // Toggle mobile thread list visibility based on selection
   useEffect(() => {
     if (isMobile && selectedThread) {
       setShowMobileThreadList(false);
     }
   }, [selectedThread, isMobile]);
-  
-  // Handle initial user selection
+
   useInitialUserSelection(
     initialSelectedUser,
     profiles,
@@ -62,47 +61,51 @@ export const MessagesContainer = ({
     refreshKey
   );
 
-  // Custom wrapper for onSendMessage to ensure state updates properly
   const handleSendMessage = createMessageHandler(
-    onSendMessage, 
-    setMessagesSent, 
-    setRefreshKey, 
+    onSendMessage,
+    setMessagesSent,
+    setRefreshKey,
     () => {}
   );
 
-  // Handle prompt selection - reset state
   const handlePromptUsed = () => {
-    console.log("Prompt was used - will reset state after message is sent");
+    console.log("Prompt used.");
   };
 
-  // Handler for going back to thread list on mobile - only change thread list visibility
   const handleBackToThreadList = () => {
     setShowMobileThreadList(true);
   };
 
-  // Show mobile thread list when we want to display the thread list on mobile
+  // ✅ Mobile - show message thread list
   if (isMobile && showMobileThreadList) {
     return (
-      <ScrollArea className="h-full w-full">
-        <MobileMessagesView
-          threads={threads}
-          selectedThread={selectedThread}
-          setSelectedThread={(thread) => {
-            setSelectedThread(thread);
-            setShowMobileThreadList(false);
-          }}
-          profiles={profiles}
-          currentUserProfile={currentUserProfile}
-        />
-      </ScrollArea>
+      <div className="relative h-full w-full">
+        <ScrollArea className="h-full w-full pb-20">
+          <MobileMessagesView
+            threads={threads}
+            selectedThread={selectedThread}
+            setSelectedThread={(thread) => {
+              setSelectedThread(thread);
+              setShowMobileThreadList(false);
+            }}
+            profiles={profiles}
+            currentUserProfile={currentUserProfile}
+          />
+        </ScrollArea>
+
+        {/* ✅ Show Mobile Nav ONLY when browsing thread list */}
+        <MobileBottomNav isActive={isActive} />
+      </div>
     );
   }
 
-  // Show desktop view or conversation on mobile
+  // ✅ Mobile - show conversation OR Desktop
   return (
-    <div className="h-full flex flex-col w-full overflow-hidden">
-      {!isMobile && <h1 className="text-2xl font-bold text-gray-900 px-4 py-6">Messages</h1>}
-      
+    <div className="h-full flex flex-col overflow-hidden w-full">
+      {!isMobile && (
+        <h1 className="text-2xl font-bold text-gray-900 px-4 py-6">Messages</h1>
+      )}
+
       <DesktopMessagesView
         threads={threads}
         selectedThread={selectedThread}
