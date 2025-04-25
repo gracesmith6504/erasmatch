@@ -1,4 +1,3 @@
-
 import { ReactNode } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "sonner";
@@ -61,22 +60,7 @@ const Layout = ({ children }: LayoutProps) => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-6 md:mb-8">
               <div>
-                <h3 className="text-lg font-semibold mb-3 md:mb-4 gradient-text flex items-center">
-                  <svg 
-                    className="h-6 w-6 mr-2" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    strokeWidth="2" 
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <circle cx="12" cy="12" r="10" className="text-erasmatch-dark"/>
-                    <path d="M10 8C10 9.10457 9.10457 10 8 10C6.89543 10 6 9.10457 6 8C6 6.89543 6.89543 6 8 6C9.10457 6 10 6.89543 10 8Z" 
-                      className="fill-erasmatch-green" />
-                    <path d="M16 18L8 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
-                  ErasMatch
-                </h3>
+                <h3 className="text-lg font-semibold mb-3 md:mb-4 gradient-text">ErasMatch</h3>
                 <p className="text-sm text-gray-500">
                   Connecting Erasmus students worldwide for better exchange experiences.
                 </p>
@@ -84,17 +68,17 @@ const Layout = ({ children }: LayoutProps) => {
               <div className="mt-6 md:mt-0">
                 <h3 className="text-sm font-semibold mb-3 md:mb-4 text-gray-700">Quick Links</h3>
                 <ul className="space-y-2 text-sm">
-                  <li><a href="/" className="text-gray-500 hover:text-erasmatch-green transition-colors">Home</a></li>
-                  <li><a href="/students" className="text-gray-500 hover:text-erasmatch-green transition-colors">Find Students</a></li>
-                  <li><a href="/groups" className="text-gray-500 hover:text-erasmatch-green transition-colors">Your Group Chats</a></li>
+                  <li><a href="/" className="text-gray-500 hover:text-erasmatch-blue">Home</a></li>
+                  <li><a href="/students" className="text-gray-500 hover:text-erasmatch-blue">Find Students</a></li>
+                  <li><a href="/groups" className="text-gray-500 hover:text-erasmatch-blue">Your Group Chats</a></li>
                 </ul>
               </div>
               <div className="mt-6 md:mt-0">
                 <h3 className="text-sm font-semibold mb-3 md:mb-4 text-gray-700">Connect</h3>
                 <ul className="space-y-2 text-sm">
-                  <li><a href="#" className="text-gray-500 hover:text-erasmatch-green transition-colors">About Us</a></li>
-                  <li><a href="#" className="text-gray-500 hover:text-erasmatch-green transition-colors">Contact</a></li>
-                  <li><a href="#" className="text-gray-500 hover:text-erasmatch-green transition-colors">Privacy Policy</a></li>
+                  <li><a href="#" className="text-gray-500 hover:text-erasmatch-blue">About Us</a></li>
+                  <li><a href="#" className="text-gray-500 hover:text-erasmatch-blue">Contact</a></li>
+                  <li><a href="#" className="text-gray-500 hover:text-erasmatch-blue">Privacy Policy</a></li>
                 </ul>
               </div>
             </div>

@@ -73,25 +73,7 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
             {/* Logo section */}
             <div className="flex items-center">
               <a href="/" className="flex-shrink-0 flex items-center">
-                <span className="text-xl md:text-xl font-bold gradient-text flex items-center">
-                  <svg 
-                    className="h-8 w-8 mr-2" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    strokeWidth="2" 
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <circle cx="12" cy="12" r="10" className="text-erasmatch-dark"/>
-                    <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" 
-                      stroke="currentColor" strokeWidth="2" />
-                    <path d="M10 8C10 9.10457 9.10457 10 8 10C6.89543 10 6 9.10457 6 8C6 6.89543 6.89543 6 8 6C9.10457 6 10 6.89543 10 8Z" 
-                      className="fill-erasmatch-green" />
-                    <path d="M16 18L8 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                    <path d="M12 17L12 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                    <path d="M16 12C17.1046 12 18 11.1046 18 10C18 8.89543 17.1046 8 16 8" 
-                      stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
+                <span className="text-xl md:text-xl font-bold gradient-text animate-pulse-soft">
                   Eras<span className="text-erasmatch-green">Match</span> 
                 </span>
               </a>

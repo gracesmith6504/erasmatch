@@ -18,10 +18,10 @@ export const DesktopNav = ({ isAuthenticated, isActive, onLogout }: DesktopNavPr
     return (
       <div className="hidden md:flex items-center space-x-1">
         <Link to="/auth?mode=login">
-          <Button variant="outline" className="button-hover rounded-xl">Log In</Button>
+          <Button variant="ghost" className="button-hover">Log In</Button>
         </Link>
         <Link to="/auth?mode=signup">
-          <Button variant="gradient" className="button-hover rounded-xl">
+          <Button className="button-hover bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple border-0 text-white">
             Sign Up
           </Button>
         </Link>
@@ -39,7 +39,7 @@ export const DesktopNav = ({ isAuthenticated, isActive, onLogout }: DesktopNavPr
               to={item.path} 
               isActive={isActive(item.path)}
               className="px-4 py-2 rounded-full transition-all duration-200"
-              activeClass="text-white bg-gradient-to-r from-erasmatch-dark to-erasmatch-green shadow-sm"
+              activeClass="text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple shadow-sm"
               inactiveClass="text-gray-700 hover:bg-gray-200"
               icon={item.icon}
             >
@@ -56,7 +56,7 @@ export const DesktopNav = ({ isAuthenticated, isActive, onLogout }: DesktopNavPr
               ? 'bg-gray-200' 
               : 'hover:bg-gray-100'
           }`}>
-            <User className="w-5 h-5 text-erasmatch-green" />
+            <User className="w-5 h-5 text-erasmatch-blue" />
           </Link>
           <Button 
             variant="ghost" 

@@ -20,9 +20,9 @@ const StudentAvatar = ({ avatarUrl, name, className = "" }: StudentAvatarProps) 
   };
 
   return (
-    <Avatar className={`${className} border-4 border-white shadow-md ring-2 ring-erasmatch-green/30 group-hover:scale-105 transition-all duration-300`}>
+    <Avatar className={`${className} border-4 border-white shadow-md ring-2 ring-white/50 group-hover:scale-105 transition-all duration-300`}>
       <AvatarImage src={avatarUrl || undefined} />
-      <AvatarFallback className="text-lg bg-gradient-to-br from-gray-100 to-white text-erasmatch-dark font-semibold">
+      <AvatarFallback className="text-lg bg-gradient-to-br from-blue-100 to-purple-100 text-erasmatch-blue">
         {getInitials(name)}
       </AvatarFallback>
     </Avatar>

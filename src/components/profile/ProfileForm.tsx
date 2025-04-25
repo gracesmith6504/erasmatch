@@ -8,17 +8,11 @@ export function ProfileForm() {
   const { loading, handleSubmit } = useProfileContext();
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 animate-fade-in">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <ProfileFormFields />
 
       <div className="flex justify-end">
-        <Button 
-          type="submit" 
-          disabled={loading} 
-          variant="gradient"
-          size="lg"
-          className="min-w-[140px] shadow-button hover:shadow-lg"
-        >
+        <Button type="submit" disabled={loading} className="min-w-[120px]">
           {loading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
