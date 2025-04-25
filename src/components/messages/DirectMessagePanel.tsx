@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { Message, Profile, ChatThread } from "@/types";
 import { MessageHeader } from "./MessageHeader";

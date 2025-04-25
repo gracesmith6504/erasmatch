@@ -1,5 +1,5 @@
 
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Home, Users, MessageSquare, User } from "lucide-react";
 import { useNavigation } from "./useNavigation";
 
@@ -9,6 +9,12 @@ interface MobileBottomNavProps {
 
 export const MobileBottomNav = ({ isActive }: MobileBottomNavProps) => {
   const { navigationItems } = useNavigation();
+  const location = useLocation();
+  const isMessagesPage = location.pathname === "/messages";
+  
+  if (isMessagesPage) {
+    return null; // Don't render the bottom nav on the messages page
+  }
   
   return (
     <div className="md:hidden fixed bottom-6 left-0 right-0 z-50 flex justify-center">
