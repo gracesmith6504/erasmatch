@@ -50,7 +50,7 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
   };
 
   return (
-    <div className="h-screen overflow-hidden w-full max-w-full fixed inset-0 pt-16 pb-0">
+    <div className="h-[calc(100vh-64px)] overflow-hidden w-full max-w-full fixed inset-0 pt-16">
       <MessagesContainer
         messages={messages}
         profiles={profiles}
