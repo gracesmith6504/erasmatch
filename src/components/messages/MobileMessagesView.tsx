@@ -1,7 +1,7 @@
 import { Profile } from "@/types";
 import { ThreadsList } from "./ThreadsList";
 import { getInitials } from "./utils/messageUtils";
-import { MobileBottomNav } from "@../layout/navbar/MobileBottomNav";
+import { MobileBottomNav } from "src/components/layout/navbar/MobileBottomNav.tsx";
 import { useNavigation } from "@/components/useNavigation";
 
 interface MobileMessagesViewProps {
