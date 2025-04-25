@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Message, Profile } from "@/types";
 import { MobileMessagesView } from "./MobileMessagesView";
@@ -6,9 +6,8 @@ import { DesktopMessagesView } from "./DesktopMessagesView";
 import { useMessageState } from "@/hooks/useMessageState";
 import { useInitialUserSelection } from "@/hooks/useInitialUserSelection";
 import { createMessageHandler } from "./utils/messageUtils";
+import { useState, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MobileBottomNav } from "../layout/navbar/MobileBottomNav";
-import { useNavigation } from "../layout/navbar/useNavigation";
 
 interface MessagesContainerProps {
   messages: Message[];
@@ -26,9 +25,9 @@ export const MessagesContainer = ({
   initialSelectedUser = null,
 }: MessagesContainerProps) => {
   const isMobile = useIsMobile();
-  const { isActive } = useNavigation();
   const [showMobileThreadList, setShowMobileThreadList] = useState(true);
-
+  
+  // Get message state from hook
   const {
     selectedThread,
     setSelectedThread,
@@ -41,12 +40,14 @@ export const MessagesContainer = ({
     threadMessages
   } = useMessageState(messages, profiles, currentUserId, initialSelectedUser);
 
+  // Toggle mobile thread list visibility based on selection
   useEffect(() => {
     if (isMobile && selectedThread) {
       setShowMobileThreadList(false);
     }
   }, [selectedThread, isMobile]);
-
+  
+  // Handle initial user selection
   useInitialUserSelection(
     initialSelectedUser,
     profiles,
@@ -61,21 +62,25 @@ export const MessagesContainer = ({
     refreshKey
   );
 
+  // Custom wrapper for onSendMessage to ensure state updates properly
   const handleSendMessage = createMessageHandler(
-    onSendMessage,
-    setMessagesSent,
-    setRefreshKey,
+    onSendMessage, 
+    setMessagesSent, 
+    setRefreshKey, 
     () => {}
   );
 
+  // Handle prompt selection - reset state
   const handlePromptUsed = () => {
-    console.log("Prompt used.");
+    console.log("Prompt was used - will reset state after message is sent");
   };
 
+  // Handler for going back to thread list on mobile - only change thread list visibility
   const handleBackToThreadList = () => {
     setShowMobileThreadList(true);
   };
 
+  // Show mobile thread list when we want to display the thread list on mobile
   if (isMobile && showMobileThreadList) {
     return (
       <ScrollArea className="h-full w-full">
@@ -89,18 +94,15 @@ export const MessagesContainer = ({
           profiles={profiles}
           currentUserProfile={currentUserProfile}
         />
-        {/* ✅ Show bottom nav only when no thread is selected */}
-        <MobileBottomNav isActive={isActive} />
       </ScrollArea>
     );
   }
 
+  // Show desktop view or conversation on mobile
   return (
-    <div className="h-full flex flex-col overflow-hidden w-full">
-      {!isMobile && (
-        <h1 className="text-2xl font-bold text-gray-900 px-4 py-6">Messages</h1>
-      )}
-
+    <div className="h-full flex flex-col w-full overflow-hidden">
+      {!isMobile && <h1 className="text-2xl font-bold text-gray-900 px-4 py-6">Messages</h1>}
+      
       <DesktopMessagesView
         threads={threads}
         selectedThread={selectedThread}
@@ -114,9 +116,6 @@ export const MessagesContainer = ({
         onPromptUsed={handlePromptUsed}
         onBack={isMobile ? handleBackToThreadList : undefined}
       />
-
-      {/* ✅ Only show when NOT in thread */}
-      {isMobile && !selectedThread && <MobileBottomNav isActive={isActive} />}
     </div>
   );
 };
