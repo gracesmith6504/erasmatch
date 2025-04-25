@@ -99,13 +99,10 @@ export const MessagesContainer = ({
     );
   }
 
-  // ✅ Mobile - show conversation OR Desktop
-  return (
-    <div className="h-full flex flex-col overflow-hidden w-full">
-      {!isMobile && (
-        <h1 className="text-2xl font-bold text-gray-900 px-4 py-6">Messages</h1>
-      )}
-
+// ✅ Show chat on mobile OR desktop
+return (
+  <div className="h-full flex flex-col overflow-hidden w-full">
+    {isMobile && selectedThread ? (
       <DesktopMessagesView
         threads={threads}
         selectedThread={selectedThread}
@@ -114,11 +111,29 @@ export const MessagesContainer = ({
         currentUserProfile={currentUserProfile}
         threadMessages={threadMessages}
         currentUserId={currentUserId}
-        isMobile={isMobile}
+        isMobile={true}
         onSendMessage={handleSendMessage}
         onPromptUsed={handlePromptUsed}
-        onBack={isMobile ? handleBackToThreadList : undefined}
+        onBack={handleBackToThreadList}
       />
-    </div>
-  );
+    ) : (
+      <>
+        <h1 className="text-2xl font-bold text-gray-900 px-4 py-6">Messages</h1>
+        <DesktopMessagesView
+          threads={threads}
+          selectedThread={selectedThread}
+          setSelectedThread={setSelectedThread}
+          profiles={profiles}
+          currentUserProfile={currentUserProfile}
+          threadMessages={threadMessages}
+          currentUserId={currentUserId}
+          isMobile={false}
+          onSendMessage={handleSendMessage}
+          onPromptUsed={handlePromptUsed}
+        />
+      </>
+    )}
+  </div>
+);
+
 };
