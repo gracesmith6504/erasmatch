@@ -1,7 +1,8 @@
-
 import { Profile } from "@/types";
 import { ThreadsList } from "./ThreadsList";
 import { getInitials } from "./utils/messageUtils";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
+import { useNavigation } from "@/components/useNavigation";
 
 interface MobileMessagesViewProps {
   threads: any[];
@@ -18,10 +19,12 @@ export const MobileMessagesView = ({
   profiles,
   currentUserProfile,
 }: MobileMessagesViewProps) => {
+  const { isActive } = useNavigation();
+
   return (
     <div className="w-full overflow-hidden px-4 py-6">
       <h1 className="text-xl font-bold text-gray-900 mb-4">Messages</h1>
-      
+
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <ThreadsList 
           threads={threads} 
@@ -30,6 +33,11 @@ export const MobileMessagesView = ({
           getInitials={getInitials}
         />
       </div>
+
+      {/* Hide bottom nav when a thread is selected */}
+      {!selectedThread && (
+        <MobileBottomNav isActive={isActive} />
+      )}
     </div>
   );
 };
