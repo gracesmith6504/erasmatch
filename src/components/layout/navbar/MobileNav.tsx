@@ -32,9 +32,9 @@ export const MobileNav = ({
               <Link 
                 key={item.path}
                 to={item.path} 
-                className={`block px-4 py-3 rounded-xl text-base font-medium ${
+                className={`block px-4 py-3 rounded-lg text-base font-medium ${
                   isActive(item.path) 
-                    ? 'text-white bg-gradient-to-r from-erasmatch-dark to-erasmatch-green shadow-sm' 
+                    ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple' 
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
@@ -44,9 +44,9 @@ export const MobileNav = ({
                 </div>
               </Link>
             ))}
-            <Link to="/profile" className={`block px-4 py-3 rounded-xl text-base font-medium ${
+            <Link to="/profile" className={`block px-4 py-3 rounded-lg text-base font-medium ${
               isActive('/profile') 
-                ? 'text-white bg-gradient-to-r from-erasmatch-dark to-erasmatch-green shadow-sm' 
+                ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple' 
                 : 'text-gray-700 hover:bg-gray-50'
             }`}>
               <div className="flex items-center">
@@ -57,7 +57,7 @@ export const MobileNav = ({
             <button 
               onClick={onLogout}
               type="button"
-              className="w-full text-left block px-4 py-3 rounded-xl text-base font-medium text-gray-700 hover:text-red-600 hover:bg-red-50"
+              className="w-full text-left block px-4 py-3 rounded-lg text-base font-medium text-gray-700 hover:text-red-600 hover:bg-red-50"
             >
               <div className="flex items-center">
                 <LogOut className="w-5 h-5 mr-3" />
@@ -71,7 +71,7 @@ export const MobileNav = ({
               <Button variant="outline" className="w-full button-hover py-3 text-base">Log In</Button>
             </Link>
             <Link to="/auth?mode=signup" className="w-full">
-              <Button variant="gradient" className="w-full button-hover py-3 text-base">
+              <Button className="w-full button-hover py-3 text-base bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple border-0 text-white">
                 Sign Up
               </Button>
             </Link>

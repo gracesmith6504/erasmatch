@@ -18,18 +18,14 @@ export const MobileBottomNav = ({ isActive }: MobileBottomNavProps) => {
             key={item.path}
             to={item.path} 
             className={`p-3.5 rounded-full transition-colors ${
-              isActive(item.path) 
-                ? 'bg-green-100 text-erasmatch-green animate-pulse-soft' 
-                : 'text-gray-500'
+              isActive(item.path) ? 'bg-blue-100 text-erasmatch-blue' : 'text-gray-500'
             }`}
           >
             <item.icon className="w-5 h-5" />
           </Link>
         ))}
         <Link to="/profile" className={`p-3.5 rounded-full transition-colors ${
-          isActive('/profile') 
-            ? 'bg-green-100 text-erasmatch-green animate-pulse-soft' 
-            : 'text-gray-500'
+          isActive('/profile') ? 'bg-blue-100 text-erasmatch-blue' : 'text-gray-500'
         }`}>
           <User className="w-5 h-5" />
         </Link>
