@@ -34,6 +34,9 @@ export const DirectMessagePanel = ({
   const [showSuggestedPrompts, setShowSuggestedPrompts] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const [isScrollingUp, setIsScrollingUp] = useState(false);
+  const lastScrollTop = useRef(0);
+
   const { localMessages, setLocalMessages } = useRealTimeMessages({
     messages,
     currentUserId,
@@ -80,6 +83,17 @@ export const DirectMessagePanel = ({
     }
   };
 
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+  const scrollTop = e.currentTarget.scrollTop;
+  if (scrollTop < lastScrollTop.current) {
+    setIsScrollingUp(true);
+  } else {
+    setIsScrollingUp(false);
+  }
+  lastScrollTop.current = scrollTop;
+ };
+
+
   return (
     <div className="flex flex-col h-full overflow-hidden relative">
 
@@ -91,7 +105,7 @@ export const DirectMessagePanel = ({
   />
 
   {/* 🟢 SCROLLABLE MESSAGES AREA */}
-  <ScrollArea className="flex-1 overflow-y-auto">
+  <ScrollArea className="flex-1 overflow-y-auto" onScroll={handleScroll}>
     <div className="p-4 flex flex-col space-y-4 mx-auto w-full max-w-full md:max-w-4xl lg:max-w-5xl">
       {localMessages.length === 0 ? (
         <MessageEmptyState />
@@ -106,7 +120,7 @@ export const DirectMessagePanel = ({
   </ScrollArea>
 
   {/* 🟠 STICKY INPUT */}
-  <div className="sticky bottom-0 left-0 right-0 w-full z-20 bg-white border-t">
+  <div className={`sticky bottom-0 left-0 right-0 w-full z-20 bg-white border-t transition-transform duration-300 ease-in-out ${isScrollingUp ? 'translate-y-full' : 'translate-y-0'}`}>
     <div className="mx-auto w-full max-w-full md:max-w-4xl lg:max-w-5xl">
       <MessageInput 
         onSendMessage={handleSendMessage}
