@@ -23,7 +23,7 @@ export const MessageHeader = ({ isMobile, onBack, profile }: MessageHeaderProps)
   };
 
   return (
-    <div className="p-4 border-b bg-white/95 backdrop-blur-sm flex items-center gap-3 w-full">
+    <div className="sticky top-0 z-30 p-4 border-b bg-white/95 backdrop-blur-sm flex items-center gap-3 w-full">
       {isMobile && onBack && (
         <Button 
           variant="ghost" 
