@@ -81,44 +81,46 @@ export const DirectMessagePanel = ({
   };
 
   return (
-    <div className="flex flex-col h-full relative overflow-hidden pb-0">
-      
-      <ScrollArea className="flex-1 overflow-y-auto">
+    <div className="flex flex-col h-full overflow-hidden relative">
 
-      <MessageHeader
-       isMobile={isMobile} 
-       onBack={onBack} 
-       profile={thread.partner} 
-      />
-        
-        <div className="p-4 flex flex-col space-y-4 mx-auto w-full max-w-full md:max-w-4xl lg:max-w-5xl">
-          {localMessages.length === 0 ? (
-            <MessageEmptyState />
-          ) : (
-            <DirectMessageList 
-              messages={localMessages} 
-              currentUserId={currentUserId}
-            />
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-      </ScrollArea>
-      
-      <div className="sticky bottom-0 left-0 right-0 w-full z-20 bg-white border-t">
-        <div className="mx-auto max-w-3xl">
-          <MessageInput 
-            onSendMessage={handleSendMessage}
-            isSending={isSending}
-            newMessage={newMessage}
-            setNewMessage={setNewMessage}
-            showSuggestedPrompts={showSuggestedPrompts}
-            onDismissSuggestedPrompts={() => setShowSuggestedPrompts(false)}
-            onPromptUsed={onPromptUsed}
-            currentUser={currentUserProfile}
-            selectedUser={thread.partner}
-          />
-        </div>
-      </div>
+  {/* 🔵 HEADER (static, sticky itself) */}
+  <MessageHeader
+    isMobile={isMobile}
+    onBack={onBack}
+    profile={thread.partner}
+  />
+
+  {/* 🟢 SCROLLABLE MESSAGES AREA */}
+  <ScrollArea className="flex-1 overflow-y-auto">
+    <div className="p-4 flex flex-col space-y-4 mx-auto w-full max-w-full md:max-w-4xl lg:max-w-5xl">
+      {localMessages.length === 0 ? (
+        <MessageEmptyState />
+      ) : (
+        <DirectMessageList 
+          messages={localMessages}
+          currentUserId={currentUserId}
+        />
+      )}
+      <div ref={messagesEndRef} />
     </div>
+  </ScrollArea>
+
+  {/* 🟠 STICKY INPUT */}
+  <div className="sticky bottom-0 left-0 right-0 w-full z-20 bg-white border-t">
+    <div className="mx-auto w-full max-w-full md:max-w-4xl lg:max-w-5xl">
+      <MessageInput 
+        onSendMessage={handleSendMessage}
+        isSending={isSending}
+        newMessage={newMessage}
+        setNewMessage={setNewMessage}
+        showSuggestedPrompts={showSuggestedPrompts}
+        onDismissSuggestedPrompts={() => setShowSuggestedPrompts(false)}
+        onPromptUsed={onPromptUsed}
+        currentUser={currentUserProfile}
+        selectedUser={thread.partner}
+      />
+    </div>
+  </div>
+</div>
   );
 };
