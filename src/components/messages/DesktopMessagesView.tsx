@@ -37,7 +37,7 @@ export const DesktopMessagesView = ({
       {/* Thread list - hidden on mobile when thread selected */}
       {(!isMobile || !selectedThread) && (
         <div className="w-full md:w-1/3 border-r flex flex-col h-full overflow-hidden">
-          <ScrollArea className="h-full">
+          <ScrollArea className="flex-1 overflow-y-auto bg-gray-50">
             <ThreadsList 
               threads={threads} 
               selectedThread={selectedThread} 
