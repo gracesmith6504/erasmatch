@@ -50,6 +50,7 @@ export const DesktopMessagesView = ({
       
       {/* Conversation area - full width on mobile */}
       {selectedThread ? (
+      <div className="w-full md:w-2/3 flex flex-col h-full">
         <DirectMessagePanel
           thread={selectedThread}
           messages={threadMessages}
@@ -60,6 +61,7 @@ export const DesktopMessagesView = ({
           onSendMessage={onSendMessage}
           onPromptUsed={onPromptUsed}
         />
+      </div>
       ) : (
         <div className="hidden md:flex flex-col w-2/3 items-center justify-center p-4">
           <p className="text-gray-500 mb-4">Select a conversation from the left</p>
