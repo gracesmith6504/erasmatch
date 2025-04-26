@@ -105,7 +105,7 @@ export const DirectMessagePanel = ({
   />
 
   {/* 🟢 SCROLLABLE MESSAGES AREA */}
-  <ScrollArea className="flex-1 overflow-y-auto" onScroll={handleScroll}>
+  <ScrollArea className="flex-1 overflow-y-auto bg-gray-50" onScroll={handleScroll}>
     <div className="p-4 flex flex-col space-y-4 mx-auto w-full max-w-full md:max-w-4xl lg:max-w-5xl">
       {localMessages.length === 0 ? (
         <MessageEmptyState />
