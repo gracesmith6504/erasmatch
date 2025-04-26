@@ -100,7 +100,7 @@ export const MessagesContainer = ({
 
   // Show desktop view or conversation on mobile
   return (
-    <div className="h-full flex flex-col w-full overflow-hidden">
+    <div className="h-full flex flex-col overflow-hidden">
       {!isMobile && <h1 className="text-2xl font-bold text-gray-900 px-4 py-6">Messages</h1>}
       
       <DesktopMessagesView
