@@ -49,7 +49,7 @@ export const MessageInput = ({
   };
 
   return (
-    <div className="p-3 sm:p-4 border-t w-full z-10 bg-white max-w-full">
+    <div className="p-3 sm:p-4 border-t w-full z-50 bg-white">
       {showSuggestedPrompts && (
         <SuggestedPrompts
           onSelectPrompt={handleSelectPrompt}
