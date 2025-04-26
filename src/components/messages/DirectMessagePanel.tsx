@@ -82,13 +82,15 @@ export const DirectMessagePanel = ({
 
   return (
     <div className="flex flex-col h-full relative overflow-hidden pb-0">
+      
+      <ScrollArea className="flex-1 overflow-y-auto">
+
       <MessageHeader
        isMobile={isMobile} 
        onBack={onBack} 
        profile={thread.partner} 
       />
-      
-      <ScrollArea className="flex-1 overflow-y-auto">
+        
         <div className="p-4 flex flex-col space-y-4 mx-auto w-full max-w-full md:max-w-4xl lg:max-w-5xl">
           {localMessages.length === 0 ? (
             <MessageEmptyState />
