@@ -12,7 +12,7 @@ export const DirectMessageList = ({
   currentUserId,
 }: DirectMessageListProps) => {
   return (
-    <>
+     <div className="flex flex-col w-full max-w-full md:max-w-4xl lg:max-w-5xl mx-auto space-y-4">
       {messages.map((message) => {
         const isCurrentUser = message.sender_id === currentUserId;
         return (
@@ -25,6 +25,6 @@ export const DirectMessageList = ({
           />
         );
       })}
-    </>
+    </div>
   );
 };
