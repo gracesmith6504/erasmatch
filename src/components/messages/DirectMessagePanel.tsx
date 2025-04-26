@@ -82,14 +82,16 @@ export const DirectMessagePanel = ({
 
   return (
     <div className="flex flex-col h-full relative overflow-hidden pb-0">
-      <MessageHeader 
-        isMobile={isMobile} 
-        onBack={onBack} 
-        profile={thread.partner} 
-      />
+      <div className="sticky top-0 z-30">
+        <MessageHeader 
+          isMobile={isMobile} 
+          onBack={onBack} 
+          profile={thread.partner} 
+        />
+      </div>
       
       <ScrollArea className="flex-1 overflow-y-auto pb-16">
-        <div className="p-4 flex flex-col space-y-4">
+        <div className="p-4 flex flex-col space-y-4 mx-auto max-w-3xl">
           {localMessages.length === 0 ? (
             <MessageEmptyState />
           ) : (
@@ -103,17 +105,19 @@ export const DirectMessagePanel = ({
       </ScrollArea>
       
       <div className="sticky bottom-0 left-0 right-0 w-full z-20 bg-white border-t">
-        <MessageInput 
-          onSendMessage={handleSendMessage}
-          isSending={isSending}
-          newMessage={newMessage}
-          setNewMessage={setNewMessage}
-          showSuggestedPrompts={showSuggestedPrompts}
-          onDismissSuggestedPrompts={() => setShowSuggestedPrompts(false)}
-          onPromptUsed={onPromptUsed}
-          currentUser={currentUserProfile}
-          selectedUser={thread.partner}
-        />
+        <div className="mx-auto max-w-3xl">
+          <MessageInput 
+            onSendMessage={handleSendMessage}
+            isSending={isSending}
+            newMessage={newMessage}
+            setNewMessage={setNewMessage}
+            showSuggestedPrompts={showSuggestedPrompts}
+            onDismissSuggestedPrompts={() => setShowSuggestedPrompts(false)}
+            onPromptUsed={onPromptUsed}
+            currentUser={currentUserProfile}
+            selectedUser={thread.partner}
+          />
+        </div>
       </div>
     </div>
   );
