@@ -6,7 +6,6 @@ interface DirectMessageListProps {
   messages: Message[];
   currentUserId: string;
 }
-
 export const DirectMessageList = ({
   messages,
   currentUserId,
