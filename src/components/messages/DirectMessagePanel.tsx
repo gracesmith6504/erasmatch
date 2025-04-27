@@ -84,58 +84,57 @@ export const DirectMessagePanel = ({
   };
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const scrollTop = e.currentTarget.scrollTop;
-    if (scrollTop < lastScrollTop.current) {
-      setIsScrollingUp(true);
-    } else {
-      setIsScrollingUp(false);
-    }
-    lastScrollTop.current = scrollTop;
-  };
+  const scrollTop = e.currentTarget.scrollTop;
+  if (scrollTop < lastScrollTop.current) {
+    setIsScrollingUp(true);
+  } else {
+    setIsScrollingUp(false);
+  }
+  lastScrollTop.current = scrollTop;
+ };
 
 
   return (
     <div className="flex flex-col h-full overflow-hidden relative">
-      {/* 🔵 HEADER (sticky with blur background) */}
-      <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm">
-        <MessageHeader
-          isMobile={isMobile}
-          onBack={onBack}
-          profile={thread.partner}
+
+  {/* 🔵 HEADER (static, sticky itself) */}
+  <MessageHeader
+    isMobile={isMobile}
+    onBack={onBack}
+    profile={thread.partner}
+  />
+
+  {/* 🟢 SCROLLABLE MESSAGES AREA */}
+  <ScrollArea className="flex-1 overflow-y-auto bg-gray-50" onScroll={handleScroll}>
+    <div className="p-4 flex flex-col space-y-4 mx-auto w-full max-w-full md:max-w-4xl lg:max-w-5xl">
+      {localMessages.length === 0 ? (
+        <MessageEmptyState />
+      ) : (
+        <DirectMessageList 
+          messages={localMessages}
+          currentUserId={currentUserId}
         />
-      </div>
-
-      {/* 🟢 SCROLLABLE MESSAGES AREA */}
-      <ScrollArea className="flex-1 overflow-y-auto bg-gray-50" onScroll={handleScroll}>
-        <div className="p-4 flex flex-col space-y-4 mx-auto w-full max-w-full md:max-w-3xl">
-          {localMessages.length === 0 ? (
-            <MessageEmptyState />
-          ) : (
-            <DirectMessageList 
-              messages={localMessages}
-              currentUserId={currentUserId}
-            />
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-      </ScrollArea>
-
-      {/* 🟠 STICKY INPUT */}
-      <div className={`sticky bottom-0 left-0 right-0 w-full z-20 bg-white border-t transition-transform duration-300 ease-in-out ${isScrollingUp ? 'translate-y-full' : 'translate-y-0'}`}>
-        <div className="mx-auto w-full max-w-full md:max-w-3xl">
-          <MessageInput 
-            onSendMessage={handleSendMessage}
-            isSending={isSending}
-            newMessage={newMessage}
-            setNewMessage={setNewMessage}
-            showSuggestedPrompts={showSuggestedPrompts}
-            onDismissSuggestedPrompts={() => setShowSuggestedPrompts(false)}
-            onPromptUsed={onPromptUsed}
-            currentUser={currentUserProfile}
-            selectedUser={thread.partner}
-          />
-        </div>
-      </div>
+      )}
+      <div ref={messagesEndRef} />
     </div>
+  </ScrollArea>
+
+  {/* 🟠 STICKY INPUT */}
+  <div className={`sticky bottom-0 left-0 right-0 w-full z-20 bg-white border-t transition-transform duration-300 ease-in-out ${isScrollingUp ? 'translate-y-full' : 'translate-y-0'}`}>
+    <div className="mx-auto w-full max-w-full md:max-w-4xl lg:max-w-5xl">
+      <MessageInput 
+        onSendMessage={handleSendMessage}
+        isSending={isSending}
+        newMessage={newMessage}
+        setNewMessage={setNewMessage}
+        showSuggestedPrompts={showSuggestedPrompts}
+        onDismissSuggestedPrompts={() => setShowSuggestedPrompts(false)}
+        onPromptUsed={onPromptUsed}
+        currentUser={currentUserProfile}
+        selectedUser={thread.partner}
+      />
+    </div>
+  </div>
+</div>
   );
 };
