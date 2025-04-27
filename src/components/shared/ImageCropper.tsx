@@ -24,10 +24,13 @@ const ImageCropper = ({ imageUrl, onSave, onCancel }: ImageCropperProps) => {
       backgroundColor: "#f1f5f9"
     });
 
-    // Fix: Use the correct method signature for loading images in Fabric.js v6
-    FabricImage.fromURL(
-      imageUrl, 
-      (img) => {
+    // Fix: Use correct Fabric.js v6 fromURL signature
+    FabricImage.fromURL(imageUrl, {
+      // Using the correct options object format
+      scaleX: 1,
+      scaleY: 1,
+      // Callback now needs to be in the options object
+      onImageCreated: (img) => {
         const scale = Math.min(
           fabricCanvas.width! / img.width!,
           fabricCanvas.height! / img.height!
@@ -47,7 +50,7 @@ const ImageCropper = ({ imageUrl, onSave, onCancel }: ImageCropperProps) => {
         fabricCanvas.setActiveObject(img);
         fabricCanvas.renderAll();
       }
-    );
+    });
 
     setCanvas(fabricCanvas);
 
