@@ -38,7 +38,10 @@ const ProfileView = ({ profiles, currentUserId, onSendMessage }: ProfileViewProp
   return (
     <div className="max-w-3xl mx-auto py-8 px-4 sm:px-6">
       <div className="bg-white shadow rounded-lg overflow-hidden">
-        <ProfileHeader profile={profile} isOwnProfile={isOwnProfile} />
+        <ProfileHeader 
+          profile={profile} 
+          isOwnProfile={isOwnProfile} 
+        />
         
         <div className="px-4 sm:px-6 pb-5">
           {!isOwnProfile && currentUserId && (

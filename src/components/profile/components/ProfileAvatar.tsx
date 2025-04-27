@@ -1,8 +1,9 @@
-
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import ImageModal from "@/components/shared/ImageModal";
+import React from "react";
+import { toast } from "sonner";
 
 type ProfileAvatarProps = {
   name: string | null;
@@ -32,9 +33,22 @@ export const ProfileAvatar = ({
       .substring(0, 2);
   };
 
-  const handleEditClick = () => {
-    document.getElementById('avatar-upload')?.click();
-    setIsModalOpen(false);
+  const handleCropComplete = async (croppedImage: string) => {
+    try {
+      // Convert base64 to blob
+      const response = await fetch(croppedImage);
+      const blob = await response.blob();
+      
+      // Create a File object from the blob
+      const file = new File([blob], 'profile-picture.png', { type: 'image/png' });
+      
+      // Use the existing file upload handler
+      const event = { target: { files: [file] } } as React.ChangeEvent<HTMLInputElement>;
+      handleFileUpload(event);
+    } catch (error) {
+      console.error('Error processing cropped image:', error);
+      toast.error("Failed to save cropped image. Please try again.");
+    }
   };
 
   return (
@@ -88,7 +102,7 @@ export const ProfileAvatar = ({
         onClose={() => setIsModalOpen(false)}
         imageUrl={avatarUrl}
         showEditButton={true}
-        onEditClick={handleEditClick}
+        onCropComplete={handleCropComplete}
       />
     </div>
   );
