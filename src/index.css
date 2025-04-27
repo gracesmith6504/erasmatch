@@ -1,6 +1,5 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -17,7 +16,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
  
-    --primary: 88 95% 40%; /* Duolingo green */
+    --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
  
     --secondary: 210 40% 96.1%;
@@ -26,7 +25,7 @@
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
  
-    --accent: 198 84% 49%; /* Duolingo blue */
+    --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
  
     --destructive: 0 84.2% 60.2%;
@@ -36,7 +35,7 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
  
-    --radius: 0.75rem;
+    --radius: 0.5rem;
     
     /* Sidebar */
     --sidebar-background: 0 0% 100%;
@@ -133,6 +132,27 @@
     .card, [class*="Card"] {
       @apply p-4 rounded-xl;
     }
+    
+    /* Enhanced homepage mobile styles */
+    .homepage-hero-mobile {
+      padding: 2rem 1rem 3rem;
+      text-align: center;
+    }
+    
+    /* Mobile CTA buttons */
+    .mobile-cta {
+      height: auto !important;
+      padding: 1rem 1.5rem !important;
+      border-radius: 0.75rem !important;
+      font-size: 1.125rem !important;
+      font-weight: 600 !important;
+      margin-bottom: 0.75rem !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 100% !important;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+    }
   }
 }
 
@@ -147,33 +167,8 @@
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
   }
   .gradient-text {
-    @apply bg-gradient-to-r from-duo-blue to-duo-purple bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent;
   }
-
-  /* Duolingo-style button */
-  .button-duo {
-    @apply bg-duo-green text-white font-rounded font-bold rounded-2xl shadow-duo hover:bg-duo-green-dark hover:-translate-y-1 hover:shadow-none transition-all duration-200;
-  }
-
-  /* Tinder-style button */
-  .button-tinder {
-    @apply bg-gradient-to-r from-tinder-gradient-from to-tinder-gradient-to text-white font-semibold rounded-full shadow-tinder hover:opacity-90 hover:-translate-y-1 transition-all duration-200;
-  }
-
-  /* Card styles */
-  .card-duo {
-    @apply bg-white rounded-2xl p-5 border-2 border-gray-100 hover:border-duo-blue transition-all duration-200;
-  }
-
-  .card-tinder {
-    @apply bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300;
-  }
-
-  /* Profile card style (combining Tinder and Duolingo) */
-  .profile-card {
-    @apply bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300;
-  }
-  
   /* Floating animations */
   .animate-float-slow {
     animation: float 6s ease-in-out infinite;
@@ -195,11 +190,6 @@
   }
   .hide-scrollbar::-webkit-scrollbar {
     display: none; /* Chrome, Safari and Opera */
-  }
-
-  /* Additional styling classes */
-  .text-shadow-sm {
-    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
   }
   
   /* Mobile-specific utilities */
@@ -269,6 +259,25 @@
     
     .mobile-pb-20 {
       padding-bottom: 5rem !important;
+    }
+    
+    /* New mobile homepage specific styles */
+    .mobile-cta-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    
+    .mobile-trust-signal {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid #f3f4f6;
     }
   }
 }
@@ -362,5 +371,24 @@
   /* Card adjustments */
   .card-hover {
     @apply mobile-shadow-lg;
+  }
+  
+  /* Homepage hero section mobile specific styles */
+  section.relative.overflow-hidden.bg-gradient-to-r {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+  
+  /* Mobile hero heading */
+  section.relative.overflow-hidden.bg-gradient-to-r h1 {
+    font-size: 2.25rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  /* Mobile hero description */
+  section.relative.overflow-hidden.bg-gradient-to-r p.text-lg {
+    font-size: 1.125rem !important;
+    margin-bottom: 1.5rem !important;
   }
 }
