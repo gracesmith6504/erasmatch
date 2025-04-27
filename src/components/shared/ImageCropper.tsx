@@ -24,26 +24,30 @@ const ImageCropper = ({ imageUrl, onSave, onCancel }: ImageCropperProps) => {
       backgroundColor: "#f1f5f9"
     });
 
-    FabricImage.fromURL(imageUrl, (img) => {
-      const scale = Math.min(
-        fabricCanvas.width! / img.width!,
-        fabricCanvas.height! / img.height!
-      );
+    // Fix: Use the correct method signature for loading images in Fabric.js v6
+    FabricImage.fromURL(
+      imageUrl, 
+      (img) => {
+        const scale = Math.min(
+          fabricCanvas.width! / img.width!,
+          fabricCanvas.height! / img.height!
+        );
 
-      img.scale(scale);
-      img.center();
-      img.setControlsVisibility({
-        mt: true, 
-        mb: true, 
-        ml: true, 
-        mr: true,
-        mtr: true
-      });
+        img.scale(scale);
+        img.center();
+        img.setControlsVisibility({
+          mt: true, 
+          mb: true, 
+          ml: true, 
+          mr: true,
+          mtr: true
+        });
 
-      fabricCanvas.add(img);
-      fabricCanvas.setActiveObject(img);
-      fabricCanvas.renderAll();
-    });
+        fabricCanvas.add(img);
+        fabricCanvas.setActiveObject(img);
+        fabricCanvas.renderAll();
+      }
+    );
 
     setCanvas(fabricCanvas);
 
@@ -56,9 +60,11 @@ const ImageCropper = ({ imageUrl, onSave, onCancel }: ImageCropperProps) => {
     if (!canvas) return;
     
     try {
+      // Fix: Add the required 'multiplier' property to toDataURL options
       const dataUrl = canvas.toDataURL({
         format: 'png',
-        quality: 0.8
+        quality: 0.8,
+        multiplier: 1 // Add the required multiplier property
       });
       onSave(dataUrl);
     } catch (error) {
