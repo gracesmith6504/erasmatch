@@ -32,7 +32,18 @@ const ImageCropper = ({ imageUrl, onSave, onCancel }: ImageCropperProps) => {
       );
 
       img.scale(scale);
-      img.center();
+      
+      // Fix: Use centerObject instead of the center() method
+      // Position the image in the center of the canvas
+      if (fabricCanvas.width && fabricCanvas.height) {
+        img.set({
+          left: fabricCanvas.width / 2,
+          top: fabricCanvas.height / 2,
+          originX: 'center',
+          originY: 'center'
+        });
+      }
+      
       img.setControlsVisibility({
         mt: true, 
         mb: true, 
