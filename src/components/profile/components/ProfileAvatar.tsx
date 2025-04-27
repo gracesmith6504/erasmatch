@@ -83,8 +83,6 @@ export const ProfileAvatar = ({
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         imageUrl={avatarUrl}
-        showEditButton
-        onEditClick={() => {}} // This will trigger the file upload input
       />
     </div>
   );
