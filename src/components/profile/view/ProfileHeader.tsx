@@ -4,8 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Profile } from "@/types";
 import { Upload } from "lucide-react";
-import { useState } from "react";
-import ImageModal from "@/components/shared/ImageModal";
 
 type ProfileHeaderProps = {
   profile: Profile;
@@ -13,8 +11,6 @@ type ProfileHeaderProps = {
 };
 
 export const ProfileHeader = ({ profile, isOwnProfile }: ProfileHeaderProps) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   const getInitials = (name: string | null) => {
     if (!name) return "?";
     return name
@@ -44,17 +40,12 @@ export const ProfileHeader = ({ profile, isOwnProfile }: ProfileHeaderProps) => 
 
   return (
     <div className="text-center px-4 pt-6 pb-4 bg-indigo-50 rounded-b-2xl">
-      <div 
-        onClick={() => profile.avatar_url && setIsModalOpen(true)}
-        className={profile.avatar_url ? "cursor-pointer transition-transform hover:scale-105" : ""}
-      >
-        <Avatar className="w-24 h-24 rounded-full mx-auto text-xl font-bold bg-indigo-200 text-white flex items-center justify-center">
-          <AvatarImage src={profile.avatar_url || undefined} alt={profile.name || "Profile"} />
-          <AvatarFallback>
-            {getInitials(profile.name)}
-          </AvatarFallback>
-        </Avatar>
-      </div>
+      <Avatar className="w-24 h-24 rounded-full mx-auto text-xl font-bold bg-indigo-200 text-white flex items-center justify-center">
+        <AvatarImage src={profile.avatar_url || undefined} alt={profile.name || "Profile"} />
+        <AvatarFallback>
+          {getInitials(profile.name)}
+        </AvatarFallback>
+      </Avatar>
       
       <h1 className="text-lg font-semibold mt-2">{profile.name}</h1>
       <p className="text-sm text-gray-500">{getSecondaryInfo()}</p>
@@ -69,12 +60,6 @@ export const ProfileHeader = ({ profile, isOwnProfile }: ProfileHeaderProps) => 
           </Link>
         </div>
       )}
-
-      <ImageModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        imageUrl={profile.avatar_url}
-      />
     </div>
   );
 };
