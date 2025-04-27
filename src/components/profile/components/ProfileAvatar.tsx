@@ -2,9 +2,7 @@
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import ImageModal from "@/components/shared/ImageModal";
-import React from "react";
-import { toast } from "sonner";
+import { Upload } from "lucide-react";
 
 type ProfileAvatarProps = {
   name: string | null;
@@ -22,8 +20,6 @@ export const ProfileAvatar = ({
   uploadStatus,
   handleFileUpload,
 }: ProfileAvatarProps) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   const getInitials = (name: string | null) => {
     if (!name) return "?";
     return name
@@ -36,25 +32,21 @@ export const ProfileAvatar = ({
 
   return (
     <div className="relative">
-      <div 
-        onClick={() => avatarUrl && setIsModalOpen(true)}
-        className={avatarUrl ? "cursor-pointer" : ""}
-      >
-        <Avatar className="w-24 h-24 rounded-full mx-auto text-xl font-bold bg-indigo-100 text-indigo-700 flex items-center justify-center">
-          <AvatarImage
-            src={avatarUrl || undefined}
-            alt={name || "Profile"}
-            className="w-full h-full object-cover"
-            width={96}
-            height={96}
-            loading="lazy"
-            decoding="async"
-          />
-          <AvatarFallback className="flex items-center justify-center">
-            {getInitials(name)}
-          </AvatarFallback>
-        </Avatar>
-      </div>
+      <Avatar className="w-24 h-24 rounded-full mx-auto text-xl font-bold bg-indigo-100 text-indigo-700 flex items-center justify-center">
+        <AvatarImage
+          src={avatarUrl || undefined}
+          alt={name || "Profile"}
+          className="w-full h-full object-cover"
+          width={96}
+          height={96}
+          loading="lazy"
+          decoding="async"
+        />
+
+        <AvatarFallback className="flex items-center justify-center">
+          {getInitials(name)}
+        </AvatarFallback>
+      </Avatar>
       
       <div className="mt-2">
         {!uploadStatus.uploading ? (
@@ -78,12 +70,6 @@ export const ProfileAvatar = ({
       {uploadStatus.error && (
         <p className="text-xs text-red-500 mt-1">{uploadStatus.error}</p>
       )}
-
-      <ImageModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        imageUrl={avatarUrl}
-      />
     </div>
   );
 };
