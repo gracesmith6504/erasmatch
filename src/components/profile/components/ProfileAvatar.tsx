@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
@@ -42,9 +43,28 @@ export const ProfileAvatar = ({
       // Create a File object from the blob
       const file = new File([blob], 'profile-picture.png', { type: 'image/png' });
       
-      // Use the existing file upload handler
-      const event = { target: { files: [file] } } as React.ChangeEvent<HTMLInputElement>;
-      handleFileUpload(event);
+      // Create a proper synthetic event that matches React.ChangeEvent<HTMLInputElement>
+      const mockEvent = {
+        target: { 
+          files: [file] 
+        },
+        currentTarget: { files: [file] },
+        nativeEvent: new Event('change'),
+        bubbles: true,
+        cancelable: true,
+        defaultPrevented: false,
+        eventPhase: 0,
+        isTrusted: true,
+        preventDefault: () => {},
+        isDefaultPrevented: () => false,
+        stopPropagation: () => {},
+        isPropagationStopped: () => false,
+        persist: () => {},
+        timeStamp: Date.now(),
+        type: 'change'
+      } as unknown as React.ChangeEvent<HTMLInputElement>;
+      
+      handleFileUpload(mockEvent);
     } catch (error) {
       console.error('Error processing cropped image:', error);
       toast.error("Failed to save cropped image. Please try again.");
