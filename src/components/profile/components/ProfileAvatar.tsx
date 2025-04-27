@@ -22,8 +22,6 @@ export const ProfileAvatar = ({
   uploadStatus,
   handleFileUpload,
 }: ProfileAvatarProps) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  
   const getInitials = (name: string | null) => {
     if (!name) return "?";
     return name
@@ -34,65 +32,22 @@ export const ProfileAvatar = ({
       .substring(0, 2);
   };
 
-  const handleCropComplete = async (croppedImage: string) => {
-    try {
-      // Convert base64 to blob
-      const response = await fetch(croppedImage);
-      const blob = await response.blob();
-      
-      // Create a File object from the blob
-      const file = new File([blob], 'profile-picture.png', { type: 'image/png' });
-      
-      // Create a proper synthetic event that matches React.ChangeEvent<HTMLInputElement>
-      const mockEvent = {
-        target: { 
-          files: [file] 
-        },
-        currentTarget: { files: [file] },
-        nativeEvent: new Event('change'),
-        bubbles: true,
-        cancelable: true,
-        defaultPrevented: false,
-        eventPhase: 0,
-        isTrusted: true,
-        preventDefault: () => {},
-        isDefaultPrevented: () => false,
-        stopPropagation: () => {},
-        isPropagationStopped: () => false,
-        persist: () => {},
-        timeStamp: Date.now(),
-        type: 'change'
-      } as unknown as React.ChangeEvent<HTMLInputElement>;
-      
-      handleFileUpload(mockEvent);
-    } catch (error) {
-      console.error('Error processing cropped image:', error);
-      toast.error("Failed to save cropped image. Please try again.");
-    }
-  };
-
   return (
     <div className="relative">
-      <div 
-        onClick={() => avatarUrl && setIsModalOpen(true)}
-        className={avatarUrl ? "cursor-pointer transition-transform hover:scale-105" : ""}
-      >
-        <Avatar className="w-24 h-24 rounded-full mx-auto text-xl font-bold bg-indigo-100 text-indigo-700 flex items-center justify-center">
-          <AvatarImage
-            src={avatarUrl || undefined}
-            alt={name || "Profile"}
-            className="w-full h-full object-cover"
-            width={96}
-            height={96}
-            loading="lazy"
-            decoding="async"
-          />
-
-          <AvatarFallback className="flex items-center justify-center">
-            {getInitials(name)}
-          </AvatarFallback>
-        </Avatar>
-      </div>
+      <Avatar className="w-24 h-24 rounded-full mx-auto text-xl font-bold bg-indigo-100 text-indigo-700 flex items-center justify-center">
+        <AvatarImage
+          src={avatarUrl || undefined}
+          alt={name || "Profile"}
+          className="w-full h-full object-cover"
+          width={96}
+          height={96}
+          loading="lazy"
+          decoding="async"
+        />
+        <AvatarFallback className="flex items-center justify-center">
+          {getInitials(name)}
+        </AvatarFallback>
+      </Avatar>
       
       <div className="mt-2">
         {!uploadStatus.uploading ? (
@@ -116,14 +71,6 @@ export const ProfileAvatar = ({
       {uploadStatus.error && (
         <p className="text-xs text-red-500 mt-1">{uploadStatus.error}</p>
       )}
-
-      <ImageModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        imageUrl={avatarUrl}
-        showEditButton={true}
-        onCropComplete={handleCropComplete}
-      />
     </div>
   );
 };
