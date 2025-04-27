@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { Upload } from "lucide-react";
+import ImageModal from "@/components/shared/ImageModal";
 
 type ProfileAvatarProps = {
   name: string | null;
@@ -20,6 +20,8 @@ export const ProfileAvatar = ({
   uploadStatus,
   handleFileUpload,
 }: ProfileAvatarProps) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const getInitials = (name: string | null) => {
     if (!name) return "?";
     return name
@@ -30,23 +32,33 @@ export const ProfileAvatar = ({
       .substring(0, 2);
   };
 
+  const handleEditClick = () => {
+    document.getElementById('avatar-upload')?.click();
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="relative">
-      <Avatar className="w-24 h-24 rounded-full mx-auto text-xl font-bold bg-indigo-100 text-indigo-700 flex items-center justify-center">
-        <AvatarImage
-          src={avatarUrl || undefined}
-          alt={name || "Profile"}
-          className="w-full h-full object-cover"
-          width={96}
-          height={96}
-          loading="lazy"
-          decoding="async"
-        />
+      <div 
+        onClick={() => avatarUrl && setIsModalOpen(true)}
+        className={avatarUrl ? "cursor-pointer transition-transform hover:scale-105" : ""}
+      >
+        <Avatar className="w-24 h-24 rounded-full mx-auto text-xl font-bold bg-indigo-100 text-indigo-700 flex items-center justify-center">
+          <AvatarImage
+            src={avatarUrl || undefined}
+            alt={name || "Profile"}
+            className="w-full h-full object-cover"
+            width={96}
+            height={96}
+            loading="lazy"
+            decoding="async"
+          />
 
-        <AvatarFallback className="flex items-center justify-center">
-          {getInitials(name)}
-        </AvatarFallback>
-      </Avatar>
+          <AvatarFallback className="flex items-center justify-center">
+            {getInitials(name)}
+          </AvatarFallback>
+        </Avatar>
+      </div>
       
       <div className="mt-2">
         {!uploadStatus.uploading ? (
@@ -70,6 +82,14 @@ export const ProfileAvatar = ({
       {uploadStatus.error && (
         <p className="text-xs text-red-500 mt-1">{uploadStatus.error}</p>
       )}
+
+      <ImageModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        imageUrl={avatarUrl}
+        showEditButton={true}
+        onEditClick={handleEditClick}
+      />
     </div>
   );
 };
