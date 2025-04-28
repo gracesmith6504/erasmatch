@@ -75,7 +75,7 @@ export function UniversityDropdown({
       >
         <Command>
           <CommandInput 
-            placeholder="Search by name..." 
+            placeholder="Search by name,city,country..." 
             value={searchQuery}
             onValueChange={onSearchChange}
             className="bg-white"
