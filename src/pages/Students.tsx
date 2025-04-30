@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Profile } from "@/types";
 import { useStudentsData } from "@/hooks/useStudentsData";
@@ -9,7 +10,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Users, MapPin } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { WelcomeBanner } from "@/components/WelcomeBanner";
-import { useInitialUserSelection } from "@/hooks/useInitialUserSelection";
+import { useOnboardingBanner } from "@/hooks/useOnboardingBanner";
 
 type StudentsProps = {
   profiles: Profile[];
@@ -42,7 +43,7 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
   }, []);
 
   const location = useLocation();
-  const { showBanner, cityName } = useInitialUserSelection(currentUserId);
+  const { showBanner, cityName } = useOnboardingBanner(currentUserId);
   
   // Store onboarding completion info when coming from onboarding
   useEffect(() => {
