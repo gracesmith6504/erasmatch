@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
@@ -20,22 +19,23 @@ export const DestinationUniversityStep = ({
   onUpdateProfile,
 }: DestinationUniversityStepProps) => {
   const [university, setUniversity] = useState(initialValue);
+  const [city, setCity] = useState<string | null>(null); // ✅ Track selected city
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { universities } = useUniversitySearch(); // ✅ Get university list with city info
 
   const handleChange = (value: string) => {
     setUniversity(value);
+
+    const matched = universities.find((u) => u.name === value);
+    setCity(matched?.city ?? null); // ✅ Set city based on match
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const selected = universities.find((u) => u.name === university);
-    const city = selected?.city || null;
-    
     try {
-      const success = await onUpdateProfile({ university, city });
+      const success = await onUpdateProfile({ university, city }); // ✅ Send both
       if (success) {
         onNext();
       }
