@@ -13,6 +13,7 @@ import Students from "@/pages/Students";
 import Messages from "@/pages/Messages";
 import Groups from "@/pages/Groups";
 import NotFound from "@/pages/NotFound";
+import Onboarding from "@/pages/Onboarding"; // Add import for new Onboarding page
 
 // Contexts
 import { useAuth } from "@/contexts/AuthContext";
@@ -42,9 +43,17 @@ const AppRoutes = () => {
         path="/auth" 
         element={
           isAuthenticated ? 
-          <Navigate to="/" /> : 
+          <Navigate to="/onboarding" /> : // Redirect to onboarding if authenticated
           <Auth onLogin={handleLogin} />
         } 
+      />
+      <Route 
+        path="/onboarding" 
+        element={
+          <ProtectedRoute>
+            <Onboarding />
+          </ProtectedRoute>
+        }
       />
       <Route 
         path="/profile" 
