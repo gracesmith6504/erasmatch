@@ -79,7 +79,6 @@ export const DestinationUniversityStep = ({
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="w-full flex flex-col gap-2">
-            {/* Autocomplete input */}
             <UniversityAutocomplete
               value={university}
               onChange={handleChange}
@@ -87,7 +86,7 @@ export const DestinationUniversityStep = ({
               required={false}
             />
 
-            {/* City below input if university selected */}
+            {/* City label if university is selected */}
             {university && (
               <div className="flex items-center text-sm text-gray-600 px-1">
                 <MapPin className="h-4 w-4 mr-1 text-erasmatch-green shrink-0" />
@@ -97,17 +96,15 @@ export const DestinationUniversityStep = ({
               </div>
             )}
 
-            {/* Manual entry prompt if no university selected */}
-            {!university && (
-              <div className="text-center">
-                <p
-                  onClick={() => setUniversity("")}
-                  className="text-xs text-gray-500 underline cursor-pointer px-2 pt-1"
-                >
-                  Can’t find your university? Enter it manually
-                </p>
-              </div>
-            )}
+            {/* 🔁 Always-visible manual entry link */}
+            <div className="text-center mt-1">
+              <p
+                onClick={() => setUniversity("")}
+                className="text-xs text-gray-500 underline cursor-pointer"
+              >
+                Can’t find your university? Enter it manually
+              </p>
+            </div>
           </div>
 
           <div className="flex flex-col gap-3">
