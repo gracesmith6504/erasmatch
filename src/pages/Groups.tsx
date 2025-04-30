@@ -1,5 +1,7 @@
-
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { WelcomeBanner } from "@/components/WelcomeBanner";
+import { useInitialUserSelection } from "@/hooks/useInitialUserSelection";
 import { useData } from "@/contexts/DataContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProfileContext } from "@/components/profile/ProfileContext";
@@ -12,8 +14,21 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
 
 const Groups = () => {
+  const location = useLocation();
+  const currentUserId = localStorage.getItem('userId'); // This is how the app gets the user ID
+  const { showBanner, cityName } = useInitialUserSelection(currentUserId);
+  
+  // Store onboarding completion info when coming from onboarding
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("from") === "onboarding") {
+      sessionStorage.setItem("justCompletedOnboarding", "true");
+      // City will be fetched in the hook
+    }
+  }, [location]);
+  
   const { profiles } = useData();
-  const { currentUserId } = useAuth();
+  const { currentUserId: authCurrentUserId } = useAuth();
   const { profile: currentUserProfile } = useProfileContext();
   const isMobile = useIsMobile();
   
@@ -50,7 +65,7 @@ const Groups = () => {
           {selectedGroupChat ? (
             <GroupChatPanel 
               universityName={selectedGroupChat}
-              currentUserId={currentUserId!}
+              currentUserId={authCurrentUserId!}
               profiles={profiles}
               onBack={handleBack}
               isFullScreen={true}
@@ -58,7 +73,7 @@ const Groups = () => {
           ) : selectedCityChat ? (
             <CityPanel
               cityName={selectedCityChat}
-              currentUserId={currentUserId!}
+              currentUserId={authCurrentUserId!}
               profiles={profiles}
               onBack={handleBack}
               isFullScreen={true}
@@ -72,6 +87,10 @@ const Groups = () => {
   // Cards view for listing available groups
   return (
     <div className="max-w-7xl mx-auto py-6 md:py-8 px-4 sm:px-6 lg:px-8">
+      {showBanner && (
+        <WelcomeBanner cityName={cityName} variant="groups" />
+      )}
+      
       <h1 className="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8">Join Group Chats</h1>
       
       <div className="space-y-4 md:space-y-6">

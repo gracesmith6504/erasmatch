@@ -1,57 +1,58 @@
 
-import { useEffect } from "react";
-import { Profile, ChatThread } from "@/types";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
-export function useInitialUserSelection(
-  initialSelectedUser: string | null,
-  profiles: Profile[],
-  threads: ChatThread[],
-  selectedThread: ChatThread | null,
-  isMobile: boolean,
-  activeTab: string,
-  setSelectedThread: (thread: ChatThread | null) => void,
-  setActiveTab: (tab: any) => void,
-  setSelectedGroupChat: (name: string | null) => void,
-  setSelectedCityChat: (name: string | null) => void,
-  refreshKey: number
-) {
-  // Handle initial user selection from URL params
+export const useInitialUserSelection = (currentUserId: string | null) => {
+  const [showBanner, setShowBanner] = useState(false);
+  const [cityName, setCityName] = useState<string | null>(null);
+  const location = useLocation();
+  
   useEffect(() => {
-    if (initialSelectedUser && !selectedThread) {
-      console.log("Looking for user with ID:", initialSelectedUser);
+    // Check if the user just completed onboarding
+    const justCompletedOnboarding = sessionStorage.getItem("justCompletedOnboarding");
+
+    if (justCompletedOnboarding) {
+      setShowBanner(true);
+      const city = sessionStorage.getItem("userCity");
+      setCityName(city);
       
-      // Find the thread with the selected user
-      const thread = threads.find(
-        t => t.partner.id === initialSelectedUser
-      );
-      
-      if (thread) {
-        console.log("Found thread for user:", thread.partner.name);
-        setSelectedThread(thread);
-        
-        // Set active tab to direct messages
-        setActiveTab("direct");
-      } else {
-        console.log("No thread found for user ID:", initialSelectedUser);
-        
-        // If no thread exists yet, find the user profile
-        const selectedUserProfile = profiles.find(
-          profile => profile.id === initialSelectedUser
-        );
-        
-        if (selectedUserProfile) {
-          console.log("Found profile for user:", selectedUserProfile.name);
-          
-          // Create a new thread with this user
-          const newThread: ChatThread = {
-            partner: selectedUserProfile,
-            lastMessage: null
-          };
-          
-          setSelectedThread(newThread);
-          setActiveTab("direct");
-        }
-      }
+      // Clear the flag
+      sessionStorage.removeItem("justCompletedOnboarding");
+      sessionStorage.removeItem("userCity");
     }
-  }, [initialSelectedUser, threads, selectedThread, profiles, refreshKey]);
-}
+    
+    // For manual testing, we can also check the query string
+    const params = new URLSearchParams(location.search);
+    if (params.get("showBanner") === "true") {
+      setShowBanner(true);
+    }
+    
+    // If there's no city yet, fetch it from the user's profile
+    if (!cityName && currentUserId) {
+      const fetchUserCity = async () => {
+        try {
+          const { data, error } = await supabase
+            .from("profiles")
+            .select("city")
+            .eq("id", currentUserId)
+            .single();
+          
+          if (data && !error) {
+            setCityName(data.city);
+          }
+        } catch (err) {
+          console.error("Error fetching user city:", err);
+        }
+      };
+      
+      fetchUserCity();
+    }
+  }, [location.search, currentUserId, cityName]);
+  
+  return {
+    showBanner,
+    cityName,
+    setShowBanner
+  };
+};

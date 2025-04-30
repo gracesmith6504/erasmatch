@@ -8,6 +8,7 @@ import { HomeUniversityStep } from "./steps/HomeUniversityStep";
 import { CourseStep } from "./steps/CourseStep";
 import { InterestsStep } from "./steps/InterestsStep";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 export const OnboardingFlow = () => {
   const navigate = useNavigate();
@@ -34,13 +35,43 @@ export const OnboardingFlow = () => {
     }
   };
 
+  const checkDestinationCityUsers = async (city: string | null) => {
+    if (!city) return '/students?from=onboarding'; // Default redirect if no city
+    
+    try {
+      const { count, error } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('city', city)
+        .neq('id', currentUserProfile?.id || ''); // Exclude current user
+      
+      if (error) throw error;
+      
+      // Set sessionStorage to indicate completion
+      sessionStorage.setItem("justCompletedOnboarding", "true");
+      if (city) {
+        sessionStorage.setItem("userCity", city);
+      }
+      
+      // Redirect based on user count with query param
+      return (count && count > 2) ? '/groups?from=onboarding' : '/students?from=onboarding';
+    } catch (error) {
+      console.error('Error checking destination city users:', error);
+      return '/students?from=onboarding'; // Default fallback
+    }
+  };
+
   const handleCompleteOnboarding = async () => {
     try {
       await handleProfileUpdate({
         onboarding_complete: true,
       });
+      
       toast.success("Welcome to ErasMatch!");
-      navigate("/students");
+      
+      // Determine where to redirect based on city population
+      const redirectPath = await checkDestinationCityUsers(currentUserProfile?.city);
+      navigate(redirectPath);
     } catch (error: any) {
       toast.error("Failed to complete onboarding: " + error.message);
     }
