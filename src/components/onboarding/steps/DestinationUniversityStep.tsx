@@ -4,6 +4,7 @@ import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import UniversityAutocomplete from "@/components/UniversityAutocomplete";
+import { useUniversitySearch } from "@/components/university/useUniversitySearch";
 
 type DestinationUniversityStepProps = {
   initialValue: string;
@@ -20,6 +21,7 @@ export const DestinationUniversityStep = ({
 }: DestinationUniversityStepProps) => {
   const [university, setUniversity] = useState(initialValue);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { universities } = useUniversitySearch(); // ✅ Get university list with city info
 
   const handleChange = (value: string) => {
     setUniversity(value);
@@ -28,9 +30,12 @@ export const DestinationUniversityStep = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    const selected = universities.find((u) => u.name === university);
+    const city = selected?.city || null;
     
     try {
-      const success = await onUpdateProfile({ university });
+      const success = await onUpdateProfile({ university, city });
       if (success) {
         onNext();
       }
