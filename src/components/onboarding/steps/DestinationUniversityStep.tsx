@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, MapPin } from "lucide-react";
 import UniversityAutocomplete from "@/components/UniversityAutocomplete";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -25,7 +25,6 @@ export const DestinationUniversityStep = ({
   const handleChange = async (value: string) => {
     setUniversity(value);
 
-    // ✅ Lookup city from universities table
     try {
       const { data, error } = await supabase
         .from("universities")
@@ -79,13 +78,36 @@ export const DestinationUniversityStep = ({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="w-full">
+          <div className="w-full flex flex-col gap-2">
+            {/* Autocomplete input */}
             <UniversityAutocomplete
               value={university}
               onChange={handleChange}
               label=""
               required={false}
             />
+
+            {/* City below input if university selected */}
+            {university && (
+              <div className="flex items-center text-sm text-gray-600 px-1">
+                <MapPin className="h-4 w-4 mr-1 text-erasmatch-green shrink-0" />
+                <span className="truncate">
+                  {city ? city : "City not available for this university"}
+                </span>
+              </div>
+            )}
+
+            {/* Manual entry prompt if no university selected */}
+            {!university && (
+              <div className="text-center">
+                <p
+                  onClick={() => setUniversity("")}
+                  className="text-xs text-gray-500 underline cursor-pointer px-2 pt-1"
+                >
+                  Can’t find your university? Enter it manually
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col gap-3">
