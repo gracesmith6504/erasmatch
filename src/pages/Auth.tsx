@@ -1,4 +1,3 @@
-
 import { useState, FormEvent, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -97,12 +96,8 @@ const Auth = ({ onLogin }: AuthProps) => {
           onLogin(email);
           toast.success("Account created successfully!");
           
-          // Navigate to returnTo URL if provided, otherwise go to profile
-          if (returnTo) {
-            navigate(returnTo);
-          } else {
-            navigate("/profile");
-          }
+          // Changed: Navigate to onboarding instead of profile or returnTo
+          navigate("/onboarding");
           return;
         } else {
           toast.info("Please check your email to confirm your registration");
@@ -118,7 +113,7 @@ const Auth = ({ onLogin }: AuthProps) => {
         toast.success("Welcome back!");
         onLogin(email);
         
-        // Navigate to returnTo URL if provided, otherwise go to home
+        // If returning user, navigate to returnTo URL if provided, otherwise go to home
         if (returnTo) {
           navigate(returnTo);
         } else {
