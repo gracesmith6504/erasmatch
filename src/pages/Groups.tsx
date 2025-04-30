@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { WelcomeBanner } from "@/components/WelcomeBanner";
-import { useInitialUserSelection } from "@/hooks/useInitialUserSelection";
+import { useOnboardingBanner } from "@/hooks/useOnboardingBanner";
 import { useData } from "@/contexts/DataContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProfileContext } from "@/components/profile/ProfileContext";
@@ -16,7 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 const Groups = () => {
   const location = useLocation();
   const currentUserId = localStorage.getItem('userId'); // This is how the app gets the user ID
-  const { showBanner, cityName } = useInitialUserSelection(currentUserId);
+  const { showBanner, cityName } = useOnboardingBanner(currentUserId);
   
   // Store onboarding completion info when coming from onboarding
   useEffect(() => {
