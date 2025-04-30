@@ -3,7 +3,7 @@ import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import UniversityAutocomplete from "@/components/UniversityAutocomplete";
-import { useUniversitySearch } from "@/components/university/useUniversitySearch";
+import { supabase } from "@/integrations/supabase/client";
 
 type DestinationUniversityStepProps = {
   initialValue: string;
@@ -19,15 +19,30 @@ export const DestinationUniversityStep = ({
   onUpdateProfile,
 }: DestinationUniversityStepProps) => {
   const [university, setUniversity] = useState(initialValue);
-  const [city, setCity] = useState<string | null>(null); // ✅ Track selected city
+  const [city, setCity] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { universities } = useUniversitySearch(); // ✅ Get university list with city info
 
-  const handleChange = (value: string) => {
+  const handleChange = async (value: string) => {
     setUniversity(value);
 
-    const matched = universities.find((u) => u.name === value);
-    setCity(matched?.city ?? null); // ✅ Set city based on match
+    // ✅ Lookup city from universities table
+    try {
+      const { data, error } = await supabase
+        .from("universities")
+        .select("city")
+        .eq("name", value)
+        .single();
+
+      if (error) {
+        console.error("Failed to fetch city:", error);
+        setCity(null);
+      } else {
+        setCity(data?.city || null);
+      }
+    } catch (err) {
+      console.error("Lookup error:", err);
+      setCity(null);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,7 +50,7 @@ export const DestinationUniversityStep = ({
     setIsSubmitting(true);
 
     try {
-      const success = await onUpdateProfile({ university, city }); // ✅ Send both
+      const success = await onUpdateProfile({ university, city });
       if (success) {
         onNext();
       }
