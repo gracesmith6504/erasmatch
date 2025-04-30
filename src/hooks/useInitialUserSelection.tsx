@@ -1,58 +1,81 @@
 
-import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { useEffect } from "react";
+import { Profile, ChatThread } from "@/types";
 
-export const useInitialUserSelection = (currentUserId: string | null) => {
-  const [showBanner, setShowBanner] = useState(false);
-  const [cityName, setCityName] = useState<string | null>(null);
-  const location = useLocation();
-  
+interface InitialUserSelectionProps {
+  initialSelectedUserId: string | null;
+  profiles: Profile[];
+  threads: ChatThread[];
+  selectedThread: ChatThread | null;
+  isMobile: boolean;
+  viewMode?: string;
+  setSelectedThread: (thread: ChatThread | null) => void;
+  setShowGroupsList?: () => void;
+  setShowCityList?: () => void;
+  setSelectedView?: (view: string) => void;
+  refreshKey?: number;
+}
+
+export const useInitialUserSelection = ({
+  initialSelectedUserId,
+  profiles,
+  threads,
+  selectedThread,
+  isMobile,
+  viewMode = "direct",
+  setSelectedThread,
+  setShowGroupsList = () => {},
+  setShowCityList = () => {},
+  setSelectedView = () => {},
+  refreshKey = 0
+}: InitialUserSelectionProps) => {
   useEffect(() => {
-    // Check if the user just completed onboarding
-    const justCompletedOnboarding = sessionStorage.getItem("justCompletedOnboarding");
+    if (!initialSelectedUserId || selectedThread?.partner?.id === initialSelectedUserId) {
+      return;
+    }
 
-    if (justCompletedOnboarding) {
-      setShowBanner(true);
-      const city = sessionStorage.getItem("userCity");
-      setCityName(city);
+    // Find the profile for the initial selected user
+    const userProfile = profiles.find(p => p.id === initialSelectedUserId);
+    if (!userProfile) return;
+
+    // Find or create a thread for this user
+    const existingThread = threads.find(t => t.partner.id === initialSelectedUserId);
+    
+    if (existingThread) {
+      setSelectedThread(existingThread);
       
-      // Clear the flag
-      sessionStorage.removeItem("justCompletedOnboarding");
-      sessionStorage.removeItem("userCity");
-    }
-    
-    // For manual testing, we can also check the query string
-    const params = new URLSearchParams(location.search);
-    if (params.get("showBanner") === "true") {
-      setShowBanner(true);
-    }
-    
-    // If there's no city yet, fetch it from the user's profile
-    if (!cityName && currentUserId) {
-      const fetchUserCity = async () => {
-        try {
-          const { data, error } = await supabase
-            .from("profiles")
-            .select("city")
-            .eq("id", currentUserId)
-            .single();
-          
-          if (data && !error) {
-            setCityName(data.city);
-          }
-        } catch (err) {
-          console.error("Error fetching user city:", err);
+      // Set the appropriate view for mobile
+      if (isMobile) {
+        if (viewMode === "direct") {
+          // Do nothing, the thread will be selected in MessagesContainer
+        } else if (viewMode === "groups") {
+          setShowGroupsList();
+        } else if (viewMode === "cities") {
+          setShowCityList();
         }
+        
+        setSelectedView("direct");
+      }
+    } else if (userProfile) {
+      // Create a new thread with this user
+      const newThread: ChatThread = {
+        partner: userProfile,
+        lastMessage: null
       };
       
-      fetchUserCity();
+      setSelectedThread(newThread);
     }
-  }, [location.search, currentUserId, cityName]);
-  
-  return {
-    showBanner,
-    cityName,
-    setShowBanner
-  };
+  }, [
+    initialSelectedUserId, 
+    profiles, 
+    threads, 
+    selectedThread, 
+    isMobile, 
+    viewMode, 
+    setSelectedThread,
+    setShowGroupsList,
+    setShowCityList,
+    setSelectedView,
+    refreshKey
+  ]);
 };
