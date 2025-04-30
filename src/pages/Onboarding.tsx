@@ -22,30 +22,15 @@ const Onboarding = () => {
       if (!loading && currentUserProfile?.onboarding_complete) {
         setLoadingRedirect(true);
         
-        try {
-          // Check how many users are in the same city
-          const city = currentUserProfile?.city;
-          if (city) {
-            const { count, error } = await supabase
-              .from('profiles')
-              .select('*', { count: 'exact', head: true })
-              .eq('city', city)
-              .neq('id', currentUserProfile?.id || '');
-              
-            if (error) throw error;
-            
-            // Redirect based on user count
-            const redirectPath = (count && count > 2) ? "/groups" : "/students";
-            navigate(redirectPath);
-          } else {
-            navigate("/students");
-          }
-        } catch (error) {
-          console.error("Error during redirect check:", error);
-          navigate("/students");
-        } finally {
-          setLoadingRedirect(false);
-        }
+        // Always redirect to groups page for completed onboarding
+        navigate("/groups");
+        
+        // Force a page reload to ensure fresh data
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+        
+        setLoadingRedirect(false);
       }
     };
     

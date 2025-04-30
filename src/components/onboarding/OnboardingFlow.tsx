@@ -53,11 +53,11 @@ export const OnboardingFlow = () => {
         sessionStorage.setItem("userCity", city);
       }
       
-      // Redirect based on user count with query param
-      return (count && count > 2) ? '/groups?from=onboarding' : '/students?from=onboarding';
+      // Always redirect to groups with the onboarding flag
+      return '/groups?from=onboarding';
     } catch (error) {
       console.error('Error checking destination city users:', error);
-      return '/students?from=onboarding'; // Default fallback
+      return '/groups?from=onboarding'; // Default to groups on error
     }
   };
 
@@ -69,9 +69,16 @@ export const OnboardingFlow = () => {
       
       toast.success("Welcome to ErasMatch!");
       
-      // Determine where to redirect based on city population
+      // Always redirect to groups page with onboarding flag
       const redirectPath = await checkDestinationCityUsers(currentUserProfile?.city);
+      
+      // Navigate to the groups page
       navigate(redirectPath);
+      
+      // Force a page reload after navigation to ensure fresh data
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
     } catch (error: any) {
       toast.error("Failed to complete onboarding: " + error.message);
     }
