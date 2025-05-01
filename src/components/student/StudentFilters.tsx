@@ -1,16 +1,15 @@
 import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { School, MapPin, X, User, ChevronDown, ChevronUp, Check } from "lucide-react";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { School, MapPin, X, User, ChevronDown, ChevronUp } from "lucide-react";
 import { PERSONALITY_TAGS } from "@/components/profile/constants";
-import { cn } from "@/lib/utils";
 
 interface StudentFiltersProps {
   universityFilter: string;
@@ -21,12 +20,6 @@ interface StudentFiltersProps {
   setPersonalityTagsFilter: (tags: string[]) => void;
   uniqueUniversities: string[];
   uniqueCities: string[];
-  universitySearchQuery: string;
-  setUniversitySearchQuery: (query: string) => void;
-  citySearchQuery: string;
-  setCitySearchQuery: (query: string) => void;
-  filteredUniversities: string[];
-  filteredCities: string[];
   resetFilters: () => void;
 }
 
@@ -39,17 +32,9 @@ const StudentFilters = ({
   setPersonalityTagsFilter,
   uniqueUniversities,
   uniqueCities,
-  universitySearchQuery,
-  setUniversitySearchQuery,
-  citySearchQuery,
-  setCitySearchQuery,
-  filteredUniversities,
-  filteredCities,
   resetFilters,
 }: StudentFiltersProps) => {
   const [showAllTags, setShowAllTags] = useState(false);
-  const [universityOpen, setUniversityOpen] = useState(false);
-  const [cityOpen, setCityOpen] = useState(false);
   
   // Check if any filter is active
   const isAnyFilterActive = universityFilter || cityFilter || personalityTagsFilter.length > 0;
@@ -94,149 +79,45 @@ const StudentFilters = ({
     !defaultVisibleTags.includes(tag.value)
   );
 
-  // Make sure we're not passing undefined to commandGroup for universities
-  const safeFilteredUniversities = filteredUniversities || [];
-  
-  // Make sure we're not passing undefined to commandGroup for cities
-  const safeFilteredCities = filteredCities || [];
-
   return (
     <div className="bg-white shadow-sm rounded-xl p-6 mb-8 border border-gray-100">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
-          <Popover open={universityOpen} onOpenChange={setUniversityOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                aria-expanded={universityOpen}
-                className="w-full justify-between h-12 border-gray-200 focus:border-erasmatch-blue"
-              >
-                <div className="flex items-center">
-                  <School className="mr-2 h-4 w-4 text-gray-400" />
-                  <span>{universityFilter ? universityFilter : "University"}</span>
-                </div>
-                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-full p-0">
-              <Command>
-                <CommandInput 
-                  placeholder="Search university..." 
-                  value={universitySearchQuery}
-                  onValueChange={setUniversitySearchQuery}
-                  className="h-10"
-                />
-                <CommandEmpty>No university found.</CommandEmpty>
-                <CommandGroup className="max-h-64 overflow-auto">
-                  <CommandItem
-                    key="all-universities"
-                    value="all-universities"
-                    onSelect={() => {
-                      setUniversityFilter("all-universities");
-                      setUniversityOpen(false);
-                    }}
-                    className="py-2"
-                  >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        universityFilter === "all-universities" ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                    <span>All Universities</span>
-                  </CommandItem>
-                  {safeFilteredUniversities.map((uni) => (
-                    <CommandItem
-                      key={uni}
-                      value={uni}
-                      onSelect={() => {
-                        setUniversityFilter(uni);
-                        setUniversityOpen(false);
-                      }}
-                      className="py-2"
-                    >
-                      <Check
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          universityFilter === uni ? "opacity-100" : "opacity-0"
-                        )}
-                      />
-                      {uni}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </Command>
-            </PopoverContent>
-          </Popover>
+          <Select value={universityFilter} onValueChange={setUniversityFilter}>
+            <SelectTrigger className="h-12 border-gray-200 focus:border-erasmatch-blue">
+              <div className="flex items-center">
+                <School className="mr-2 h-4 w-4 text-gray-400" />
+                <SelectValue placeholder="University" />
+              </div>
+            </SelectTrigger>
+            <SelectContent className="max-h-80">
+              <SelectItem value="all-universities">All Universities</SelectItem>
+              {uniqueUniversities.map((uni) => (
+                <SelectItem key={uni} value={uni}>
+                  {uni}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div>
-          <Popover open={cityOpen} onOpenChange={setCityOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                aria-expanded={cityOpen}
-                className="w-full justify-between h-12 border-gray-200 focus:border-erasmatch-blue"
-              >
-                <div className="flex items-center">
-                  <MapPin className="mr-2 h-4 w-4 text-gray-400" />
-                  <span>{cityFilter ? cityFilter : "City"}</span>
-                </div>
-                <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-full p-0">
-              <Command>
-                <CommandInput 
-                  placeholder="Search city..." 
-                  value={citySearchQuery}
-                  onValueChange={setCitySearchQuery}
-                  className="h-10"
-                />
-                <CommandEmpty>No city found.</CommandEmpty>
-                <CommandGroup className="max-h-64 overflow-auto">
-                  <CommandItem
-                    key="all-cities"
-                    value="all-cities"
-                    onSelect={() => {
-                      setCityFilter("all-cities");
-                      setCityOpen(false);
-                    }}
-                    className="py-2"
-                  >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        cityFilter === "all-cities" ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                    <span>All Cities</span>
-                  </CommandItem>
-                  {safeFilteredCities.map((city) => (
-                    <CommandItem
-                      key={city}
-                      value={city}
-                      onSelect={() => {
-                        setCityFilter(city);
-                        setCityOpen(false);
-                      }}
-                      className="py-2"
-                    >
-                      <Check
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          cityFilter === city ? "opacity-100" : "opacity-0"
-                        )}
-                      />
-                      {city}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </Command>
-            </PopoverContent>
-          </Popover>
+          <Select value={cityFilter} onValueChange={setCityFilter}>
+            <SelectTrigger className="h-12 border-gray-200 focus:border-erasmatch-blue">
+              <div className="flex items-center">
+                <MapPin className="mr-2 h-4 w-4 text-gray-400" />
+                <SelectValue placeholder="City" />
+              </div>
+            </SelectTrigger>
+            <SelectContent className="max-h-80">
+              <SelectItem value="all-cities">All Cities</SelectItem>
+              {uniqueCities.map((city) => (
+                <SelectItem key={city} value={city}>
+                  {city}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 

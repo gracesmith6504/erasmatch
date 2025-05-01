@@ -25,14 +25,8 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
     setCityFilter,
     personalityTagsFilter,
     setPersonalityTagsFilter,
-    universitySearchQuery,
-    setUniversitySearchQuery,
-    citySearchQuery,
-    setCitySearchQuery,
     uniqueUniversities,
     uniqueCities,
-    filteredUniversities,
-    filteredCities,
     filteredProfiles,
     loading,
     resetFilters
@@ -124,14 +118,8 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
             setCityFilter={setCityFilter}
             personalityTagsFilter={personalityTagsFilter}
             setPersonalityTagsFilter={setPersonalityTagsFilter}
-            universitySearchQuery={universitySearchQuery}
-            setUniversitySearchQuery={setUniversitySearchQuery}
-            citySearchQuery={citySearchQuery}
-            setCitySearchQuery={setCitySearchQuery}
             uniqueUniversities={uniqueUniversities}
             uniqueCities={uniqueCities}
-            filteredUniversities={filteredUniversities}
-            filteredCities={filteredCities}
             resetFilters={resetFilters}
           />
 
