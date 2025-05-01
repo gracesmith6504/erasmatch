@@ -31,33 +31,15 @@ export const CityPanel = ({
   const [hasSentMessage, setHasSentMessage] = useState(false);
   
   useEffect(() => {
-    const fetchParticipants = async () => {
-      try {
-        // Query profiles with a filter for deleted users
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('city', cityName)
-          .is('deleted_at', null);
-
-        if (error) throw error;
-
-        // Process profiles
-        const activeParticipants = data?.map(profile => ({
-          ...profile,
-          country: null,
-          interests: null,
-          personality_tags: profile.personality_tags || []
-        })) as unknown as Profile[];
-
-        setParticipants(activeParticipants || []);
-      } catch (error) {
-        console.error("Error fetching city participants:", error);
-      }
+    const getParticipants = () => {
+      const cityStudents = profiles.filter(
+        (profile) => profile.city === cityName
+      );
+      setParticipants(cityStudents);
     };
     
-    fetchParticipants();
-  }, [cityName]);
+    getParticipants();
+  }, [cityName, profiles]);
   
   useEffect(() => {
     const fetchMessages = async () => {

@@ -31,33 +31,15 @@ export const GroupChatPanel = ({
   const [hasSentMessage, setHasSentMessage] = useState(false);
   
   useEffect(() => {
-    const fetchParticipants = async () => {
-      try {
-        // Query profiles with a filter for deleted users
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('university', universityName)
-          .is('deleted_at', null);
-
-        if (error) throw error;
-
-        // Process profiles
-        const activeParticipants = data?.map(profile => ({
-          ...profile,
-          country: null,
-          interests: null,
-          personality_tags: profile.personality_tags || []
-        })) as unknown as Profile[];
-
-        setParticipants(activeParticipants || []);
-      } catch (error) {
-        console.error("Error fetching group participants:", error);
-      }
+    const getParticipants = () => {
+      const universityStudents = profiles.filter(
+        (profile) => profile.university === universityName
+      );
+      setParticipants(universityStudents);
     };
     
-    fetchParticipants();
-  }, [universityName]);
+    getParticipants();
+  }, [universityName, profiles]);
   
   useEffect(() => {
     const fetchMessages = async () => {

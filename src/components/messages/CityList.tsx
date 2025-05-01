@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { MapPin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -29,14 +28,10 @@ export const CityList = ({
       }
 
       try {
-        // Get participants count for the city using profiles with a filter for deleted users
-        const { data: cityParticipants, error: participantsError } = await supabase
-          .from("profiles")
-          .select("id")
-          .eq("city", currentUserProfile.city)
-          .is("deleted_at", null);
-        
-        if (participantsError) throw participantsError;
+        // Get participants count for the city
+        const cityResidents = profiles.filter(
+          (profile) => profile.city === currentUserProfile.city
+        );
         
         // Get latest message for the city
         const { data: latestMessages, error } = await supabase
@@ -52,7 +47,7 @@ export const CityList = ({
         
         const cityChat: CityChat = {
           city_name: currentUserProfile.city,
-          participants_count: cityParticipants?.length || 0,
+          participants_count: cityResidents.length,
           last_message: latestMessage 
             ? {
                 content: latestMessage.content,
