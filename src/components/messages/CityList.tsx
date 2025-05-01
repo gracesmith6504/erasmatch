@@ -29,11 +29,12 @@ export const CityList = ({
       }
 
       try {
-        // Get participants count for the city using active_profiles view
+        // Get participants count for the city using profiles with a filter for deleted users
         const { data: cityParticipants, error: participantsError } = await supabase
-          .from("active_profiles")
+          .from("profiles")
           .select("id")
-          .eq("city", currentUserProfile.city);
+          .eq("city", currentUserProfile.city)
+          .is("deleted_at", null);
         
         if (participantsError) throw participantsError;
         
