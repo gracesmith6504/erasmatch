@@ -4,7 +4,7 @@ import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { PERSONALITY_TAGS } from "@/components/profile/constants";
 import { Badge } from "@/components/ui/badge";
-import { Check } from "lucide-react";
+import { Check, Heart } from "lucide-react";
 
 type InterestsStepProps = {
   initialValue: string[];
@@ -70,18 +70,25 @@ export const InterestsStep = ({
       currentStep={5}
       totalSteps={5}
       onBack={onBack}
-      title="Last Step"
+      title="Final Step"
     >
       <div className="w-full max-w-md space-y-6">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">What describes you?</h1>
-          <p className="text-gray-500">
+          <div className="flex justify-center mb-5">
+            <div className="bg-pink-100 rounded-full w-16 h-16 flex items-center justify-center">
+              <Heart className="h-8 w-8 text-pink-500" />
+            </div>
+          </div>
+          <h1 className="text-2xl font-bold mb-2 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green bg-clip-text text-transparent">
+            What describes you?
+          </h1>
+          <p className="text-gray-500 mb-4">
             Select your interests to connect with like-minded students
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="flex flex-wrap gap-2 justify-center">
+          <div className="flex flex-wrap gap-2 justify-center p-4 bg-white rounded-xl shadow-sm border border-gray-100">
             {PERSONALITY_TAGS.map((tag) => {
               const isSelected = selectedTags.includes(tag.value);
               return (
@@ -90,7 +97,7 @@ export const InterestsStep = ({
                   variant={isSelected ? "default" : "outline"}
                   className={`cursor-pointer transition-all flex items-center ${
                     isSelected ? getTagColor(tag.value) : "hover:bg-gray-100"
-                  } px-4 py-2 text-base`}
+                  } px-4 py-2 text-base animate-fade-in`}
                   onClick={() => toggleTag(tag.value)}
                 >
                   {isSelected && <Check className="h-3 w-3 mr-1" />}
@@ -103,7 +110,7 @@ export const InterestsStep = ({
           <div className="flex flex-col gap-3">
             <Button
               type="submit"
-              className="w-full py-6"
+              className="w-full py-6 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green hover:opacity-90"
               disabled={isSubmitting}
             >
               Complete Profile

@@ -27,6 +27,7 @@ export const DestinationUniversityStep = ({
     setUniversity(value);
 
     try {
+      // Query the universities table to get city information
       const { data, error } = await supabase
         .from("universities")
         .select("city")
@@ -50,6 +51,7 @@ export const DestinationUniversityStep = ({
     setIsSubmitting(true);
 
     try {
+      // Save both university and city to the profile
       const success = await onUpdateProfile({ university, city });
       if (success) {
         onNext();
