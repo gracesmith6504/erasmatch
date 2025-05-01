@@ -72,7 +72,12 @@ const StudentList = ({ students }: StudentListProps) => {
             className="flex flex-col sm:flex-row items-center bg-white border border-gray-100 p-4 rounded-xl gap-4 hover:shadow-soft transition-all duration-300"
           >
             <Avatar className="h-16 w-16 border-2 border-white shadow-sm">
-              <AvatarImage src={student.avatar_url || undefined} />
+              {student.avatar_url ? (
+                <AvatarImage 
+                  src={student.avatar_url || undefined}
+                  loading="lazy" // Add lazy loading for avatars
+                />
+              ) : null}
               <AvatarFallback className="text-lg bg-gradient-to-br from-blue-100 to-purple-100 text-erasmatch-blue">
                 {getInitials(student.name)}
               </AvatarFallback>

@@ -2,8 +2,10 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { University } from "@/components/university/types";
+import { useUniversitiesCache } from "@/hooks/useUniversitiesCache";
 
 export function useUniversitiesData() {
+  const { universities: cachedUniversities, loading: cacheLoading } = useUniversitiesCache();
   const [universities, setUniversities] = useState<University[]>([]);
   const [filteredUniversities, setFilteredUniversities] = useState<University[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,85 +21,91 @@ export function useUniversitiesData() {
       try {
         setLoading(true);
         
-        // First, fetch all universities
-        const { data: universitiesData, error: universitiesError } = await supabase
-          .from('universities')
-          .select('*');
-
-        if (universitiesError) {
-          throw universitiesError;
-        }
-
-        if (!universitiesData) {
-          setUniversities([]);
-          setFilteredUniversities([]);
-          return;
-        }
-
-        // Then, fetch all profiles to count students per university
-        const { data: profilesData, error: profilesError } = await supabase
-          .from('profiles')
-          .select('university');
-
-        if (profilesError) {
-          throw profilesError;
-        }
-
-        // Count students per university
-        const studentCountMap = new Map<string, number>();
-        profilesData.forEach(profile => {
-          if (profile.university) {
-            const count = studentCountMap.get(profile.university) || 0;
-            studentCountMap.set(profile.university, count + 1);
-          }
-        });
-
-        // Combine university data with student counts and transform to correct type
-        const universitiesWithCounts = universitiesData.map(uni => {
-          // Convert JSON links to the expected format
-          let formattedLinks = null;
+        if (cachedUniversities.length > 0) {
+          // Use our cache for basic universities data
+          console.log("Using cached universities data as base");
           
-          if (uni.links && typeof uni.links === 'object') {
-            const linksObj = uni.links as Record<string, unknown>;
-            formattedLinks = {
-              housing: linksObj.housing as string | undefined,
-              transport: linksObj.transport as string | undefined,
-              student_groups: linksObj.student_groups as string | undefined
-            };
-          }
-          
-          return {
-            id: uni.id,
-            name: uni.name,
-            city: uni.city,
-            country: uni.country,
-            description: null, // Set default values for properties that might not exist
-            overview: uni.overview || null,
-            erasmus_tips: uni.erasmus_tips || null,
-            accommodation_info: uni.accommodation_info || null,
-            popular_courses: uni.popular_courses || null,
-            image_url: uni.image_url || null,
-            student_count: studentCountMap.get(uni.name) || 0,
-            links: formattedLinks
-          } as University;
-        });
+          // Then, fetch student counts from profiles table
+          const { data: profilesData, error: profilesError } = await supabase
+            .from('profiles')
+            .select('university')
+            .is('deleted_at', null);
 
-        // Sort by student count (descending)
-        const sortedUniversities = universitiesWithCounts.sort(
-          (a, b) => (b.student_count || 0) - (a.student_count || 0)
-        );
-        
-        setUniversities(sortedUniversities);
-        setFilteredUniversities(sortedUniversities);
-        
-        // Extract unique countries
-        const countries = sortedUniversities
-          .map(uni => uni.country)
-          .filter(Boolean) // Remove null/undefined values
-          .filter((country, index, self) => country !== null && self.indexOf(country) === index)
-          .sort();
-        
-        setUniqueCountries(countries as string[]);
+          if (profilesError) {
+            throw profilesError;
+          }
+
+          // Count students per university
+          const studentCountMap = new Map<string, number>();
+          profilesData?.forEach(profile => {
+            if (profile.university) {
+              const count = studentCountMap.get(profile.university) || 0;
+              studentCountMap.set(profile.university, count + 1);
+            }
+          });
+
+          // Now fetch additional university details (only those we need)
+          const { data: uniDetails, error: uniError } = await supabase
+            .from('universities')
+            .select('id, overview, erasmus_tips, accommodation_info, popular_courses, image_url, links');
+
+          if (uniError) {
+            throw uniError;
+          }
+
+          // Create a map for quick lookups
+          const detailsMap = new Map();
+          uniDetails?.forEach(uni => detailsMap.set(uni.id, uni));
+
+          // Combine university data with student counts and transform to correct type
+          const universitiesWithCounts = cachedUniversities.map(uni => {
+            // Get additional details if available
+            const details = detailsMap.get(uni.id);
+            
+            // Convert JSON links to the expected format
+            let formattedLinks = null;
+            if (details?.links && typeof details.links === 'object') {
+              const linksObj = details.links as Record<string, unknown>;
+              formattedLinks = {
+                housing: linksObj.housing as string | undefined,
+                transport: linksObj.transport as string | undefined,
+                student_groups: linksObj.student_groups as string | undefined
+              };
+            }
+            
+            return {
+              id: uni.id,
+              name: uni.name,
+              city: uni.city,
+              country: uni.country,
+              description: null,
+              overview: details?.overview || null,
+              erasmus_tips: details?.erasmus_tips || null,
+              accommodation_info: details?.accommodation_info || null,
+              popular_courses: details?.popular_courses || null,
+              image_url: details?.image_url || null,
+              student_count: studentCountMap.get(uni.name) || 0,
+              links: formattedLinks
+            } as University;
+          });
+
+          // Sort by student count (descending)
+          const sortedUniversities = universitiesWithCounts.sort(
+            (a, b) => (b.student_count || 0) - (a.student_count || 0)
+          );
+          
+          setUniversities(sortedUniversities);
+          setFilteredUniversities(sortedUniversities);
+          
+          // Extract unique countries
+          const countries = sortedUniversities
+            .map(uni => uni.country)
+            .filter(Boolean)
+            .filter((country, index, self) => country !== null && self.indexOf(country) === index)
+            .sort();
+          
+          setUniqueCountries(countries as string[]);
+        }
       } catch (err: any) {
         console.error("Error fetching universities:", err);
         setError(err.message);
@@ -106,8 +114,10 @@ export function useUniversitiesData() {
       }
     };
 
-    fetchUniversities();
-  }, []);
+    if (!cacheLoading && cachedUniversities.length > 0) {
+      fetchUniversities();
+    }
+  }, [cachedUniversities, cacheLoading]);
 
   // Filter universities based on search query and selected country
   useEffect(() => {
@@ -141,7 +151,7 @@ export function useUniversitiesData() {
   return {
     universities,
     filteredUniversities,
-    loading,
+    loading: loading || cacheLoading,
     error,
     searchQuery,
     setSearchQuery,
