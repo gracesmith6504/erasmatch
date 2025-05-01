@@ -88,9 +88,9 @@ export const DestinationUniversityStep = ({
           </p>
           
           <p className="text-sm text-gray-400">
-            You’ll instantly see others going to the same city — and yes, you can change it later.
+            You'll instantly see others going to the same city — and yes, you can change it later.
           </p>
-
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="w-full flex flex-col gap-2 bg-white rounded-xl p-4 shadow-sm border border-gray-100">

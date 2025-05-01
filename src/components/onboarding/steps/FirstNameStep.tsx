@@ -58,7 +58,7 @@ export const FirstNameStep = ({
             This is how it'll appear on your profile. <br />
             <span className="text-sm text-gray-400">You can change it later.</span>
           </p>
-
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <Input

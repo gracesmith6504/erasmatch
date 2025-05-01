@@ -66,9 +66,9 @@ export const HomeUniversityStep = ({
           </p>
           
           <p className="text-sm text-gray-400">
-            You’ll see students leaving from the same place. You can always update this later.
+            You'll see students leaving from the same place. You can always update this later.
           </p>
-
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="w-full bg-white rounded-xl p-4 shadow-sm border border-gray-100">
