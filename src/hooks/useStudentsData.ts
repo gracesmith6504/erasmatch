@@ -13,14 +13,15 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
   const [loadedProfiles, setLoadedProfiles] = useState<Profile[]>(initialProfiles);
   const [loading, setLoading] = useState(true);
 
-  // Fetch profiles from Supabase
+  // Fetch profiles from Supabase with optimized selection
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
+        // Only select the fields we need, not "*"
         const { data, error } = await supabase
           .from('profiles')
-          .select('*')
-          .is('deleted_at', null);  // Filter out deleted users
+          .select('id, name, university, city, semester, personality_tags, avatar_url, deleted_at, home_university')
+          .is('deleted_at', null);
         
         if (error) {
           throw error;

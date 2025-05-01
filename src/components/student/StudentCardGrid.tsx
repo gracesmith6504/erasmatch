@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
@@ -16,7 +17,7 @@ interface StudentCardGridProps {
   resetFilters: () => void;
 }
 
-const ITEMS_PER_PAGE = 40;
+const ITEMS_PER_PAGE = 20; // Reduced from 40 to 20 for better performance
 
 const StudentCardGrid = ({ filteredProfiles, resetFilters }: StudentCardGridProps) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,7 +57,7 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters }: StudentCardGridProp
   return (
     <div id="student-grid">
       <div className="mb-4 md:mb-6 text-sm text-gray-600">
-        Showing <span className="font-medium text-gray-900">{filteredProfiles.length}</span> students
+        Showing <span className="font-medium text-gray-900">{Math.min(currentProfiles.length, ITEMS_PER_PAGE)}</span> of <span className="font-medium text-gray-900">{filteredProfiles.length}</span> students
       </div>
 
       {filteredProfiles.length === 0 ? (
