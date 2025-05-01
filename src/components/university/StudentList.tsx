@@ -12,8 +12,8 @@ interface StudentListProps {
 }
 
 const StudentList = ({ students }: StudentListProps) => {
-  // Filter out deleted users
-  const activeStudents = students.filter(student => !student.deleted_at);
+  // No need to filter deleted users since we're using the active_profiles view
+  const activeStudents = students;
 
   const getInitials = (name: string | null) => {
     if (!name) return "?";

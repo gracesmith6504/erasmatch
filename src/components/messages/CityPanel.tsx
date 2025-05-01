@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile, CityMessage } from "@/types";
@@ -31,15 +30,32 @@ export const CityPanel = ({
   const [hasSentMessage, setHasSentMessage] = useState(false);
   
   useEffect(() => {
-    const getParticipants = () => {
-      const cityStudents = profiles.filter(
-        (profile) => profile.city === cityName
-      );
-      setParticipants(cityStudents);
+    const fetchParticipants = async () => {
+      try {
+        // Query the active_profiles view to get participants
+        const { data, error } = await supabase
+          .from('active_profiles')
+          .select('*')
+          .eq('city', cityName);
+
+        if (error) throw error;
+
+        // Process profiles
+        const activeParticipants = data?.map(profile => ({
+          ...profile,
+          country: null,
+          interests: null,
+          personality_tags: profile.personality_tags || []
+        })) as unknown as Profile[];
+
+        setParticipants(activeParticipants || []);
+      } catch (error) {
+        console.error("Error fetching city participants:", error);
+      }
     };
     
-    getParticipants();
-  }, [cityName, profiles]);
+    fetchParticipants();
+  }, [cityName]);
   
   useEffect(() => {
     const fetchMessages = async () => {
