@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -38,19 +37,26 @@ export function UniversityDropdown({
   required = false,
 }: UniversityDropdownProps) {
   const [open, setOpen] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null); // ✅
 
   const handleSelect = (universityName: string) => {
     onChange(universityName);
     setOpen(false);
   };
   
-  // Position the popover properly on mobile
   useEffect(() => {
     if (open && popoverRef.current) {
       const popoverElement = popoverRef.current;
       popoverElement.style.width = `${popoverElement.offsetWidth}px`;
     }
   }, [open, popoverRef]);
+
+  // ✅ Reset scroll to top when universities list changes
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+    }
+  }, [universities]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -75,12 +81,12 @@ export function UniversityDropdown({
       >
         <Command>
           <CommandInput 
-            placeholder="Search by name,city,country..." 
+            placeholder="Search by name, city, country..." 
             value={searchQuery}
             onValueChange={onSearchChange}
             className="bg-white"
           />
-          <CommandList className="max-h-[300px] overflow-y-auto">
+          <CommandList ref={scrollRef} className="max-h-[300px] overflow-y-auto">
             <CommandEmpty>
               {isLoading ? (
                 <p className="py-6 text-center text-sm">Loading...</p>
