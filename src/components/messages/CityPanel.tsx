@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile, CityMessage } from "@/types";
@@ -32,11 +33,12 @@ export const CityPanel = ({
   useEffect(() => {
     const fetchParticipants = async () => {
       try {
-        // Query the active_profiles view to get participants
+        // Query profiles with a filter for deleted users
         const { data, error } = await supabase
-          .from('active_profiles')
+          .from('profiles')
           .select('*')
-          .eq('city', cityName);
+          .eq('city', cityName)
+          .is('deleted_at', null);
 
         if (error) throw error;
 

@@ -110,9 +110,10 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     setCitySearchQuery,
     uniqueUniversities,
     uniqueCities,
-    filteredUniversities,
-    filteredCities,
-    filteredProfiles,
+    // Ensure we never return undefined arrays
+    filteredUniversities: filteredUniversities || [],
+    filteredCities: filteredCities || [],
+    filteredProfiles: filteredProfiles || [],
     loading,
     resetFilters
   };

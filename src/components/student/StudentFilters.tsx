@@ -1,14 +1,6 @@
-
 import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import {
@@ -102,6 +94,12 @@ const StudentFilters = ({
     !defaultVisibleTags.includes(tag.value)
   );
 
+  // Make sure we're not passing undefined to commandGroup for universities
+  const safeFilteredUniversities = filteredUniversities || [];
+  
+  // Make sure we're not passing undefined to commandGroup for cities
+  const safeFilteredCities = filteredCities || [];
+
   return (
     <div className="bg-white shadow-sm rounded-xl p-6 mb-8 border border-gray-100">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -148,7 +146,7 @@ const StudentFilters = ({
                     />
                     <span>All Universities</span>
                   </CommandItem>
-                  {filteredUniversities.map((uni) => (
+                  {safeFilteredUniversities.map((uni) => (
                     <CommandItem
                       key={uni}
                       value={uni}
@@ -216,7 +214,7 @@ const StudentFilters = ({
                     />
                     <span>All Cities</span>
                   </CommandItem>
-                  {filteredCities.map((city) => (
+                  {safeFilteredCities.map((city) => (
                     <CommandItem
                       key={city}
                       value={city}
