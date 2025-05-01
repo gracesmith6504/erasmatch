@@ -1,7 +1,8 @@
+
 import { useState } from "react";
 import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, MapPin } from "lucide-react";
+import { ArrowRight, MapPin, School } from "lucide-react";
 import UniversityAutocomplete from "@/components/UniversityAutocomplete";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -71,14 +72,21 @@ export const DestinationUniversityStep = ({
     >
       <div className="w-full max-w-md space-y-6">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">Where are you going?</h1>
-          <p className="text-gray-500">
+          <div className="flex justify-center mb-5">
+            <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center">
+              <School className="h-8 w-8 text-erasmatch-green" />
+            </div>
+          </div>
+          <h1 className="text-2xl font-bold mb-3 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green bg-clip-text text-transparent">
+            Where are you going?
+          </h1>
+          <p className="text-gray-500 mb-6">
             Your destination university for exchange
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="w-full flex flex-col gap-2">
+          <div className="w-full flex flex-col gap-2 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
             <UniversityAutocomplete
               value={university}
               onChange={handleChange}
@@ -88,30 +96,20 @@ export const DestinationUniversityStep = ({
 
             {/* City label if university is selected */}
             {university && (
-              <div className="flex items-center text-sm text-gray-600 px-1">
+              <div className="flex items-center text-sm text-gray-600 px-1 mt-1 animate-fade-in">
                 <MapPin className="h-4 w-4 mr-1 text-erasmatch-green shrink-0" />
                 <span className="truncate">
                   {city ? city : "City not available for this university"}
                 </span>
               </div>
             )}
-
-            {/* 🔁 Always-visible manual entry link */}
-            <div className="text-center mt-1">
-              <p
-                onClick={() => setUniversity("")}
-                className="text-xs text-gray-500 underline cursor-pointer"
-              >
-                Can’t find your university? Enter it manually
-              </p>
-            </div>
           </div>
 
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 mt-6">
             <Button
               type="submit"
               disabled={isSubmitting || !university.trim()}
-              className="w-full py-6"
+              className="w-full py-6 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green hover:opacity-90"
             >
               Next
               <ArrowRight className="ml-2 h-4 w-4" />

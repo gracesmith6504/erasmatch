@@ -32,6 +32,10 @@ const UniversityAutocomplete = ({
     onChange(e.target.value);
   };
   
+  const handleReturnToDropdown = () => {
+    setManualEntry(false);
+  };
+  
   return (
     <div className="space-y-2">
       <Label htmlFor="university" className="block text-sm font-medium text-gray-700">
@@ -39,22 +43,34 @@ const UniversityAutocomplete = ({
       </Label>
       
       {!manualEntry ? (
-        <UniversityDropdown
-          value={value}
-          onChange={onChange}
-          onManualEntry={handleManualEntry}
-          universities={universities}
-          isLoading={isLoading}
-          searchQuery={searchQuery}
-          onSearchChange={handleSearch}
-          popoverRef={popoverRef}
-          required={required}
-        />
+        <div className="space-y-2">
+          <UniversityDropdown
+            value={value}
+            onChange={onChange}
+            onManualEntry={handleManualEntry}
+            universities={universities}
+            isLoading={isLoading}
+            searchQuery={searchQuery}
+            onSearchChange={handleSearch}
+            popoverRef={popoverRef}
+            required={required}
+          />
+          
+          {/* Always visible manual entry link */}
+          <div className="text-center mt-1">
+            <p
+              onClick={handleManualEntry}
+              className="text-xs text-gray-500 underline cursor-pointer"
+            >
+              Can't find your university? Enter it manually
+            </p>
+          </div>
+        </div>
       ) : (
         <ManualUniversityEntry
           value={value}
           onChange={handleManualInputChange}
-          onReturn={() => setManualEntry(false)}
+          onReturn={handleReturnToDropdown}
           required={required}
         />
       )}
