@@ -1,3 +1,4 @@
+
 import { useState, FormEvent, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -18,7 +19,6 @@ const Auth = ({ onLogin }: AuthProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -43,12 +43,6 @@ const Auth = ({ onLogin }: AuthProps) => {
 
     const isSignUp = activeTab === "signup";
 
-    if (isSignUp && !name) {
-      toast.error("Please enter your name");
-      setLoading(false);
-      return;
-    }
-
     if (!email) {
       toast.error("Please enter your email");
       setLoading(false);
@@ -66,24 +60,17 @@ const Auth = ({ onLogin }: AuthProps) => {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: {
-            data: {
-              name
-            }
-          }
         });
 
         if (error) throw error;
         
         if (data.user) {
-          const refCode = await generateUniqueRefCode(name);
-          console.log("Generated ref code:", refCode, "from name:", name);
+          const refCode = await generateUniqueRefCode('');
           
           const { error: updateError } = await supabase
             .from('profiles')
             .upsert({
               id: data.user.id,
-              name,
               email,
               ref_code: refCode,
               invited_by: searchParams.get("ref") || null
@@ -142,7 +129,7 @@ const Auth = ({ onLogin }: AuthProps) => {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-gradient-to-b from-indigo-50 to-white px-4 py-12 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <Link to="/" className="inline-block">
@@ -186,28 +173,8 @@ const Auth = ({ onLogin }: AuthProps) => {
           </Tabs>
         </div>
 
-        <div className="bg-white py-8 px-6 shadow-soft rounded-lg">
+        <div className="bg-white py-8 px-6 shadow-lg rounded-lg border border-gray-100">
           <form className="space-y-6" onSubmit={handleSubmit}>
-            {activeTab === "signup" && (
-              <div>
-                <Label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                  Full Name
-                </Label>
-                <div className="mt-1">
-                  <Input
-                    id="name"
-                    name="name"
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Your full name"
-                    required={activeTab === "signup"}
-                    className="mt-1"
-                  />
-                </div>
-              </div>
-            )}
-
             <div>
               <Label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email address
@@ -257,7 +224,11 @@ const Auth = ({ onLogin }: AuthProps) => {
             </div>
 
             <div>
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button 
+                type="submit" 
+                className="w-full bg-erasmatch-blue hover:bg-erasmatch-blue/90" 
+                disabled={loading}
+              >
                 {loading ? "Processing..." : activeTab === "signup" ? "Create Account" : "Sign In"}
               </Button>
             </div>
@@ -266,6 +237,6 @@ const Auth = ({ onLogin }: AuthProps) => {
       </div>
     </div>
   );
-};
+}
 
 export default Auth;

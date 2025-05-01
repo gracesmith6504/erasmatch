@@ -9,8 +9,12 @@ const Onboarding = () => {
   const { isAuthenticated, currentUserProfile, loading } = useAuth();
   const navigate = useNavigate();
   const [loadingRedirect, setLoadingRedirect] = useState(false);
+  const [pageLoaded, setPageLoaded] = useState(false);
 
   useEffect(() => {
+    // Mark page as loaded for animations
+    setPageLoaded(true);
+    
     const checkUserStatus = async () => {
       // If user is not authenticated, redirect to auth page
       if (!loading && !isAuthenticated) {
@@ -39,13 +43,20 @@ const Onboarding = () => {
 
   if (loading || loadingRedirect) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p>Loading...</p>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-blue-50/60 to-white">
+        <div className="flex flex-col items-center">
+          <div className="w-12 h-12 rounded-full border-4 border-erasmatch-blue border-t-transparent animate-spin"></div>
+          <p className="mt-4 text-erasmatch-blue font-medium">Loading...</p>
+        </div>
       </div>
     );
   }
 
-  return <OnboardingFlow />;
+  return (
+    <div className={`transition-opacity duration-500 ${pageLoaded ? 'opacity-100' : 'opacity-0'}`}>
+      <OnboardingFlow />
+    </div>
+  );
 };
 
 export default Onboarding;

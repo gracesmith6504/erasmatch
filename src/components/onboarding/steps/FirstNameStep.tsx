@@ -3,7 +3,7 @@ import { useState } from "react";
 import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, User } from "lucide-react";
 
 type FirstNameStepProps = {
   initialValue: string;
@@ -46,8 +46,15 @@ export const FirstNameStep = ({
     >
       <div className="w-full max-w-md space-y-6">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">What's your first name?</h1>
-          <p className="text-gray-500">
+          <div className="flex justify-center mb-5">
+            <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center">
+              <User className="h-8 w-8 text-erasmatch-blue" />
+            </div>
+          </div>
+          <h1 className="text-2xl font-bold mb-3 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green bg-clip-text text-transparent">
+            What's your first name?
+          </h1>
+          <p className="text-gray-500 mb-6">
             This helps other students identify you
           </p>
         </div>
@@ -58,7 +65,7 @@ export const FirstNameStep = ({
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Your first name"
-            className="text-center text-xl h-12"
+            className="text-center text-xl h-14 shadow-sm border-gray-200 rounded-xl"
             autoFocus
           />
 
@@ -66,7 +73,7 @@ export const FirstNameStep = ({
             <Button
               type="submit"
               disabled={isSubmitting || !name.trim()}
-              className="w-full py-6"
+              className="w-full py-6 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green hover:opacity-90"
             >
               Next
               <ArrowRight className="ml-2 h-4 w-4" />
