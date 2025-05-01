@@ -60,10 +60,14 @@ export const CourseStep = ({
           <h1 className="text-2xl font-bold mb-2 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green bg-clip-text text-transparent">
             What are you studying?
           </h1>
-          <p className="text-gray-500">
-            Your course or field of study
+          
+          <p className="text-gray-500 mb-1">
+            Add your course or field of study — it helps others know what you’re about.
           </p>
-        </div>
+          
+          <p className="text-sm text-gray-400">
+            This shows on your profile and helps spark better connections.
+          </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="w-full flex flex-col gap-2 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
