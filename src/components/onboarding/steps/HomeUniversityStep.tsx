@@ -58,12 +58,17 @@ export const HomeUniversityStep = ({
             </div>
           </div>
           <h1 className="text-2xl font-bold mb-3 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green bg-clip-text text-transparent">
-            Where are you from?
+            Where are you coming from?
           </h1>
-          <p className="text-gray-500 mb-6">
-            Your home university
+          
+          <p className="text-gray-500 mb-1">
+            Tell us your home university — it helps us connect you with others from the same background.
           </p>
-        </div>
+          
+          <p className="text-sm text-gray-400">
+            You’ll see students leaving from the same place. You can always update this later.
+          </p>
+
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="w-full bg-white rounded-xl p-4 shadow-sm border border-gray-100">

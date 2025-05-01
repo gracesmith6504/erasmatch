@@ -80,12 +80,17 @@ export const DestinationUniversityStep = ({
             </div>
           </div>
           <h1 className="text-2xl font-bold mb-3 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green bg-clip-text text-transparent">
-            Where are you going?
+            Headed somewhere exciting?
           </h1>
-          <p className="text-gray-500 mb-6">
-            Your destination university for exchange
+          
+          <p className="text-gray-500 mb-1">
+            Choose your destination university so we can add you to the right group chats.
           </p>
-        </div>
+          
+          <p className="text-sm text-gray-400">
+            You’ll instantly see others going to the same city — and yes, you can change it later.
+          </p>
+
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="w-full flex flex-col gap-2 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
