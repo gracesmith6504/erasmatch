@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { University } from "./types";
+import { useUniversitiesCache } from "@/hooks/useUniversitiesCache";
 
 // List of Irish universities to prioritize for the "Home University" dropdown
 const IRISH_UNIVERSITIES = [
@@ -17,61 +17,20 @@ const IRISH_UNIVERSITIES = [
 ];
 
 export function useUniversitySearch(prioritizeIrish = false) {
-  const [allUniversities, setAllUniversities] = useState<University[]>([]);
+  const { universities: allUniversities, loading: isLoading } = useUniversitiesCache();
   const [universities, setUniversities] = useState<University[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    fetchUniversities();
-  }, []);
-
-  const fetchUniversities = async () => {
-    try {
-      setIsLoading(true);
-      console.log("Fetching universities...");
-
-      const { data, error } = await supabase
-        .from("universities")
-        .select("id, name, city, country");
-
-      if (error) {
-        console.error("Error fetching universities:", error);
-        setAllUniversities([]);
-        setUniversities([]);
-        return;
-      }
-
-      const typedData = data.map((uni) => ({
-        id: uni.id,
-        name: uni.name || "",
-        city: uni.city || null,
-        country: uni.country || null,
-      })) as University[];
-
-      console.log("Fetched universities:", typedData.length);
-      
-      // Sort universities alphabetically by name
-      const sortedData = [...typedData].sort((a, b) => 
-        a.name.localeCompare(b.name)
-      );
-      
-      setAllUniversities(sortedData);
-      
+    if (allUniversities.length > 0) {
       // Initial list - sorted with Irish universities first if prioritizeIrish is true
       const initialList = prioritizeIrish 
-        ? sortUniversitiesByIrishFirst(sortedData) 
-        : sortedData;
+        ? sortUniversitiesByIrishFirst([...allUniversities]) 
+        : [...allUniversities];
       
       setUniversities(initialList.slice(0, 10)); // Just show first 10 initially for better performance
-    } catch (error) {
-      console.error("Error in fetchUniversities:", error);
-      setAllUniversities([]);
-      setUniversities([]);
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [allUniversities, prioritizeIrish]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -82,7 +41,7 @@ export function useUniversitySearch(prioritizeIrish = false) {
       // When no search query, show all universities or just top 10
       // If prioritizing Irish universities, sort them first
       const defaultList = prioritizeIrish 
-        ? sortUniversitiesByIrishFirst(allUniversities) 
+        ? sortUniversitiesByIrishFirst([...allUniversities]) 
         : [...allUniversities];
       
       setUniversities(defaultList.slice(0, 10));
@@ -97,8 +56,6 @@ export function useUniversitySearch(prioritizeIrish = false) {
       
       return nameMatch || cityMatch || countryMatch;
     });
-
-    console.log(`Found ${filtered.length} matches for "${query}"`);
 
     // Sort results by relevance, considering Irish universities if needed
     const sorted = sortUniversityResults(filtered, trimmedQuery, prioritizeIrish);

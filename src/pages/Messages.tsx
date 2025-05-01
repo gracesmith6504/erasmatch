@@ -38,6 +38,16 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
     });
   }, []);
 
+  // Filter out messages with deleted users
+  const activeMessages = messages.filter(message => {
+    // Find the profiles for both the sender and receiver
+    const senderProfile = profiles.find(p => p.id === message.sender_id);
+    const receiverProfile = profiles.find(p => p.id === message.receiver_id);
+    
+    // Check if either sender or receiver has been deleted
+    return !(senderProfile?.deleted_at || receiverProfile?.deleted_at);
+  });
+
   // Wrapper for onSendMessage to ensure proper state updates
   const handleSendMessage = async (receiverId: string, content: string): Promise<void> => {
     try {
@@ -49,11 +59,14 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
     }
   };
 
+  // Filter active profiles (not deleted)
+  const activeProfiles = profiles.filter(profile => !profile.deleted_at);
+
   return (
     <div className="h-full overflow-hidden w-full inset-0 pt-16 pb-0 flex flex-col">
       <MessagesContainer
-        messages={messages}
-        profiles={profiles}
+        messages={activeMessages}
+        profiles={activeProfiles}
         currentUserId={currentUserId}
         onSendMessage={handleSendMessage}
         initialSelectedUser={initialSelectedUser}
