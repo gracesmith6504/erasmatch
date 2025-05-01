@@ -15,6 +15,8 @@ const IRISH_UNIVERSITIES = [
   "Maynooth University",
   "Queen's University Belfast"
 ];
+const normalizeString = (str: string) =>
+  str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
 export function useUniversitySearch(prioritizeIrish = false) {
   const { universities: allUniversities, loading: isLoading } = useUniversitiesCache();
@@ -35,7 +37,7 @@ export function useUniversitySearch(prioritizeIrish = false) {
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     
-    const trimmedQuery = query.trim().toLowerCase();
+    const trimmedQuery = normalizeString(query.trim());
     
     if (!trimmedQuery) {
       // When no search query, show all universities or just top 10
@@ -49,13 +51,14 @@ export function useUniversitySearch(prioritizeIrish = false) {
     }
 
     // Filter universities based on name, city or country
-    const filtered = allUniversities.filter((uni) => {
-      const nameMatch = uni.name?.toLowerCase().includes(trimmedQuery) || false;
-      const cityMatch = uni.city?.toLowerCase?.()?.includes(trimmedQuery) || false;
-      const countryMatch = uni.country?.toLowerCase?.()?.includes(trimmedQuery) || false;
+      const filtered = allUniversities.filter((uni) => {
+        const nameMatch = normalizeString(uni.name || "").includes(trimmedQuery);
+        const cityMatch = normalizeString(uni.city || "").includes(trimmedQuery);
+        const countryMatch = normalizeString(uni.country || "").includes(trimmedQuery);
       
-      return nameMatch || cityMatch || countryMatch;
-    });
+        return nameMatch || cityMatch || countryMatch;
+      });
+
 
     // Sort results by relevance, considering Irish universities if needed
     const sorted = sortUniversityResults(filtered, trimmedQuery, prioritizeIrish);
