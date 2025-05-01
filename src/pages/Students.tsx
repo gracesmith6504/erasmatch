@@ -8,6 +8,9 @@ import StudentCardGrid from "@/components/student/StudentCardGrid";
 import CitiesView from "@/components/student/CitiesView";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Users, MapPin } from "lucide-react";
+import { useLocation } from "react-router-dom";
+import { WelcomeBanner } from "@/components/WelcomeBanner";
+import { useOnboardingBanner } from "@/hooks/useOnboardingBanner";
 
 type StudentsProps = {
   profiles: Profile[];
@@ -39,38 +42,49 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
     });
   }, []);
 
-
-const getCompletionPercentage = (profile: Profile) => {
-  const fields = [
-    profile.name,
-    profile.email,
-    profile.university,
-    profile.avatar_url,
-    profile.bio,
-    profile.semester,
-    profile.home_university,
-    profile.city,
-    profile.country,
-    profile.interests
-  ];
-  const filled = fields.filter(Boolean).length;
-  return Math.round((filled / fields.length) * 100);
-};
-
-const sortedProfiles = [...filteredProfiles].sort((a, b) => {
-  const hasPhotoA = Boolean(a.avatar_url);
-  const hasPhotoB = Boolean(b.avatar_url);
-
-  if (hasPhotoA && !hasPhotoB) return -1;
-  if (!hasPhotoA && hasPhotoB) return 1;
-
-  return getCompletionPercentage(b) - getCompletionPercentage(a);
-});
-
-
-
-
+  const location = useLocation();
+  const { showBanner, cityName } = useOnboardingBanner(currentUserId);
   
+  // Store onboarding completion info when coming from onboarding
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("from") === "onboarding") {
+      sessionStorage.setItem("justCompletedOnboarding", "true");
+      // Find user city from profiles
+      const userProfile = profiles.find(p => p.id === currentUserId);
+      if (userProfile?.city) {
+        sessionStorage.setItem("userCity", userProfile.city);
+      }
+    }
+  }, [location, profiles, currentUserId]);
+
+  const getCompletionPercentage = (profile: Profile) => {
+    const fields = [
+      profile.name,
+      profile.email,
+      profile.university,
+      profile.avatar_url,
+      profile.bio,
+      profile.semester,
+      profile.home_university,
+      profile.city,
+      profile.country,
+      profile.interests
+    ];
+    const filled = fields.filter(Boolean).length;
+    return Math.round((filled / fields.length) * 100);
+  };
+
+  const sortedProfiles = [...filteredProfiles].sort((a, b) => {
+    const hasPhotoA = Boolean(a.avatar_url);
+    const hasPhotoB = Boolean(b.avatar_url);
+
+    if (hasPhotoA && !hasPhotoB) return -1;
+    if (!hasPhotoA && hasPhotoB) return 1;
+
+    return getCompletionPercentage(b) - getCompletionPercentage(a);
+  });
+
   // Rendering skeleton loaders during loading state
   if (loading) {
     return <StudentLoadingSkeleton />;
@@ -78,6 +92,10 @@ const sortedProfiles = [...filteredProfiles].sort((a, b) => {
 
   return (
     <div className="max-w-7xl mx-auto py-4 sm:py-6 md:py-8 px-4 sm:px-6 lg:px-8 animate-fade-in overflow-x-hidden w-full">
+      {showBanner && (
+        <WelcomeBanner cityName={cityName} />
+      )}
+      
       <h1 className="text-xl sm:text-2xl font-bold gradient-text mb-4">Find Erasmus Students</h1>
 
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "list" | "cities")} className="mb-4 w-full overflow-hidden">

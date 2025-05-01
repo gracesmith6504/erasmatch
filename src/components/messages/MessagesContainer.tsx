@@ -48,19 +48,19 @@ export const MessagesContainer = ({
   }, [selectedThread, isMobile]);
   
   // Handle initial user selection
-  useInitialUserSelection(
-    initialSelectedUser,
+  useInitialUserSelection({
+    initialSelectedUserId: initialSelectedUser,
     profiles,
     threads,
     selectedThread,
     isMobile,
-    "direct",
+    viewMode: "direct",
     setSelectedThread,
-    () => {},
-    () => {},
-    () => {},
+    setShowGroupsList: () => {},
+    setShowCityList: () => {},
+    setSelectedView: () => {},
     refreshKey
-  );
+  });
 
   // Custom wrapper for onSendMessage to ensure state updates properly
   const handleSendMessage = createMessageHandler(

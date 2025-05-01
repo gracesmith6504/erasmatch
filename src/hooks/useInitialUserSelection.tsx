@@ -2,56 +2,80 @@
 import { useEffect } from "react";
 import { Profile, ChatThread } from "@/types";
 
-export function useInitialUserSelection(
-  initialSelectedUser: string | null,
-  profiles: Profile[],
-  threads: ChatThread[],
-  selectedThread: ChatThread | null,
-  isMobile: boolean,
-  activeTab: string,
-  setSelectedThread: (thread: ChatThread | null) => void,
-  setActiveTab: (tab: any) => void,
-  setSelectedGroupChat: (name: string | null) => void,
-  setSelectedCityChat: (name: string | null) => void,
-  refreshKey: number
-) {
-  // Handle initial user selection from URL params
-  useEffect(() => {
-    if (initialSelectedUser && !selectedThread) {
-      console.log("Looking for user with ID:", initialSelectedUser);
-      
-      // Find the thread with the selected user
-      const thread = threads.find(
-        t => t.partner.id === initialSelectedUser
-      );
-      
-      if (thread) {
-        console.log("Found thread for user:", thread.partner.name);
-        setSelectedThread(thread);
-        
-        // Set active tab to direct messages
-        setActiveTab("direct");
-      } else {
-        console.log("No thread found for user ID:", initialSelectedUser);
-        
-        // If no thread exists yet, find the user profile
-        const selectedUserProfile = profiles.find(
-          profile => profile.id === initialSelectedUser
-        );
-        
-        if (selectedUserProfile) {
-          console.log("Found profile for user:", selectedUserProfile.name);
-          
-          // Create a new thread with this user
-          const newThread: ChatThread = {
-            partner: selectedUserProfile,
-            lastMessage: null
-          };
-          
-          setSelectedThread(newThread);
-          setActiveTab("direct");
-        }
-      }
-    }
-  }, [initialSelectedUser, threads, selectedThread, profiles, refreshKey]);
+interface InitialUserSelectionProps {
+  initialSelectedUserId: string | null;
+  profiles: Profile[];
+  threads: ChatThread[];
+  selectedThread: ChatThread | null;
+  isMobile: boolean;
+  viewMode?: string;
+  setSelectedThread: (thread: ChatThread | null) => void;
+  setShowGroupsList?: () => void;
+  setShowCityList?: () => void;
+  setSelectedView?: (view: string) => void;
+  refreshKey?: number;
 }
+
+export const useInitialUserSelection = ({
+  initialSelectedUserId,
+  profiles,
+  threads,
+  selectedThread,
+  isMobile,
+  viewMode = "direct",
+  setSelectedThread,
+  setShowGroupsList = () => {},
+  setShowCityList = () => {},
+  setSelectedView = () => {},
+  refreshKey = 0
+}: InitialUserSelectionProps) => {
+  useEffect(() => {
+    if (!initialSelectedUserId || selectedThread?.partner?.id === initialSelectedUserId) {
+      return;
+    }
+
+    // Find the profile for the initial selected user
+    const userProfile = profiles.find(p => p.id === initialSelectedUserId);
+    if (!userProfile) return;
+
+    // Find or create a thread for this user
+    const existingThread = threads.find(t => t.partner.id === initialSelectedUserId);
+    
+    if (existingThread) {
+      setSelectedThread(existingThread);
+      
+      // Set the appropriate view for mobile
+      if (isMobile) {
+        if (viewMode === "direct") {
+          // Do nothing, the thread will be selected in MessagesContainer
+        } else if (viewMode === "groups") {
+          setShowGroupsList();
+        } else if (viewMode === "cities") {
+          setShowCityList();
+        }
+        
+        setSelectedView("direct");
+      }
+    } else if (userProfile) {
+      // Create a new thread with this user
+      const newThread: ChatThread = {
+        partner: userProfile,
+        lastMessage: null
+      };
+      
+      setSelectedThread(newThread);
+    }
+  }, [
+    initialSelectedUserId, 
+    profiles, 
+    threads, 
+    selectedThread, 
+    isMobile, 
+    viewMode, 
+    setSelectedThread,
+    setShowGroupsList,
+    setShowCityList,
+    setSelectedView,
+    refreshKey
+  ]);
+};

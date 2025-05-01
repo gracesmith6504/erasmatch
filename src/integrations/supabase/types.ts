@@ -114,6 +114,7 @@ export type Database = {
           invited_by: string | null
           last_active_at: string | null
           name: string | null
+          onboarding_complete: boolean | null
           personality_tags: string[] | null
           ref_code: string | null
           semester: string | null
@@ -132,6 +133,7 @@ export type Database = {
           invited_by?: string | null
           last_active_at?: string | null
           name?: string | null
+          onboarding_complete?: boolean | null
           personality_tags?: string[] | null
           ref_code?: string | null
           semester?: string | null
@@ -150,6 +152,7 @@ export type Database = {
           invited_by?: string | null
           last_active_at?: string | null
           name?: string | null
+          onboarding_complete?: boolean | null
           personality_tags?: string[] | null
           ref_code?: string | null
           semester?: string | null

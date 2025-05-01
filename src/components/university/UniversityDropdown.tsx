@@ -85,16 +85,7 @@ export function UniversityDropdown({
               {isLoading ? (
                 <p className="py-6 text-center text-sm">Loading...</p>
               ) : (
-                <div className="py-6 text-center text-sm">
-                  <p>No university found</p>
-                  <Button 
-                    variant="link" 
-                    onClick={onManualEntry}
-                    className="mt-2"
-                  >
-                    University not listed? Enter manually
-                  </Button>
-                </div>
+                <p className="py-6 text-center text-sm">No university found</p>
               )}
             </CommandEmpty>
             <UniversitySearchResults 
