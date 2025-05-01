@@ -49,15 +49,18 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
   }, []);
 
   useEffect(() => {
-    // Extract unique filter options
-    if (loadedProfiles.length > 0) {
-      const universities = [...new Set(loadedProfiles.map(p => p.university).filter(Boolean))] as string[];
-      const cities = [...new Set(loadedProfiles.map(p => p.city).filter(Boolean))] as string[];
-      
-      setUniqueUniversities(universities);
-      setUniqueCities(cities);
-    }
-  }, [loadedProfiles]);
+  if (loadedProfiles.length > 0) {
+    const universities = [...new Set(loadedProfiles.map(p => p.university).filter(Boolean))]
+      .sort((a, b) => a!.localeCompare(b!)) as string[];
+
+    const cities = [...new Set(loadedProfiles.map(p => p.city).filter(Boolean))]
+      .sort((a, b) => a!.localeCompare(b!)) as string[];
+
+    setUniqueUniversities(universities);
+    setUniqueCities(cities);
+  }
+}, [loadedProfiles]);
+
 
   // Filter profiles based on university, city, and personality tag filters
   const filteredProfiles = loadedProfiles.filter(profile => {
