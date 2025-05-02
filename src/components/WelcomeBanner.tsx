@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { X, Camera } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
@@ -12,6 +12,19 @@ interface WelcomeBannerProps {
 
 export const WelcomeBanner = ({ cityName, variant = "default" }: WelcomeBannerProps) => {
   const [dismissed, setDismissed] = useState(false);
+  
+  // Check localStorage on component mount
+  useEffect(() => {
+    const isDismissed = localStorage.getItem("welcomeBannerDismissed");
+    if (isDismissed === "true") {
+      setDismissed(true);
+    }
+  }, []);
+
+  const handleDismiss = () => {
+    setDismissed(true);
+    localStorage.setItem("welcomeBannerDismissed", "true");
+  };
 
   if (dismissed) return null;
 
@@ -37,7 +50,7 @@ export const WelcomeBanner = ({ cityName, variant = "default" }: WelcomeBannerPr
         </div>
       </AlertDescription>
       <button
-        onClick={() => setDismissed(true)}
+        onClick={handleDismiss}
         className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
       >
         <X className="h-4 w-4" />
