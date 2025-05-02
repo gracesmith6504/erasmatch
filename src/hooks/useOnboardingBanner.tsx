@@ -9,6 +9,13 @@ export const useOnboardingBanner = (currentUserId: string | null) => {
   const location = useLocation();
   
   useEffect(() => {
+    // First check if banner has been dismissed via localStorage
+    const isDismissed = localStorage.getItem("welcomeBannerDismissed");
+    if (isDismissed === "true") {
+      setShowBanner(false);
+      return;
+    }
+    
     // Check if the user just completed onboarding
     const justCompletedOnboarding = sessionStorage.getItem("justCompletedOnboarding");
 

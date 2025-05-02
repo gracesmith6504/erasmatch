@@ -9,6 +9,7 @@ import { CourseStep } from "./steps/CourseStep";
 import { InterestsStep } from "./steps/InterestsStep";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { generateUniqueRefCode } from "@/utils/refCodeGenerator";
 
 export const OnboardingFlow = () => {
   const navigate = useNavigate();
@@ -37,8 +38,12 @@ export const OnboardingFlow = () => {
 
   const handleCompleteOnboarding = async () => {
     try {
+      // Generate a unique ref_code based on the user's name
+      const refCode = await generateUniqueRefCode(currentUserProfile?.name || '');
+      
       await handleProfileUpdate({
         onboarding_complete: true,
+        ref_code: refCode
       });
       
       toast.success("Welcome to ErasMatch!");
