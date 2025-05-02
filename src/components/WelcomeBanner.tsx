@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { X } from "lucide-react";
+import { X, Camera } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 
@@ -16,15 +16,23 @@ export const WelcomeBanner = ({ cityName, variant = "default" }: WelcomeBannerPr
   if (dismissed) return null;
 
   return (
-    <Alert className="mb-6 relative pr-10">
-      <AlertTitle className="text-lg font-medium">
+    <Alert className="mb-6 relative pr-10 bg-blue-50 border-blue-200">
+      <AlertTitle className="text-lg font-medium flex items-center">
         Welcome to {cityName || "ErasMatch"}!
       </AlertTitle>
       <AlertDescription className="flex flex-col gap-2">
         <p>Profiles with photos get more attention — want to add yours?</p>
-        <div className="mt-2">
-          <Button asChild size="sm">
-            <Link to="/profile">Add a photo</Link>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <Button asChild size="sm" className="flex items-center">
+            <Link to="/profile">
+              <Camera className="h-4 w-4 mr-2" />
+              Add a photo
+            </Link>
+          </Button>
+          <Button asChild size="sm" variant="outline">
+            <Link to="/groups">
+              Browse groups
+            </Link>
           </Button>
         </div>
       </AlertDescription>

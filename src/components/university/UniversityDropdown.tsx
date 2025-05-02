@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -38,16 +39,28 @@ export function UniversityDropdown({
 }: UniversityDropdownProps) {
   const [open, setOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null); // ✅
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const handleSelect = (universityName: string) => {
     onChange(universityName);
     setOpen(false);
   };
   
+  // Adjust width on mobile
   useEffect(() => {
     if (open && popoverRef.current) {
       const popoverElement = popoverRef.current;
-      popoverElement.style.width = `${popoverElement.offsetWidth}px`;
+      const viewportWidth = window.innerWidth;
+      
+      if (viewportWidth < 640) { // Mobile
+        popoverElement.style.width = `${viewportWidth - 40}px`;
+      } else {
+        // On desktop use the button width
+        const buttonWidth = buttonRef.current?.offsetWidth;
+        if (buttonWidth) {
+          popoverElement.style.width = `${buttonWidth}px`;
+        }
+      }
     }
   }, [open, popoverRef]);
 
@@ -67,6 +80,7 @@ export function UniversityDropdown({
           aria-expanded={open}
           className={`w-full justify-between ${required && !value ? 'border-red-300' : ''}`}
           aria-required={required}
+          ref={buttonRef}
         >
           {value || "Select university..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
