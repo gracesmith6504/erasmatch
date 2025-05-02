@@ -37,6 +37,7 @@ export const useOnboardingBanner = (currentUserId: string | null) => {
           if (data && !error) {
             setCityName(data.city);
             sessionStorage.setItem("userCity", data.city || "");
+            setShowBanner(true); // Always show banner if we have a city
           }
         } catch (err) {
           console.error("Error fetching user city:", err);

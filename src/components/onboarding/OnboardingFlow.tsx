@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -34,32 +35,6 @@ export const OnboardingFlow = () => {
     }
   };
 
-  const checkDestinationCityUsers = async (city: string | null) => {
-    if (!city) return '/students?from=onboarding'; // Default redirect if no city
-    
-    try {
-      const { count, error } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
-        .eq('city', city)
-        .neq('id', currentUserProfile?.id || ''); // Exclude current user
-      
-      if (error) throw error;
-      
-      // Set sessionStorage to indicate completion
-      sessionStorage.setItem("justCompletedOnboarding", "true");
-      if (city) {
-        sessionStorage.setItem("userCity", city);
-      }
-      
-      // Always redirect to students page with the onboarding flag
-      return '/students?from=onboarding';
-    } catch (error) {
-      console.error('Error checking destination city users:', error);
-      return '/students?from=onboarding'; // Default to students on error
-    }
-  };
-
   const handleCompleteOnboarding = async () => {
     try {
       await handleProfileUpdate({
@@ -68,11 +43,14 @@ export const OnboardingFlow = () => {
       
       toast.success("Welcome to ErasMatch!");
       
-      // Always redirect to students page with onboarding flag
-      const redirectPath = await checkDestinationCityUsers(currentUserProfile?.city);
+      // Store city in sessionStorage if available
+      if (currentUserProfile?.city) {
+        sessionStorage.setItem("justCompletedOnboarding", "true");
+        sessionStorage.setItem("userCity", currentUserProfile.city);
+      }
       
-      // Navigate to the students page
-      navigate(redirectPath);
+      // Always redirect to students page with onboarding flag
+      navigate('/students?from=onboarding');
       
       // Force a page reload after navigation to ensure fresh data
       setTimeout(() => {

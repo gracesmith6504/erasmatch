@@ -2,7 +2,7 @@
 import { supabase } from "@/integrations/supabase/client";
 
 export const generateRefCode = (name: string): string => {
-  if (!name) {
+  if (!name || name.trim() === '') {
     // Fallback if no name is provided
     return `user${Math.floor(100 + Math.random() * 900)}`;
   }
@@ -12,6 +12,11 @@ export const generateRefCode = (name: string): string => {
     .split(' ')[0]
     .toLowerCase()
     .replace(/[^a-z]/g, '');
+  
+  // If name is empty after cleaning, use fallback
+  if (!cleanFirstName || cleanFirstName === '') {
+    return `user${Math.floor(100 + Math.random() * 900)}`;
+  }
   
   // Generate a random 3-digit number
   const randomNum = Math.floor(100 + Math.random() * 900);
@@ -36,20 +41,22 @@ export const isRefCodeUnique = async (refCode: string): Promise<boolean> => {
 };
 
 export const generateUniqueRefCode = async (name: string): Promise<string> => {
-  let refCode = generateRefCode(name);
+  // Ensure name is not null or undefined before processing
+  const safeName = name || '';
+  let refCode = generateRefCode(safeName);
   let attempts = 0;
   const maxAttempts = 10;
 
   while (!(await isRefCodeUnique(refCode)) && attempts < maxAttempts) {
-    refCode = generateRefCode(name);
+    refCode = generateRefCode(safeName);
     attempts++;
   }
 
   if (attempts === maxAttempts) {
     // Fallback to a more unique generation if we couldn't find a unique code
     const timestamp = Date.now().toString().slice(-6);
-    const namePrefix = name ? name.split(' ')[0].toLowerCase().replace(/[^a-z]/g, '') : 'user';
-    refCode = `${namePrefix}${timestamp}`;
+    const namePrefix = safeName ? safeName.split(' ')[0].toLowerCase().replace(/[^a-z]/g, '') : 'user';
+    refCode = `${namePrefix || 'user'}${timestamp}`;
   }
 
   return refCode;

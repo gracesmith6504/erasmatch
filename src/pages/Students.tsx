@@ -54,10 +54,10 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
       const userProfile = profiles.find(p => p.id === currentUserId);
       if (userProfile?.city) {
         sessionStorage.setItem("userCity", userProfile.city);
-      }
-      // Force reload to show the banner if needed
-      if (!showBanner) {
-        window.location.reload();
+        // Force reload to show the banner if needed
+        if (!showBanner) {
+          window.location.reload();
+        }
       }
     }
   }, [location, profiles, currentUserId, showBanner]);

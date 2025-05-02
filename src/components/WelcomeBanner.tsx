@@ -18,7 +18,7 @@ export const WelcomeBanner = ({ cityName, variant = "default" }: WelcomeBannerPr
   return (
     <Alert className="mb-6 relative pr-10 bg-blue-50 border-blue-200">
       <AlertTitle className="text-lg font-medium flex items-center">
-        Welcome to {cityName || "ErasMatch"}!
+        <span className="truncate pr-1">Welcome to {cityName || "ErasMatch"}!</span>
       </AlertTitle>
       <AlertDescription className="flex flex-col gap-2">
         <p>Profiles with photos get more attention — want to add yours?</p>
