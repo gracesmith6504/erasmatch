@@ -9,6 +9,7 @@ import { CourseStep } from "./steps/CourseStep";
 import { InterestsStep } from "./steps/InterestsStep";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { generateUniqueRefCode } from "@/utils/refCodeGenerator";
 
 export const OnboardingFlow = () => {
   const navigate = useNavigate();
@@ -35,45 +36,26 @@ export const OnboardingFlow = () => {
     }
   };
 
-  const checkDestinationCityUsers = async (city: string | null) => {
-    if (!city) return '/students?from=onboarding'; // Default redirect if no city
-    
-    try {
-      const { count, error } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
-        .eq('city', city)
-        .neq('id', currentUserProfile?.id || ''); // Exclude current user
-      
-      if (error) throw error;
-      
-      // Set sessionStorage to indicate completion
-      sessionStorage.setItem("justCompletedOnboarding", "true");
-      if (city) {
-        sessionStorage.setItem("userCity", city);
-      }
-      
-      // Always redirect to groups with the onboarding flag
-      return '/groups?from=onboarding';
-    } catch (error) {
-      console.error('Error checking destination city users:', error);
-      return '/groups?from=onboarding'; // Default to groups on error
-    }
-  };
-
   const handleCompleteOnboarding = async () => {
     try {
+      // Generate a unique ref_code based on the user's name
+      const refCode = await generateUniqueRefCode(currentUserProfile?.name || '');
+      
       await handleProfileUpdate({
         onboarding_complete: true,
+        ref_code: refCode
       });
       
       toast.success("Welcome to ErasMatch!");
       
-      // Always redirect to groups page with onboarding flag
-      const redirectPath = await checkDestinationCityUsers(currentUserProfile?.city);
+      // Store city in sessionStorage if available
+      if (currentUserProfile?.city) {
+        sessionStorage.setItem("justCompletedOnboarding", "true");
+        sessionStorage.setItem("userCity", currentUserProfile.city);
+      }
       
-      // Navigate to the groups page
-      navigate(redirectPath);
+      // Always redirect to students page with onboarding flag
+      navigate('/students?from=onboarding');
       
       // Force a page reload after navigation to ensure fresh data
       setTimeout(() => {
