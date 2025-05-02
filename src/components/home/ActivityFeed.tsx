@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { UserCheck, UserPlus, MessageCircle } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -11,41 +10,36 @@ interface ActivityItem {
 
 export const ActivityFeed = () => {
   const isMobile = useIsMobile();
-  
-  // Activity feed data - simulated real-time activities
-  const [activities, setActivities] = useState([
-    { id: 1, text: "✨ Paula matched with Leo in Barcelona", time: "Just now" },
-    { id: 2, text: "🇮🇹 Anna joined the Rome University Chat", time: "2 minutes ago" },
-    { id: 3, text: "🏠 Lucas found housing in Amsterdam", time: "5 minutes ago" },
-    { id: 4, text: "🇫🇷 Sofia and Thiago met in Paris", time: "10 minutes ago" },
-    { id: 5, text: "🎓 Michael joined ERASMUS+ 2025", time: "15 minutes ago" }
+
+  const [activities, setActivities] = useState<ActivityItem[]>([
+    { id: 1, text: "👋 A student from Trinity just joined the Paris group", time: "Just now" },
+    { id: 2, text: "🎓 A new student signed up from Rome", time: "4 minutes ago" },
+    { id: 3, text: "💬 A message was sent in the Madrid university chat", time: "6 minutes ago" },
+    { id: 4, text: "🌍 Students from 3 new cities joined today", time: "10 minutes ago" }
   ]);
 
-  // Simulate new activities appearing in real-time
   useEffect(() => {
-    // Skip activity simulation on mobile
     if (isMobile) return;
-    
-    const possibleActivities = [
-      { text: "✨ Mia matched with Alex in Berlin", time: "Just now" },
-      { text: "🇵🇹 Carlos joined the Lisbon University Chat", time: "Just now" },
-      { text: "🏠 Emma found housing in Vienna", time: "Just now" },
-      { text: "🇪🇸 Luca and Sophie met in Madrid", time: "Just now" },
-      { text: "🎓 Olivia joined ERASMUS+ 2025", time: "Just now" }
+
+    const possibleActivities: ActivityItem[] = [
+      { text: "👋 A new student joined the Berlin group", time: "Just now", id: 0 },
+      { text: "🎓 A student registered from Lisbon", time: "Just now", id: 0 },
+      { text: "💬 A new message was posted in the Vienna chat", time: "Just now", id: 0 },
+      { text: "🌐 5 students signed up from different countries", time: "Just now", id: 0 },
+      { text: "📢 A university chat got its 20th member", time: "Just now", id: 0 }
     ];
 
     const interval = setInterval(() => {
       const randomActivity = possibleActivities[Math.floor(Math.random() * possibleActivities.length)];
       setActivities(prev => [{
-        id: Date.now(),
-        ...randomActivity
+        ...randomActivity,
+        id: Date.now()
       }, ...prev.slice(0, 4)]);
     }, 10000);
 
     return () => clearInterval(interval);
   }, [isMobile]);
 
-  // Don't render on mobile
   if (isMobile) return null;
 
   return (
@@ -58,11 +52,11 @@ export const ActivityFeed = () => {
             className={`flex items-center gap-4 p-4 mb-3 rounded-lg border border-gray-100 ${index === 0 ? 'animate-pulse-soft bg-blue-50' : 'bg-white'}`}
           >
             <div className={`h-12 w-12 rounded-full flex items-center justify-center text-white ${index === 0 ? 'bg-blue-500' : 'bg-purple-500'}`}>
-              {activity.text.includes("matched") ? 
-                <UserCheck className="h-6 w-6" /> : 
-                activity.text.includes("joined") ? 
+              {activity.text.includes("message") ? 
+                <MessageCircle className="h-6 w-6" /> :
+                activity.text.includes("joined") || activity.text.includes("signed up") ? 
                 <UserPlus className="h-6 w-6" /> : 
-                <MessageCircle className="h-6 w-6" />
+                <UserCheck className="h-6 w-6" />
               }
             </div>
             <div className="flex-1">

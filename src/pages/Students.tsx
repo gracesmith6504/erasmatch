@@ -8,7 +8,7 @@ import StudentCardGrid from "@/components/student/StudentCardGrid";
 import CitiesView from "@/components/student/CitiesView";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Users, MapPin } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import { WelcomeBanner } from "@/components/WelcomeBanner";
 import { useOnboardingBanner } from "@/hooks/useOnboardingBanner";
 
@@ -43,7 +43,7 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
   }, []);
 
   const location = useLocation();
-  const { showBanner, cityName } = useOnboardingBanner(currentUserId);
+  const { showBanner, cityName, setShowBanner } = useOnboardingBanner(currentUserId);
   
   // Store onboarding completion info when coming from onboarding
   useEffect(() => {
@@ -54,9 +54,13 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
       const userProfile = profiles.find(p => p.id === currentUserId);
       if (userProfile?.city) {
         sessionStorage.setItem("userCity", userProfile.city);
+        // Force reload to show the banner if needed
+        if (!showBanner) {
+          window.location.reload();
+        }
       }
     }
-  }, [location, profiles, currentUserId]);
+  }, [location, profiles, currentUserId, showBanner]);
 
   const getCompletionPercentage = (profile: Profile) => {
     const fields = [

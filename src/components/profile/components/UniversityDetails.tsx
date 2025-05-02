@@ -69,7 +69,7 @@ export const UniversityDetails = ({
           value={form.home_university}
           onChange={handleHomeUniversityChange}
           label="Home University"
-          required={true}
+          required={false}
           prioritizeIrish={true}
         />
       </div>
