@@ -13,7 +13,8 @@ import Students from "@/pages/Students";
 import Messages from "@/pages/Messages";
 import Groups from "@/pages/Groups";
 import NotFound from "@/pages/NotFound";
-import Onboarding from "@/pages/Onboarding"; // Add import for new Onboarding page
+import Onboarding from "@/pages/Onboarding";
+import PrivacyPolicy from "@/pages/PrivacyPolicy"; // Add import for Privacy Policy page
 
 // Contexts
 import { useAuth } from "@/contexts/AuthContext";
@@ -43,7 +44,7 @@ const AppRoutes = () => {
         path="/auth" 
         element={
           isAuthenticated ? 
-          <Navigate to="/onboarding" /> : // Redirect to onboarding if authenticated
+          <Navigate to="/onboarding" /> : 
           <Auth onLogin={handleLogin} />
         } 
       />
@@ -119,6 +120,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         } 
       />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
