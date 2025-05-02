@@ -16,15 +16,11 @@ export const useOnboardingBanner = (currentUserId: string | null) => {
       setShowBanner(true);
       const city = sessionStorage.getItem("userCity");
       setCityName(city);
-      
-      // Clear the flag
-      sessionStorage.removeItem("justCompletedOnboarding");
-      sessionStorage.removeItem("userCity");
     }
     
     // For manual testing, we can also check the query string
     const params = new URLSearchParams(location.search);
-    if (params.get("showBanner") === "true") {
+    if (params.get("from") === "onboarding" || params.get("showBanner") === "true") {
       setShowBanner(true);
     }
     
@@ -40,6 +36,7 @@ export const useOnboardingBanner = (currentUserId: string | null) => {
           
           if (data && !error) {
             setCityName(data.city);
+            sessionStorage.setItem("userCity", data.city || "");
           }
         } catch (err) {
           console.error("Error fetching user city:", err);

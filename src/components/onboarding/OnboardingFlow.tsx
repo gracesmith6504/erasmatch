@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -53,11 +52,11 @@ export const OnboardingFlow = () => {
         sessionStorage.setItem("userCity", city);
       }
       
-      // Always redirect to groups with the onboarding flag
-      return '/groups?from=onboarding';
+      // Always redirect to students page with the onboarding flag
+      return '/students?from=onboarding';
     } catch (error) {
       console.error('Error checking destination city users:', error);
-      return '/groups?from=onboarding'; // Default to groups on error
+      return '/students?from=onboarding'; // Default to students on error
     }
   };
 
@@ -69,10 +68,10 @@ export const OnboardingFlow = () => {
       
       toast.success("Welcome to ErasMatch!");
       
-      // Always redirect to groups page with onboarding flag
+      // Always redirect to students page with onboarding flag
       const redirectPath = await checkDestinationCityUsers(currentUserProfile?.city);
       
-      // Navigate to the groups page
+      // Navigate to the students page
       navigate(redirectPath);
       
       // Force a page reload after navigation to ensure fresh data
