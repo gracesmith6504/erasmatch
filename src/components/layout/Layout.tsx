@@ -1,6 +1,6 @@
 
 import { ReactNode } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navbar } from "./navbar";
@@ -77,9 +77,8 @@ const Layout = ({ children }: LayoutProps) => {
               <div className="mt-6 md:mt-0">
                 <h3 className="text-sm font-semibold mb-3 md:mb-4 text-gray-700">Connect</h3>
                 <ul className="space-y-2 text-sm">
-                  {/* <li><a href="#" className="text-gray-500 hover:text-erasmatch-blue">About Us</a></li> */}
                   <li><a href="mailto:erasmatchbusiness@gmail.com" className="text-gray-500 hover:text-erasmatch-blue">Contact</a></li>
-                  {/* <li><a href="#" className="text-gray-500 hover:text-erasmatch-blue">Privacy Policy</a></li> */}
+                  <li><Link to="/privacy-policy" className="text-gray-500 hover:text-erasmatch-blue">Privacy Policy</Link></li>
                 </ul>
               </div>
             </div>
