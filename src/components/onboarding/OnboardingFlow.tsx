@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -48,19 +47,14 @@ export const OnboardingFlow = () => {
       
       toast.success("Welcome to ErasMatch!");
       
-      // Store city in sessionStorage if available
+      // Store city in sessionStorage if available and set flag for just completed onboarding
       if (currentUserProfile?.city) {
         sessionStorage.setItem("justCompletedOnboarding", "true");
         sessionStorage.setItem("userCity", currentUserProfile.city);
       }
       
-      // Always redirect to students page with onboarding flag
+      // Redirect to students page with onboarding flag
       navigate('/students?from=onboarding');
-      
-      // Force a page reload after navigation to ensure fresh data
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
     } catch (error: any) {
       toast.error("Failed to complete onboarding: " + error.message);
     }
