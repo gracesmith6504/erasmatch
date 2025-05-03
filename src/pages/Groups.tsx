@@ -32,16 +32,20 @@ const Groups = () => {
     // Check if this is the first visit to the groups page
     const hasVisitedGroups = sessionStorage.getItem("hasVisitedGroups");
     const fromOnboarding = sessionStorage.getItem("justCompletedOnboarding");
+    const isFirstVisit = !hasVisitedGroups && fromOnboarding === "true";
     
-    if (!hasVisitedGroups || fromOnboarding === "true") {
-      // Mark that we've visited groups page
+    if (isFirstVisit) {
+      // Mark that we've visited groups page to prevent future reloads
       sessionStorage.setItem("hasVisitedGroups", "true");
       
       // Show a loading toast to indicate refresh is happening
       toast.info("Loading group chats...");
       
-      // Force a page reload to ensure group chats load properly
-      window.location.reload();
+      // Set a timeout to prevent immediate reload loops
+      setTimeout(() => {
+        // Force a page reload to ensure group chats load properly
+        window.location.reload();
+      }, 500);
     }
   }, []);
   
