@@ -12,7 +12,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, GraduationCap } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Groups = () => {
   const location = useLocation();
@@ -27,17 +27,25 @@ const Groups = () => {
   const [selectedGroupChat, setSelectedGroupChat] = useState<string | null>(null);
   const [selectedCityChat, setSelectedCityChat] = useState<string | null>(null);
   
-  // Force refresh on first visit to ensure group chats load properly
+  // Improved refresh logic for first visit to groups page
   useEffect(() => {
     // Check if this is the first visit to the groups page
     const hasVisitedGroups = sessionStorage.getItem("hasVisitedGroups");
+    const fromOnboarding = sessionStorage.getItem("justCompletedOnboarding");
+    const isFirstVisit = !hasVisitedGroups && fromOnboarding === "true";
     
-    if (!hasVisitedGroups) {
-      // Mark that we've visited groups page
+    if (isFirstVisit) {
+      // Mark that we've visited groups page to prevent future reloads
       sessionStorage.setItem("hasVisitedGroups", "true");
       
-      // Force a page reload to ensure group chats load properly
-      window.location.reload();
+      // Show a loading toast to indicate refresh is happening
+      toast.info("Loading group chats...");
+      
+      // Set a timeout to prevent immediate reload loops
+      setTimeout(() => {
+        // Force a page reload to ensure group chats load properly
+        window.location.reload();
+      }, 500);
     }
   }, []);
   
