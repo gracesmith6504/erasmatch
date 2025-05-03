@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -51,7 +52,12 @@ export const OnboardingFlow = () => {
       if (currentUserProfile?.city) {
         sessionStorage.setItem("justCompletedOnboarding", "true");
         sessionStorage.setItem("userCity", currentUserProfile.city);
+      } else {
+        sessionStorage.setItem("justCompletedOnboarding", "true");
       }
+      
+      // Clear the hasVisitedGroups flag to ensure it reloads when visiting /groups
+      sessionStorage.removeItem("hasVisitedGroups");
       
       // Redirect to students page with onboarding flag
       navigate('/students?from=onboarding');
