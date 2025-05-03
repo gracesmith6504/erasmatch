@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const useOnboardingBanner = (currentUserId: string | null) => {
   const [showBanner, setShowBanner] = useState(false);
   const [cityName, setCityName] = useState<string | null>(null);
+  const [hasAvatar, setHasAvatar] = useState(false);
   const location = useLocation();
   
   useEffect(() => {
@@ -31,33 +32,35 @@ export const useOnboardingBanner = (currentUserId: string | null) => {
       setShowBanner(true);
     }
     
-    // If there's no city yet, fetch it from the user's profile
-    if (!cityName && currentUserId) {
-      const fetchUserCity = async () => {
+    // If no city yet, fetch it from the user's profile and also check avatar
+    if (currentUserId) {
+      const fetchUserData = async () => {
         try {
           const { data, error } = await supabase
             .from("profiles")
-            .select("city")
+            .select("city, avatar_url")
             .eq("id", currentUserId)
             .single();
           
           if (data && !error) {
             setCityName(data.city);
+            setHasAvatar(!!data.avatar_url); // Set hasAvatar based on avatar_url existence
             sessionStorage.setItem("userCity", data.city || "");
-            setShowBanner(true); // Always show banner if we have a city
+            setShowBanner(true); // Only show banner if we have a city and no avatar
           }
         } catch (err) {
-          console.error("Error fetching user city:", err);
+          console.error("Error fetching user data:", err);
         }
       };
       
-      fetchUserCity();
+      fetchUserData();
     }
-  }, [location.search, currentUserId, cityName]);
+  }, [location.search, currentUserId]);
   
   return {
     showBanner,
     cityName,
+    hasAvatar,
     setShowBanner
   };
 };
