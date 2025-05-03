@@ -56,11 +56,6 @@ export const OnboardingFlow = () => {
       
       // Always redirect to students page with onboarding flag
       navigate('/students?from=onboarding');
-      
-      // Force a page reload after navigation to ensure fresh data
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
     } catch (error: any) {
       toast.error("Failed to complete onboarding: " + error.message);
     }

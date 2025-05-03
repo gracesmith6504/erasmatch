@@ -43,7 +43,7 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
   }, []);
 
   const location = useLocation();
-  const { showBanner, cityName, setShowBanner } = useOnboardingBanner(currentUserId);
+  const { showBanner, cityName, hasAvatar, setShowBanner } = useOnboardingBanner(currentUserId);
   
   // Store onboarding completion info when coming from onboarding
   useEffect(() => {
@@ -97,7 +97,7 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
   return (
     <div className="max-w-7xl mx-auto py-4 sm:py-6 md:py-8 px-4 sm:px-6 lg:px-8 animate-fade-in overflow-x-hidden w-full">
       {showBanner && (
-        <WelcomeBanner cityName={cityName} />
+        <WelcomeBanner cityName={cityName} hasAvatar={hasAvatar} />
       )}
       
       <h1 className="text-xl sm:text-2xl font-bold gradient-text mb-4">Find Erasmus Students</h1>
