@@ -8,9 +8,10 @@ import { Button } from "@/components/ui/button";
 interface WelcomeBannerProps {
   cityName: string | null;
   variant?: "default" | "groups";
+  hasAvatar?: boolean;
 }
 
-export const WelcomeBanner = ({ cityName, variant = "default" }: WelcomeBannerProps) => {
+export const WelcomeBanner = ({ cityName, variant = "default", hasAvatar = false }: WelcomeBannerProps) => {
   const [dismissed, setDismissed] = useState(false);
   
   // Check localStorage on component mount
@@ -24,9 +25,13 @@ export const WelcomeBanner = ({ cityName, variant = "default" }: WelcomeBannerPr
   const handleDismiss = () => {
     setDismissed(true);
     localStorage.setItem("welcomeBannerDismissed", "true");
+    
+    // Also clear the onboarding flag when dismissed
+    sessionStorage.removeItem("justCompletedOnboarding");
   };
 
-  if (dismissed) return null;
+  // If the banner is dismissed or user has avatar and we're showing the photo prompt, return null
+  if (dismissed || (hasAvatar && variant !== "groups")) return null;
 
   return (
     <Alert className="mb-6 relative pr-10 bg-blue-50 border-blue-200">

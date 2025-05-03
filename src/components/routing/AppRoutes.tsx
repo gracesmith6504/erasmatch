@@ -14,7 +14,7 @@ import Messages from "@/pages/Messages";
 import Groups from "@/pages/Groups";
 import NotFound from "@/pages/NotFound";
 import Onboarding from "@/pages/Onboarding";
-import PrivacyPolicy from "@/pages/PrivacyPolicy"; // Add import for Privacy Policy page
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
 
 // Contexts
 import { useAuth } from "@/contexts/AuthContext";

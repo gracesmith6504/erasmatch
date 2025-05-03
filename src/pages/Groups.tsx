@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { WelcomeBanner } from "@/components/WelcomeBanner";
@@ -18,6 +19,28 @@ const Groups = () => {
   const currentUserId = localStorage.getItem('userId'); // This is how the app gets the user ID
   const { showBanner, cityName } = useOnboardingBanner(currentUserId);
   
+  const { profiles } = useData();
+  const { currentUserId: authCurrentUserId } = useAuth();
+  const { profile: currentUserProfile } = useProfileContext();
+  const isMobile = useIsMobile();
+  
+  const [selectedGroupChat, setSelectedGroupChat] = useState<string | null>(null);
+  const [selectedCityChat, setSelectedCityChat] = useState<string | null>(null);
+  
+  // Force refresh on first visit to ensure group chats load properly
+  useEffect(() => {
+    // Check if this is the first visit to the groups page
+    const hasVisitedGroups = sessionStorage.getItem("hasVisitedGroups");
+    
+    if (!hasVisitedGroups) {
+      // Mark that we've visited groups page
+      sessionStorage.setItem("hasVisitedGroups", "true");
+      
+      // Force a page reload to ensure group chats load properly
+      window.location.reload();
+    }
+  }, []);
+  
   // Store onboarding completion info when coming from onboarding
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -26,14 +49,6 @@ const Groups = () => {
       // City will be fetched in the hook
     }
   }, [location]);
-  
-  const { profiles } = useData();
-  const { currentUserId: authCurrentUserId } = useAuth();
-  const { profile: currentUserProfile } = useProfileContext();
-  const isMobile = useIsMobile();
-  
-  const [selectedGroupChat, setSelectedGroupChat] = useState<string | null>(null);
-  const [selectedCityChat, setSelectedCityChat] = useState<string | null>(null);
   
   const handleSelectGroupChat = (universityName: string) => {
     console.log("Selecting group chat:", universityName);
