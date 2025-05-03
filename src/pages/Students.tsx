@@ -50,17 +50,14 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
     const params = new URLSearchParams(location.search);
     if (params.get("from") === "onboarding") {
       sessionStorage.setItem("justCompletedOnboarding", "true");
+      
       // Find user city from profiles
       const userProfile = profiles.find(p => p.id === currentUserId);
       if (userProfile?.city) {
         sessionStorage.setItem("userCity", userProfile.city);
-        // Force reload to show the banner if needed
-        if (!showBanner) {
-          window.location.reload();
-        }
       }
     }
-  }, [location, profiles, currentUserId, showBanner]);
+  }, [location, profiles, currentUserId]);
 
   const getCompletionPercentage = (profile: Profile) => {
     const fields = [

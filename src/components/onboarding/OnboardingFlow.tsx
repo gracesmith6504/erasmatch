@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -48,7 +47,7 @@ export const OnboardingFlow = () => {
       
       toast.success("Welcome to ErasMatch!");
       
-      // Store city in sessionStorage if available
+      // Store city in sessionStorage if available and set flag for just completed onboarding
       if (currentUserProfile?.city) {
         sessionStorage.setItem("justCompletedOnboarding", "true");
         sessionStorage.setItem("userCity", currentUserProfile.city);

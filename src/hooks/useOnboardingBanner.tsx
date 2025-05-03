@@ -20,7 +20,7 @@ export const useOnboardingBanner = (currentUserId: string | null) => {
     // Check if the user just completed onboarding
     const justCompletedOnboarding = sessionStorage.getItem("justCompletedOnboarding");
 
-    if (justCompletedOnboarding) {
+    if (justCompletedOnboarding === "true") {
       setShowBanner(true);
       const city = sessionStorage.getItem("userCity");
       setCityName(city);
@@ -28,8 +28,9 @@ export const useOnboardingBanner = (currentUserId: string | null) => {
     
     // For manual testing, we can also check the query string
     const params = new URLSearchParams(location.search);
-    if (params.get("from") === "onboarding" || params.get("showBanner") === "true") {
+    if (params.get("from") === "onboarding") {
       setShowBanner(true);
+      sessionStorage.setItem("justCompletedOnboarding", "true");
     }
     
     // If no city yet, fetch it from the user's profile and also check avatar
@@ -45,8 +46,16 @@ export const useOnboardingBanner = (currentUserId: string | null) => {
           if (data && !error) {
             setCityName(data.city);
             setHasAvatar(!!data.avatar_url); // Set hasAvatar based on avatar_url existence
-            sessionStorage.setItem("userCity", data.city || "");
-            setShowBanner(true); // Only show banner if we have a city and no avatar
+            
+            if (data.city) {
+              sessionStorage.setItem("userCity", data.city || "");
+            }
+            
+            // Only show banner if we don't already have justCompletedOnboarding flag
+            // or if explicitly coming from onboarding
+            if (!justCompletedOnboarding && !params.get("from")) {
+              setShowBanner(!data.avatar_url); // Only show if no avatar
+            }
           }
         } catch (err) {
           console.error("Error fetching user data:", err);
