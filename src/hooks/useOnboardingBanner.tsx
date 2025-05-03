@@ -51,10 +51,12 @@ export const useOnboardingBanner = (currentUserId: string | null) => {
               sessionStorage.setItem("userCity", data.city || "");
             }
             
-            // Only show banner if we don't already have justCompletedOnboarding flag
-            // or if explicitly coming from onboarding
-            if (!justCompletedOnboarding && !params.get("from")) {
-              setShowBanner(!data.avatar_url); // Only show if no avatar
+            // Show banner if we just completed onboarding or coming from onboarding
+            if (justCompletedOnboarding === "true" || params.get("from") === "onboarding") {
+              setShowBanner(true);
+            } else {
+              // Only show banner if no avatar (and not dismissed)
+              setShowBanner(!data.avatar_url);
             }
           }
         } catch (err) {
