@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -26,13 +25,8 @@ const Onboarding = () => {
       if (!loading && currentUserProfile?.onboarding_complete) {
         setLoadingRedirect(true);
         
-        // Always redirect to groups page for completed onboarding
-        navigate("/groups");
-        
-        // Force a page reload to ensure fresh data
-        setTimeout(() => {
-          window.location.reload();
-        }, 100);
+        // Redirect to students page for completed onboarding
+        navigate("/students");
         
         setLoadingRedirect(false);
       }

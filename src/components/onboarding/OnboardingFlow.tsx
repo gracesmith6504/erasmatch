@@ -54,7 +54,7 @@ export const OnboardingFlow = () => {
         sessionStorage.setItem("userCity", currentUserProfile.city);
       }
       
-      // Always redirect to students page with onboarding flag
+      // Redirect to students page with onboarding flag
       navigate('/students?from=onboarding');
     } catch (error: any) {
       toast.error("Failed to complete onboarding: " + error.message);
