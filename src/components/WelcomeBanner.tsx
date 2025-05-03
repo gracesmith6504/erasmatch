@@ -25,10 +25,13 @@ export const WelcomeBanner = ({ cityName, variant = "default", hasAvatar = false
   const handleDismiss = () => {
     setDismissed(true);
     localStorage.setItem("welcomeBannerDismissed", "true");
+    
+    // Also clear the onboarding flag when dismissed
+    sessionStorage.removeItem("justCompletedOnboarding");
   };
 
   // If the banner is dismissed or user has avatar and we're showing the photo prompt, return null
-  if (dismissed || (hasAvatar)) return null;
+  if (dismissed || (hasAvatar && variant !== "groups")) return null;
 
   return (
     <Alert className="mb-6 relative pr-10 bg-blue-50 border-blue-200">
