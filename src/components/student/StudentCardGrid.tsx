@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { Profile } from "@/types";
@@ -15,12 +16,13 @@ import { useLocation } from "react-router-dom";
 interface StudentCardGridProps {
   filteredProfiles: Profile[];
   resetFilters: () => void;
+  featuredProfiles?: Profile[];
 }
 
 const ITEMS_PER_PAGE = 20; // Reduced from 40 to 20 for better performance
 const PAGINATION_STATE_KEY = "studentGridPaginationState";
 
-const StudentCardGrid = ({ filteredProfiles, resetFilters }: StudentCardGridProps) => {
+const StudentCardGrid = ({ filteredProfiles, resetFilters, featuredProfiles = [] }: StudentCardGridProps) => {
   const location = useLocation();
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(filteredProfiles.length / ITEMS_PER_PAGE);
@@ -52,8 +54,37 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters }: StudentCardGridProp
     }
   }, [filteredProfiles.length, location.state]);
 
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentProfiles = filteredProfiles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  // Generate current page profiles, prioritizing featured profiles on page 1
+  const currentProfiles = useMemo(() => {
+    if (currentPage === 1 && featuredProfiles.length > 0) {
+      // Filter out featured profiles from the main list
+      const nonFeaturedProfiles = filteredProfiles.filter(
+        p => !featuredProfiles.some(fp => fp.id === p.id)
+      );
+      
+      // Get featured profiles that also match the filters
+      const filteredFeaturedProfiles = featuredProfiles.filter(profile => {
+        // Skip current user and deleted users
+        if (profile.deleted_at || (!profile.university && !profile.home_university)) return false;
+        
+        // Check if this featured profile is in the filtered list
+        return filteredProfiles.some(fp => fp.id === profile.id);
+      });
+      
+      // Combine featured profiles with regular profiles for page 1
+      const remainingSlots = ITEMS_PER_PAGE - filteredFeaturedProfiles.length;
+      const regularProfiles = nonFeaturedProfiles.slice(0, remainingSlots);
+      
+      return [...filteredFeaturedProfiles, ...regularProfiles];
+    } else {
+      // For other pages, calculate the correct slice
+      // If we're on page 1, we need to make sure we skip the featured profiles
+      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+      
+      // For pages beyond the first, simply slice based on page number
+      return filteredProfiles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    }
+  }, [currentPage, filteredProfiles, featuredProfiles]);
 
   const scrollToGrid = () => {
     const grid = document.getElementById("student-grid");
@@ -82,6 +113,9 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters }: StudentCardGridProp
     <div id="student-grid">
       <div className="mb-4 md:mb-6 text-sm text-gray-600">
         Showing <span className="font-medium text-gray-900">{Math.min(currentProfiles.length, ITEMS_PER_PAGE)}</span> of <span className="font-medium text-gray-900">{filteredProfiles.length}</span> students
+        {currentPage === 1 && featuredProfiles.length > 0 && (
+          <span className="ml-1 text-xs text-blue-600">(including featured students)</span>
+        )}
       </div>
 
       {filteredProfiles.length === 0 ? (
@@ -99,7 +133,11 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters }: StudentCardGridProp
         <>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-8">
             {currentProfiles.map((profile) => (
-              <StudentCard key={profile.id} profile={profile} />
+              <StudentCard 
+                key={profile.id} 
+                profile={profile} 
+                isFeatured={currentPage === 1 && featuredProfiles.some(fp => fp.id === profile.id)}
+              />
             ))}
           </div>
 
