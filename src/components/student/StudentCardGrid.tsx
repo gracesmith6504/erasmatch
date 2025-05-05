@@ -56,27 +56,37 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters, featuredProfiles = []
 
   const currentProfiles = useMemo(() => {
   if (currentPage === 1 && featuredProfiles.length > 0) {
-    // Step 1: Only include featured profiles that match current filters
-    const filteredFeaturedProfiles = featuredProfiles.filter(fp =>
+    // Step 1: Only use featured profiles that are also in the filtered list
+    const featuredInFilter = featuredProfiles.filter(fp =>
       filteredProfiles.some(p => p.id === fp.id)
     );
 
-    const featuredIds = new Set(filteredFeaturedProfiles.map(fp => fp.id));
+    const featuredIds = new Set(featuredInFilter.map(fp => fp.id));
 
-    // Step 2: Filter out those same featured profiles from the main list
-    const nonFeaturedProfiles = filteredProfiles.filter(p => !featuredIds.has(p.id));
+    // Step 2: Remove featured profiles from filteredProfiles
+    const regularProfiles = filteredProfiles.filter(p => !featuredIds.has(p.id));
 
-    // Step 3: Fill the rest of the page with regular profiles
-    const remainingSlots = ITEMS_PER_PAGE - filteredFeaturedProfiles.length;
-    const regularProfiles = nonFeaturedProfiles.slice(0, remainingSlots);
+    // Step 3: Fill remaining slots with regular profiles
+    const remainingSlots = ITEMS_PER_PAGE - featuredInFilter.length;
+    const paginatedRegularProfiles = regularProfiles.slice(0, remainingSlots);
 
-    // Step 4: Merge and return
-    return [...filteredFeaturedProfiles, ...regularProfiles];
-  } else {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    return filteredProfiles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    // Step 4: Merge and deduplicate (just in case)
+    const merged = [...featuredInFilter, ...paginatedRegularProfiles];
+    const seen = new Set<string>();
+    const deduplicated = merged.filter(p => {
+      if (seen.has(p.id)) return false;
+      seen.add(p.id);
+      return true;
+    });
+
+    return deduplicated;
   }
+
+  // Other pages
+  const start = (currentPage - 1) * ITEMS_PER_PAGE;
+  return filteredProfiles.slice(start, start + ITEMS_PER_PAGE);
 }, [currentPage, filteredProfiles, featuredProfiles]);
+
 
 
   const scrollToGrid = () => {
