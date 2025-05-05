@@ -1,3 +1,4 @@
+
 export interface Message {
   id: string;
   sender_id: string;
@@ -27,6 +28,7 @@ export interface Profile {
   country?: string | null;
   interests?: string[] | null;
   onboarding_complete?: boolean;
+  featured?: boolean;
 }
 
 export interface LastMessage {

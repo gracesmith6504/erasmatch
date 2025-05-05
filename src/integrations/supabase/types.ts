@@ -109,6 +109,7 @@ export type Database = {
           created_at: string
           deleted_at: string | null
           email: string | null
+          featured: boolean | null
           home_university: string | null
           id: string
           invited_by: string | null
@@ -128,6 +129,7 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           email?: string | null
+          featured?: boolean | null
           home_university?: string | null
           id: string
           invited_by?: string | null
@@ -147,6 +149,7 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           email?: string | null
+          featured?: boolean | null
           home_university?: string | null
           id?: string
           invited_by?: string | null
