@@ -7,7 +7,7 @@ import PersonalityTags from "./card/PersonalityTags";
 import StudentInfo from "./card/StudentInfo";
 import StudentCardActions from "./card/StudentCardActions";
 import CountryFlag from "./card/CountryFlag";
-import { StarIcon } from "lucide-react";
+
 
 interface StudentCardProps {
   profile: Profile;
@@ -18,11 +18,6 @@ const StudentCard = ({ profile, isFeatured = false }: StudentCardProps) => {
   return (
     <Card className="overflow-hidden card-hover border-gray-100 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group">
       <div className="h-24 bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple"></div>
-      {isFeatured && (
-        <div className="absolute top-3 right-3 bg-yellow-500 text-white text-xs rounded-full py-1 px-2 flex items-center">
-          <StarIcon className="h-3 w-3 mr-1" /> Featured
-        </div>
-      )}
       <div className="-mt-12 flex justify-center">
         <StudentAvatar 
           avatarUrl={profile.avatar_url}
