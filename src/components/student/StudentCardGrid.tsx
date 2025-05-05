@@ -56,21 +56,21 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters, featuredProfiles = []
 
   const currentProfiles = useMemo(() => {
   if (currentPage === 1 && featuredProfiles.length > 0) {
-    const featuredIds = new Set(featuredProfiles.map(fp => fp.id));
-
-    // Filter featuredProfiles that are also present in the current filteredProfiles
+    // Step 1: Only include featured profiles that match current filters
     const filteredFeaturedProfiles = featuredProfiles.filter(fp =>
       filteredProfiles.some(p => p.id === fp.id)
     );
 
-    // Remove those from the main filtered list to prevent duplication
-    const nonFeaturedProfiles = filteredProfiles.filter(
-      p => !featuredIds.has(p.id)
-    );
+    const featuredIds = new Set(filteredFeaturedProfiles.map(fp => fp.id));
 
+    // Step 2: Filter out those same featured profiles from the main list
+    const nonFeaturedProfiles = filteredProfiles.filter(p => !featuredIds.has(p.id));
+
+    // Step 3: Fill the rest of the page with regular profiles
     const remainingSlots = ITEMS_PER_PAGE - filteredFeaturedProfiles.length;
     const regularProfiles = nonFeaturedProfiles.slice(0, remainingSlots);
 
+    // Step 4: Merge and return
     return [...filteredFeaturedProfiles, ...regularProfiles];
   } else {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -106,6 +106,9 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters, featuredProfiles = []
     <div id="student-grid">
       <div className="mb-4 md:mb-6 text-sm text-gray-600">
         Showing <span className="font-medium text-gray-900">{Math.min(currentProfiles.length, ITEMS_PER_PAGE)}</span> of <span className="font-medium text-gray-900">{filteredProfiles.length}</span> students
+        {currentPage === 1 && featuredProfiles.length > 0 && (
+          <span className="ml-1 text-xs text-blue-600">(including featured students)</span>
+        )}
       </div>
 
       {filteredProfiles.length === 0 ? (
