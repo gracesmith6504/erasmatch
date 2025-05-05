@@ -1,7 +1,7 @@
 
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, ArrowLeft } from "lucide-react";
 import { Profile } from "@/types";
 import { ProfileHeader } from "@/components/profile/view/ProfileHeader";
 import { ProfileDetails } from "@/components/profile/view/ProfileDetails";
@@ -17,6 +17,7 @@ type ProfileViewProps = {
 
 const ProfileView = ({ profiles, currentUserId, onSendMessage }: ProfileViewProps) => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const profile = profiles.find((p) => p.id === id);
   
   const {
@@ -31,12 +32,28 @@ const ProfileView = ({ profiles, currentUserId, onSendMessage }: ProfileViewProp
     isOwnProfile
   } = useProfileView(profile, currentUserId, onSendMessage);
 
+  const handleBackToStudents = () => {
+    navigate('/students', { state: { fromProfile: true }});
+  };
+
   if (!profile) {
     return <NotFoundView />;
   }
 
   return (
     <div className="max-w-3xl mx-auto py-8 px-4 sm:px-6">
+      <div className="mb-4">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={handleBackToStudents}
+          className="flex items-center text-gray-600"
+        >
+          <ArrowLeft className="mr-1 h-4 w-4" />
+          Back to Students
+        </Button>
+      </div>
+      
       <div className="bg-white shadow rounded-lg overflow-hidden">
         <ProfileHeader profile={profile} isOwnProfile={isOwnProfile} />
         

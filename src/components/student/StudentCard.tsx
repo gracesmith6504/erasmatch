@@ -8,11 +8,13 @@ import StudentInfo from "./card/StudentInfo";
 import StudentCardActions from "./card/StudentCardActions";
 import CountryFlag from "./card/CountryFlag";
 
+
 interface StudentCardProps {
   profile: Profile;
+  isFeatured?: boolean;
 }
 
-const StudentCard = ({ profile }: StudentCardProps) => {
+const StudentCard = ({ profile, isFeatured = false }: StudentCardProps) => {
   return (
     <Card className="overflow-hidden card-hover border-gray-100 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group">
       <div className="h-24 bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple"></div>

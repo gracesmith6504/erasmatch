@@ -28,6 +28,7 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
     uniqueUniversities,
     uniqueCities,
     filteredProfiles,
+    featuredProfiles,
     loading,
     resetFilters
   } = useStudentsData(profiles, currentUserId);
@@ -126,7 +127,8 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
 
           <StudentCardGrid 
             filteredProfiles={sortedProfiles} 
-            resetFilters={resetFilters} 
+            resetFilters={resetFilters}
+            featuredProfiles={featuredProfiles} 
           />
         </TabsContent>
         
