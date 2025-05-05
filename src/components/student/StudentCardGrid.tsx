@@ -54,37 +54,30 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters, featuredProfiles = []
     }
   }, [filteredProfiles.length, location.state]);
 
-  // Generate current page profiles, prioritizing featured profiles on page 1
   const currentProfiles = useMemo(() => {
-    if (currentPage === 1 && featuredProfiles.length > 0) {
-      // Filter out featured profiles from the main list
-      const nonFeaturedProfiles = filteredProfiles.filter(
-        p => !featuredProfiles.some(fp => fp.id === p.id)
-      );
-      
-      // Get featured profiles that also match the filters
-      const filteredFeaturedProfiles = featuredProfiles.filter(profile => {
-        // Skip current user and deleted users
-        if (profile.deleted_at || (!profile.university && !profile.home_university)) return false;
-        
-        // Check if this featured profile is in the filtered list
-        return filteredProfiles.some(fp => fp.id === profile.id);
-      });
-      
-      // Combine featured profiles with regular profiles for page 1
-      const remainingSlots = ITEMS_PER_PAGE - filteredFeaturedProfiles.length;
-      const regularProfiles = nonFeaturedProfiles.slice(0, remainingSlots);
-      
-      return [...filteredFeaturedProfiles, ...regularProfiles];
-    } else {
-      // For other pages, calculate the correct slice
-      // If we're on page 1, we need to make sure we skip the featured profiles
-      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-      
-      // For pages beyond the first, simply slice based on page number
-      return filteredProfiles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-    }
-  }, [currentPage, filteredProfiles, featuredProfiles]);
+  if (currentPage === 1 && featuredProfiles.length > 0) {
+    const featuredIds = new Set(featuredProfiles.map(fp => fp.id));
+
+    // Filter out featured profiles from the main list first
+    const nonFeaturedProfiles = filteredProfiles.filter(
+      p => !featuredIds.has(p.id)
+    );
+
+    // Only include featured profiles that match current filters
+    const filteredFeaturedProfiles = featuredProfiles.filter(profile => {
+      return filteredProfiles.some(fp => fp.id === profile.id);
+    });
+
+    const remainingSlots = ITEMS_PER_PAGE - filteredFeaturedProfiles.length;
+    const regularProfiles = nonFeaturedProfiles.slice(0, remainingSlots);
+
+    return [...filteredFeaturedProfiles, ...regularProfiles];
+  } else {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredProfiles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }
+}, [currentPage, filteredProfiles, featuredProfiles]);
+
 
   const scrollToGrid = () => {
     const grid = document.getElementById("student-grid");
@@ -113,6 +106,9 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters, featuredProfiles = []
     <div id="student-grid">
       <div className="mb-4 md:mb-6 text-sm text-gray-600">
         Showing <span className="font-medium text-gray-900">{Math.min(currentProfiles.length, ITEMS_PER_PAGE)}</span> of <span className="font-medium text-gray-900">{filteredProfiles.length}</span> students
+        {currentPage === 1 && featuredProfiles.length > 0 && (
+          <span className="ml-1 text-xs text-blue-600">(including featured students)</span>
+        )}
       </div>
 
       {filteredProfiles.length === 0 ? (
