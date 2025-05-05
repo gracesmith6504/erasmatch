@@ -23,6 +23,12 @@ const StudentCardActions: React.FC<StudentCardActionsProps> = ({ studentId }) =>
     });
   };
 
+  const handleProfileClick = (e: React.MouseEvent) => {
+    // Instead of directly navigating with Link, use navigate with state
+    e.preventDefault();
+    navigate(`/profile/${studentId}`, { state: { fromProfile: true } });
+  };
+
   return (
     <>
       <Button 
@@ -32,11 +38,12 @@ const StudentCardActions: React.FC<StudentCardActionsProps> = ({ studentId }) =>
       >
         <Mail className="mr-1 h-4 w-4" /> Message
       </Button>
-      <Link to={`/profile/${studentId}`} className="w-1/2">
-        <Button className="w-full button-hover bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple hover:from-erasmatch-purple hover:to-erasmatch-blue">
-          <Globe className="mr-1 h-4 w-4" /> Profile
-        </Button>
-      </Link>
+      <Button 
+        onClick={handleProfileClick}
+        className="w-1/2 button-hover bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple hover:from-erasmatch-purple hover:to-erasmatch-blue"
+      >
+        <Globe className="mr-1 h-4 w-4" /> Profile
+      </Button>
     </>
   );
 };

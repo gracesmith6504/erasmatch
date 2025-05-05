@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
@@ -11,6 +10,7 @@ import {
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useLocation } from "react-router-dom";
 
 interface StudentCardGridProps {
   filteredProfiles: Profile[];
@@ -18,15 +18,39 @@ interface StudentCardGridProps {
 }
 
 const ITEMS_PER_PAGE = 20; // Reduced from 40 to 20 for better performance
+const PAGINATION_STATE_KEY = "studentGridPaginationState";
 
 const StudentCardGrid = ({ filteredProfiles, resetFilters }: StudentCardGridProps) => {
+  const location = useLocation();
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(filteredProfiles.length / ITEMS_PER_PAGE);
   const isMobile = useIsMobile();
 
+  // Store current page in session storage when it changes
   useEffect(() => {
-    setCurrentPage(1);
-  }, [filteredProfiles.length]);
+    sessionStorage.setItem(PAGINATION_STATE_KEY, currentPage.toString());
+  }, [currentPage]);
+
+  // Restore pagination state from session storage on component mount
+  useEffect(() => {
+    const savedPage = sessionStorage.getItem(PAGINATION_STATE_KEY);
+    if (savedPage) {
+      const parsedPage = parseInt(savedPage, 10);
+      // Ensure the page is valid for current data
+      if (parsedPage > 0 && parsedPage <= Math.ceil(filteredProfiles.length / ITEMS_PER_PAGE)) {
+        setCurrentPage(parsedPage);
+      }
+    }
+  }, []);
+
+  // Reset to page 1 only when filters change (profile length changes)
+  useEffect(() => {
+    // Only reset to page 1 when filters change, not when returning from a profile
+    const comingFromProfile = location.state?.fromProfile;
+    if (!comingFromProfile) {
+      setCurrentPage(1);
+    }
+  }, [filteredProfiles.length, location.state]);
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentProfiles = filteredProfiles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
