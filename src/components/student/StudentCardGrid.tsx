@@ -58,15 +58,15 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters, featuredProfiles = []
   if (currentPage === 1 && featuredProfiles.length > 0) {
     const featuredIds = new Set(featuredProfiles.map(fp => fp.id));
 
-    // Filter out featured profiles from the main list first
+    // Filter featuredProfiles that are also present in the current filteredProfiles
+    const filteredFeaturedProfiles = featuredProfiles.filter(fp =>
+      filteredProfiles.some(p => p.id === fp.id)
+    );
+
+    // Remove those from the main filtered list to prevent duplication
     const nonFeaturedProfiles = filteredProfiles.filter(
       p => !featuredIds.has(p.id)
     );
-
-    // Only include featured profiles that match current filters
-    const filteredFeaturedProfiles = featuredProfiles.filter(profile => {
-      return filteredProfiles.some(fp => fp.id === profile.id);
-    });
 
     const remainingSlots = ITEMS_PER_PAGE - filteredFeaturedProfiles.length;
     const regularProfiles = nonFeaturedProfiles.slice(0, remainingSlots);
@@ -106,9 +106,6 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters, featuredProfiles = []
     <div id="student-grid">
       <div className="mb-4 md:mb-6 text-sm text-gray-600">
         Showing <span className="font-medium text-gray-900">{Math.min(currentProfiles.length, ITEMS_PER_PAGE)}</span> of <span className="font-medium text-gray-900">{filteredProfiles.length}</span> students
-        {currentPage === 1 && featuredProfiles.length > 0 && (
-          <span className="ml-1 text-xs text-blue-600">(including featured students)</span>
-        )}
       </div>
 
       {filteredProfiles.length === 0 ? (
