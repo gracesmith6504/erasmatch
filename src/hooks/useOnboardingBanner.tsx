@@ -19,21 +19,21 @@ export const useOnboardingBanner = (currentUserId: string | null) => {
     
     // Check if the user just completed onboarding
     const justCompletedOnboarding = sessionStorage.getItem("justCompletedOnboarding");
+    const fromParam = new URLSearchParams(location.search).get("from");
 
-    if (justCompletedOnboarding === "true") {
+    // Always prioritize showing banner if coming directly from onboarding
+    if (fromParam === "onboarding" || justCompletedOnboarding === "true") {
       setShowBanner(true);
       const city = sessionStorage.getItem("userCity");
       setCityName(city);
+      
+      // Store the onboarding completion flag if it came from URL
+      if (fromParam === "onboarding") {
+        sessionStorage.setItem("justCompletedOnboarding", "true");
+      }
     }
     
-    // For manual testing, we can also check the query string
-    const params = new URLSearchParams(location.search);
-    if (params.get("from") === "onboarding") {
-      setShowBanner(true);
-      sessionStorage.setItem("justCompletedOnboarding", "true");
-    }
-    
-    // If no city yet, fetch it from the user's profile and also check avatar
+    // If user is authenticated, fetch their profile data
     if (currentUserId) {
       const fetchUserData = async () => {
         try {
@@ -45,18 +45,19 @@ export const useOnboardingBanner = (currentUserId: string | null) => {
           
           if (data && !error) {
             setCityName(data.city);
-            setHasAvatar(!!data.avatar_url); // Set hasAvatar based on avatar_url existence
+            setHasAvatar(!!data.avatar_url);
             
             if (data.city) {
               sessionStorage.setItem("userCity", data.city || "");
             }
             
-            // Show banner if we just completed onboarding or coming from onboarding
-            if (justCompletedOnboarding === "true" || params.get("from") === "onboarding") {
+            // Determine whether to show banner based on onboarding status and avatar
+            const shouldShowBanner = (fromParam === "onboarding" || 
+                                     justCompletedOnboarding === "true" || 
+                                     !data.avatar_url);
+            
+            if (shouldShowBanner && isDismissed !== "true") {
               setShowBanner(true);
-            } else {
-              // Only show banner if no avatar (and not dismissed)
-              setShowBanner(!data.avatar_url);
             }
           }
         } catch (err) {

@@ -30,7 +30,7 @@ export const WelcomeBanner = ({ cityName, variant = "default", hasAvatar = false
     sessionStorage.removeItem("justCompletedOnboarding");
   };
 
-  // If the banner is dismissed or user has avatar and we're showing the photo prompt, return null
+  // If the banner is dismissed or user has avatar and we're showing the photo prompt, don't show
   if (dismissed || (hasAvatar && variant !== "groups")) return null;
 
   return (
@@ -39,20 +39,36 @@ export const WelcomeBanner = ({ cityName, variant = "default", hasAvatar = false
         <span className="truncate pr-1">Welcome to {cityName || "ErasMatch"}!</span>
       </AlertTitle>
       <AlertDescription className="flex flex-col gap-2">
-        <p>Profiles with photos get more attention — want to add yours?</p>
-        <div className="mt-2 flex flex-wrap gap-2">
-          <Button asChild size="sm" className="flex items-center">
-            <Link to="/profile">
-              <Camera className="h-4 w-4 mr-2" />
-              Add a photo
-            </Link>
-          </Button>
-          <Button asChild size="sm" variant="outline">
-            <Link to="/groups">
-              Browse groups
-            </Link>
-          </Button>
-        </div>
+        {!hasAvatar && (
+          <>
+            <p>Profiles with photos get more attention — want to add yours?</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <Button asChild size="sm" className="flex items-center">
+                <Link to="/profile">
+                  <Camera className="h-4 w-4 mr-2" />
+                  Add a photo
+                </Link>
+              </Button>
+              <Button asChild size="sm" variant="outline">
+                <Link to="/groups">
+                  Browse groups
+                </Link>
+              </Button>
+            </div>
+          </>
+        )}
+        {hasAvatar && (
+          <>
+            <p>Thanks for completing your profile! Connect with your Erasmus peers:</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <Button asChild size="sm" variant="outline">
+                <Link to="/groups">
+                  Browse groups
+                </Link>
+              </Button>
+            </div>
+          </>
+        )}
       </AlertDescription>
       <button
         onClick={handleDismiss}
