@@ -13,35 +13,36 @@ export const ProfileDetails = ({ profile, universityCity, isLoadingCity }: Profi
   return (
     <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
       <div className="space-y-4">
-        <div className="flex items-center text-gray-700">
-          <Home className="h-5 w-5 mr-2 text-erasmatch-purple" />
-          <span>{profile.home_university || "Home university not specified"}</span>
-        </div>
+        {profile.home_university && (
+          <div className="flex items-center text-gray-700">
+            <Home className="h-5 w-5 mr-2 text-erasmatch-purple" />
+            <span>{profile.home_university}</span>
+          </div>
+        )}
         {profile.course && (
           <div className="flex items-center text-gray-700">
             <BookOpen className="h-5 w-5 mr-2 text-erasmatch-purple" />
             <span>{profile.course}</span>
           </div>
         )}
-        <div className="flex items-center text-gray-700">
-          <School className="h-5 w-5 mr-2 text-erasmatch-blue" />
-          <span>{profile.university || "University not specified"}</span>
-        </div>
-        {(profile.university && !isLoadingCity) ? (
+        {profile.university && (
+          <div className="flex items-center text-gray-700">
+            <School className="h-5 w-5 mr-2 text-erasmatch-blue" />
+            <span>{profile.university}</span>
+          </div>
+        )}
+        {profile.university && !isLoadingCity && universityCity && (
           <div className="flex items-center text-gray-700">
             <MapPin className="h-5 w-5 mr-2 text-erasmatch-blue" />
-            <span>{universityCity || "Destination city not available"}</span>
+            <span>{universityCity}</span>
           </div>
-        ) : isLoadingCity ? (
-          <div className="flex items-center text-gray-500">
-            <MapPin className="h-5 w-5 mr-2 text-erasmatch-blue" />
-            <span>Loading city information...</span>
+        )}
+        {profile.semester && (
+          <div className="flex items-center text-gray-700">
+            <CalendarClock className="h-5 w-5 mr-2 text-erasmatch-blue" />
+            <span>{profile.semester}</span>
           </div>
-        ) : null}
-        <div className="flex items-center text-gray-700">
-          <CalendarClock className="h-5 w-5 mr-2 text-erasmatch-blue" />
-          <span>{profile.semester || "Semester not specified"}</span>
-        </div>
+        )}
         
         <ProfilePersonalityTags tags={profile.personality_tags} />
       </div>

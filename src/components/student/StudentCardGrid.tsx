@@ -122,9 +122,6 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters, featuredProfiles = []
     <div id="student-grid">
       <div className="mb-4 md:mb-6 text-sm text-gray-600">
         Showing <span className="font-medium text-gray-900">{displayedCount}</span> of <span className="font-medium text-gray-900">{totalProfileCount}</span> students
-        {currentPage === 1 && featuredProfiles.length > 0 && (
-          <span className="ml-1 text-xs text-blue-600">(including featured students)</span>
-        )}
       </div>
 
       {filteredProfiles.length === 0 ? (
