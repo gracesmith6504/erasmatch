@@ -48,12 +48,13 @@ export const OnboardingFlow = () => {
       
       toast.success("Welcome to ErasMatch!");
       
-      // Store city in sessionStorage if available and set flag for just completed onboarding
+      // Ensure the welcome banner shows by setting these values
+      sessionStorage.setItem("justCompletedOnboarding", "true");
+      localStorage.removeItem("welcomeBannerDismissed"); // Clear any previous dismissal
+      
+      // Store city in sessionStorage if available
       if (currentUserProfile?.city) {
-        sessionStorage.setItem("justCompletedOnboarding", "true");
         sessionStorage.setItem("userCity", currentUserProfile.city);
-      } else {
-        sessionStorage.setItem("justCompletedOnboarding", "true");
       }
       
       // Clear the hasVisitedGroups flag to ensure it reloads when visiting /groups
