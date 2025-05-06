@@ -59,24 +59,24 @@ const StudentInfo: React.FC<StudentInfoProps> = ({
           <span>{course}</span>
         </div>
       )}
-      {university && (
-        <div className="flex items-center justify-center text-sm text-gray-600">
-          <School className="h-4 w-4 mr-2 text-erasmatch-blue opacity-70" />
-          <span>{university}</span>
-        </div>
-      )}
-      {!loading && universityCity && (
-        <div className="flex items-center justify-center text-sm text-gray-600">
-          <MapPin className="h-4 w-4 mr-2 text-erasmatch-green opacity-70" />
+      <div className="flex items-center justify-center text-sm text-gray-600">
+        <School className="h-4 w-4 mr-2 text-erasmatch-blue opacity-70" />
+        <span>{university || "University not specified"}</span>
+      </div>
+      <div className="flex items-center justify-center text-sm text-gray-600">
+        <MapPin className="h-4 w-4 mr-2 text-erasmatch-green opacity-70" />
+        {loading ? (
+          <span className="text-gray-400">Loading city...</span>
+        ) : universityCity ? (
           <span>{universityCity}</span>
-        </div>
-      )}
-      {semester && (
-        <div className="flex items-center justify-center text-sm text-gray-600">
-          <CalendarClock className="h-4 w-4 mr-2 text-erasmatch-purple opacity-70" />
-          <span>{semester}</span>
-        </div>
-      )}
+        ) : (
+          <span className="text-gray-400">Destination city not available</span>
+        )}
+      </div>
+      <div className="flex items-center justify-center text-sm text-gray-600">
+        <CalendarClock className="h-4 w-4 mr-2 text-erasmatch-purple opacity-70" />
+        <span>{semester || "Semester not specified"}</span>
+      </div>
     </div>
   );
 };
