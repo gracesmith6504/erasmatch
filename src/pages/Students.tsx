@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Profile } from "@/types";
 import { useStudentsData } from "@/hooks/useStudentsData";
@@ -34,17 +33,8 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
   } = useStudentsData(profiles, currentUserId);
 
   const [activeTab, setActiveTab] = useState<"list" | "cities">("list");
-
-  // Scroll to top when the page loads
-  useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  }, []);
-
   const location = useLocation();
-  const { showBanner, cityName, hasAvatar, setShowBanner } = useOnboardingBanner(currentUserId);
+  const { showBanner, cityName, hasAvatar } = useOnboardingBanner(currentUserId);
   
   // Store onboarding completion info when coming from onboarding
   useEffect(() => {
@@ -58,6 +48,12 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
         sessionStorage.setItem("userCity", userProfile.city);
       }
     }
+    
+    // Scroll to top when the page loads
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   }, [location, profiles, currentUserId]);
 
   const getCompletionPercentage = (profile: Profile) => {
