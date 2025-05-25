@@ -12,6 +12,7 @@ import PublicProfile from "@/pages/PublicProfile";
 import Students from "@/pages/Students";
 import Messages from "@/pages/Messages";
 import Groups from "@/pages/Groups";
+import About from "@/pages/About";
 import NotFound from "@/pages/NotFound";
 import Onboarding from "@/pages/Onboarding";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
@@ -120,6 +121,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         } 
       />
+      <Route path="/about" element={<About />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
