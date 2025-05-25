@@ -113,14 +113,28 @@ const About = () => {
         </div>
       </section>
 
-      <div className="prose prose-lg mx-auto text-gray-600 mt-12">
+<section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+  <div className="max-w-4xl mx-auto">
+    <div className="text-center mb-8">
+      <h2 className="text-2xl font-bold text-gray-900 mb-2">Who’s Behind ErasMatch?</h2>
+      <p className="text-md text-gray-600 max-w-2xl mx-auto">
+        Get to know the creator and the mission behind the platform.
+      </p>
+    </div>
+
+    <div className="prose prose-lg mx-auto text-gray-600 mt-12">
       <p className="text-lg leading-relaxed mb-6">
-      ErasMatch was created by <strong>Grace Smith</strong>, a student passionate about helping others make the most of their Erasmus experience. If you have ideas, feedback, or want to collaborate, feel free to get in touch.
+        Hi! I'm Grace Smith, a student and developer passionate about creating tools that make life easier for other students. 
+        I built ErasMatch to solve real problems I noticed in the Erasmus process and I'm continuing to develop new features based on your feedback. 
+        If you have an idea, suggestion, or want to get involved, I’d love to hear from you!
       </p>
       <p className="text-lg leading-relaxed">
-    📩 <a href="mailto:erasmatchbusiness@gmail.com" className="text-erasmatch-blue underline">erasmatchbusiness@gmail.com</a>
-  </p>
-</div>
+        📩 <a href="mailto:erasmatchbusiness@gmail.com" className="text-erasmatch-blue underline">erasmatchbusiness@gmail.com</a>
+      </p>
+    </div>
+  </div>
+</section>
+
 
 
       {/* CTA Section */}
