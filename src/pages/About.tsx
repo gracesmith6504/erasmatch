@@ -3,11 +3,8 @@ import { Link } from "react-router-dom";
 import { Users, MessageSquare, Globe, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAuth } from "@/contexts/auth/useAuth";
 
 const About = () => {
-  const { isAuthenticated } = useAuth();
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-white">
       {/* Hero Section */}
@@ -126,25 +123,12 @@ const About = () => {
             Join thousands of students who have found their perfect study abroad community through ErasMatch.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            {isAuthenticated ? (
-              <>
-                <Button asChild size="lg" className="bg-white text-erasmatch-blue hover:bg-gray-100">
-                  <Link to="/students">Browse Students</Link>
-                </Button>
-                <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-erasmatch-blue">
-                  <Link to="/groups">Join Groups</Link>
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button asChild size="lg" className="bg-white text-erasmatch-blue hover:bg-gray-100">
-                  <Link to="/auth?mode=signup">Get Started</Link>
-                </Button>
-                <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-erasmatch-blue">
-                  <Link to="/students">Browse Students</Link>
-                </Button>
-              </>
-            )}
+            <Button asChild size="lg" className="bg-white text-erasmatch-blue hover:bg-gray-100">
+              <Link to="/auth?mode=signup">Get Started</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-erasmatch-blue">
+              <Link to="/students">Browse Students</Link>
+            </Button>
           </div>
         </div>
       </section>
