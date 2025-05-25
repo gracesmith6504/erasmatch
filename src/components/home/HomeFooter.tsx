@@ -10,7 +10,6 @@ export const HomeFooter = () => {
             Helping Erasmus students feel connected, wherever they go.
           </p>
         </div>
-        
         <div className="flex flex-wrap justify-center gap-8">
           <Link to="/about" className="text-gray-500 hover:text-blue-600 transition-colors">About</Link>
           <Link to="/blog" className="text-gray-500 hover:text-blue-600 transition-colors">Blog</Link>
