@@ -1,5 +1,5 @@
-
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import { Users, MessageSquare, Globe, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,11 +7,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 const About = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-white">
+      <Helmet>
+        <title>About ErasMatch</title>
+        <meta
+          name="description"
+          content="Learn more about ErasMatch, the platform helping Erasmus students connect, chat, and thrive abroad. Built by Grace Kervick."
+        />
+      </Helmet>
+
       {/* Hero Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            About <span className="text-erasmatch-blue">Eras</span><span className="text-erasmatch-green">Match</span>
+            About <span className="text-erasmatch-blue">Eras</span>
+            <span className="text-erasmatch-green">Match</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
             We're connecting Erasmus students worldwide to create meaningful friendships 
@@ -113,6 +122,20 @@ const About = () => {
         </div>
       </section>
 
+      {/* Creator Section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Who’s Behind ErasMatch?</h2>
+          <p className="text-lg text-gray-700 mb-4">
+            ErasMatch was created by <strong>Grace Kervick</strong>, a student passionate about helping others make the most of their Erasmus experience.
+            If you have ideas, feedback, or want to collaborate, I’d love to hear from you.
+          </p>
+          <p className="text-lg text-erasmatch-blue">
+            📩 <a href="mailto:hello@erasmatch.app" className="underline">hello@erasmatch.app</a>
+          </p>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple">
         <div className="max-w-4xl mx-auto text-center">
@@ -132,6 +155,12 @@ const About = () => {
           </div>
         </div>
       </section>
+
+      {/* Footer Legal Links */}
+      <footer className="text-center text-sm text-gray-500 py-6">
+        <Link to="/privacy" className="underline mr-4">Privacy Policy</Link>
+        <Link to="/terms" className="underline">Terms of Use</Link>
+      </footer>
     </div>
   );
 };
