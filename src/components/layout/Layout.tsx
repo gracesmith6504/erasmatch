@@ -78,6 +78,7 @@ const Layout = ({ children }: LayoutProps) => {
                 <h3 className="text-sm font-semibold mb-3 md:mb-4 text-gray-700">Connect</h3>
                 <ul className="space-y-2 text-sm">
                   <li><a href="mailto:erasmatchbusiness@gmail.com" className="text-gray-500 hover:text-erasmatch-blue">Contact</a></li>
+                  <li><a href="/about" className="text-gray-500 hover:text-erasmatch-blue">About</a></li>
                   <li><Link to="/privacy-policy" className="text-gray-500 hover:text-erasmatch-blue">Privacy Policy</Link></li>
                 </ul>
               </div>
