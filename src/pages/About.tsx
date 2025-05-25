@@ -3,14 +3,6 @@ import { Link } from "react-router-dom";
 import { Users, MessageSquare, Globe, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Helmet } from "react-helmet";
-
-<Helmet>
-  <title>About ErasMatch</title>
-  <meta name="description" content="Learn more about ErasMatch, the platform helping Erasmus students connect, chat, and thrive abroad. Built by Grace Smith." />
-</Helmet>
-
-
 
 const About = () => {
   return (
