@@ -3,6 +3,14 @@ import { Link } from "react-router-dom";
 import { Users, MessageSquare, Globe, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Helmet } from "react-helmet";
+
+<Helmet>
+  <title>About ErasMatch</title>
+  <meta name="description" content="Learn more about ErasMatch, the platform helping Erasmus students connect, chat, and thrive abroad. Built by Grace Smith." />
+</Helmet>
+
+
 
 const About = () => {
   return (
@@ -105,13 +113,23 @@ const About = () => {
             </p>
             
             <p className="text-lg leading-relaxed">
-              Today, thousands of Erasmus students use ErasMatch to discover friendships, 
+              Today, hundreds of Erasmus students use ErasMatch to discover friendships, 
               share experiences, and make their exchange dreams come true. We're proud to be 
               part of their journey and excited to be part of yours.
             </p>
           </div>
         </div>
       </section>
+
+      <div className="prose prose-lg mx-auto text-gray-600 mt-12">
+      <p className="text-lg leading-relaxed mb-6">
+      ErasMatch was created by <strong>Grace Smith</strong>, a student passionate about helping others make the most of their Erasmus experience. If you have ideas, feedback, or want to collaborate, feel free to get in touch.
+      </p>
+      <p className="text-lg leading-relaxed">
+    📩 <a href="mailto:erasmatchbusiness@gmail.com" className="text-erasmatch-blue underline">erasmatchbusiness@gmail.com</a>
+  </p>
+</div>
+
 
       {/* CTA Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple">
@@ -125,9 +143,6 @@ const About = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" className="bg-white text-erasmatch-blue hover:bg-gray-100">
               <Link to="/auth?mode=signup">Get Started</Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-erasmatch-blue">
-              <Link to="/students">Browse Students</Link>
             </Button>
           </div>
         </div>
