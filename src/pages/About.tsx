@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Users, MessageSquare, Globe, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/auth/useAuth";
 
 const About = () => {
   const { isAuthenticated } = useAuth();

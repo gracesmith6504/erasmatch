@@ -8,6 +8,7 @@ import { HowItWorksSection } from "@/components/home/HowItWorksSection";
 import { StudentStoriesSection } from "@/components/home/StudentStoriesSection";
 import { GroupChatSection } from "@/components/home/GroupChatSection";
 import { CommunitySection } from "@/components/home/CommunitySection";
+import { HomeFooter } from "@/components/home/HomeFooter";
 
 const Index = () => {
   const { isAuthenticated } = useAuth();
@@ -52,6 +53,7 @@ const Index = () => {
       <StudentStoriesSection />
       <GroupChatSection handleFindStudents={handleFindStudents} />
       <CommunitySection handleFindStudents={handleFindStudents} />
+      <HomeFooter />
     </div>
   );
 };
