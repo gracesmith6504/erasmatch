@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostSignupPrompt } from "@/components/share/PostSignupPrompt";
 import { generateUniqueRefCode } from '@/utils/refCodeGenerator';
+import { GoogleAuthHandler } from "@/components/auth/GoogleAuthHandler";
 
 type AuthProps = {
   onLogin: (email: string) => void;
@@ -45,7 +46,7 @@ const Auth = ({ onLogin }: AuthProps) => {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/onboarding`,
+          redirectTo: `${window.location.origin}/auth?mode=google-callback`,
           queryParams: {
             ref: refCode || '',
             returnTo: returnTo || ''
@@ -110,7 +111,7 @@ const Auth = ({ onLogin }: AuthProps) => {
           onLogin(email);
           toast.success("Account created successfully!");
           
-          // Changed: Navigate to onboarding instead of profile or returnTo
+          // Navigate to onboarding for email signup
           navigate("/onboarding");
           return;
         } else {
@@ -145,6 +146,11 @@ const Auth = ({ onLogin }: AuthProps) => {
   const handleContinueAfterSignup = () => {
     navigate("/profile");
   };
+
+  // Handle Google OAuth callback
+  if (activeTab === "google-callback") {
+    return <GoogleAuthHandler />;
+  }
 
   if (showPostSignup) {
     return (
