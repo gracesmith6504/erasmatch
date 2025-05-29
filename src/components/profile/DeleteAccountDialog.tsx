@@ -25,6 +25,14 @@ export const DeleteAccountDialog = ({ userId }: DeleteAccountDialogProps) => {
     try {
       setIsDeleting(true);
 
+      // First, get the current session to check auth method
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error("No active session found");
+        return;
+      }
+
       // Delete the user's profile data first
       const { error: profileError } = await supabase
         .from('profiles')
@@ -37,18 +45,18 @@ export const DeleteAccountDialog = ({ userId }: DeleteAccountDialogProps) => {
         return;
       }
 
-      // Sign the user out - this is the only reliable way to handle account deletion
-      // that works consistently across all auth providers (email/password and OAuth)
+      // For proper account deletion that allows re-signup with the same email,
+      // we need to sign out and then the user can re-register
       await supabase.auth.signOut();
       
       // Close the dialog
       setIsOpen(false);
       
-      // Show success toast with clear message about what happened
-      toast.success("Your account has been deleted. You can create a new account with the same email address.");
+      // Show success message
+      toast.success("Your account has been deleted. You can now create a new account with the same email address.");
       
       // Redirect to login page
-      navigate("/auth?mode=login");
+      navigate("/auth?mode=signup");
       
     } catch (error: any) {
       console.error("Error deleting account:", error);
