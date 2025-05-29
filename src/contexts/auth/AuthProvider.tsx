@@ -1,3 +1,4 @@
+
 import { ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -61,17 +62,43 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const profileData = await fetchUserProfile(session.user.id);
 
         if (profileData) {
-          // Check if the user account is deleted
+          // Check if the user account is marked as deleted
           if (profileData.deleted_at) {
-            // If account is deleted, sign out
-            await supabase.auth.signOut();
-            setIsAuthenticated(false);
-            setCurrentUserId(null);
-            localStorage.removeItem('userId');
-            setCurrentUserEmail(null);
-            setCurrentUserProfile(null);
-            toast.error("This account has been deleted");
-            navigate("/auth?mode=login");
+            console.log("User has a deleted account, handling re-registration");
+            
+            // This is a re-registration after deletion
+            // Reset the deleted_at timestamp and restore basic info
+            const userData = session.user.user_metadata || {};
+            const defaultName = userData.name || userData.full_name || null;
+            
+            const { error: restoreError } = await supabase
+              .from('profiles')
+              .update({
+                deleted_at: null,
+                email: session.user.email,
+                name: defaultName,
+                onboarding_complete: false
+              })
+              .eq('id', session.user.id);
+
+            if (restoreError) {
+              console.error("Error restoring profile:", restoreError);
+              toast.error("Error restoring your account. Please try again.");
+              await supabase.auth.signOut();
+              return;
+            }
+
+            // Fetch the updated profile
+            const updatedProfile = await fetchUserProfile(session.user.id);
+            if (updatedProfile) {
+              setCurrentUserProfile(updatedProfile);
+              toast.success("Welcome back! Please complete your profile setup.");
+              
+              // Redirect to onboarding for profile completion
+              if (!window.location.pathname.includes('/onboarding') && !window.location.pathname.includes('/auth')) {
+                navigate("/onboarding");
+              }
+            }
             return;
           }
           
@@ -85,12 +112,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             }
           }
         } else {
-          // No profile found - this could be a deleted user trying to re-signup
-          // Check if this is a Google OAuth user without a profile (indicating account was deleted)
+          // No profile found - this is a completely new user
+          console.log("No profile found, creating new profile for user:", session.user.id);
+          
           const userData = session.user.user_metadata || {};
           const defaultName = userData.name || userData.full_name || null;
           
-          // Create a new profile for this "new" user
+          // Create a new profile for this new user
           const newProfile = await createUserProfile(
             session.user.id, 
             session.user.email, 
@@ -100,7 +128,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           if (newProfile) {
             setCurrentUserProfile(newProfile);
             
-            // New/recreated user, redirect to onboarding
+            // New user, redirect to onboarding
             if (!window.location.pathname.includes('/onboarding') && !window.location.pathname.includes('/auth')) {
               navigate("/onboarding");
             }

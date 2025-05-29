@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
@@ -25,7 +24,7 @@ export const DeleteAccountDialog = ({ userId }: DeleteAccountDialogProps) => {
     try {
       setIsDeleting(true);
 
-      // First, get the current session to check auth method
+      // Get current session to check auth method
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
@@ -33,33 +32,50 @@ export const DeleteAccountDialog = ({ userId }: DeleteAccountDialogProps) => {
         return;
       }
 
-      // Delete the user's profile data first
+      console.log("Starting account deletion process for user:", userId);
+
+      // Mark the profile as deleted with timestamp instead of actually deleting it
+      // This approach allows us to handle re-registration properly
       const { error: profileError } = await supabase
         .from('profiles')
-        .delete()
+        .update({ 
+          deleted_at: new Date().toISOString(),
+          // Clear sensitive data but keep the record
+          email: null,
+          name: null,
+          bio: null,
+          avatar_url: null,
+          onboarding_complete: false
+        })
         .eq('id', userId);
 
       if (profileError) {
-        console.error("Error deleting profile:", profileError);
-        toast.error("Failed to delete profile data");
+        console.error("Error marking profile as deleted:", profileError);
+        toast.error("Failed to delete account data");
         return;
       }
 
-      // For proper account deletion that allows re-signup with the same email,
-      // we need to sign out and then the user can re-register
-      await supabase.auth.signOut();
+      console.log("Profile marked as deleted successfully");
+
+      // Sign out the user
+      const { error: signOutError } = await supabase.auth.signOut();
       
+      if (signOutError) {
+        console.error("Error signing out:", signOutError);
+        // Continue anyway as the profile is already marked as deleted
+      }
+
       // Close the dialog
       setIsOpen(false);
       
       // Show success message
-      toast.success("Your account has been deleted. You can now create a new account with the same email address.");
+      toast.success("Your account has been deleted successfully. You can create a new account with the same email address.");
       
-      // Redirect to login page
+      // Redirect to signup page
       navigate("/auth?mode=signup");
       
     } catch (error: any) {
-      console.error("Error deleting account:", error);
+      console.error("Error during account deletion:", error);
       toast.error(`Failed to delete account: ${error.message}`);
     } finally {
       setIsDeleting(false);
