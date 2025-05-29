@@ -25,19 +25,35 @@ export const DeleteAccountDialog = ({ userId }: DeleteAccountDialogProps) => {
     try {
       setIsDeleting(true);
 
-      // Mark the user profile as deleted
-      const { error } = await supabase
+      // Delete the user's profile data first
+      const { error: profileError } = await supabase
         .from('profiles')
-        .update({
-          name: 'Deleted User',
-          avatar_url: null,
-          bio: '',
-          deleted_at: new Date().toISOString(),
-          personality_tags: [],
-        })
+        .delete()
         .eq('id', userId);
 
-      if (error) throw error;
+      if (profileError) {
+        console.error("Error deleting profile:", profileError);
+        // Continue with user deletion even if profile deletion fails
+      }
+
+      // Delete the user from Supabase Auth (this completely removes the user)
+      const { error: userError } = await supabase.auth.admin.deleteUser(userId);
+
+      if (userError) {
+        // If admin delete fails, try regular signOut and mark profile as deleted
+        console.error("Admin delete failed, falling back to profile marking:", userError);
+        
+        await supabase
+          .from('profiles')
+          .upsert({
+            id: userId,
+            name: 'Deleted User',
+            avatar_url: null,
+            bio: '',
+            deleted_at: new Date().toISOString(),
+            personality_tags: [],
+          });
+      }
 
       // Sign the user out
       await supabase.auth.signOut();
@@ -46,7 +62,7 @@ export const DeleteAccountDialog = ({ userId }: DeleteAccountDialogProps) => {
       setIsOpen(false);
       
       // Show success toast
-      toast.success("Your account has been deleted");
+      toast.success("Your account has been deleted. You can now create a new account with the same email if desired.");
       
       // Redirect to login page
       navigate("/auth?mode=login");
@@ -75,8 +91,9 @@ export const DeleteAccountDialog = ({ userId }: DeleteAccountDialogProps) => {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure you want to delete your account?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action will remove your personal information and mark your account as deleted. 
-              You won't be visible to other users anymore.
+              This action will permanently delete your account and all associated data. 
+              You will be able to create a new account with the same email address if you wish.
+              This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

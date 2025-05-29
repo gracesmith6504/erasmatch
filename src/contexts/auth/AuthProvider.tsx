@@ -38,6 +38,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     // Set up auth listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log("Auth state changed:", event, session?.user?.id);
         handleAuthChange(session);
       }
     );
@@ -76,6 +77,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           }
           
           setCurrentUserProfile(profileData);
+          
+          // Check if this is a new user who needs onboarding
+          if (!profileData.onboarding_complete) {
+            // Check if we're not already on the onboarding or auth page
+            if (!window.location.pathname.includes('/onboarding') && !window.location.pathname.includes('/auth')) {
+              navigate("/onboarding");
+            }
+          }
         } else {
           // No profile found, create a new one with user metadata if available
           const userData = session.user.user_metadata || {};
@@ -89,6 +98,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           
           if (newProfile) {
             setCurrentUserProfile(newProfile);
+            
+            // New user created, redirect to onboarding
+            if (!window.location.pathname.includes('/onboarding') && !window.location.pathname.includes('/auth')) {
+              navigate("/onboarding");
+            }
           }
         }
       } catch (error) {
