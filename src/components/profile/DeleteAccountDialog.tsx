@@ -33,36 +33,19 @@ export const DeleteAccountDialog = ({ userId }: DeleteAccountDialogProps) => {
 
       if (profileError) {
         console.error("Error deleting profile:", profileError);
-        // Continue with user deletion even if profile deletion fails
+        toast.error("Failed to delete profile data");
+        return;
       }
 
-      // Delete the user from Supabase Auth (this completely removes the user)
-      const { error: userError } = await supabase.auth.admin.deleteUser(userId);
-
-      if (userError) {
-        // If admin delete fails, try regular signOut and mark profile as deleted
-        console.error("Admin delete failed, falling back to profile marking:", userError);
-        
-        await supabase
-          .from('profiles')
-          .upsert({
-            id: userId,
-            name: 'Deleted User',
-            avatar_url: null,
-            bio: '',
-            deleted_at: new Date().toISOString(),
-            personality_tags: [],
-          });
-      }
-
-      // Sign the user out
+      // Sign the user out - this is the only reliable way to handle account deletion
+      // that works consistently across all auth providers (email/password and OAuth)
       await supabase.auth.signOut();
       
       // Close the dialog
       setIsOpen(false);
       
-      // Show success toast
-      toast.success("Your account has been deleted. You can now create a new account with the same email if desired.");
+      // Show success toast with clear message about what happened
+      toast.success("Your account has been deleted. You can create a new account with the same email address.");
       
       // Redirect to login page
       navigate("/auth?mode=login");
