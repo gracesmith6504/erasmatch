@@ -1,4 +1,3 @@
-
 import { ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -86,10 +85,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             }
           }
         } else {
-          // No profile found, create a new one with user metadata if available
+          // No profile found - this could be a deleted user trying to re-signup
+          // Check if this is a Google OAuth user without a profile (indicating account was deleted)
           const userData = session.user.user_metadata || {};
           const defaultName = userData.name || userData.full_name || null;
           
+          // Create a new profile for this "new" user
           const newProfile = await createUserProfile(
             session.user.id, 
             session.user.email, 
@@ -99,7 +100,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           if (newProfile) {
             setCurrentUserProfile(newProfile);
             
-            // New user created, redirect to onboarding
+            // New/recreated user, redirect to onboarding
             if (!window.location.pathname.includes('/onboarding') && !window.location.pathname.includes('/auth')) {
               navigate("/onboarding");
             }
