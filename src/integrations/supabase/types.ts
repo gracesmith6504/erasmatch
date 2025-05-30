@@ -117,6 +117,7 @@ export type Database = {
           name: string | null
           onboarding_complete: boolean | null
           personality_tags: string[] | null
+          privacy_consent_at: string | null
           ref_code: string | null
           semester: string | null
           university: string | null
@@ -137,6 +138,7 @@ export type Database = {
           name?: string | null
           onboarding_complete?: boolean | null
           personality_tags?: string[] | null
+          privacy_consent_at?: string | null
           ref_code?: string | null
           semester?: string | null
           university?: string | null
@@ -157,6 +159,7 @@ export type Database = {
           name?: string | null
           onboarding_complete?: boolean | null
           personality_tags?: string[] | null
+          privacy_consent_at?: string | null
           ref_code?: string | null
           semester?: string | null
           university?: string | null
