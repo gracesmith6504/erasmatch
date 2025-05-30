@@ -77,7 +77,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
                 deleted_at: null,
                 email: session.user.email,
                 name: defaultName,
-                onboarding_complete: false
+                onboarding_complete: false,
+                privacy_consent_at: new Date().toISOString()
               })
               .eq('id', session.user.id);
 
@@ -126,6 +127,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           );
           
           if (newProfile) {
+            // Add privacy consent timestamp for new users
+            const { error: consentError } = await supabase
+              .from('profiles')
+              .update({
+                privacy_consent_at: new Date().toISOString()
+              })
+              .eq('id', session.user.id);
+
+            if (consentError) {
+              console.error("Error updating consent timestamp:", consentError);
+            }
+
             setCurrentUserProfile(newProfile);
             
             // New user, redirect to onboarding
