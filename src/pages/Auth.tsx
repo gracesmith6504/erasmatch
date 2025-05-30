@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,6 +28,7 @@ const Auth = ({ onLogin }: AuthProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showPostSignup, setShowPostSignup] = useState(false);
   const [signupCity, setSignupCity] = useState<string | undefined>(undefined);
+  const [privacyConsent, setPrivacyConsent] = useState(false);
   
   const activeTab = searchParams.get("mode") || "login";
   const refCode = searchParams.get("ref");
@@ -40,6 +42,11 @@ const Auth = ({ onLogin }: AuthProps) => {
   };
 
   const handleGoogleAuth = async () => {
+    if (activeTab === "signup" && !privacyConsent) {
+      toast.error("Please agree to the Privacy Policy to continue");
+      return;
+    }
+
     setGoogleLoading(true);
     
     try {
@@ -49,7 +56,8 @@ const Auth = ({ onLogin }: AuthProps) => {
           redirectTo: `${window.location.origin}/auth?mode=google-callback`,
           queryParams: {
             ref: refCode || '',
-            returnTo: returnTo || ''
+            returnTo: returnTo || '',
+            privacyConsent: activeTab === "signup" ? 'true' : 'false'
           }
         }
       });
@@ -83,6 +91,12 @@ const Auth = ({ onLogin }: AuthProps) => {
       return;
     }
 
+    if (isSignUp && !privacyConsent) {
+      toast.error("Please agree to the Privacy Policy to continue");
+      setLoading(false);
+      return;
+    }
+
     try {
       if (isSignUp) {
         const { data, error } = await supabase.auth.signUp({
@@ -101,7 +115,8 @@ const Auth = ({ onLogin }: AuthProps) => {
               id: data.user.id,
               email,
               ref_code: refCode,
-              invited_by: searchParams.get("ref") || null
+              invited_by: searchParams.get("ref") || null,
+              privacy_consent_at: new Date().toISOString()
             });
             
           if (updateError) {
@@ -284,6 +299,29 @@ const Auth = ({ onLogin }: AuthProps) => {
                 </button>
               </div>
             </div>
+
+            {/* Privacy Consent Checkbox for Sign Up */}
+            {activeTab === "signup" && (
+              <div className="flex items-start space-x-2">
+                <Checkbox
+                  id="privacy-consent"
+                  checked={privacyConsent}
+                  onCheckedChange={(checked) => setPrivacyConsent(checked === true)}
+                  className="mt-1"
+                />
+                <Label htmlFor="privacy-consent" className="text-sm text-gray-700 leading-relaxed">
+                  I agree to the{" "}
+                  <Link 
+                    to="/privacy-policy" 
+                    className="text-erasmatch-blue hover:text-erasmatch-blue/80 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Privacy Policy
+                  </Link>
+                </Label>
+              </div>
+            )}
 
             <div>
               <Button 
