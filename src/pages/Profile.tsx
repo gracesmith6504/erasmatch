@@ -6,7 +6,13 @@ import { DataExportDialog } from "@/components/profile/DataExportDialog";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Profile = () => {
-  const { currentUserId } = useAuth();
+  const { currentUserId, currentUserProfile, handleProfileUpdate } = useAuth();
+
+  // Function to fetch profile - using the auth context
+  const fetchProfile = async () => {
+    // This will be handled by the auth context automatically
+    // No need to implement here as auth context manages profile state
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50/60 to-white py-8">
@@ -16,7 +22,11 @@ const Profile = () => {
             Your Profile
           </h1>
           
-          <ProfileProvider>
+          <ProfileProvider 
+            profile={currentUserProfile}
+            onProfileUpdate={handleProfileUpdate}
+            fetchProfile={fetchProfile}
+          >
             <ProfileForm />
           </ProfileProvider>
 
