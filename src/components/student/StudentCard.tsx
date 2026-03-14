@@ -83,9 +83,27 @@ const StudentCard = ({ profile, isFeatured = false }: StudentCardProps) => {
           )}
         </div>
 
+        {/* Looking For Tags */}
+        {visibleLookingFor.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mt-3">
+            {visibleLookingFor.map((item) => {
+              const info = LOOKING_FOR_OPTIONS.find(o => o.value === item);
+              return (
+                <Badge
+                  key={item}
+                  variant="outline"
+                  className="bg-primary/10 text-primary border-primary/20 text-sm px-3 py-1"
+                >
+                  🔍 {info?.label || item}
+                </Badge>
+              );
+            })}
+          </div>
+        )}
+
         {/* Personality Tags */}
         {visibleTags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mt-3">
+          <div className="flex flex-wrap gap-1.5 mt-2">
             {visibleTags.map((tag) => {
               const tagInfo = getTagInfo(tag);
               return (
