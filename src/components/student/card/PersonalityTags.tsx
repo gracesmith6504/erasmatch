@@ -21,11 +21,11 @@ const PersonalityTags: React.FC<PersonalityTagsProps> = ({ tags }) => {
 
   return (
     <div className="flex flex-col items-center mt-2">
-      <div className="flex flex-wrap justify-center gap-1">
+      <div className="flex flex-wrap justify-center gap-1.5">
         {visibleTags.map((tag) => {
           const tagInfo = getTagInfo(tag);
           return (
-            <Badge key={tag} className={`${getTagBgColor(tag)} text-xs`}>
+            <Badge key={tag} className={`${getTagBgColor(tag)} text-sm px-3 py-1`}>
               {tagInfo?.icon} {tagInfo?.label}
             </Badge>
           );
@@ -34,11 +34,11 @@ const PersonalityTags: React.FC<PersonalityTagsProps> = ({ tags }) => {
       
       {hasMoreTags && (
         <>
-          <div className={`${showAllTags ? 'flex' : 'hidden sm:flex'} flex-wrap justify-center gap-1 mt-1`}>
+          <div className={`${showAllTags ? 'flex' : 'hidden sm:flex'} flex-wrap justify-center gap-1.5 mt-1.5`}>
             {hiddenTags.map((tag) => {
               const tagInfo = getTagInfo(tag);
               return (
-                <Badge key={tag} className={`${getTagBgColor(tag)} text-xs`}>
+                <Badge key={tag} className={`${getTagBgColor(tag)} text-sm px-3 py-1`}>
                   {tagInfo?.icon} {tagInfo?.label}
                 </Badge>
               );
