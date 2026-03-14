@@ -107,6 +107,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          arrival_date: string | null
           avatar_url: string | null
           bio: string | null
           city: string | null
@@ -129,6 +130,7 @@ export type Database = {
           university: string | null
         }
         Insert: {
+          arrival_date?: string | null
           avatar_url?: string | null
           bio?: string | null
           city?: string | null
@@ -151,6 +153,7 @@ export type Database = {
           university?: string | null
         }
         Update: {
+          arrival_date?: string | null
           avatar_url?: string | null
           bio?: string | null
           city?: string | null

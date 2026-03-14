@@ -4,11 +4,12 @@ import { Profile } from "@/types";
 import StudentAvatar from "./card/StudentAvatar";
 import StudentCardActions from "./card/StudentCardActions";
 import CountryFlag from "./card/CountryFlag";
-import { Home, MapPin, CalendarClock } from "lucide-react";
+import { Home, MapPin, CalendarClock, Plane } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { getTagInfo } from "@/components/profile/constants";
+import { format } from "date-fns";
 
 interface StudentCardProps {
   profile: Profile;
@@ -70,6 +71,12 @@ const StudentCard = ({ profile, isFeatured = false }: StudentCardProps) => {
             <CalendarClock className="h-4 w-4 mr-2 shrink-0 text-primary/60" />
             <span className="truncate">{profile.semester || "Semester not specified"}</span>
           </div>
+          {profile.arrival_date && (
+            <div className="flex items-center text-sm text-muted-foreground">
+              <span className="mr-2 shrink-0">✈️</span>
+              <span className="truncate">Arriving {format(new Date(profile.arrival_date), "d MMM")}</span>
+            </div>
+          )}
         </div>
 
         {/* Personality Tags */}

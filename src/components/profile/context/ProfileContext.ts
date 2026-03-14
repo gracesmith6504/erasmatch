@@ -14,6 +14,7 @@ type ProfileFormState = {
   personality_tags: string[];
   course: string;
   email_notifications: boolean;
+  arrival_date: string | null;
 };
 
 export type ProfileContextType = {
