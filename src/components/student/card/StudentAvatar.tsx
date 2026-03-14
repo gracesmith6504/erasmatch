@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -11,23 +10,15 @@ interface StudentAvatarProps {
 const StudentAvatar = ({ avatarUrl, name, className = "" }: StudentAvatarProps) => {
   const getInitials = (name: string | null) => {
     if (!name) return "?";
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .substring(0, 2);
+    return name.split(" ").map((n) => n[0]).join("").toUpperCase().substring(0, 2);
   };
 
   return (
-    <Avatar className={`${className} border-4 border-white shadow-md ring-2 ring-white/50 group-hover:scale-105 transition-all duration-300`}>
+    <Avatar className={`${className} border-4 border-card shadow-soft ring-2 ring-card/50 group-hover:scale-105 transition-all duration-300`}>
       {avatarUrl ? (
-        <AvatarImage 
-          src={avatarUrl || undefined} 
-          loading="lazy" // Add lazy loading
-        />
+        <AvatarImage src={avatarUrl || undefined} loading="lazy" />
       ) : null}
-      <AvatarFallback className="text-lg bg-gradient-to-br from-blue-100 to-purple-100 text-erasmatch-blue">
+      <AvatarFallback className="text-lg bg-secondary text-foreground">
         {getInitials(name)}
       </AvatarFallback>
     </Avatar>

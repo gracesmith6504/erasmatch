@@ -1,4 +1,3 @@
-
 import { Profile } from "@/types";
 import { ThreadsList } from "./ThreadsList";
 import { getInitials } from "./utils/messageUtils";
@@ -20,9 +19,9 @@ export const MobileMessagesView = ({
 }: MobileMessagesViewProps) => {
   return (
     <div className="w-full overflow-hidden px-4 py-6">
-      <h1 className="text-xl font-bold text-gray-900 mb-4">Messages</h1>
+      <h1 className="text-xl font-display font-bold text-foreground mb-4">Messages</h1>
       
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="bg-card rounded-2xl shadow-soft border border-border overflow-hidden">
         <ThreadsList 
           threads={threads} 
           selectedThread={selectedThread} 

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { WelcomeBanner } from "@/components/WelcomeBanner";
@@ -16,7 +15,7 @@ import { toast } from "sonner";
 
 const Groups = () => {
   const location = useLocation();
-  const currentUserId = localStorage.getItem('userId'); // This is how the app gets the user ID
+  const currentUserId = localStorage.getItem('userId');
   const { showBanner, cityName } = useOnboardingBanner(currentUserId);
   
   const { profiles } = useData();
@@ -27,45 +26,33 @@ const Groups = () => {
   const [selectedGroupChat, setSelectedGroupChat] = useState<string | null>(null);
   const [selectedCityChat, setSelectedCityChat] = useState<string | null>(null);
   
-  // Improved refresh logic for first visit to groups page
   useEffect(() => {
-    // Check if this is the first visit to the groups page
     const hasVisitedGroups = sessionStorage.getItem("hasVisitedGroups");
     const fromOnboarding = sessionStorage.getItem("justCompletedOnboarding");
     const isFirstVisit = !hasVisitedGroups && fromOnboarding === "true";
     
     if (isFirstVisit) {
-      // Mark that we've visited groups page to prevent future reloads
       sessionStorage.setItem("hasVisitedGroups", "true");
-      
-      // Show a loading toast to indicate refresh is happening
       toast.info("Loading group chats...");
-      
-      // Set a timeout to prevent immediate reload loops
       setTimeout(() => {
-        // Force a page reload to ensure group chats load properly
         window.location.reload();
       }, 500);
     }
   }, []);
   
-  // Store onboarding completion info when coming from onboarding
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     if (params.get("from") === "onboarding") {
       sessionStorage.setItem("justCompletedOnboarding", "true");
-      // City will be fetched in the hook
     }
   }, [location]);
   
   const handleSelectGroupChat = (universityName: string) => {
-    console.log("Selecting group chat:", universityName);
     setSelectedGroupChat(universityName || null);
     setSelectedCityChat(null);
   };
 
   const handleSelectCityChat = (cityName: string) => {
-    console.log("Selecting city chat:", cityName);
     setSelectedCityChat(cityName || null);
     setSelectedGroupChat(null);
   };
@@ -75,12 +62,6 @@ const Groups = () => {
     setSelectedCityChat(null);
   };
 
-  // Log when profile updates to verify we're getting fresh data
-  useEffect(() => {
-    console.log("Groups component received updated profile:", currentUserProfile);
-  }, [currentUserProfile]);
-
-  // Show full-screen chat view when a chat is selected
   if (selectedGroupChat || selectedCityChat) {
     return (
       <div className="h-[calc(100vh-64px)] flex flex-col">
@@ -107,28 +88,26 @@ const Groups = () => {
     );
   }
 
-  // Cards view for listing available groups
   return (
     <div className="max-w-7xl mx-auto py-6 md:py-8 px-4 sm:px-6 lg:px-8">
       {showBanner && (
         <WelcomeBanner cityName={cityName} variant="groups" />
       )}
       
-      <h1 className="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8">Join Group Chats</h1>
+      <h1 className="text-2xl md:text-3xl font-display font-bold text-center text-foreground mb-6 md:mb-8">Join Group Chats</h1>
       
       <div className="space-y-4 md:space-y-6">
-        {/* University Card */}
         {currentUserProfile?.university && (
           <Card 
-            className="rounded-3xl overflow-hidden cursor-pointer hover:shadow-lg transition-shadow" 
+            className="rounded-2xl overflow-hidden cursor-pointer hover:shadow-card transition-all border-border" 
             onClick={() => handleSelectGroupChat(currentUserProfile.university!)}
           >
-            <div className="bg-gradient-to-r from-purple-700 to-indigo-500 text-white p-6 md:p-8 relative">
-              <div className="absolute top-4 right-4 bg-white/20 px-2 py-1 rounded-full text-xs font-medium flex items-center">
+            <div className="bg-gradient-to-r from-erasmatch-purple to-erasmatch-blue text-accent-foreground p-6 md:p-8 relative">
+              <div className="absolute top-4 right-4 bg-background/20 px-2 py-1 rounded-full text-xs font-medium flex items-center">
                 {profiles.filter(p => p.university === currentUserProfile.university).length} students
               </div>
               <GraduationCap className="w-12 h-12 md:w-16 md:h-16 mb-4 opacity-70 absolute right-6 md:right-8 top-6 md:top-8" />
-              <h2 className="text-4xl md:text-5xl font-bold mb-2">Your University</h2>
+              <h2 className="text-4xl md:text-5xl font-display font-bold mb-2">Your University</h2>
               <p className="text-xl md:text-2xl opacity-90 mb-4">
                 Chat with students at<br/>{currentUserProfile.university}
               </p>
@@ -136,18 +115,17 @@ const Groups = () => {
           </Card>
         )}
         
-        {/* City Card */}
         {currentUserProfile?.city && (
           <Card 
-            className="rounded-3xl overflow-hidden cursor-pointer hover:shadow-lg transition-shadow" 
+            className="rounded-2xl overflow-hidden cursor-pointer hover:shadow-card transition-all border-border" 
             onClick={() => handleSelectCityChat(currentUserProfile.city!)}
           >
-            <div className="bg-gradient-to-r from-blue-600 to-blue-400 text-white p-6 md:p-8 relative">
-              <div className="absolute top-4 right-4 bg-white/20 px-2 py-1 rounded-full text-xs font-medium flex items-center">
+            <div className="bg-gradient-to-r from-erasmatch-green to-erasmatch-blue text-accent-foreground p-6 md:p-8 relative">
+              <div className="absolute top-4 right-4 bg-background/20 px-2 py-1 rounded-full text-xs font-medium flex items-center">
                 {profiles.filter(p => p.city === currentUserProfile.city).length} students
               </div>
               <MapPin className="w-12 h-12 md:w-16 md:h-16 mb-4 opacity-70 absolute right-6 md:right-8 top-6 md:top-8" />
-              <h2 className="text-4xl md:text-5xl font-bold mb-2">Your City</h2>
+              <h2 className="text-4xl md:text-5xl font-display font-bold mb-2">Your City</h2>
               <p className="text-xl md:text-2xl opacity-90 mb-4">
                 Group chat for<br/>{currentUserProfile.city}
               </p>
@@ -156,12 +134,12 @@ const Groups = () => {
         )}
         
         {!currentUserProfile?.university && !currentUserProfile?.city && (
-          <div className="text-center p-6 md:p-8 bg-gray-50 rounded-xl">
-            <p className="text-lg text-gray-600">
+          <div className="text-center p-6 md:p-8 bg-secondary rounded-2xl">
+            <p className="text-lg text-muted-foreground">
               Set your university and city in your profile to join group chats.
             </p>
             <Button 
-              className="mt-4 py-2.5 md:py-2"
+              className="mt-4 rounded-full bg-foreground text-background hover:bg-foreground/90"
               onClick={() => window.location.href = "/profile"}
             >
               Update Profile

@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { ChatThread } from "@/types";
 import { format } from "date-fns";
@@ -24,42 +23,42 @@ export const ThreadsList = ({
     <>
       {threads.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-full p-4">
-          <p className="text-gray-600 mb-4">No messages yet</p>
+          <p className="text-muted-foreground mb-4">No messages yet</p>
           <Link to="/students">
-            <Button>Find Students</Button>
+            <Button className="rounded-full bg-foreground text-background hover:bg-foreground/90">Find Students</Button>
           </Link>
         </div>
       ) : (
         threads.map((thread) => (
           <div key={thread.partner.id}>
             <button
-              className={`w-full p-4 hover:bg-gray-50 text-left flex items-center relative ${
-                selectedThread?.partner.id === thread.partner.id ? 'bg-gray-100' : ''
+              className={`w-full p-4 hover:bg-secondary text-left flex items-center relative transition-colors ${
+                selectedThread?.partner.id === thread.partner.id ? 'bg-secondary' : ''
               }`}
               onClick={() => onSelectThread(thread)}
             >
               <Avatar className="h-10 w-10 mr-3">
                 <AvatarImage src={thread.partner.avatar_url || undefined} />
-                <AvatarFallback className="bg-erasmatch-light-accent">
+                <AvatarFallback className="bg-secondary text-foreground">
                   {getInitials(thread.partner.name)}
                 </AvatarFallback>
               </Avatar>
               <div className="overflow-hidden flex-1">
-                <div className="font-medium flex items-center">
+                <div className="font-medium text-foreground flex items-center">
                   {thread.partner.name}
                   {thread.hasUnreadMessages && (
-                    <CircleDot className="h-3 w-3 text-blue-500 ml-2" />
+                    <CircleDot className="h-3 w-3 text-erasmatch-green ml-2" />
                   )}
                 </div>
                 {thread.lastMessage && (
-                  <div className="text-sm text-gray-500 truncate">
+                  <div className="text-sm text-muted-foreground truncate">
                     {thread.lastMessage.sender_name === thread.partner.name ? '' : 'You: '}
                     {thread.lastMessage.content}
                   </div>
                 )}
               </div>
               {thread.lastMessage && (
-                <div className="ml-auto text-xs text-gray-400">
+                <div className="ml-auto text-xs text-muted-foreground">
                   {format(new Date(thread.lastMessage.created_at), "MMM d")}
                 </div>
               )}
