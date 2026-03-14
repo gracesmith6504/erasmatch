@@ -15,6 +15,7 @@ type ProfileFormState = {
   course: string;
   email_notifications: boolean;
   arrival_date: string | null;
+  looking_for: string[];
 };
 
 export type ProfileContextType = {

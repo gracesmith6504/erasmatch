@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { getTagInfo } from "@/components/profile/constants";
+import { LOOKING_FOR_OPTIONS } from "@/components/profile/components/LookingForSection";
 import { format } from "date-fns";
 
 interface StudentCardProps {
@@ -37,6 +38,9 @@ const StudentCard = ({ profile, isFeatured = false }: StudentCardProps) => {
   const tags = profile.personality_tags || [];
   const visibleTags = tags.slice(0, 3);
   const extraCount = tags.length - 3;
+
+  const lookingFor = profile.looking_for || [];
+  const visibleLookingFor = lookingFor.slice(0, 3);
 
   return (
     <Card className="overflow-hidden border-border hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group min-h-[280px] flex flex-col">
@@ -79,9 +83,27 @@ const StudentCard = ({ profile, isFeatured = false }: StudentCardProps) => {
           )}
         </div>
 
+        {/* Looking For Tags */}
+        {visibleLookingFor.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mt-3">
+            {visibleLookingFor.map((item) => {
+              const info = LOOKING_FOR_OPTIONS.find(o => o.value === item);
+              return (
+                <Badge
+                  key={item}
+                  variant="outline"
+                  className="bg-primary/10 text-primary border-primary/20 text-sm px-3 py-1"
+                >
+                  🔍 {info?.label || item}
+                </Badge>
+              );
+            })}
+          </div>
+        )}
+
         {/* Personality Tags */}
         {visibleTags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mt-3">
+          <div className="flex flex-wrap gap-1.5 mt-2">
             {visibleTags.map((tag) => {
               const tagInfo = getTagInfo(tag);
               return (

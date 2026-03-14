@@ -6,6 +6,7 @@ import { NameDisplay } from "./components/NameDisplay";
 import { UniversityDetails } from "./components/UniversityDetails";
 import { AboutMeSection } from "./components/AboutMeSection";
 import { PersonalityTagsSection } from "./components/PersonalityTagsSection";
+import { LookingForSection } from "./components/LookingForSection";
 
 export function ProfileFormFields() {
   const { 
@@ -18,6 +19,7 @@ export function ProfileFormFields() {
     uploadStatus, 
     avatarUrl,
     handlePersonalityTagToggle,
+    handleLookingForToggle,
   } = useProfileForm();
 
   return (
@@ -49,6 +51,11 @@ export function ProfileFormFields() {
       <AboutMeSection
         bio={form.bio}
         handleChange={handleChange}
+      />
+
+      <LookingForSection
+        selectedOptions={form.looking_for || []}
+        onToggleOption={handleLookingForToggle}
       />
 
       <PersonalityTagsSection
