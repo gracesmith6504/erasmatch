@@ -114,6 +114,7 @@ export type Database = {
           created_at: string
           deleted_at: string | null
           email: string | null
+          email_notifications: boolean
           featured: boolean | null
           home_university: string | null
           id: string
@@ -135,6 +136,7 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           email?: string | null
+          email_notifications?: boolean
           featured?: boolean | null
           home_university?: string | null
           id: string
@@ -156,6 +158,7 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           email?: string | null
+          email_notifications?: boolean
           featured?: boolean | null
           home_university?: string | null
           id?: string
