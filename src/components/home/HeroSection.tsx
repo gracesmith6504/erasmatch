@@ -77,7 +77,7 @@ export const HeroSection = ({
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
               <Button 
                 size="lg" 
-                className="text-base px-8 py-6 bg-foreground text-background hover:bg-foreground/90 rounded-full shadow-elevated transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+                className="text-base px-8 py-6 bg-foreground text-primary-foreground hover:bg-foreground/90 rounded-full shadow-elevated transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
                 onClick={handleAuthAction}
               >
                 {isAuthenticated ? "Explore Students" : "Join for free"}

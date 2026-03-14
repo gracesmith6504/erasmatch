@@ -70,7 +70,7 @@ export const FeaturesSection = () => {
             <motion.div
               key={feature.title}
               variants={item}
-              className="group relative p-6 rounded-2xl bg-background border border-border hover:border-foreground/10 hover:shadow-card transition-all duration-300"
+              className="group relative p-6 rounded-2xl bg-background border border-border hover:border-border/80 hover:shadow-card hover:scale-105 transition-all duration-300"
             >
               <div className={`h-11 w-11 rounded-xl ${feature.color} flex items-center justify-center mb-5`}>
                 <feature.icon className="h-5 w-5" />
