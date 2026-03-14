@@ -86,7 +86,7 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     setUniversityFilter("");
     setCityFilter("");
     setPersonalityTagsFilter([]);
-    setArrivalMonthFilter("");
+    setSemesterFilter([]);
   };
 
   return {
