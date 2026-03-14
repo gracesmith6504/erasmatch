@@ -40,11 +40,6 @@ const Auth = ({ onLogin }: AuthProps) => {
   };
 
   const handleGoogleAuth = async () => {
-    if (activeTab === "signup" && !privacyConsent) {
-      toast.error("Please agree to the Privacy Policy to continue");
-      return;
-    }
-
     setGoogleLoading(true);
     
     try {
