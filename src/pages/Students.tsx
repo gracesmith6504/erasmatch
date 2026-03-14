@@ -94,7 +94,7 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
         <WelcomeBanner cityName={cityName} hasAvatar={hasAvatar} />
       )}
       
-      <h1 className="text-xl sm:text-2xl font-bold gradient-text mb-4">Find Erasmus Students</h1>
+      <h1 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-4">Find Erasmus Students</h1>
 
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "list" | "cities")} className="mb-4 w-full overflow-hidden">
         <TabsList className="w-full md:w-auto bg-muted/50 mb-4">
