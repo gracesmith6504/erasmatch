@@ -182,22 +182,31 @@ const StudentFilters = ({
           </Select>
         </div>
 
-        {/* Arrival Month Filter */}
-        <div>
-          <Select value={arrivalMonthFilter} onValueChange={setArrivalMonthFilter}>
-            <SelectTrigger className="h-12 border-border focus:border-erasmatch-green">
-              <div className="flex items-center">
-                <Plane className="mr-2 h-4 w-4 text-muted-foreground" />
-                <SelectValue placeholder="Arrival month" />
-              </div>
-            </SelectTrigger>
-            <SelectContent className="max-h-80">
-              <SelectItem value="all-months">All Arrival Months</SelectItem>
-              {uniqueArrivalMonths.map((month) => (
-                <SelectItem key={month} value={month}>{formatMonth(month)}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      </div>
+
+      {/* Semester Filter */}
+      <div className="mt-6">
+        <div className="flex items-center text-sm font-medium mb-3 text-foreground">
+          <Plane className="mr-2 h-4 w-4 text-muted-foreground" />
+          <span>Filter by Semester</span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {SEMESTER_OPTIONS.map((semester) => {
+            const isSelected = semesterFilter.includes(semester);
+            return (
+              <Badge
+                key={semester}
+                variant={isSelected ? "default" : "outline"}
+                className={`cursor-pointer transition-all ${
+                  isSelected ? "bg-erasmatch-coral/10 text-erasmatch-coral" : "hover:bg-secondary"
+                }`}
+                onClick={() => handleSemesterToggle(semester)}
+              >
+                {semester}
+                {isSelected && <X className="h-3 w-3 ml-1" />}
+              </Badge>
+            );
+          })}
         </div>
       </div>
 
