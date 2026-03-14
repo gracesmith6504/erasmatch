@@ -76,16 +76,8 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     const tagMatch = personalityTagsFilter.length === 0 || 
       (profile.personality_tags && profile.personality_tags.some(tag => personalityTagsFilter.includes(tag)));
     
-    let arrivalMatch = true;
-    if (arrivalMonthFilter && arrivalMonthFilter !== "all-months") {
-      if (!profile.arrival_date) {
-        arrivalMatch = false;
-      } else {
-        const d = new Date(profile.arrival_date);
-        const month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-        arrivalMatch = month === arrivalMonthFilter;
-      }
-    }
+    const semesterMatch = semesterFilter.length === 0 || 
+      (profile.semester && semesterFilter.includes(profile.semester));
 
     return uniMatch && cityMatch && tagMatch && arrivalMatch;
   });
