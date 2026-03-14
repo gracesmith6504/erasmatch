@@ -62,7 +62,7 @@ export const CommunitySection = ({ handleFindStudents }: CommunitySectionProps) 
         >
           <Button 
             size="lg" 
-            className="rounded-full bg-background text-foreground hover:bg-background/90 shadow-elevated hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-base px-8 py-6"
+            className="rounded-full bg-background text-foreground hover:bg-secondary shadow-elevated hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-base px-8 py-6"
             onClick={handleFindStudents}
           >
             Join ErasMatch <ArrowRight className="ml-2 h-4 w-4" />

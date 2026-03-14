@@ -100,7 +100,7 @@ export const GroupChatSection = ({ handleFindStudents }: GroupChatSectionProps) 
             </p>
             <Button 
               size="lg" 
-              className="rounded-full bg-foreground text-background hover:bg-foreground/90 shadow-elevated hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+              className="rounded-full bg-foreground text-primary-foreground hover:bg-foreground/90 shadow-elevated hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
               onClick={handleFindStudents}
             >
               Find your group <ArrowRight className="ml-2 h-4 w-4" />
