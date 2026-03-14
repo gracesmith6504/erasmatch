@@ -43,6 +43,7 @@ export const DesktopNav = ({ isAuthenticated, isActive, onLogout }: DesktopNavPr
               activeClass="bg-foreground text-background shadow-button"
               inactiveClass="text-muted-foreground hover:text-foreground hover:bg-background/60"
               icon={item.icon}
+              badge={item.badge}
             >
               {item.name}
             </NavigationLink>
