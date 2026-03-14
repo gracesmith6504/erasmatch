@@ -288,10 +288,10 @@ const StudentFilters = ({
               </button>
             </div>
           )}
-          {arrivalMonthFilter && arrivalMonthFilter !== "all-months" && (
+          {semesterFilter.length > 0 && (
             <div className="inline-flex items-center text-xs bg-erasmatch-coral/10 text-erasmatch-coral py-1 px-2 rounded-full">
-              Arriving: {formatMonth(arrivalMonthFilter)}
-              <button className="ml-1" onClick={() => setArrivalMonthFilter("")}>
+              {semesterFilter.length} semester{semesterFilter.length > 1 ? 's' : ''}
+              <button className="ml-1" onClick={() => setSemesterFilter([])}>
                 <X className="h-3 w-3" />
               </button>
             </div>
