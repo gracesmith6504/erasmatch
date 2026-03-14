@@ -81,8 +81,8 @@ export default {
 				sm: 'calc(var(--radius) - 4px)'
 			},
 			fontFamily: {
-				sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
-				display: ['"Instrument Serif"', 'Georgia', 'serif'],
+				sans: ['"Inter"', 'system-ui', 'sans-serif'],
+				display: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
 			},
 			boxShadow: {
 				'soft': '0 4px 20px rgba(0, 0, 0, 0.06)',
