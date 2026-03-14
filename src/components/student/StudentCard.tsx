@@ -39,6 +39,9 @@ const StudentCard = ({ profile, isFeatured = false }: StudentCardProps) => {
   const visibleTags = tags.slice(0, 3);
   const extraCount = tags.length - 3;
 
+  const lookingFor = profile.looking_for || [];
+  const visibleLookingFor = lookingFor.slice(0, 3);
+
   return (
     <Card className="overflow-hidden border-border hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group min-h-[280px] flex flex-col">
       <CardContent className="pt-5 pb-3 flex-1 flex flex-col">
