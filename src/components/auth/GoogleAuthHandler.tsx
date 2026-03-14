@@ -24,15 +24,6 @@ export const GoogleAuthHandler = () => {
               ref_code: refCode,
             })
             .eq('id', currentUserProfile.id);
-
-          // Send welcome email
-          const userEmail = currentUserProfile.email;
-          const firstName = currentUserProfile.name?.split(' ')[0] || userEmail?.split('@')[0] || 'there';
-          if (userEmail) {
-            supabase.functions.invoke('send-welcome-email', {
-              body: { email: userEmail, firstName },
-            }).catch((err) => console.error('Welcome email error:', err));
-          }
           
           navigate("/onboarding");
         };
