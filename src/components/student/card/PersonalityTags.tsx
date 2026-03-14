@@ -34,7 +34,7 @@ const PersonalityTags: React.FC<PersonalityTagsProps> = ({ tags }) => {
       
       {hasMoreTags && (
         <>
-          <div className={`${showAllTags ? 'flex' : 'hidden sm:flex'} flex-wrap justify-center gap-1 mt-1`}>
+          <div className={`${showAllTags ? 'flex' : 'hidden sm:flex'} flex-wrap justify-center gap-1.5 mt-1.5`}>
             {hiddenTags.map((tag) => {
               const tagInfo = getTagInfo(tag);
               return (
