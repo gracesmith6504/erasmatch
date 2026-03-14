@@ -1,10 +1,12 @@
-
+/**
+ * Application entry point.
+ * Wraps the app in BrowserRouter for client-side routing.
+ */
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from "react-router-dom";
 import App from './App.tsx'
 import './index.css'
 
-// Set document title programmatically
 document.title = "ErasMatch";
 
 createRoot(document.getElementById("root")!).render(

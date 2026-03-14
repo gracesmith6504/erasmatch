@@ -1,7 +1,11 @@
-
+/**
+ * Authentication utilities for Supabase profile CRUD operations.
+ * Used by AuthProvider to manage user profiles during auth flows.
+ */
 import { supabase } from "@/integrations/supabase/client";
 import { Profile } from "@/types";
 
+/** Fetches a user profile by ID. Returns null if not found. */
 export const fetchUserProfile = async (userId: string): Promise<Profile | null> => {
   try {
     const { data, error } = await supabase
@@ -10,10 +14,7 @@ export const fetchUserProfile = async (userId: string): Promise<Profile | null> 
       .eq('id', userId)
       .maybeSingle();
 
-    if (error) {
-      throw error;
-    }
-
+    if (error) throw error;
     return data as unknown as Profile;
   } catch (error) {
     console.error('Error fetching user profile:', error);
@@ -21,6 +22,7 @@ export const fetchUserProfile = async (userId: string): Promise<Profile | null> 
   }
 };
 
+/** Creates a new profile for a freshly registered user. Uses upsert for idempotency. */
 export const createUserProfile = async (
   userId: string, 
   email: string, 
@@ -46,10 +48,7 @@ export const createUserProfile = async (
       .from('profiles')
       .upsert(newProfile);
       
-    if (error) {
-      throw error;
-    }
-    
+    if (error) throw error;
     return newProfile as Profile;
   } catch (error) {
     console.error("Error creating profile:", error);
@@ -57,6 +56,7 @@ export const createUserProfile = async (
   }
 };
 
+/** Updates specific fields on a user profile. */
 export const updateUserProfile = async (
   userId: string, 
   updatedProfile: Partial<Profile>
@@ -68,7 +68,6 @@ export const updateUserProfile = async (
       .eq('id', userId);
     
     if (error) throw error;
-    
     return true;
   } catch (error) {
     console.error('Error updating profile:', error);

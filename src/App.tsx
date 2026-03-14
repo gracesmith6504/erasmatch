@@ -1,4 +1,7 @@
-
+/**
+ * Root application component.
+ * Sets up global providers: React Query, tooltips, toasts, auth, and data.
+ */
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";

@@ -1,4 +1,8 @@
-
+/**
+ * Application route definitions.
+ * Public routes: home, auth, about, privacy, students, public profiles.
+ * Protected routes: onboarding, profile, messages, groups.
+ */
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 import { ProfileProvider } from "@/components/profile/ProfileContext";
@@ -17,29 +21,18 @@ import NotFound from "@/pages/NotFound";
 import Onboarding from "@/pages/Onboarding";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 
-// Contexts
 import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
 
 const AppRoutes = () => {
-  const { 
-    isAuthenticated, 
-    currentUserId, 
-    handleLogin 
-  } = useAuth();
-  
-  const { 
-    profiles, 
-    handleSendMessage,
-    updateProfile,
-    fetchProfile
-  } = useData();
+  const { isAuthenticated, currentUserId, handleLogin } = useAuth();
+  const { profiles, handleSendMessage, updateProfile, fetchProfile } = useData();
 
-  // Find current user profile
   const currentUserProfile = profiles.find(p => p.id === currentUserId) || null;
 
   return (
     <Routes>
+      {/* Public routes */}
       <Route path="/" element={<Index />} />
       <Route 
         path="/auth" 
@@ -49,6 +42,25 @@ const AppRoutes = () => {
           <Auth onLogin={handleLogin} />
         } 
       />
+      <Route path="/about" element={<About />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route 
+        path="/students" 
+        element={<Students profiles={profiles} currentUserId={currentUserId} />} 
+      />
+      <Route 
+        path="/profile/:id" 
+        element={
+          <ProfileView 
+            profiles={profiles}
+            currentUserId={currentUserId}
+            onSendMessage={handleSendMessage}
+          />
+        } 
+      />
+      <Route path="/u/:refCode" element={<PublicProfile />} />
+
+      {/* Protected routes — require authentication */}
       <Route 
         path="/onboarding" 
         element={
@@ -69,29 +81,6 @@ const AppRoutes = () => {
               <Profile />
             </ProfileProvider>
           </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/profile/:id" 
-        element={
-          <ProfileView 
-            profiles={profiles}
-            currentUserId={currentUserId}
-            onSendMessage={handleSendMessage}
-          />
-        } 
-      />
-      <Route 
-        path="/u/:refCode" 
-        element={<PublicProfile />} 
-      />
-      <Route 
-        path="/students" 
-        element={
-          <Students 
-            profiles={profiles}
-            currentUserId={currentUserId}
-          />
         } 
       />
       <Route 
@@ -121,8 +110,8 @@ const AppRoutes = () => {
           </ProtectedRoute>
         } 
       />
-      <Route path="/about" element={<About />} />
-      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+
+      {/* Catch-all */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
