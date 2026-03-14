@@ -40,8 +40,8 @@ export const StudentStoriesSection = () => {
           transition={{ duration: 0.6 }}
         >
           <p className="text-sm font-medium tracking-widest uppercase text-erasmatch-green mb-3">Student stories</p>
-          <h2 className="text-3xl sm:text-4xl font-display italic text-foreground">
-            Real experiences from the <span className="font-sans font-bold not-italic">community.</span>
+          <h2 className="text-3xl sm:text-4xl font-display font-bold text-foreground">
+            Real experiences from the <span className="text-erasmatch-green">community.</span>
           </h2>
         </motion.div>
 
