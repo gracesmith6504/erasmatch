@@ -80,6 +80,14 @@ export const useProfileForm = () => {
     setAvatarUrl(null);
   };
 
+  const handleLookingForToggle = (option: string) => {
+    const current = context.form.looking_for || [];
+    const updated = current.includes(option)
+      ? current.filter(o => o !== option)
+      : [...current, option];
+    context.handleSelectChange("looking_for", updated);
+  };
+
   const handlePersonalityTagToggle = (tag: string) => {
     const currentTags = context.form.personality_tags || [];
     const updatedTags = currentTags.includes(tag)
