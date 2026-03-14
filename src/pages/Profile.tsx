@@ -3,9 +3,36 @@ import { ProfileForm } from "@/components/profile/ProfileForm";
 import { DeleteAccountDialog } from "@/components/profile/DeleteAccountDialog";
 import { DataExportDialog } from "@/components/profile/DataExportDialog";
 import { useAuth } from "@/contexts/AuthContext";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { supabase } from "@/integrations/supabase/client";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 const Profile = () => {
   const { currentUserId, currentUserProfile, handleProfileUpdate } = useAuth();
+  const [emailNotifications, setEmailNotifications] = useState(true);
+
+  useEffect(() => {
+    if (currentUserProfile) {
+      setEmailNotifications(currentUserProfile.email_notifications !== false);
+    }
+  }, [currentUserProfile]);
+
+  const handleToggleEmailNotifications = async (checked: boolean) => {
+    setEmailNotifications(checked);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ email_notifications: checked } as any)
+        .eq('id', currentUserId);
+      if (error) throw error;
+      toast.success(checked ? "Email notifications enabled" : "Email notifications disabled");
+    } catch (err: any) {
+      setEmailNotifications(!checked);
+      toast.error("Failed to update notification preference");
+    }
+  };
 
   const fetchProfile = async () => {};
 
@@ -28,7 +55,22 @@ const Profile = () => {
           {/* GDPR Compliance Section */}
           <div className="mt-8 pt-8 border-t border-border">
             <h2 className="text-lg font-display font-semibold text-foreground mb-4">Data & Privacy</h2>
-            <div className="space-y-3">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between rounded-lg border border-border p-4">
+                <div className="space-y-0.5">
+                  <Label htmlFor="email-notifications" className="text-sm font-medium text-foreground">
+                    Email notifications
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    Receive an email when someone messages you
+                  </p>
+                </div>
+                <Switch
+                  id="email-notifications"
+                  checked={emailNotifications}
+                  onCheckedChange={handleToggleEmailNotifications}
+                />
+              </div>
               <DataExportDialog userId={currentUserId} />
               <DeleteAccountDialog userId={currentUserId} />
             </div>
