@@ -4,11 +4,12 @@ import { Profile } from "@/types";
 import StudentAvatar from "./card/StudentAvatar";
 import StudentCardActions from "./card/StudentCardActions";
 import CountryFlag from "./card/CountryFlag";
-import { Home, MapPin, CalendarClock } from "lucide-react";
+import { Home, MapPin, CalendarClock, Plane } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { getTagInfo } from "@/components/profile/constants";
+import { format } from "date-fns";
 
 interface StudentCardProps {
   profile: Profile;
