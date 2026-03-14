@@ -1,10 +1,8 @@
 import { Link } from "react-router-dom";
-import { ChatThread } from "@/types";
-import { format } from "date-fns";
+import { ChatThread, Profile } from "@/types";
+import { format, isToday, isYesterday, differenceInDays } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { CircleDot } from "lucide-react";
 
 interface ThreadsListProps {
   threads: (ChatThread & { hasUnreadMessages?: boolean })[];
@@ -13,60 +11,99 @@ interface ThreadsListProps {
   getInitials: (name: string | null) => string;
 }
 
+const formatMessageTime = (dateStr: string) => {
+  const date = new Date(dateStr);
+  if (isToday(date)) return format(date, "HH:mm");
+  if (isYesterday(date)) return "Yesterday";
+  if (differenceInDays(new Date(), date) < 7) return format(date, "EEE");
+  return format(date, "dd/MM/yy");
+};
+
+const isOnline = (partner: ChatThread["partner"]) => {
+  if (!partner.last_active_at) return false;
+  return differenceInDays(new Date(), new Date(partner.last_active_at)) <= 14;
+};
+
 export const ThreadsList = ({
   threads,
   selectedThread,
   onSelectThread,
   getInitials,
 }: ThreadsListProps) => {
+  if (threads.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full p-8">
+        <p className="text-muted-foreground mb-4 text-sm">No messages yet</p>
+        <Link to="/students">
+          <Button className="rounded-full bg-foreground text-background hover:bg-foreground/90 text-sm px-6">
+            Find Students
+          </Button>
+        </Link>
+      </div>
+    );
+  }
+
   return (
-    <>
-      {threads.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-full p-4">
-          <p className="text-muted-foreground mb-4">No messages yet</p>
-          <Link to="/students">
-            <Button className="rounded-full bg-foreground text-background hover:bg-foreground/90">Find Students</Button>
-          </Link>
-        </div>
-      ) : (
-        threads.map((thread) => (
-          <div key={thread.partner.id}>
-            <button
-              className={`w-full p-4 hover:bg-secondary text-left flex items-center relative transition-colors ${
-                selectedThread?.partner.id === thread.partner.id ? 'bg-secondary' : ''
-              }`}
-              onClick={() => onSelectThread(thread)}
-            >
-              <Avatar className="h-10 w-10 mr-3">
+    <div className="flex flex-col">
+      {threads.map((thread) => {
+        const isSelected = selectedThread?.partner.id === thread.partner.id;
+        const unread = thread.hasUnreadMessages;
+        const online = isOnline(thread.partner);
+
+        return (
+          <button
+            key={thread.partner.id}
+            className={`w-full px-4 py-3 flex items-center gap-3 transition-colors border-b border-border/50 ${
+              isSelected
+                ? "bg-accent/60"
+                : "hover:bg-accent/30"
+            }`}
+            onClick={() => onSelectThread(thread)}
+          >
+            {/* Avatar with online indicator */}
+            <div className="relative shrink-0">
+              <Avatar className="h-12 w-12">
                 <AvatarImage src={thread.partner.avatar_url || undefined} />
-                <AvatarFallback className="bg-secondary text-foreground">
+                <AvatarFallback className="bg-muted text-muted-foreground text-sm font-medium">
                   {getInitials(thread.partner.name)}
                 </AvatarFallback>
               </Avatar>
-              <div className="overflow-hidden flex-1">
-                <div className="font-medium text-foreground flex items-center">
+              {online && (
+                <span className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full bg-green-500 border-2 border-background" />
+              )}
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 min-w-0 text-left">
+              <div className="flex items-center justify-between gap-2">
+                <span className={`text-sm truncate ${unread ? "font-semibold text-foreground" : "font-medium text-foreground"}`}>
                   {thread.partner.name}
-                  {thread.hasUnreadMessages && (
-                    <CircleDot className="h-3 w-3 text-erasmatch-green ml-2" />
-                  )}
-                </div>
+                </span>
                 {thread.lastMessage && (
-                  <div className="text-sm text-muted-foreground truncate">
-                    {thread.lastMessage.sender_name === thread.partner.name ? '' : 'You: '}
-                    {thread.lastMessage.content}
-                  </div>
+                  <span className="text-[11px] text-muted-foreground shrink-0">
+                    {formatMessageTime(thread.lastMessage.created_at)}
+                  </span>
                 )}
               </div>
-              {thread.lastMessage && (
-                <div className="ml-auto text-xs text-muted-foreground">
-                  {format(new Date(thread.lastMessage.created_at), "MMM d")}
-                </div>
-              )}
-            </button>
-            <Separator />
-          </div>
-        ))
-      )}
-    </>
+              <div className="flex items-center gap-2 mt-0.5">
+                {thread.lastMessage ? (
+                  <p className={`text-[13px] truncate ${unread ? "font-semibold text-foreground" : "text-muted-foreground"}`}>
+                    {thread.lastMessage.sender_name !== thread.partner.name && (
+                      <span className="text-muted-foreground">You: </span>
+                    )}
+                    {thread.lastMessage.content}
+                  </p>
+                ) : (
+                  <p className="text-[13px] text-muted-foreground italic">No messages yet</p>
+                )}
+                {unread && (
+                  <span className="shrink-0 h-2.5 w-2.5 rounded-full bg-blue-500" />
+                )}
+              </div>
+            </div>
+          </button>
+        );
+      })}
+    </div>
   );
 };
