@@ -22,11 +22,11 @@ interface StudentFiltersProps {
   setCityFilter: (value: string) => void;
   personalityTagsFilter: string[];
   setPersonalityTagsFilter: (tags: string[]) => void;
-  arrivalMonthFilter: string;
-  setArrivalMonthFilter: (value: string) => void;
+  semesterFilter: string[];
+  setSemesterFilter: (tags: string[]) => void;
   uniqueUniversities: string[];
   uniqueCities: string[];
-  uniqueArrivalMonths: string[];
+  uniqueSemesters: string[];
   resetFilters: () => void;
 }
 
