@@ -33,6 +33,8 @@ export const ProfileProvider = ({
     city: initialProfile?.city || null,
     personality_tags: initialProfile?.personality_tags || [],
     course: initialProfile?.course || "",
+    email_notifications: initialProfile?.email_notifications !== false,
+    arrival_date: initialProfile?.arrival_date || null,
   });
   const [loading, setLoading] = useState(false);
 
@@ -51,6 +53,8 @@ export const ProfileProvider = ({
         city: initialProfile.city || null,
         personality_tags: initialProfile.personality_tags || [],
         course: initialProfile.course || "",
+        email_notifications: initialProfile.email_notifications !== false,
+        arrival_date: initialProfile.arrival_date || null,
       });
       
       // Store initial university for comparison
@@ -118,12 +122,12 @@ export const ProfileProvider = ({
       // Update form state if needed
       setForm(prev => ({
         ...prev,
-        ...Object.entries(newData).reduce((acc, [key, value]) => {
+        ...Object.entries(newData).reduce<Record<string, any>>((acc, [key, value]) => {
           if (key in prev) {
-            acc[key as keyof typeof prev] = value as any;
+            acc[key] = value;
           }
           return acc;
-        }, {} as typeof prev)
+        }, {})
       }));
       
       // Fetch the latest profile data to ensure everything is in sync
@@ -158,6 +162,8 @@ export const ProfileProvider = ({
         city: form.city,
         personality_tags: form.personality_tags,
         course: form.course,
+        email_notifications: form.email_notifications,
+        arrival_date: form.arrival_date,
       };
       
       // Use the updateProfile function

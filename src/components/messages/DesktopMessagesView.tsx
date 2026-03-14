@@ -1,4 +1,3 @@
-
 import { Profile, ChatThread } from "@/types";
 import { DirectMessagePanel } from "./DirectMessagePanel";
 import { ThreadsList } from "./ThreadsList";
@@ -33,11 +32,10 @@ export const DesktopMessagesView = ({
   onBack,
 }: DesktopMessagesViewProps) => {
   return (
-    <div className="flex flex-1 bg-white rounded-lg shadow overflow-hidden h-full">
-      {/* Thread list - hidden on mobile when thread selected */}
+    <div className="flex flex-1 bg-card rounded-2xl shadow-soft border border-border overflow-hidden h-full">
       {(!isMobile || !selectedThread) && (
-        <div className="w-full md:w-1/3 border-r flex flex-col h-full overflow-hidden">
-          <ScrollArea className="flex-1 overflow-y-auto bg-gray-50">
+        <div className="w-full md:w-1/3 border-r border-border flex flex-col h-full overflow-hidden">
+          <ScrollArea className="flex-1 overflow-y-auto bg-background">
             <ThreadsList 
               threads={threads} 
               selectedThread={selectedThread} 
@@ -48,7 +46,6 @@ export const DesktopMessagesView = ({
         </div>
       )}
       
-      {/* Conversation area - full width on mobile */}
       {selectedThread ? (
       <div className="w-full md:w-2/3 flex flex-col h-full">
         <DirectMessagePanel
@@ -64,7 +61,7 @@ export const DesktopMessagesView = ({
       </div>
       ) : (
         <div className="hidden md:flex flex-col w-2/3 items-center justify-center p-4">
-          <p className="text-gray-500 mb-4">Select a conversation from the left</p>
+          <p className="text-muted-foreground mb-4">Select a conversation from the left</p>
         </div>
       )}
     </div>
