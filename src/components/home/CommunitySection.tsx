@@ -1,43 +1,73 @@
-
 import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface CommunitySectionProps {
   handleFindStudents: () => void;
 }
 
+const universities = [
+  "University of Barcelona",
+  "Humboldt University",
+  "Sorbonne University",
+  "University of Amsterdam",
+  "University of Lisbon",
+  "Politecnico di Milano",
+  "Charles University",
+  "KU Leuven",
+];
+
 export const CommunitySection = ({ handleFindStudents }: CommunitySectionProps) => {
   return (
-    <section className="py-16 bg-gradient-to-br from-blue-50 to-purple-50">
+    <section className="py-24 bg-foreground text-background overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-2xl shadow-sm">
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1523580846011-d3a5bc25702b')] bg-cover bg-center opacity-20"></div>
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/80 to-purple-600/80"></div>
-          
-          <div className="relative px-6 py-16 sm:px-12 lg:px-16 text-center">
-            <h2 className="text-3xl font-bold text-white mb-4">
-              ErasMatch is free, private, and growing fast.
-            </h2>
-            <p className="text-xl text-white/90 max-w-2xl mx-auto mb-8">
-              ErasMatch is a safe space to meet, plan, and connect with real students before and during Erasmus.
-            </p>
-            
-            <div className="flex flex-wrap justify-center gap-3 mb-10">
-              <div className="px-4 py-2 bg-white/20 rounded-full backdrop-blur-sm text-white text-sm">University of Barcelona</div>
-              <div className="px-4 py-2 bg-white/20 rounded-full backdrop-blur-sm text-white text-sm">Humboldt University</div>
-              <div className="px-4 py-2 bg-white/20 rounded-full backdrop-blur-sm text-white text-sm">Sorbonne University</div>
-              <div className="px-4 py-2 bg-white/20 rounded-full backdrop-blur-sm text-white text-sm">University of Amsterdam</div>
-              <div className="px-4 py-2 bg-white/20 rounded-full backdrop-blur-sm text-white text-sm">+ 45 more</div>
-            </div>
-            
-            <Button 
-              size="lg" 
-              className="text-lg px-8 py-6 bg-white text-blue-600 hover:bg-blue-50 shadow-lg hover:shadow-xl transition-all duration-300"
-              onClick={handleFindStudents}
-            >
-              Find Students Near You
-            </Button>
+        <motion.div
+          className="text-center max-w-2xl mx-auto mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+        >
+          <h2 className="text-3xl sm:text-5xl mb-6 font-display font-bold">
+            Free, private, and{" "}
+            <span className="gradient-text">growing fast.</span>
+          </h2>
+          <p className="text-lg text-background/70 leading-relaxed">
+            A safe space to meet, plan, and connect with real students — before and during Erasmus.
+          </p>
+        </motion.div>
+
+        {/* University marquee */}
+        <div className="relative mb-14">
+          <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-foreground to-transparent z-10" />
+          <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-foreground to-transparent z-10" />
+          <div className="flex gap-3 animate-marquee">
+            {[...universities, ...universities].map((uni, i) => (
+              <span
+                key={`${uni}-${i}`}
+                className="flex-shrink-0 px-4 py-2 rounded-full border border-background/15 text-sm text-background/60 whitespace-nowrap"
+              >
+                {uni}
+              </span>
+            ))}
           </div>
         </div>
+
+        <motion.div
+          className="text-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ delay: 0.2, duration: 0.6 }}
+        >
+          <Button 
+            size="lg" 
+            className="rounded-full bg-background text-foreground hover:bg-secondary shadow-elevated hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-base px-8 py-6"
+            onClick={handleFindStudents}
+          >
+            Join ErasMatch <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </motion.div>
       </div>
     </section>
   );

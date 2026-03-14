@@ -7,6 +7,7 @@ import { MessageInput } from "./MessageInput";
 import { useRealTimeMessages } from "./hooks/useRealTimeMessages";
 import MessageEmptyState from "./MessageEmptyState";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { markMessagesAsRead } from "@/hooks/useUnreadMessageCount";
 
 interface DirectMessagePanelProps {
   thread: ChatThread;
@@ -47,6 +48,13 @@ export const DirectMessagePanel = ({
   useEffect(() => {
     setShowSuggestedPrompts(localMessages.length === 0);
   }, [localMessages]);
+
+  // Mark messages as read when opening the thread
+  useEffect(() => {
+    if (currentUserId && thread?.partner?.id) {
+      markMessagesAsRead(currentUserId, thread.partner.id);
+    }
+  }, [currentUserId, thread?.partner?.id]);
 
   function scrollToBottom() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

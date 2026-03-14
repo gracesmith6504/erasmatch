@@ -1,6 +1,5 @@
-
 import { Link } from "react-router-dom";
-import { Home, Users, MessageSquare, User, LogOut } from "lucide-react";
+import { User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigation } from "./useNavigation";
 
@@ -11,31 +10,31 @@ interface MobileNavProps {
   onLogout: (e: React.MouseEvent) => void;
 }
 
-export const MobileNav = ({ 
-  isOpen, 
-  isAuthenticated, 
-  isActive, 
-  onLogout 
+export const MobileNav = ({
+  isOpen,
+  isAuthenticated,
+  isActive,
+  onLogout,
 }: MobileNavProps) => {
   const { navigationItems } = useNavigation();
-  
+
   return (
-    <div 
+    <div
       className={`md:hidden transition-all duration-300 ease-in-out overflow-hidden ${
-        isOpen ? 'max-h-screen' : 'max-h-0'
+        isOpen ? "max-h-screen" : "max-h-0"
       }`}
     >
-      <div className="px-4 pt-2 pb-3 space-y-2 bg-white shadow-md rounded-b-lg">
+      <div className="px-4 pt-2 pb-3 space-y-1 bg-background border-t border-border shadow-soft rounded-b-xl">
         {isAuthenticated ? (
           <>
             {navigationItems.map((item) => (
-              <Link 
+              <Link
                 key={item.path}
-                to={item.path} 
-                className={`block px-4 py-3 rounded-lg text-base font-medium ${
-                  isActive(item.path) 
-                    ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple' 
-                    : 'text-gray-700 hover:bg-gray-50'
+                to={item.path}
+                className={`block px-4 py-3 rounded-xl text-base font-medium transition-colors ${
+                  isActive(item.path)
+                    ? "bg-foreground text-background"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                 }`}
               >
                 <div className="flex items-center">
@@ -44,20 +43,23 @@ export const MobileNav = ({
                 </div>
               </Link>
             ))}
-            <Link to="/profile" className={`block px-4 py-3 rounded-lg text-base font-medium ${
-              isActive('/profile') 
-                ? 'text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple' 
-                : 'text-gray-700 hover:bg-gray-50'
-            }`}>
+            <Link
+              to="/profile"
+              className={`block px-4 py-3 rounded-xl text-base font-medium transition-colors ${
+                isActive("/profile")
+                  ? "bg-foreground text-background"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+              }`}
+            >
               <div className="flex items-center">
                 <User className="w-5 h-5 mr-3" />
                 Profile
               </div>
             </Link>
-            <button 
+            <button
               onClick={onLogout}
               type="button"
-              className="w-full text-left block px-4 py-3 rounded-lg text-base font-medium text-gray-700 hover:text-red-600 hover:bg-red-50"
+              className="w-full text-left block px-4 py-3 rounded-xl text-base font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
             >
               <div className="flex items-center">
                 <LogOut className="w-5 h-5 mr-3" />
@@ -66,12 +68,17 @@ export const MobileNav = ({
             </button>
           </>
         ) : (
-          <div className="flex flex-col space-y-2 pt-2 pb-2">
+          <div className="flex flex-col gap-2 py-2">
             <Link to="/auth?mode=login" className="w-full">
-              <Button variant="outline" className="w-full button-hover py-3 text-base">Log In</Button>
+              <Button
+                variant="outline"
+                className="w-full py-3 text-base rounded-xl border-border text-foreground hover:bg-secondary"
+              >
+                Log In
+              </Button>
             </Link>
             <Link to="/auth?mode=signup" className="w-full">
-              <Button className="w-full button-hover py-3 text-base bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple border-0 text-white">
+              <Button className="w-full py-3 text-base rounded-xl bg-foreground text-background hover:bg-foreground/90">
                 Sign Up
               </Button>
             </Link>

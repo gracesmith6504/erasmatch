@@ -1,6 +1,6 @@
-
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface GroupChatSectionProps {
   handleFindStudents: () => void;
@@ -8,81 +8,104 @@ interface GroupChatSectionProps {
 
 export const GroupChatSection = ({ handleFindStudents }: GroupChatSectionProps) => {
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-24 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">You're Not Arriving Alone</h2>
-          <p className="max-w-3xl mx-auto text-xl text-gray-600">
-            You're not arriving alone. Join your uni group chat the moment you sign up — and feel connected from day one.
-          </p>
-        </div>
+        <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
+          {/* Chat mockup */}
+          <motion.div 
+            className="w-full lg:w-1/2"
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="bg-card rounded-2xl border border-border shadow-card overflow-hidden">
+              {/* Chat header */}
+              <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-full bg-erasmatch-blue/15 flex items-center justify-center text-sm font-bold text-erasmatch-blue">
+                    L
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-sm text-foreground">Lisbon Group Chat</h3>
+                    <p className="text-xs text-muted-foreground">24 members</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-erasmatch-green/10">
+                  <span className="h-1.5 w-1.5 rounded-full bg-erasmatch-green" />
+                  <span className="text-xs font-medium text-erasmatch-green">12 online</span>
+                </div>
+              </div>
+              
+              {/* Messages */}
+              <div className="p-5 space-y-4">
+                <div className="flex gap-2.5">
+                  <div className="h-7 w-7 rounded-full bg-erasmatch-purple/10 flex-shrink-0 flex items-center justify-center text-[10px]">🇩🇪</div>
+                  <div>
+                    <p className="text-[10px] text-muted-foreground mb-1">Anna</p>
+                    <div className="bg-secondary rounded-xl rounded-tl-sm px-3 py-2">
+                      <p className="text-xs text-foreground">Does anyone know good co-working spots near Marquês? ☕</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex gap-2.5 justify-end">
+                  <div>
+                    <div className="bg-foreground rounded-xl rounded-tr-sm px-3 py-2">
+                      <p className="text-xs text-background">Try Second Home! It's amazing 🌿</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex gap-2.5">
+                  <div className="h-7 w-7 rounded-full bg-erasmatch-coral/10 flex-shrink-0 flex items-center justify-center text-[10px]">🇮🇹</div>
+                  <div>
+                    <p className="text-[10px] text-muted-foreground mb-1">Luca</p>
+                    <div className="bg-secondary rounded-xl rounded-tl-sm px-3 py-2">
+                      <p className="text-xs text-foreground">Who's up for surfing this weekend? 🏄‍♂️</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-        <div className="flex flex-col md:flex-row gap-8 items-center justify-center">
-          <div className="w-full max-w-md bg-white p-6 rounded-xl shadow-md">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center">
-                <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center text-white text-lg font-bold">
-                  L
-                </div>
-                <h3 className="ml-3 font-bold text-lg">Lisbon Group Chat</h3>
-              </div>
-              <div className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                12 online
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              {/* Blurred chat messages */}
-              <div className="flex gap-3">
-                <div className="h-8 w-8 rounded-full bg-purple-100 flex-shrink-0"></div>
-                <div className="bg-gray-100 rounded-lg p-3 max-w-[80%]">
-                  <div className="h-2 bg-gray-200 rounded w-40"></div>
-                  <div className="h-2 bg-gray-200 rounded w-24 mt-2"></div>
-                </div>
-              </div>
-              
-              <div className="flex gap-3 justify-end">
-                <div className="bg-blue-50 rounded-lg p-3 max-w-[80%]">
-                  <div className="h-2 bg-blue-100 rounded w-32"></div>
-                  <div className="h-2 bg-blue-100 rounded w-40 mt-2"></div>
-                </div>
-                <div className="h-8 w-8 rounded-full bg-blue-100 flex-shrink-0"></div>
-              </div>
-              
-              <div className="flex gap-3">
-                <div className="h-8 w-8 rounded-full bg-green-100 flex-shrink-0"></div>
-                <div className="bg-gray-100 rounded-lg p-3 max-w-[80%]">
-                  <div className="h-2 bg-gray-200 rounded w-36"></div>
+              {/* Typing indicator */}
+              <div className="px-5 pb-4">
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <div className="flex gap-1">
+                    <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 animate-pulse" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 animate-pulse [animation-delay:0.2s]" />
+                    <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 animate-pulse [animation-delay:0.4s]" />
+                  </div>
+                  <span>3 people typing...</span>
                 </div>
               </div>
             </div>
-            
-            <div className="mt-6 flex items-center">
-              <div className="flex -space-x-2">
-                <div className="h-7 w-7 rounded-full bg-blue-500 border-2 border-white"></div>
-                <div className="h-7 w-7 rounded-full bg-green-500 border-2 border-white"></div>
-                <div className="h-7 w-7 rounded-full bg-purple-500 border-2 border-white"></div>
-                <div className="h-7 w-7 rounded-full bg-yellow-500 border-2 border-white flex items-center justify-center text-xs text-white font-bold">+8</div>
-              </div>
-              <div className="ml-3 text-xs text-gray-500">💬 Currently active</div>
-            </div>
-          </div>
-          
-          <div className="text-center md:text-left md:max-w-md">
-            <h3 className="font-bold text-2xl text-gray-900 mb-4">Join your university group chat</h3>
-            <p className="text-gray-600 mb-6">
-              Connect with other Erasmus students headed to your destination. Share tips, ask questions, and make friends before you even arrive.
+          </motion.div>
+
+          {/* Text content */}
+          <motion.div 
+            className="w-full lg:w-1/2"
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <p className="text-sm font-medium tracking-widest uppercase text-erasmatch-green mb-3">Group chats</p>
+            <h2 className="text-3xl sm:text-4xl mb-6 text-foreground font-display font-bold">
+              You're not arriving{" "}
+              <span className="text-erasmatch-green">alone.</span>
+            </h2>
+            <p className="text-muted-foreground text-lg leading-relaxed mb-8">
+              Join your university and city group chat the moment you sign up. Ask about housing, courses, nightlife — or just say hi. Your Erasmus crew is waiting.
             </p>
-            <div className="flex justify-center md:justify-start">
-              <Button 
-                size="lg" 
-                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
-                onClick={handleFindStudents}
-              >
-                Find Students Near You <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-          </div>
+            <Button 
+              size="lg" 
+              className="rounded-full bg-foreground text-primary-foreground hover:bg-foreground/90 shadow-elevated hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+              onClick={handleFindStudents}
+            >
+              Find your group <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </motion.div>
         </div>
       </div>
     </section>

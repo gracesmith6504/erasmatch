@@ -13,6 +13,8 @@ type ProfileFormState = {
   city: string | null;
   personality_tags: string[];
   course: string;
+  email_notifications: boolean;
+  arrival_date: string | null;
 };
 
 export type ProfileContextType = {

@@ -1,4 +1,3 @@
-
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Message, Profile } from "@/types";
 import { MobileMessagesView } from "./MobileMessagesView";
@@ -27,7 +26,6 @@ export const MessagesContainer = ({
   const isMobile = useIsMobile();
   const [showMobileThreadList, setShowMobileThreadList] = useState(true);
   
-  // Get message state from hook
   const {
     selectedThread,
     setSelectedThread,
@@ -40,14 +38,12 @@ export const MessagesContainer = ({
     threadMessages
   } = useMessageState(messages, profiles, currentUserId, initialSelectedUser);
 
-  // Toggle mobile thread list visibility based on selection
   useEffect(() => {
     if (isMobile && selectedThread) {
       setShowMobileThreadList(false);
     }
   }, [selectedThread, isMobile]);
   
-  // Handle initial user selection
   useInitialUserSelection({
     initialSelectedUserId: initialSelectedUser,
     profiles,
@@ -62,7 +58,6 @@ export const MessagesContainer = ({
     refreshKey
   });
 
-  // Custom wrapper for onSendMessage to ensure state updates properly
   const handleSendMessage = createMessageHandler(
     onSendMessage, 
     setMessagesSent, 
@@ -70,17 +65,12 @@ export const MessagesContainer = ({
     () => {}
   );
 
-  // Handle prompt selection - reset state
-  const handlePromptUsed = () => {
-    console.log("Prompt was used - will reset state after message is sent");
-  };
+  const handlePromptUsed = () => {};
 
-  // Handler for going back to thread list on mobile - only change thread list visibility
   const handleBackToThreadList = () => {
     setShowMobileThreadList(true);
   };
 
-  // Show mobile thread list when we want to display the thread list on mobile
   if (isMobile && showMobileThreadList) {
     return (
       <ScrollArea className="h-full w-full">
@@ -98,10 +88,9 @@ export const MessagesContainer = ({
     );
   }
 
-  // Show desktop view or conversation on mobile
   return (
     <div className="h-full flex flex-col overflow-hidden">
-      {!isMobile && <h1 className="text-2xl font-bold text-gray-900 px-4 py-6">Messages</h1>}
+      {!isMobile && <h1 className="text-2xl font-display font-bold text-foreground px-4 py-6">Messages</h1>}
       
       <DesktopMessagesView
         threads={threads}

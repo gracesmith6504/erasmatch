@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,61 +12,65 @@ interface DesktopNavProps {
 
 export const DesktopNav = ({ isAuthenticated, isActive, onLogout }: DesktopNavProps) => {
   const { navigationItems } = useNavigation();
-  
+
   if (!isAuthenticated) {
     return (
-      <div className="hidden md:flex items-center space-x-1">
+      <div className="hidden md:flex items-center gap-2">
         <Link to="/auth?mode=login">
-          <Button variant="ghost" className="button-hover">Log In</Button>
+          <Button variant="ghost" className="text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary rounded-full px-5">
+            Log In
+          </Button>
         </Link>
         <Link to="/auth?mode=signup">
-          <Button className="button-hover bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple border-0 text-white">
+          <Button className="text-sm font-medium rounded-full px-5 bg-foreground text-background hover:bg-foreground/90 shadow-button">
             Sign Up
           </Button>
         </Link>
       </div>
     );
   }
-  
+
   return (
     <>
-      <div className="hidden md:flex items-center space-x-1">
-        <div className="bg-gray-100 rounded-full p-1 flex items-center space-x-1">
+      <div className="hidden md:flex items-center">
+        <div className="bg-secondary rounded-full p-1 flex items-center gap-0.5">
           {navigationItems.map((item) => (
-            <NavigationLink 
+            <NavigationLink
               key={item.path}
-              to={item.path} 
+              to={item.path}
               isActive={isActive(item.path)}
-              className="px-4 py-2 rounded-full transition-all duration-200"
-              activeClass="text-white bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple shadow-sm"
-              inactiveClass="text-gray-700 hover:bg-gray-200"
+              className="px-4 py-2 rounded-full transition-all duration-200 text-sm font-medium"
+              activeClass="bg-foreground text-background shadow-button"
+              inactiveClass="text-muted-foreground hover:text-foreground hover:bg-background/60"
               icon={item.icon}
+              badge={item.badge}
             >
               {item.name}
             </NavigationLink>
           ))}
         </div>
       </div>
-      
-      <div className="hidden md:block">
-        <div className="flex items-center space-x-2">
-          <Link to="/profile" className={`p-2 rounded-full ${
-            isActive('/profile') 
-              ? 'bg-gray-200' 
-              : 'hover:bg-gray-100'
-          }`}>
-            <User className="w-5 h-5 text-erasmatch-blue" />
-          </Link>
-          <Button 
-            variant="ghost" 
-            onClick={onLogout}
-            type="button" 
-            className="p-2 rounded-full hover:bg-red-100 hover:text-red-600"
-            size="icon"
-          >
-            <LogOut className="w-5 h-5" />
-          </Button>
-        </div>
+
+      <div className="hidden md:flex items-center gap-1">
+        <Link
+          to="/profile"
+          className={`p-2 rounded-full transition-colors ${
+            isActive('/profile')
+              ? 'bg-secondary text-foreground'
+              : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+          }`}
+        >
+          <User className="w-5 h-5" />
+        </Link>
+        <Button
+          variant="ghost"
+          onClick={onLogout}
+          type="button"
+          className="p-2 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+          size="icon"
+        >
+          <LogOut className="w-5 h-5" />
+        </Button>
       </div>
     </>
   );

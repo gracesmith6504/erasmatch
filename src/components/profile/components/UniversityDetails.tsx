@@ -1,13 +1,17 @@
-
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import UniversityAutocomplete from "@/components/UniversityAutocomplete";
-import { MapPin } from "lucide-react";
+import { MapPin, CalendarIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 type UniversityDetailsProps = {
   form: {
@@ -16,24 +20,25 @@ type UniversityDetailsProps = {
     university: string;
     city: string | null;
     semester: string | null;
+    arrival_date: string | null;
   };
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSelectChange: (name: string, value: string) => void;
+  handleSelectChange: (name: string, value: string | null) => void;
   handleUniversityChange: (university: string) => void;
   handleHomeUniversityChange: (university: string) => void;
 };
 
-const SEMESTERS = ["Spring 2025", "Fall 2025", "Spring 2026", "Full Academic Year 2025–26"];
+const SEMESTERS = ["Full Academic Year 2025–26", "Spring 2026", "Fall 2027", "Full Academic Year 2026–27"];
 
 export const UniversityDetails = ({
   form,
   handleChange,
   handleSelectChange,
   handleUniversityChange,
-  handleHomeUniversityChange
+  handleHomeUniversityChange,
 }: UniversityDetailsProps) => {
   const navigate = useNavigate();
-  const [lastUniversity, setLastUniversity] = useState('');
+  const [lastUniversity, setLastUniversity] = useState("");
 
   // Track university changes to prevent duplicate notifications
   useEffect(() => {
@@ -46,18 +51,18 @@ export const UniversityDetails = ({
   const enhancedUniversityChange = (university: string) => {
     // Track that we're changing universities to update the group chats
     const isChanging = university !== form.university && university.trim().length > 0;
-    
+
     // Call the original handler
     handleUniversityChange(university);
-    
+
     // Show a notification only if we're actually changing to a new university
     if (isChanging) {
       toast.success(`You've been added to the ${university} chat group`, {
         description: "Navigate to Messages or Groups to join the conversation",
         action: {
           label: "View Chats",
-          onClick: () => navigate('/groups')
-        }
+          onClick: () => navigate("/groups"),
+        },
       });
     }
   };
@@ -95,26 +100,21 @@ export const UniversityDetails = ({
           label="Destination University"
           required={false}
         />
-        
+
         {/* Display city as read-only information */}
         {form.university && (
           <div className="flex items-center text-sm mt-2 text-gray-600">
             <MapPin className="h-4 w-4 mr-1 text-erasmatch-green" />
-            <span>
-              {form.city ? form.city : "City not available for this university"}
-            </span>
+            <span>{form.city ? form.city : "City not available for this university"}</span>
           </div>
         )}
       </div>
 
       <div>
-        <Label htmlFor="semester" className="block text-sm font-medium text-gray-700">
+        <Label htmlFor="semester" className="block text-sm font-medium text-muted-foreground">
           Exchange Semester
         </Label>
-        <Select
-          value={form.semester || ""}
-          onValueChange={(value) => handleSelectChange("semester", value)}
-        >
+        <Select value={form.semester || ""} onValueChange={(value) => handleSelectChange("semester", value)}>
           <SelectTrigger className="mt-1">
             <SelectValue placeholder="Select a semester" />
           </SelectTrigger>
@@ -126,6 +126,38 @@ export const UniversityDetails = ({
             ))}
           </SelectContent>
         </Select>
+      </div>
+
+      <div>
+        <Label className="block text-sm font-medium text-muted-foreground">
+          Arrival Date
+        </Label>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "mt-1 w-full justify-start text-left font-normal",
+                !form.arrival_date && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {form.arrival_date
+                ? format(new Date(form.arrival_date), "PPP")
+                : "When are you arriving?"}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={form.arrival_date ? new Date(form.arrival_date) : undefined}
+              onSelect={(date) =>
+                handleSelectChange("arrival_date", date ? date.toISOString().split("T")[0] : null)
+              }
+              initialFocus
+            />
+          </PopoverContent>
+        </Popover>
       </div>
     </div>
   );
