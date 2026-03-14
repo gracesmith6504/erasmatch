@@ -1,4 +1,3 @@
-
 import { Menu, X } from "lucide-react";
 
 interface MobileNavToggleProps {
@@ -11,14 +10,10 @@ export const MobileNavToggle = ({ isOpen, setIsOpen }: MobileNavToggleProps) => 
     <div className="flex items-center md:hidden">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center justify-center p-3 rounded-md text-gray-700 hover:text-erasmatch-blue focus:outline-none"
+        className="inline-flex items-center justify-center p-2.5 rounded-xl text-foreground hover:bg-secondary transition-colors focus:outline-none"
         aria-label="Toggle menu"
       >
-        {isOpen ? (
-          <X className="block h-6 w-6" />
-        ) : (
-          <Menu className="block h-6 w-6" />
-        )}
+        {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </button>
     </div>
   );
