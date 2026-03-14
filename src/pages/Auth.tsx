@@ -174,7 +174,7 @@ const Auth = ({ onLogin }: AuthProps) => {
         <div className="text-center">
           <Link to="/" className="inline-block">
             <h1 className="text-3xl font-display font-extrabold mb-2">
-              Eras<span className="text-erasmatch-green">Match</span>
+              <span className="text-erasmatch-blue">Eras</span><span className="text-erasmatch-green">Match</span>
             </h1>
           </Link>
           
