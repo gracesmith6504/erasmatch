@@ -46,6 +46,7 @@ const StudentCard = ({ profile, isFeatured = false }: StudentCardProps) => {
             avatarUrl={profile.avatar_url}
             name={profile.name}
             className="h-14 w-14"
+            lastActiveAt={profile.last_active_at}
           />
           <div className="min-w-0">
             <h3 className="text-xl font-bold text-foreground flex items-center gap-1.5 truncate">
