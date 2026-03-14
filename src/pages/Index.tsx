@@ -41,6 +41,7 @@ const Index = () => {
         handlePlanning={handlePlanning}
       />
       <FeaturesSection />
+      <div className="h-16 bg-gradient-to-b from-card to-background" />
       <HowItWorksSection />
       <StudentStoriesSection />
       <GroupChatSection handleFindStudents={handleFindStudents} />
