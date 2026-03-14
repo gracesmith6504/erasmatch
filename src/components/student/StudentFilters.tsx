@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,7 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { School, MapPin, X, User, ChevronDown, ChevronUp } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { School, MapPin, X, User, ChevronDown, ChevronUp, Search } from "lucide-react";
 import { PERSONALITY_TAGS } from "@/components/profile/constants";
 
 interface StudentFiltersProps {
