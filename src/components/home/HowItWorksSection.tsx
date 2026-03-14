@@ -33,8 +33,8 @@ export const HowItWorksSection = () => {
           transition={{ duration: 0.6 }}
         >
           <p className="text-sm font-medium tracking-widest uppercase text-erasmatch-green mb-3">How it works</p>
-          <h2 className="text-3xl sm:text-4xl font-display italic text-foreground">
-            Three steps to your <span className="font-sans font-bold not-italic">Erasmus crew.</span>
+          <h2 className="text-3xl sm:text-4xl font-display font-bold text-foreground">
+            Three steps to your <span className="text-erasmatch-green">Erasmus crew.</span>
           </h2>
         </motion.div>
 
