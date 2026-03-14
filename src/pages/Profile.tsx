@@ -11,6 +11,28 @@ import { toast } from "sonner";
 
 const Profile = () => {
   const { currentUserId, currentUserProfile, handleProfileUpdate } = useAuth();
+  const [emailNotifications, setEmailNotifications] = useState(true);
+
+  useEffect(() => {
+    if (currentUserProfile) {
+      setEmailNotifications(currentUserProfile.email_notifications !== false);
+    }
+  }, [currentUserProfile]);
+
+  const handleToggleEmailNotifications = async (checked: boolean) => {
+    setEmailNotifications(checked);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ email_notifications: checked } as any)
+        .eq('id', currentUserId);
+      if (error) throw error;
+      toast.success(checked ? "Email notifications enabled" : "Email notifications disabled");
+    } catch (err: any) {
+      setEmailNotifications(!checked);
+      toast.error("Failed to update notification preference");
+    }
+  };
 
   const fetchProfile = async () => {};
 
