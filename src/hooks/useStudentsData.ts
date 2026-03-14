@@ -60,15 +60,9 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     }
   }, [loadedProfiles]);
 
-  // Get unique arrival months from profiles for filter options
-  const uniqueArrivalMonths = [...new Set(
-    loadedProfiles
-      .filter(p => p.arrival_date)
-      .map(p => {
-        const d = new Date(p.arrival_date!);
-        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-      })
-  )].sort();
+  const uniqueSemesters = [...new Set(
+    loadedProfiles.map(p => p.semester).filter(Boolean)
+  )].sort() as string[];
 
   const filteredProfiles = loadedProfiles.filter(profile => {
     if (
