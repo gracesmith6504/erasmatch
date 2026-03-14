@@ -49,6 +49,13 @@ export const DirectMessagePanel = ({
     setShowSuggestedPrompts(localMessages.length === 0);
   }, [localMessages]);
 
+  // Mark messages as read when opening the thread
+  useEffect(() => {
+    if (currentUserId && thread?.partner?.id) {
+      markMessagesAsRead(currentUserId, thread.partner.id);
+    }
+  }, [currentUserId, thread?.partner?.id]);
+
   function scrollToBottom() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }
