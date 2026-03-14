@@ -1,4 +1,3 @@
-
 import { useState, FormEvent, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -35,7 +34,6 @@ const Auth = ({ onLogin }: AuthProps) => {
   const returnTo = searchParams.get("returnTo");
 
   const handleTabChange = (value: string) => {
-    // Preserve other query parameters when changing tabs
     const newParams = new URLSearchParams(searchParams);
     newParams.set("mode", value);
     setSearchParams(newParams);
@@ -63,8 +61,6 @@ const Auth = ({ onLogin }: AuthProps) => {
       });
 
       if (error) throw error;
-      
-      // OAuth will redirect automatically, so we don't need to handle success here
     } catch (error: any) {
       console.error("Google auth error:", error);
       toast.error(error.message || "Failed to sign in with Google");
@@ -125,8 +121,6 @@ const Auth = ({ onLogin }: AuthProps) => {
           
           onLogin(email);
           toast.success("Account created successfully!");
-          
-          // Navigate to onboarding for email signup
           navigate("/onboarding");
           return;
         } else {
@@ -143,7 +137,6 @@ const Auth = ({ onLogin }: AuthProps) => {
         toast.success("Welcome back!");
         onLogin(email);
         
-        // If returning user, navigate to returnTo URL if provided, otherwise go to home
         if (returnTo) {
           navigate(returnTo);
         } else {
@@ -162,7 +155,6 @@ const Auth = ({ onLogin }: AuthProps) => {
     navigate("/profile");
   };
 
-  // Handle Google OAuth callback
   if (activeTab === "google-callback") {
     return <GoogleAuthHandler />;
   }
@@ -177,11 +169,11 @@ const Auth = ({ onLogin }: AuthProps) => {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-gradient-to-b from-indigo-50 to-white px-4 py-12 sm:px-6 lg:px-8">
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <Link to="/" className="inline-block">
-            <h1 className="text-3xl font-bold mb-2 text-erasmatch-blue">
+            <h1 className="text-3xl font-display font-extrabold mb-2">
               Eras<span className="text-erasmatch-green">Match</span>
             </h1>
           </Link>
@@ -198,8 +190,8 @@ const Auth = ({ onLogin }: AuthProps) => {
             
             <TabsContent value="login" className="mt-6">
               <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Welcome back</h2>
-                <p className="mt-2 text-sm text-gray-600">
+                <h2 className="text-2xl font-display font-bold text-foreground">Welcome back</h2>
+                <p className="mt-2 text-sm text-muted-foreground">
                   Sign in to connect with other students
                 </p>
               </div>
@@ -207,12 +199,12 @@ const Auth = ({ onLogin }: AuthProps) => {
             
             <TabsContent value="signup" className="mt-6">
               <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Create your account</h2>
-                <p className="mt-2 text-sm text-gray-600">
+                <h2 className="text-2xl font-display font-bold text-foreground">Create your account</h2>
+                <p className="mt-2 text-sm text-muted-foreground">
                   Join Erasmus students heading to your destination
                 </p>
                 {refCode && (
-                  <p className="mt-2 text-sm font-medium text-erasmatch-blue">
+                  <p className="mt-2 text-sm font-medium text-erasmatch-green">
                     You were invited by a friend!
                   </p>
                 )}
@@ -221,13 +213,13 @@ const Auth = ({ onLogin }: AuthProps) => {
           </Tabs>
         </div>
 
-        <div className="bg-white py-8 px-6 shadow-lg rounded-lg border border-gray-100">
+        <div className="bg-card py-8 px-6 shadow-card rounded-2xl border border-border">
           {/* Google Sign In Button */}
           <div className="mb-6">
             <Button
               type="button"
               variant="outline"
-              className="w-full border-gray-300 hover:bg-gray-50"
+              className="w-full border-border hover:bg-secondary"
               onClick={handleGoogleAuth}
               disabled={googleLoading || loading}
             >
@@ -244,16 +236,16 @@ const Auth = ({ onLogin }: AuthProps) => {
           {/* Divider */}
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
+              <div className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or continue with email</span>
+              <span className="px-2 bg-card text-muted-foreground">Or continue with email</span>
             </div>
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <Label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <Label htmlFor="email" className="block text-sm font-medium text-foreground">
                 Email address
               </Label>
               <div className="mt-1">
@@ -271,7 +263,7 @@ const Auth = ({ onLogin }: AuthProps) => {
             </div>
 
             <div>
-              <Label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <Label htmlFor="password" className="block text-sm font-medium text-foreground">
                 Password
               </Label>
               <div className="mt-1 relative">
@@ -292,15 +284,14 @@ const Auth = ({ onLogin }: AuthProps) => {
                   tabIndex={-1}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-500" />
+                    <EyeOff className="h-4 w-4 text-muted-foreground" />
                   ) : (
-                    <Eye className="h-4 w-4 text-gray-500" />
+                    <Eye className="h-4 w-4 text-muted-foreground" />
                   )}
                 </button>
               </div>
             </div>
 
-            {/* Privacy Consent Checkbox for Sign Up */}
             {activeTab === "signup" && (
               <div className="flex items-start space-x-2">
                 <Checkbox
@@ -309,11 +300,11 @@ const Auth = ({ onLogin }: AuthProps) => {
                   onCheckedChange={(checked) => setPrivacyConsent(checked === true)}
                   className="mt-1"
                 />
-                <Label htmlFor="privacy-consent" className="text-sm text-gray-700 leading-relaxed">
+                <Label htmlFor="privacy-consent" className="text-sm text-muted-foreground leading-relaxed">
                   I agree to the{" "}
                   <Link 
                     to="/privacy-policy" 
-                    className="text-erasmatch-blue hover:text-erasmatch-blue/80 underline"
+                    className="text-erasmatch-green hover:text-erasmatch-green/80 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -326,7 +317,7 @@ const Auth = ({ onLogin }: AuthProps) => {
             <div>
               <Button 
                 type="submit" 
-                className="w-full bg-erasmatch-blue hover:bg-erasmatch-blue/90" 
+                className="w-full bg-foreground text-background hover:bg-foreground/90 rounded-full" 
                 disabled={loading || googleLoading}
               >
                 {loading ? "Processing..." : activeTab === "signup" ? "Create Account" : "Sign In"}
