@@ -13,6 +13,8 @@ import { School, MapPin, X, User, ChevronDown, ChevronUp, Search, Plane } from "
 import { PERSONALITY_TAGS } from "@/components/profile/constants";
 import { format } from "date-fns";
 
+const SEMESTER_OPTIONS = ["Spring 2025", "Fall 2025", "Spring 2026", "Full Academic Year 2025–26", "Fall 2026", "Full Academic Year 2026–27"];
+
 interface StudentFiltersProps {
   universityFilter: string;
   setUniversityFilter: (value: string) => void;
@@ -20,11 +22,11 @@ interface StudentFiltersProps {
   setCityFilter: (value: string) => void;
   personalityTagsFilter: string[];
   setPersonalityTagsFilter: (tags: string[]) => void;
-  arrivalMonthFilter: string;
-  setArrivalMonthFilter: (value: string) => void;
+  semesterFilter: string[];
+  setSemesterFilter: (tags: string[]) => void;
   uniqueUniversities: string[];
   uniqueCities: string[];
-  uniqueArrivalMonths: string[];
+  uniqueSemesters: string[];
   resetFilters: () => void;
 }
 
@@ -35,11 +37,11 @@ const StudentFilters = ({
   setCityFilter,
   personalityTagsFilter,
   setPersonalityTagsFilter,
-  arrivalMonthFilter,
-  setArrivalMonthFilter,
+  semesterFilter,
+  setSemesterFilter,
   uniqueUniversities,
   uniqueCities,
-  uniqueArrivalMonths,
+  uniqueSemesters,
   resetFilters,
 }: StudentFiltersProps) => {
   const [showAllTags, setShowAllTags] = useState(false);
@@ -61,13 +63,15 @@ const StudentFilters = ({
     uni.toLowerCase().includes(uniSearch.toLowerCase())
   );
 
-  const formatMonth = (yearMonth: string) => {
-    const [year, month] = yearMonth.split("-");
-    const date = new Date(Number(year), Number(month) - 1);
-    return format(date, "MMMM yyyy");
+  const handleSemesterToggle = (semester: string) => {
+    if (semesterFilter.includes(semester)) {
+      setSemesterFilter(semesterFilter.filter(s => s !== semester));
+    } else {
+      setSemesterFilter([...semesterFilter, semester]);
+    }
   };
 
-  const isAnyFilterActive = universityFilter || cityFilter || personalityTagsFilter.length > 0 || (arrivalMonthFilter && arrivalMonthFilter !== "all-months");
+  const isAnyFilterActive = universityFilter || cityFilter || personalityTagsFilter.length > 0 || semesterFilter.length > 0;
   
   const handleTagToggle = (tagValue: string) => {
     if (personalityTagsFilter.includes(tagValue)) {
@@ -98,7 +102,7 @@ const StudentFilters = ({
 
   return (
     <div className="bg-card shadow-soft rounded-2xl p-6 mb-8 border border-border">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {/* Searchable University Filter */}
         <div ref={uniRef} className="relative">
           <div className="relative">
@@ -178,22 +182,31 @@ const StudentFilters = ({
           </Select>
         </div>
 
-        {/* Arrival Month Filter */}
-        <div>
-          <Select value={arrivalMonthFilter} onValueChange={setArrivalMonthFilter}>
-            <SelectTrigger className="h-12 border-border focus:border-erasmatch-green">
-              <div className="flex items-center">
-                <Plane className="mr-2 h-4 w-4 text-muted-foreground" />
-                <SelectValue placeholder="Arrival month" />
-              </div>
-            </SelectTrigger>
-            <SelectContent className="max-h-80">
-              <SelectItem value="all-months">All Arrival Months</SelectItem>
-              {uniqueArrivalMonths.map((month) => (
-                <SelectItem key={month} value={month}>{formatMonth(month)}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      </div>
+
+      {/* Semester Filter */}
+      <div className="mt-6">
+        <div className="flex items-center text-sm font-medium mb-3 text-foreground">
+          <Plane className="mr-2 h-4 w-4 text-muted-foreground" />
+          <span>Filter by Semester</span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {SEMESTER_OPTIONS.map((semester) => {
+            const isSelected = semesterFilter.includes(semester);
+            return (
+              <Badge
+                key={semester}
+                variant={isSelected ? "default" : "outline"}
+                className={`cursor-pointer transition-all ${
+                  isSelected ? "bg-erasmatch-coral/10 text-erasmatch-coral" : "hover:bg-secondary"
+                }`}
+                onClick={() => handleSemesterToggle(semester)}
+              >
+                {semester}
+                {isSelected && <X className="h-3 w-3 ml-1" />}
+              </Badge>
+            );
+          })}
         </div>
       </div>
 
@@ -275,10 +288,10 @@ const StudentFilters = ({
               </button>
             </div>
           )}
-          {arrivalMonthFilter && arrivalMonthFilter !== "all-months" && (
+          {semesterFilter.length > 0 && (
             <div className="inline-flex items-center text-xs bg-erasmatch-coral/10 text-erasmatch-coral py-1 px-2 rounded-full">
-              Arriving: {formatMonth(arrivalMonthFilter)}
-              <button className="ml-1" onClick={() => setArrivalMonthFilter("")}>
+              {semesterFilter.length} semester{semesterFilter.length > 1 ? 's' : ''}
+              <button className="ml-1" onClick={() => setSemesterFilter([])}>
                 <X className="h-3 w-3" />
               </button>
             </div>

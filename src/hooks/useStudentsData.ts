@@ -7,7 +7,7 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
   const [universityFilter, setUniversityFilter] = useState("");
   const [cityFilter, setCityFilter] = useState("");
   const [personalityTagsFilter, setPersonalityTagsFilter] = useState<string[]>([]);
-  const [arrivalMonthFilter, setArrivalMonthFilter] = useState("");
+  const [semesterFilter, setSemesterFilter] = useState<string[]>([]);
 
   const [uniqueUniversities, setUniqueUniversities] = useState<string[]>([]);
   const [uniqueCities, setUniqueCities] = useState<string[]>([]);
@@ -60,15 +60,9 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     }
   }, [loadedProfiles]);
 
-  // Get unique arrival months from profiles for filter options
-  const uniqueArrivalMonths = [...new Set(
-    loadedProfiles
-      .filter(p => p.arrival_date)
-      .map(p => {
-        const d = new Date(p.arrival_date!);
-        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-      })
-  )].sort();
+  const uniqueSemesters = [...new Set(
+    loadedProfiles.map(p => p.semester).filter(Boolean)
+  )].sort() as string[];
 
   const filteredProfiles = loadedProfiles.filter(profile => {
     if (
@@ -82,25 +76,17 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     const tagMatch = personalityTagsFilter.length === 0 || 
       (profile.personality_tags && profile.personality_tags.some(tag => personalityTagsFilter.includes(tag)));
     
-    let arrivalMatch = true;
-    if (arrivalMonthFilter && arrivalMonthFilter !== "all-months") {
-      if (!profile.arrival_date) {
-        arrivalMatch = false;
-      } else {
-        const d = new Date(profile.arrival_date);
-        const month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-        arrivalMatch = month === arrivalMonthFilter;
-      }
-    }
+    const semesterMatch = semesterFilter.length === 0 || 
+      (profile.semester && semesterFilter.includes(profile.semester));
 
-    return uniMatch && cityMatch && tagMatch && arrivalMatch;
+    return uniMatch && cityMatch && tagMatch && semesterMatch;
   });
 
   const resetFilters = () => {
     setUniversityFilter("");
     setCityFilter("");
     setPersonalityTagsFilter([]);
-    setArrivalMonthFilter("");
+    setSemesterFilter([]);
   };
 
   return {
@@ -110,11 +96,11 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     setCityFilter,
     personalityTagsFilter,
     setPersonalityTagsFilter,
-    arrivalMonthFilter,
-    setArrivalMonthFilter,
+    semesterFilter,
+    setSemesterFilter,
     uniqueUniversities,
     uniqueCities,
-    uniqueArrivalMonths,
+    uniqueSemesters,
     filteredProfiles,
     featuredProfiles,
     loading,
