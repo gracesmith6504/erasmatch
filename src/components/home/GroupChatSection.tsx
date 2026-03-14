@@ -91,9 +91,9 @@ export const GroupChatSection = ({ handleFindStudents }: GroupChatSectionProps) 
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
             <p className="text-sm font-medium tracking-widest uppercase text-erasmatch-green mb-3">Group chats</p>
-            <h2 className="text-3xl sm:text-4xl mb-6 text-foreground">
-              <span className="font-display italic">You're not arriving</span>{" "}
-              <span className="font-bold">alone.</span>
+            <h2 className="text-3xl sm:text-4xl mb-6 text-foreground font-display font-bold">
+              You're not arriving{" "}
+              <span className="text-erasmatch-green">alone.</span>
             </h2>
             <p className="text-muted-foreground text-lg leading-relaxed mb-8">
               Join your university and city group chat the moment you sign up. Ask about housing, courses, nightlife — or just say hi. Your Erasmus crew is waiting.

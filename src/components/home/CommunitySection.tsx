@@ -28,9 +28,9 @@ export const CommunitySection = ({ handleFindStudents }: CommunitySectionProps) 
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-3xl sm:text-5xl mb-6">
-            <span className="font-display italic">Free, private, and</span>{" "}
-            <span className="font-bold gradient-text">growing fast.</span>
+          <h2 className="text-3xl sm:text-5xl mb-6 font-display font-bold">
+            Free, private, and{" "}
+            <span className="gradient-text">growing fast.</span>
           </h2>
           <p className="text-lg text-background/70 leading-relaxed">
             A safe space to meet, plan, and connect with real students — before and during Erasmus.

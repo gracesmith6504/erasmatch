@@ -62,11 +62,11 @@ export const HeroSection = ({
               <span className="text-sm font-medium text-muted-foreground">Students in 18+ countries</span>
             </motion.div>
 
-            <h1 className="text-[2.75rem] sm:text-6xl lg:text-7xl tracking-tight mb-6 leading-[1.05] text-foreground">
-              <span className="font-display italic">Erasmus</span>{" "}
-              <span className="font-sans font-bold">just got</span>
+            <h1 className="text-[2.75rem] sm:text-6xl lg:text-7xl tracking-tight mb-6 leading-[1.05] text-foreground font-display">
+              <span className="font-extrabold">Erasmus</span>{" "}
+              <span className="font-medium">just got</span>
               <br />
-              <span className="font-sans font-bold gradient-text">social.</span>
+              <span className="font-extrabold gradient-text">social.</span>
             </h1>
             
             <p className="text-lg sm:text-xl max-w-lg text-muted-foreground mb-10 leading-relaxed">

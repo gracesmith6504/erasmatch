@@ -52,10 +52,10 @@ export const FeaturesSection = () => {
           transition={{ duration: 0.6 }}
         >
           <p className="text-sm font-medium tracking-widest uppercase text-erasmatch-green mb-3">Why ErasMatch</p>
-          <h2 className="text-3xl sm:text-4xl font-display italic text-foreground text-balance">
+          <h2 className="text-3xl sm:text-4xl font-display font-bold text-foreground text-balance">
             Not just where you're going.
             <br className="hidden sm:block" />
-            <span className="font-sans font-bold not-italic"> Who you're going with.</span>
+            <span className="text-erasmatch-green"> Who you're going with.</span>
           </h2>
         </motion.div>
 
