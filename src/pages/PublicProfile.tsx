@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
@@ -21,7 +20,6 @@ const PublicProfile = () => {
   useEffect(() => {
     const fetchProfileByRefCode = async () => {
       if (!refCode) return;
-      
       try {
         setLoading(true);
         const { data, error } = await supabase
@@ -29,23 +27,18 @@ const PublicProfile = () => {
           .select('*')
           .eq('ref_code', refCode)
           .single();
-        
         if (error) {
-          console.error('Error fetching profile:', error);
           setError('User not found');
           setLoading(false);
           return;
         }
-        
         setProfile(data as Profile);
       } catch (err) {
-        console.error('Error in fetch operation:', err);
         setError('An unexpected error occurred');
       } finally {
         setLoading(false);
       }
     };
-
     fetchProfileByRefCode();
   }, [refCode]);
 
@@ -57,15 +50,9 @@ const PublicProfile = () => {
 
   const getInitials = (name: string | null) => {
     if (!name) return "?";
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .substring(0, 2);
+    return name.split(" ").map((n) => n[0]).join("").toUpperCase().substring(0, 2);
   };
 
-  // Function to get a secondary display text (instead of email)
   const getSecondaryInfo = (profile: Profile) => {
     if (profile.city) return profile.city;
     if (profile.university) return profile.university;
@@ -77,10 +64,10 @@ const PublicProfile = () => {
   if (loading) {
     return (
       <div className="max-w-2xl mx-auto py-8 px-4 sm:px-6">
-        <div className="bg-white shadow rounded-lg overflow-hidden">
-          <div className="h-32 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
+        <div className="bg-card shadow-card rounded-2xl overflow-hidden border border-border">
+          <div className="h-32 bg-gradient-to-r from-erasmatch-green/30 to-erasmatch-blue/30"></div>
           <div className="-mt-16 flex justify-center">
-            <Skeleton className="w-32 h-32 rounded-full border-4 border-white" />
+            <Skeleton className="w-32 h-32 rounded-full border-4 border-card" />
           </div>
           <div className="pt-5 pb-10 px-6 text-center">
             <Skeleton className="h-6 w-2/3 mx-auto mb-2" />
@@ -98,9 +85,9 @@ const PublicProfile = () => {
   if (error || !profile) {
     return (
       <div className="max-w-2xl mx-auto py-8 px-4 sm:px-6">
-        <div className="bg-white shadow rounded-lg p-6 text-center">
-          <h2 className="text-2xl font-semibold text-gray-900">User Not Found</h2>
-          <p className="mt-2 text-gray-600">The user you're looking for doesn't exist or the link is invalid.</p>
+        <div className="bg-card shadow-card rounded-2xl p-6 text-center border border-border">
+          <h2 className="text-2xl font-display font-bold text-foreground">User Not Found</h2>
+          <p className="mt-2 text-muted-foreground">The user you're looking for doesn't exist or the link is invalid.</p>
           <Link to="/" className="mt-4 inline-block">
             <Button>Return to Home</Button>
           </Link>
@@ -111,23 +98,23 @@ const PublicProfile = () => {
 
   return (
     <div className="max-w-2xl mx-auto py-8 px-4 sm:px-6">
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        <div className="h-32 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
+      <div className="bg-card shadow-card rounded-2xl overflow-hidden border border-border">
+        <div className="h-32 bg-gradient-to-r from-erasmatch-green/30 to-erasmatch-blue/30"></div>
         <div className="-mt-16 flex justify-center">
-          <Avatar className="w-32 h-32 rounded-full border-4 border-white bg-white">
+          <Avatar className="w-32 h-32 rounded-full border-4 border-card bg-card">
             <AvatarImage src={profile.avatar_url || undefined} alt={profile.name || "Profile"} />
-            <AvatarFallback className="bg-indigo-100 text-indigo-800 text-2xl">
+            <AvatarFallback className="bg-secondary text-foreground text-2xl">
               {getInitials(profile.name)}
             </AvatarFallback>
           </Avatar>
         </div>
         
         <div className="pt-5 px-6 text-center">
-          <h1 className="text-2xl font-bold text-gray-900">{profile.name || "Erasmus Student"}</h1>
-          <p className="text-sm text-gray-500 mt-1">{getSecondaryInfo(profile)}</p>
+          <h1 className="text-2xl font-display font-bold text-foreground">{profile.name || "Erasmus Student"}</h1>
+          <p className="text-sm text-muted-foreground mt-1">{getSecondaryInfo(profile)}</p>
           
           {profile.university && (
-            <Badge variant="outline" className="mt-2 bg-indigo-50 text-indigo-700 border-indigo-200">
+            <Badge variant="outline" className="mt-2 bg-erasmatch-green/10 text-erasmatch-green border-erasmatch-green/20">
               {profile.university}
             </Badge>
           )}
@@ -137,49 +124,46 @@ const PublicProfile = () => {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mb-6">
             {profile.home_university && (
               <div className="flex items-center">
-                <Home className="h-5 w-5 mr-2 text-indigo-600" />
-                <span className="text-gray-700">{profile.home_university}</span>
+                <Home className="h-5 w-5 mr-2 text-erasmatch-purple" />
+                <span className="text-foreground">{profile.home_university}</span>
               </div>
             )}
-            
             {profile.university && (
               <div className="flex items-center">
-                <School className="h-5 w-5 mr-2 text-indigo-600" />
-                <span className="text-gray-700">{profile.university}</span>
+                <School className="h-5 w-5 mr-2 text-erasmatch-blue" />
+                <span className="text-foreground">{profile.university}</span>
               </div>
             )}
-            
             {profile.semester && (
               <div className="flex items-center">
-                <Calendar className="h-5 w-5 mr-2 text-indigo-600" />
-                <span className="text-gray-700">{profile.semester}</span>
+                <Calendar className="h-5 w-5 mr-2 text-erasmatch-coral" />
+                <span className="text-foreground">{profile.semester}</span>
               </div>
             )}
-
             {profile.city && (
               <div className="flex items-center">
-                <User className="h-5 w-5 mr-2 text-indigo-600" />
-                <span className="text-gray-700">{profile.city}</span>
+                <User className="h-5 w-5 mr-2 text-erasmatch-green" />
+                <span className="text-foreground">{profile.city}</span>
               </div>
             )}
           </div>
           
           {profile.bio && (
             <div className="mt-4">
-              <h2 className="text-lg font-medium mb-2">About</h2>
-              <p className="text-gray-700">{profile.bio}</p>
+              <h2 className="text-lg font-display font-semibold text-foreground mb-2">About</h2>
+              <p className="text-muted-foreground">{profile.bio}</p>
             </div>
           )}
           
           <div className="mt-6">
             {isAuthenticated ? (
               <Link to={`/profile/${profile.id}`}>
-                <Button className="w-full">View Full Profile</Button>
+                <Button className="w-full rounded-full bg-foreground text-background hover:bg-foreground/90">View Full Profile</Button>
               </Link>
             ) : (
               <Button 
                 onClick={handleConnectClick} 
-                className="w-full flex items-center justify-center"
+                className="w-full flex items-center justify-center rounded-full bg-foreground text-background hover:bg-foreground/90"
               >
                 <LogIn className="mr-2 h-5 w-5" /> 
                 Log in to connect
