@@ -3,7 +3,7 @@ import { useReactions, ReactionSummary } from "@/hooks/useReactions";
 import { SmilePlus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const QUICK_EMOJIS = ["👍", "❤️", "😂", "😮", "🔥", "👏"];
+const QUICK_EMOJIS = ["👍", "❤️", "😂", "😢", "😮", "🔥", "👏"];
 
 interface MessageReactionsProps {
   messageId: string;
