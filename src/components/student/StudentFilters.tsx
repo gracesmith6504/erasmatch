@@ -37,11 +37,11 @@ const StudentFilters = ({
   setCityFilter,
   personalityTagsFilter,
   setPersonalityTagsFilter,
-  arrivalMonthFilter,
-  setArrivalMonthFilter,
+  semesterFilter,
+  setSemesterFilter,
   uniqueUniversities,
   uniqueCities,
-  uniqueArrivalMonths,
+  uniqueSemesters,
   resetFilters,
 }: StudentFiltersProps) => {
   const [showAllTags, setShowAllTags] = useState(false);
