@@ -25,7 +25,7 @@ const PersonalityTags: React.FC<PersonalityTagsProps> = ({ tags }) => {
         {visibleTags.map((tag) => {
           const tagInfo = getTagInfo(tag);
           return (
-            <Badge key={tag} className={`${getTagBgColor(tag)} text-xs`}>
+            <Badge key={tag} className={`${getTagBgColor(tag)} text-sm px-3 py-1`}>
               {tagInfo?.icon} {tagInfo?.label}
             </Badge>
           );
