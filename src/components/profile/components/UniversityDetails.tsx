@@ -111,7 +111,7 @@ export const UniversityDetails = ({
       </div>
 
       <div>
-        <Label htmlFor="semester" className="block text-sm font-medium text-gray-700">
+        <Label htmlFor="semester" className="block text-sm font-medium text-muted-foreground">
           Exchange Semester
         </Label>
         <Select value={form.semester || ""} onValueChange={(value) => handleSelectChange("semester", value)}>
@@ -126,6 +126,38 @@ export const UniversityDetails = ({
             ))}
           </SelectContent>
         </Select>
+      </div>
+
+      <div>
+        <Label className="block text-sm font-medium text-muted-foreground">
+          Arrival Date
+        </Label>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className={cn(
+                "mt-1 w-full justify-start text-left font-normal",
+                !form.arrival_date && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {form.arrival_date
+                ? format(new Date(form.arrival_date), "PPP")
+                : "When are you arriving?"}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={form.arrival_date ? new Date(form.arrival_date) : undefined}
+              onSelect={(date) =>
+                handleSelectChange("arrival_date", date ? date.toISOString().split("T")[0] : null)
+              }
+              initialFocus
+            />
+          </PopoverContent>
+        </Popover>
       </div>
     </div>
   );

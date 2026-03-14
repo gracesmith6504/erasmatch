@@ -71,6 +71,12 @@ const StudentCard = ({ profile, isFeatured = false }: StudentCardProps) => {
             <CalendarClock className="h-4 w-4 mr-2 shrink-0 text-primary/60" />
             <span className="truncate">{profile.semester || "Semester not specified"}</span>
           </div>
+          {profile.arrival_date && (
+            <div className="flex items-center text-sm text-muted-foreground">
+              <span className="mr-2 shrink-0">✈️</span>
+              <span className="truncate">Arriving {format(new Date(profile.arrival_date), "d MMM")}</span>
+            </div>
+          )}
         </div>
 
         {/* Personality Tags */}
