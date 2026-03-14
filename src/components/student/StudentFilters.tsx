@@ -102,7 +102,7 @@ const StudentFilters = ({
 
   return (
     <div className="bg-card shadow-soft rounded-2xl p-6 mb-8 border border-border">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {/* Searchable University Filter */}
         <div ref={uniRef} className="relative">
           <div className="relative">
