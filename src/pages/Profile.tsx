@@ -3,6 +3,11 @@ import { ProfileForm } from "@/components/profile/ProfileForm";
 import { DeleteAccountDialog } from "@/components/profile/DeleteAccountDialog";
 import { DataExportDialog } from "@/components/profile/DataExportDialog";
 import { useAuth } from "@/contexts/AuthContext";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { supabase } from "@/integrations/supabase/client";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 const Profile = () => {
   const { currentUserId, currentUserProfile, handleProfileUpdate } = useAuth();
