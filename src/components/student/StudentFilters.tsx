@@ -63,13 +63,15 @@ const StudentFilters = ({
     uni.toLowerCase().includes(uniSearch.toLowerCase())
   );
 
-  const formatMonth = (yearMonth: string) => {
-    const [year, month] = yearMonth.split("-");
-    const date = new Date(Number(year), Number(month) - 1);
-    return format(date, "MMMM yyyy");
+  const handleSemesterToggle = (semester: string) => {
+    if (semesterFilter.includes(semester)) {
+      setSemesterFilter(semesterFilter.filter(s => s !== semester));
+    } else {
+      setSemesterFilter([...semesterFilter, semester]);
+    }
   };
 
-  const isAnyFilterActive = universityFilter || cityFilter || personalityTagsFilter.length > 0 || (arrivalMonthFilter && arrivalMonthFilter !== "all-months");
+  const isAnyFilterActive = universityFilter || cityFilter || personalityTagsFilter.length > 0 || semesterFilter.length > 0;
   
   const handleTagToggle = (tagValue: string) => {
     if (personalityTagsFilter.includes(tagValue)) {
