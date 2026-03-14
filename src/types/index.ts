@@ -36,6 +36,7 @@ export interface Profile {
   onboarding_complete?: boolean;
   featured?: boolean;
   privacy_consent_at?: string | null;
+  email_notifications?: boolean;
 }
 
 /** Preview of the most recent message in a chat thread. */

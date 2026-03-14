@@ -55,7 +55,22 @@ const Profile = () => {
           {/* GDPR Compliance Section */}
           <div className="mt-8 pt-8 border-t border-border">
             <h2 className="text-lg font-display font-semibold text-foreground mb-4">Data & Privacy</h2>
-            <div className="space-y-3">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between rounded-lg border border-border p-4">
+                <div className="space-y-0.5">
+                  <Label htmlFor="email-notifications" className="text-sm font-medium text-foreground">
+                    Email notifications
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    Receive an email when someone messages you
+                  </p>
+                </div>
+                <Switch
+                  id="email-notifications"
+                  checked={emailNotifications}
+                  onCheckedChange={handleToggleEmailNotifications}
+                />
+              </div>
               <DataExportDialog userId={currentUserId} />
               <DeleteAccountDialog userId={currentUserId} />
             </div>
