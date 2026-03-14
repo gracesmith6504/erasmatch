@@ -35,6 +35,9 @@ export const CityMessageList = ({
         return (
           <GroupChatMessage
             key={message.id}
+            messageId={message.id}
+            messageType="city"
+            currentUserId={currentUserId}
             content={message.content}
             createdAt={message.created_at}
             senderId={message.sender_id}
