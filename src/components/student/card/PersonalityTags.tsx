@@ -21,7 +21,7 @@ const PersonalityTags: React.FC<PersonalityTagsProps> = ({ tags }) => {
 
   return (
     <div className="flex flex-col items-center mt-2">
-      <div className="flex flex-wrap justify-center gap-1">
+      <div className="flex flex-wrap justify-center gap-1.5">
         {visibleTags.map((tag) => {
           const tagInfo = getTagInfo(tag);
           return (
