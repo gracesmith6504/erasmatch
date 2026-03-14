@@ -86,7 +86,7 @@ export const HeroSection = ({
               <Button 
                 size="lg" 
                 variant="outline"
-                className="text-base px-8 py-6 rounded-full border-border hover:bg-secondary"
+                className="text-base px-8 py-6 rounded-full border-border hover:bg-secondary hover:text-foreground"
                 onClick={handleFindStudents}
               >
                 See how it works
