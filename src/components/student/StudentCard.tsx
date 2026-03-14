@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { getTagInfo } from "@/components/profile/constants";
+import { LOOKING_FOR_OPTIONS } from "@/components/profile/components/LookingForSection";
 import { format } from "date-fns";
 
 interface StudentCardProps {
