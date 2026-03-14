@@ -46,8 +46,8 @@ const Navbar = ({ isAuthenticated, onLogout }: NavbarProps) => {
           <div className="flex justify-between h-16 items-center">
             {/* Logo */}
             <a href="/" className="flex items-center gap-1">
-              <span className="text-xl font-display font-extrabold text-foreground tracking-tight">
-                Eras<span className="text-erasmatch-green">Match</span>
+                <span className="text-xl font-display font-extrabold tracking-tight">
+                <span className="text-erasmatch-blue">Eras</span><span className="text-erasmatch-green">Match</span>
               </span>
             </a>
 

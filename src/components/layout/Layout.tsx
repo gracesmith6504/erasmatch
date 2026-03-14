@@ -59,7 +59,7 @@ const Layout = ({ children }: LayoutProps) => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-6 md:mb-8">
               <div>
                 <h3 className="text-lg font-display font-bold mb-3 md:mb-4">
-                  Eras<span className="text-erasmatch-green">Match</span>
+                  <span className="text-erasmatch-blue">Eras</span><span className="text-erasmatch-green">Match</span>
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   Connecting Erasmus students worldwide for better exchange experiences.
