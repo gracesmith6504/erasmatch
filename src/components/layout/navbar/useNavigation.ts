@@ -2,10 +2,12 @@
 import { useLocation } from "react-router-dom";
 import { Home, MessageSquare, Users } from "lucide-react";
 import { useUnreadMessageCount } from "@/hooks/useUnreadMessageCount";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const useNavigation = () => {
   const location = useLocation();
-  const unreadCount = useUnreadMessageCount();
+  const { currentUserId } = useAuth();
+  const unreadCount = useUnreadMessageCount(currentUserId);
 
   const isActive = (path: string) => {
     return location.pathname === path;
