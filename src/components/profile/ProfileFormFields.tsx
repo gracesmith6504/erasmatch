@@ -23,7 +23,7 @@ export function ProfileFormFields() {
   return (
     <>
       {/* New centered header section with pastel background */}
-      <div className="text-center px-4 pt-6 pb-4 bg-indigo-50 rounded-b-2xl mb-6">
+      <div className="text-center px-4 pt-6 pb-4 bg-secondary rounded-2xl mb-6">
         <ProfileAvatar 
           name={form.name}
           avatarUrl={avatarUrl}
