@@ -119,8 +119,11 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
             setCityFilter={setCityFilter}
             personalityTagsFilter={personalityTagsFilter}
             setPersonalityTagsFilter={setPersonalityTagsFilter}
+            arrivalMonthFilter={arrivalMonthFilter}
+            setArrivalMonthFilter={setArrivalMonthFilter}
             uniqueUniversities={uniqueUniversities}
             uniqueCities={uniqueCities}
+            uniqueArrivalMonths={uniqueArrivalMonths}
             resetFilters={resetFilters}
           />
 

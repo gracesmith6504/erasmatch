@@ -9,8 +9,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { School, MapPin, X, User, ChevronDown, ChevronUp, Search } from "lucide-react";
+import { School, MapPin, X, User, ChevronDown, ChevronUp, Search, Plane } from "lucide-react";
 import { PERSONALITY_TAGS } from "@/components/profile/constants";
+import { format } from "date-fns";
 
 interface StudentFiltersProps {
   universityFilter: string;
@@ -19,8 +20,11 @@ interface StudentFiltersProps {
   setCityFilter: (value: string) => void;
   personalityTagsFilter: string[];
   setPersonalityTagsFilter: (tags: string[]) => void;
+  arrivalMonthFilter: string;
+  setArrivalMonthFilter: (value: string) => void;
   uniqueUniversities: string[];
   uniqueCities: string[];
+  uniqueArrivalMonths: string[];
   resetFilters: () => void;
 }
 
@@ -31,8 +35,11 @@ const StudentFilters = ({
   setCityFilter,
   personalityTagsFilter,
   setPersonalityTagsFilter,
+  arrivalMonthFilter,
+  setArrivalMonthFilter,
   uniqueUniversities,
   uniqueCities,
+  uniqueArrivalMonths,
   resetFilters,
 }: StudentFiltersProps) => {
   const [showAllTags, setShowAllTags] = useState(false);
@@ -54,7 +61,13 @@ const StudentFilters = ({
     uni.toLowerCase().includes(uniSearch.toLowerCase())
   );
 
-  const isAnyFilterActive = universityFilter || cityFilter || personalityTagsFilter.length > 0;
+  const formatMonth = (yearMonth: string) => {
+    const [year, month] = yearMonth.split("-");
+    const date = new Date(Number(year), Number(month) - 1);
+    return format(date, "MMMM yyyy");
+  };
+
+  const isAnyFilterActive = universityFilter || cityFilter || personalityTagsFilter.length > 0 || (arrivalMonthFilter && arrivalMonthFilter !== "all-months");
   
   const handleTagToggle = (tagValue: string) => {
     if (personalityTagsFilter.includes(tagValue)) {
@@ -85,7 +98,7 @@ const StudentFilters = ({
 
   return (
     <div className="bg-card shadow-soft rounded-2xl p-6 mb-8 border border-border">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {/* Searchable University Filter */}
         <div ref={uniRef} className="relative">
           <div className="relative">
@@ -160,6 +173,24 @@ const StudentFilters = ({
               <SelectItem value="all-cities">All Cities</SelectItem>
               {uniqueCities.map((city) => (
                 <SelectItem key={city} value={city}>{city}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Arrival Month Filter */}
+        <div>
+          <Select value={arrivalMonthFilter} onValueChange={setArrivalMonthFilter}>
+            <SelectTrigger className="h-12 border-border focus:border-erasmatch-green">
+              <div className="flex items-center">
+                <Plane className="mr-2 h-4 w-4 text-muted-foreground" />
+                <SelectValue placeholder="Arrival month" />
+              </div>
+            </SelectTrigger>
+            <SelectContent className="max-h-80">
+              <SelectItem value="all-months">All Arrival Months</SelectItem>
+              {uniqueArrivalMonths.map((month) => (
+                <SelectItem key={month} value={month}>{formatMonth(month)}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -240,6 +271,14 @@ const StudentFilters = ({
             <div className="inline-flex items-center text-xs bg-erasmatch-green/10 text-erasmatch-green py-1 px-2 rounded-full">
               City: {cityFilter}
               <button className="ml-1" onClick={() => setCityFilter("")}>
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          )}
+          {arrivalMonthFilter && arrivalMonthFilter !== "all-months" && (
+            <div className="inline-flex items-center text-xs bg-erasmatch-coral/10 text-erasmatch-coral py-1 px-2 rounded-full">
+              Arriving: {formatMonth(arrivalMonthFilter)}
+              <button className="ml-1" onClick={() => setArrivalMonthFilter("")}>
                 <X className="h-3 w-3" />
               </button>
             </div>
