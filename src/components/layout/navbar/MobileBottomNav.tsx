@@ -19,13 +19,18 @@ export const MobileBottomNav = ({ isActive }: MobileBottomNavProps) => {
           <Link
             key={item.path}
             to={item.path}
-            className={`p-3.5 rounded-full transition-colors ${
+            className={`p-3.5 rounded-full transition-colors relative ${
               isActive(item.path)
                 ? "bg-foreground text-background"
                 : "text-muted-foreground hover:text-foreground hover:bg-secondary"
             }`}
           >
             <item.icon className="w-5 h-5" />
+            {item.badge > 0 && (
+              <span className="absolute top-1 right-1 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold px-1">
+                {item.badge > 99 ? "99+" : item.badge}
+              </span>
+            )}
           </Link>
         ))}
         <Link
