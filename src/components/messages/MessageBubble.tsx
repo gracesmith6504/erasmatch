@@ -1,6 +1,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { CheckCheck, Check } from 'lucide-react';
+import { MessageReactions } from './MessageReactions';
 
 interface MessageBubbleProps {
   content: string;
@@ -9,6 +10,8 @@ interface MessageBubbleProps {
   isRead?: boolean;
   showTimestamp?: boolean;
   isFirstInGroup?: boolean;
+  messageId?: string;
+  currentUserId?: string;
 }
 
 const MessageBubble: React.FC<MessageBubbleProps> = ({ 
@@ -18,6 +21,8 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
   isRead = false,
   showTimestamp = true,
   isFirstInGroup = true,
+  messageId,
+  currentUserId,
 }) => {
   const formatMessageTime = (dateString: string) => {
     try {
@@ -36,7 +41,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
 
   return (
     <div
-      className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} ${showTimestamp ? 'mb-2' : 'mb-0.5'} animate-fade-in`}
+      className={`group/msg flex ${isCurrentUser ? 'justify-end' : 'justify-start'} ${showTimestamp ? 'mb-2' : 'mb-0.5'} animate-fade-in`}
     >
       <div className={`max-w-[70%] flex flex-col ${isCurrentUser ? 'items-end' : 'items-start'}`}>
         <div
@@ -59,6 +64,14 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
               )
             )}
           </div>
+        )}
+        {messageId && (
+          <MessageReactions
+            messageId={messageId}
+            messageType="direct"
+            currentUserId={currentUserId || null}
+            isCurrentUser={isCurrentUser}
+          />
         )}
       </div>
     </div>
