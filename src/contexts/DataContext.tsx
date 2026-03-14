@@ -1,4 +1,8 @@
-
+/**
+ * Global data provider for profiles and messages.
+ * Fetches data from Supabase when the user is authenticated and provides
+ * helper functions for sending messages and updating profiles.
+ */
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile, Message } from "@/types";
@@ -39,7 +43,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     }
   }, [isAuthenticated, currentUserId]);
 
-  // Function to fetch all profiles
+  /** Fetches all user profiles (for student discovery and messaging). */
   const fetchProfiles = async () => {
     try {
       const { data, error } = await supabase
@@ -49,7 +53,6 @@ export const DataProvider = ({ children }: DataProviderProps) => {
       if (error) throw error;
       
       if (data) {
-        // Ensure all profiles have the required fields
         const processedProfiles = data.map(profile => ({
           ...profile,
           country: null,
@@ -64,7 +67,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     }
   };
 
-  // Function to fetch messages for the current user
+  /** Fetches direct messages where the current user is sender or receiver. */
   const fetchUserMessages = async (userId: string) => {
     try {
       const { data: userMessages, error } = await supabase
@@ -74,78 +77,76 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      
-      if (userMessages) {
-        setMessages(userMessages as Message[]);
-      }
+      if (userMessages) setMessages(userMessages as Message[]);
     } catch (error) {
       console.error('Error fetching messages:', error);
     }
   };
 
- const handleSendMessage = async (receiverId: string, content: string): Promise<void> => {
-  if (!currentUserId) return;
+  /**
+   * Sends a direct message and triggers an email notification
+   * to the receiver via the send-message-notification Edge Function.
+   */
+  const handleSendMessage = async (receiverId: string, content: string): Promise<void> => {
+    if (!currentUserId) return;
 
-  try {
-    // Insert the new message
-    const { data: messageData, error: messageError } = await supabase
-      .from('messages')
-      .insert({
-        sender_id: currentUserId,
-        receiver_id: receiverId,
-        content
-      })
-      .select()
-      .single();
+    try {
+      const { data: messageData, error: messageError } = await supabase
+        .from('messages')
+        .insert({
+          sender_id: currentUserId,
+          receiver_id: receiverId,
+          content
+        })
+        .select()
+        .single();
 
-    if (messageError) throw messageError;
+      if (messageError) throw messageError;
 
-    // Get receiver's profile (for their email)
-    const { data: receiverProfile, error: receiverError } = await supabase
-      .from('profiles')
-      .select('email, name')
-      .eq('id', receiverId)
-      .single();
+      // Fetch receiver and sender profiles for the email notification
+      const { data: receiverProfile, error: receiverError } = await supabase
+        .from('profiles')
+        .select('email, name')
+        .eq('id', receiverId)
+        .single();
 
-    if (receiverError) throw receiverError;
+      if (receiverError) throw receiverError;
 
-    // Get sender's name and avatar
-    const { data: senderProfile, error: senderError } = await supabase
-      .from('profiles')
-      .select('name, avatar_url')
-      .eq('id', currentUserId)
-      .single();
+      const { data: senderProfile, error: senderError } = await supabase
+        .from('profiles')
+        .select('name, avatar_url')
+        .eq('id', currentUserId)
+        .single();
 
-    if (senderError) throw senderError;
+      if (senderError) throw senderError;
 
-    // Send email if receiver has an email
-    if (receiverProfile?.email) {
-      const response = await supabase.functions.invoke('send-message-notification', {
-        body: {
-          to: receiverProfile.email,
-          senderName: senderProfile?.name || 'Someone',
-          senderAvatarUrl: senderProfile?.avatar_url || null,
-          messageContent: content
+      // Send email notification if receiver has an email on file
+      if (receiverProfile?.email) {
+        const response = await supabase.functions.invoke('send-message-notification', {
+          body: {
+            to: receiverProfile.email,
+            senderName: senderProfile?.name || 'Someone',
+            senderAvatarUrl: senderProfile?.avatar_url || null,
+            messageContent: content
+          }
+        });
+
+        if (response.error) {
+          console.error('Error sending email notification:', response.error);
         }
-      });
-
-      if (response.error) {
-        console.error('Error sending email notification:', response.error);
       }
+
+      // Optimistically update local state
+      if (messageData) {
+        setMessages(prev => [messageData as Message, ...prev]);
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      throw error;
     }
+  };
 
-    // Update local messages state
-    if (messageData) {
-      setMessages(prev => [messageData as Message, ...prev]);
-    }
-  } catch (error) {
-    console.error('Error sending message:', error);
-    throw error;
-  }
-};
-
-
-  // Function to update a user profile
+  /** Updates the current user's profile in the database and local state. */
   const updateProfile = async (updatedProfile: Partial<Profile>): Promise<void> => {
     if (!currentUserId) return;
     
@@ -157,7 +158,6 @@ export const DataProvider = ({ children }: DataProviderProps) => {
       
       if (error) throw error;
       
-      // Update the profiles array with the updated profile
       setProfiles(prevProfiles => 
         prevProfiles.map(profile => 
           profile.id === currentUserId 
@@ -165,15 +165,13 @@ export const DataProvider = ({ children }: DataProviderProps) => {
             : profile
         )
       );
-      
-      return Promise.resolve();
     } catch (error) {
       console.error('Error updating profile:', error);
-      return Promise.reject(error);
+      throw error;
     }
   };
 
-  // Function to fetch a single profile
+  /** Re-fetches the current user's profile from the database. */
   const fetchProfile = async (): Promise<void> => {
     if (!currentUserId) return;
     
@@ -187,21 +185,15 @@ export const DataProvider = ({ children }: DataProviderProps) => {
       if (error) throw error;
       
       if (data) {
-        // Update the profiles array with the fetched profile
         setProfiles(prevProfiles => {
           const profileExists = prevProfiles.some(p => p.id === currentUserId);
           if (profileExists) {
             return prevProfiles.map(p => p.id === currentUserId ? { 
-              ...p, 
-              ...data, 
-              country: null,
-              interests: null 
+              ...p, ...data, country: null, interests: null 
             } as Profile : p);
           } else {
             return [...prevProfiles, { 
-              ...data, 
-              country: null,
-              interests: null,
+              ...data, country: null, interests: null,
               personality_tags: data.personality_tags || []
             } as Profile];
           }
@@ -214,13 +206,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
 
   return (
     <DataContext.Provider
-      value={{
-        profiles,
-        messages,
-        handleSendMessage,
-        updateProfile,
-        fetchProfile
-      }}
+      value={{ profiles, messages, handleSendMessage, updateProfile, fetchProfile }}
     >
       {children}
     </DataContext.Provider>
