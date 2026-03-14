@@ -35,6 +35,9 @@ export const GroupChatMessageList = ({
         return (
           <GroupChatMessage
             key={message.id}
+            messageId={message.id}
+            messageType="group"
+            currentUserId={currentUserId}
             content={message.content}
             createdAt={message.created_at}
             senderId={message.sender_id}

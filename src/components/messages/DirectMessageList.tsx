@@ -24,6 +24,8 @@ export const DirectMessageList = ({
         return (
           <MessageBubble
             key={message.id}
+            messageId={message.id}
+            currentUserId={currentUserId}
             content={message.content}
             timestamp={message.created_at}
             isCurrentUser={isCurrentUser}
