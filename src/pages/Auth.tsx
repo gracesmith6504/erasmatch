@@ -113,6 +113,12 @@ const Auth = ({ onLogin }: AuthProps) => {
           if (updateError) {
             console.error("Error updating profile:", updateError);
           }
+
+          // Send welcome email
+          const firstName = email.split('@')[0];
+          supabase.functions.invoke('send-welcome-email', {
+            body: { email, firstName },
+          }).catch((err) => console.error('Welcome email error:', err));
           
           onLogin(email);
           toast.success("Account created successfully!");
