@@ -120,12 +120,12 @@ export const ProfileProvider = ({
       // Update form state if needed
       setForm(prev => ({
         ...prev,
-        ...Object.entries(newData).reduce((acc, [key, value]) => {
+        ...Object.entries(newData).reduce<Record<string, any>>((acc, [key, value]) => {
           if (key in prev) {
-            acc[key as keyof typeof prev] = value as any;
+            acc[key] = value;
           }
           return acc;
-        }, {} as typeof prev)
+        }, {})
       }));
       
       // Fetch the latest profile data to ensure everything is in sync
