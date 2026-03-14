@@ -127,7 +127,8 @@ export const DataProvider = ({ children }: DataProviderProps) => {
             to: receiverProfile.email,
             senderName: senderProfile?.name || 'Someone',
             senderAvatarUrl: senderProfile?.avatar_url || null,
-            messageContent: content
+            messageContent: content,
+            receiverId: receiverId
           }
         });
 
