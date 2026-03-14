@@ -13,6 +13,7 @@ const corsHeaders = {
 interface EmailRequest {
   to: string
   senderName: string
+  senderAvatarUrl?: string | null
   messageContent: string
   receiverId: string
 }
@@ -25,12 +26,12 @@ serve(async (req) => {
   try {
     const { to, senderName, messageContent, receiverId }: EmailRequest = await req.json()
 
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
     // Check receiver's email notification preference
     if (receiverId) {
-      const supabaseUrl = Deno.env.get("SUPABASE_URL")!
-      const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-      const supabase = createClient(supabaseUrl, supabaseServiceKey)
-
       const { data: profile } = await supabase
         .from('profiles')
         .select('email_notifications')
@@ -45,10 +46,36 @@ serve(async (req) => {
       }
     }
 
+    // Get sender_id from the auth context (passed via body as receiverId pattern)
+    // We use the JWT to get the actual sender
+    const authHeader = req.headers.get('Authorization')
+    let senderId = 'unknown'
+    if (authHeader) {
+      const { data: { user } } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''))
+      if (user) senderId = user.id
+    }
+
+    // Rate limit: check if we already emailed this receiver from this sender in the last 15 minutes
+    const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000).toISOString()
+    const { data: recentLog } = await supabase
+      .from('email_notification_log')
+      .select('id')
+      .eq('sender_id', senderId)
+      .eq('receiver_id', receiverId)
+      .gte('sent_at', fifteenMinutesAgo)
+      .limit(1)
+
+    if (recentLog && recentLog.length > 0) {
+      console.log("Skipping email — already notified within 15 minutes", { senderId, receiverId })
+      return new Response(JSON.stringify({ skipped: true, reason: "rate_limited" }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
     const emailResponse = await resend.emails.send({
       from: "ErasMatch <team@erasmatch.com>",
       to: [to],
-      subject: `New message from ${senderName}`,
+      subject: `You have new messages from ${senderName} on ErasMatch`,
       html: `
         <h2>You have a new message from ${senderName}</h2>
         <p style="margin: 16px 0; padding: 12px; background-color: #f5f5f5; border-radius: 4px;">
@@ -60,6 +87,12 @@ serve(async (req) => {
     })
 
     console.log("Email sent successfully:", emailResponse)
+
+    // Log the notification
+    await supabase.from('email_notification_log').insert({
+      sender_id: senderId,
+      receiver_id: receiverId,
+    })
 
     return new Response(JSON.stringify(emailResponse), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
