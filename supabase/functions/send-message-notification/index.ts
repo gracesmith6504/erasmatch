@@ -54,12 +54,8 @@ serve(async (req) => {
         <p style="margin: 16px 0; padding: 12px; background-color: #f5f5f5; border-radius: 4px;">
           ${messageContent}
         </p>
-        <p>Log in to your account to reply.</p>
-        <hr style="margin: 32px 0 16px; border: none; border-top: 1px solid #e5e5e5;" />
-        <p style="font-size: 12px; color: #999; line-height: 1.5;">
-          You are receiving this email because you have an ErasMatch account.
-          To stop these emails, <a href="https://erasmatch.com/profile" style="color: #999;">update your notification preferences here</a>.
-        </p>
+        <a href="https://erasmatch.com/messages" style="display:inline-block;background-color:#4F46E5;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;margin:16px 0;">Reply on ErasMatch →</a>
+        <p style="color:#9CA3AF;font-size:12px;margin-top:24px;">You received this because you have an ErasMatch account. <a href="https://erasmatch.com/profile" style="color:#9CA3AF;">Unsubscribe from email notifications</a></p>
       `,
     })
 
