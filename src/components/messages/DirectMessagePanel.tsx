@@ -7,6 +7,7 @@ import { MessageInput } from "./MessageInput";
 import { useRealTimeMessages } from "./hooks/useRealTimeMessages";
 import MessageEmptyState from "./MessageEmptyState";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { markMessagesAsRead } from "@/hooks/useUnreadMessageCount";
 
 interface DirectMessagePanelProps {
   thread: ChatThread;
