@@ -35,6 +35,7 @@ const StudentFilters = ({
   uniqueCities,
   resetFilters,
 }: StudentFiltersProps) => {
+  const [showAllTags, setShowAllTags] = useState(false);
   const [uniSearch, setUniSearch] = useState("");
   const [uniDropdownOpen, setUniDropdownOpen] = useState(false);
   const uniRef = useRef<HTMLDivElement>(null);
