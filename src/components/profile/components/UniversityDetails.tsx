@@ -1,4 +1,3 @@
-
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -23,17 +22,17 @@ type UniversityDetailsProps = {
   handleHomeUniversityChange: (university: string) => void;
 };
 
-const SEMESTERS = ["Spring 2025", "Fall 2025", "Spring 2026", "Full Academic Year 2025–26", "Fall 2026", "Full Academic Year 2026–27"];
+const SEMESTERS = ["Full Academic Year 2025–26", "Spring 2026", "Fall 2027", "Full Academic Year 2026–27"];
 
 export const UniversityDetails = ({
   form,
   handleChange,
   handleSelectChange,
   handleUniversityChange,
-  handleHomeUniversityChange
+  handleHomeUniversityChange,
 }: UniversityDetailsProps) => {
   const navigate = useNavigate();
-  const [lastUniversity, setLastUniversity] = useState('');
+  const [lastUniversity, setLastUniversity] = useState("");
 
   // Track university changes to prevent duplicate notifications
   useEffect(() => {
@@ -46,18 +45,18 @@ export const UniversityDetails = ({
   const enhancedUniversityChange = (university: string) => {
     // Track that we're changing universities to update the group chats
     const isChanging = university !== form.university && university.trim().length > 0;
-    
+
     // Call the original handler
     handleUniversityChange(university);
-    
+
     // Show a notification only if we're actually changing to a new university
     if (isChanging) {
       toast.success(`You've been added to the ${university} chat group`, {
         description: "Navigate to Messages or Groups to join the conversation",
         action: {
           label: "View Chats",
-          onClick: () => navigate('/groups')
-        }
+          onClick: () => navigate("/groups"),
+        },
       });
     }
   };
@@ -95,14 +94,12 @@ export const UniversityDetails = ({
           label="Destination University"
           required={false}
         />
-        
+
         {/* Display city as read-only information */}
         {form.university && (
           <div className="flex items-center text-sm mt-2 text-gray-600">
             <MapPin className="h-4 w-4 mr-1 text-erasmatch-green" />
-            <span>
-              {form.city ? form.city : "City not available for this university"}
-            </span>
+            <span>{form.city ? form.city : "City not available for this university"}</span>
           </div>
         )}
       </div>
@@ -111,10 +108,7 @@ export const UniversityDetails = ({
         <Label htmlFor="semester" className="block text-sm font-medium text-gray-700">
           Exchange Semester
         </Label>
-        <Select
-          value={form.semester || ""}
-          onValueChange={(value) => handleSelectChange("semester", value)}
-        >
+        <Select value={form.semester || ""} onValueChange={(value) => handleSelectChange("semester", value)}>
           <SelectTrigger className="mt-1">
             <SelectValue placeholder="Select a semester" />
           </SelectTrigger>
