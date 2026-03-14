@@ -56,6 +56,7 @@ export const ProfileProvider = ({
         course: initialProfile.course || "",
         email_notifications: initialProfile.email_notifications !== false,
         arrival_date: initialProfile.arrival_date || null,
+        looking_for: initialProfile.looking_for || [],
       });
       
       // Store initial university for comparison
