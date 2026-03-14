@@ -136,7 +136,7 @@ export const GroupChatPanel = ({
           )}
           <div>
             <h2 className="font-medium text-lg">🎓 {universityName} Chat</h2>
-            <GroupParticipantsInfo count={participants.length} />
+            <GroupParticipantsInfo count={participants.length} participants={participants} />
           </div>
         </div>
         

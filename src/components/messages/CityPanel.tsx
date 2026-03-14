@@ -136,7 +136,7 @@ export const CityPanel = ({
           )}
           <div className="truncate">
             <h2 className="font-medium text-base sm:text-lg truncate">📍 {cityName} Chat</h2>
-            <CityParticipantsInfo count={participants.length} />
+            <CityParticipantsInfo count={participants.length} participants={participants} />
           </div>
         </div>
         
