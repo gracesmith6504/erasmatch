@@ -38,6 +38,7 @@ export interface Profile {
   privacy_consent_at?: string | null;
   email_notifications?: boolean;
   arrival_date?: string | null;
+  looking_for?: string[] | null;
 }
 
 /** Preview of the most recent message in a chat thread. */
