@@ -79,7 +79,7 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     const semesterMatch = semesterFilter.length === 0 || 
       (profile.semester && semesterFilter.includes(profile.semester));
 
-    return uniMatch && cityMatch && tagMatch && arrivalMatch;
+    return uniMatch && cityMatch && tagMatch && semesterMatch;
   });
 
   const resetFilters = () => {
