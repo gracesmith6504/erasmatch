@@ -7,7 +7,7 @@ export const HomeFooter = () => {
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div>
             <span className="text-lg font-bold text-foreground">
-              Eras<span className="text-erasmatch-green">Match</span>
+              <span className="text-erasmatch-blue">Eras</span><span className="text-erasmatch-green">Match</span>
             </span>
             <p className="text-sm text-muted-foreground mt-1">
               Connecting Erasmus students worldwide.
