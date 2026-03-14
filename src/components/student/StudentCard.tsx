@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Profile } from "@/types";
@@ -8,7 +7,6 @@ import StudentInfo from "./card/StudentInfo";
 import StudentCardActions from "./card/StudentCardActions";
 import CountryFlag from "./card/CountryFlag";
 
-
 interface StudentCardProps {
   profile: Profile;
   isFeatured?: boolean;
@@ -16,8 +14,8 @@ interface StudentCardProps {
 
 const StudentCard = ({ profile, isFeatured = false }: StudentCardProps) => {
   return (
-    <Card className="overflow-hidden card-hover border-gray-100 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group">
-      <div className="h-24 bg-gradient-to-r from-erasmatch-blue to-erasmatch-purple"></div>
+    <Card className="overflow-hidden border-border transition-all duration-300 hover:shadow-card hover:-translate-y-1 group">
+      <div className="h-24 bg-gradient-to-r from-erasmatch-green/30 to-erasmatch-blue/30"></div>
       <div className="-mt-12 flex justify-center">
         <StudentAvatar 
           avatarUrl={profile.avatar_url}
@@ -26,7 +24,7 @@ const StudentCard = ({ profile, isFeatured = false }: StudentCardProps) => {
         />
       </div>
       <CardContent className="pt-4 text-center">
-        <h3 className="font-semibold text-lg text-gray-900 mt-4 flex items-center justify-center">
+        <h3 className="font-display font-semibold text-lg text-foreground mt-4 flex items-center justify-center">
           {profile.name || "Anonymous Student"} 
           {profile.country && <span className="ml-2"><CountryFlag country={profile.country} /></span>}
         </h3>

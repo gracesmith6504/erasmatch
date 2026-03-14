@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Home, School, MapPin, CalendarClock, BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,14 +24,12 @@ const StudentInfo: React.FC<StudentInfoProps> = ({
         setLoading(false);
         return;
       }
-
       try {
         const { data, error } = await supabase
           .from('universities')
           .select('city')
           .eq('name', university)
           .single();
-
         if (error) throw error;
         setUniversityCity(data?.city || null);
       } catch (error) {
@@ -41,39 +38,38 @@ const StudentInfo: React.FC<StudentInfoProps> = ({
         setLoading(false);
       }
     };
-
     fetchUniversityCity();
   }, [university]);
 
   return (
     <div className="mt-4 space-y-3">
       {homeUniversity && (
-        <div className="flex items-center justify-center text-sm text-gray-600">
+        <div className="flex items-center justify-center text-sm text-muted-foreground">
           <Home className="h-4 w-4 mr-2 text-erasmatch-purple opacity-70" />
           <span>{homeUniversity}</span>
         </div>
       )}
       {course && (
-        <div className="flex items-center justify-center text-sm text-gray-600">
+        <div className="flex items-center justify-center text-sm text-muted-foreground">
           <BookOpen className="h-4 w-4 mr-2 text-erasmatch-purple opacity-70" />
           <span>{course}</span>
         </div>
       )}
-      <div className="flex items-center justify-center text-sm text-gray-600">
+      <div className="flex items-center justify-center text-sm text-muted-foreground">
         <School className="h-4 w-4 mr-2 text-erasmatch-blue opacity-70" />
         <span>{university || "University not specified"}</span>
       </div>
-      <div className="flex items-center justify-center text-sm text-gray-600">
+      <div className="flex items-center justify-center text-sm text-muted-foreground">
         <MapPin className="h-4 w-4 mr-2 text-erasmatch-green opacity-70" />
         {loading ? (
-          <span className="text-gray-400">Loading city...</span>
+          <span className="text-muted-foreground/50">Loading city...</span>
         ) : universityCity ? (
           <span>{universityCity}</span>
         ) : (
-          <span className="text-gray-400">Destination city not available</span>
+          <span className="text-muted-foreground/50">Destination city not available</span>
         )}
       </div>
-      <div className="flex items-center justify-center text-sm text-gray-600">
+      <div className="flex items-center justify-center text-sm text-muted-foreground">
         <CalendarClock className="h-4 w-4 mr-2 text-erasmatch-purple opacity-70" />
         <span>{semester || "Semester not specified"}</span>
       </div>

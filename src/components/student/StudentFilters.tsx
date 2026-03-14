@@ -35,67 +35,50 @@ const StudentFilters = ({
   resetFilters,
 }: StudentFiltersProps) => {
   const [showAllTags, setShowAllTags] = useState(false);
-  
-  // Check if any filter is active
   const isAnyFilterActive = universityFilter || cityFilter || personalityTagsFilter.length > 0;
   
   const handleTagToggle = (tagValue: string) => {
     if (personalityTagsFilter.includes(tagValue)) {
-      // Remove tag if it's already selected
       setPersonalityTagsFilter(personalityTagsFilter.filter(tag => tag !== tagValue));
     } else {
-      // Add tag if it's not already selected
       setPersonalityTagsFilter([...personalityTagsFilter, tagValue]);
     }
   };
 
-  // Generate a tag color based on the tag name for consistent coloring
   const getTagColor = (tag: string) => {
     const colors = [
-      "bg-blue-100 text-blue-800",
-      "bg-green-100 text-green-800",
-      "bg-purple-100 text-purple-800",
-      "bg-yellow-100 text-yellow-800",
-      "bg-pink-100 text-pink-800",
-      "bg-indigo-100 text-indigo-800",
-      "bg-orange-100 text-orange-800",
-      "bg-teal-100 text-teal-800",
+      "bg-erasmatch-blue/10 text-erasmatch-blue",
+      "bg-erasmatch-green/10 text-erasmatch-green",
+      "bg-erasmatch-purple/10 text-erasmatch-purple",
+      "bg-erasmatch-yellow/10 text-erasmatch-yellow",
+      "bg-erasmatch-coral/10 text-erasmatch-coral",
+      "bg-erasmatch-blue/10 text-erasmatch-blue",
+      "bg-erasmatch-orange/10 text-erasmatch-orange",
+      "bg-erasmatch-green/10 text-erasmatch-green",
     ];
-    
-    // Use the tag string to pick a consistent color
     const index = tag.length % colors.length;
     return colors[index];
   };
 
-  // Define the default visible tags
   const defaultVisibleTags = ["looking-to-meet", "weekend-trips", "clubbing"];
-  
-  // Separate tags into priority (default visible) and others
-  const priorityTagsData = PERSONALITY_TAGS.filter(tag => 
-    defaultVisibleTags.includes(tag.value)
-  );
-  
-  const otherTagsData = PERSONALITY_TAGS.filter(tag => 
-    !defaultVisibleTags.includes(tag.value)
-  );
+  const priorityTagsData = PERSONALITY_TAGS.filter(tag => defaultVisibleTags.includes(tag.value));
+  const otherTagsData = PERSONALITY_TAGS.filter(tag => !defaultVisibleTags.includes(tag.value));
 
   return (
-    <div className="bg-white shadow-sm rounded-xl p-6 mb-8 border border-gray-100">
+    <div className="bg-card shadow-soft rounded-2xl p-6 mb-8 border border-border">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
           <Select value={universityFilter} onValueChange={setUniversityFilter}>
-            <SelectTrigger className="h-12 border-gray-200 focus:border-erasmatch-blue">
+            <SelectTrigger className="h-12 border-border focus:border-erasmatch-green">
               <div className="flex items-center">
-                <School className="mr-2 h-4 w-4 text-gray-400" />
+                <School className="mr-2 h-4 w-4 text-muted-foreground" />
                 <SelectValue placeholder="University" />
               </div>
             </SelectTrigger>
             <SelectContent className="max-h-80">
               <SelectItem value="all-universities">All Universities</SelectItem>
               {uniqueUniversities.map((uni) => (
-                <SelectItem key={uni} value={uni}>
-                  {uni}
-                </SelectItem>
+                <SelectItem key={uni} value={uni}>{uni}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -103,18 +86,16 @@ const StudentFilters = ({
 
         <div>
           <Select value={cityFilter} onValueChange={setCityFilter}>
-            <SelectTrigger className="h-12 border-gray-200 focus:border-erasmatch-blue">
+            <SelectTrigger className="h-12 border-border focus:border-erasmatch-green">
               <div className="flex items-center">
-                <MapPin className="mr-2 h-4 w-4 text-gray-400" />
+                <MapPin className="mr-2 h-4 w-4 text-muted-foreground" />
                 <SelectValue placeholder="City" />
               </div>
             </SelectTrigger>
             <SelectContent className="max-h-80">
               <SelectItem value="all-cities">All Cities</SelectItem>
               {uniqueCities.map((city) => (
-                <SelectItem key={city} value={city}>
-                  {city}
-                </SelectItem>
+                <SelectItem key={city} value={city}>{city}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -123,13 +104,12 @@ const StudentFilters = ({
 
       {/* Personality Tags Filter */}
       <div className="mt-6">
-        <div className="flex items-center text-sm font-medium mb-3 text-gray-700">
-          <User className="mr-2 h-4 w-4 text-gray-400" />
+        <div className="flex items-center text-sm font-medium mb-3 text-foreground">
+          <User className="mr-2 h-4 w-4 text-muted-foreground" />
           <span>Filter by Personality Tags</span>
         </div>
         
         <div className="flex flex-wrap gap-2">
-          {/* Priority tags - always visible */}
           {priorityTagsData.map((tag) => {
             const isSelected = personalityTagsFilter.includes(tag.value);
             return (
@@ -137,7 +117,7 @@ const StudentFilters = ({
                 key={tag.value}
                 variant={isSelected ? "default" : "outline"}
                 className={`cursor-pointer transition-all ${
-                  isSelected ? getTagColor(tag.value) : "hover:bg-gray-100"
+                  isSelected ? getTagColor(tag.value) : "hover:bg-secondary"
                 }`}
                 onClick={() => handleTagToggle(tag.value)}
               >
@@ -147,7 +127,6 @@ const StudentFilters = ({
             );
           })}
           
-          {/* Other tags - conditionally visible on mobile, always visible on desktop */}
           <div className={`${showAllTags ? 'flex' : 'hidden sm:flex'} flex-wrap gap-2 w-full sm:w-auto`}>
             {otherTagsData.map((tag) => {
               const isSelected = personalityTagsFilter.includes(tag.value);
@@ -156,7 +135,7 @@ const StudentFilters = ({
                   key={tag.value}
                   variant={isSelected ? "default" : "outline"}
                   className={`cursor-pointer transition-all ${
-                    isSelected ? getTagColor(tag.value) : "hover:bg-gray-100"
+                    isSelected ? getTagColor(tag.value) : "hover:bg-secondary"
                   }`}
                   onClick={() => handleTagToggle(tag.value)}
                 >
@@ -168,12 +147,11 @@ const StudentFilters = ({
           </div>
         </div>
         
-        {/* Toggle button - only visible on mobile */}
         <Button
           variant="ghost"
           size="sm"
           onClick={() => setShowAllTags(!showAllTags)}
-          className="mt-2 text-sm text-blue-600 sm:hidden flex items-center"
+          className="mt-2 text-sm text-erasmatch-green sm:hidden flex items-center"
         >
           {showAllTags ? (
             <>Show Less <ChevronUp className="ml-1 h-4 w-4" /></>
@@ -183,12 +161,11 @@ const StudentFilters = ({
         </Button>
       </div>
 
-      {/* Tag display for active filters */}
       {isAnyFilterActive && (
-        <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t">
-          <div className="text-sm text-gray-500 mr-1">Active filters:</div>
+        <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-border">
+          <div className="text-sm text-muted-foreground mr-1">Active filters:</div>
           {universityFilter && universityFilter !== "all-universities" && (
-            <div className="inline-flex items-center text-xs bg-purple-50 text-purple-700 py-1 px-2 rounded-full">
+            <div className="inline-flex items-center text-xs bg-erasmatch-purple/10 text-erasmatch-purple py-1 px-2 rounded-full">
               University: {universityFilter}
               <button className="ml-1" onClick={() => setUniversityFilter("")}>
                 <X className="h-3 w-3" />
@@ -196,7 +173,7 @@ const StudentFilters = ({
             </div>
           )}
           {cityFilter && cityFilter !== "all-cities" && (
-            <div className="inline-flex items-center text-xs bg-green-50 text-green-700 py-1 px-2 rounded-full">
+            <div className="inline-flex items-center text-xs bg-erasmatch-green/10 text-erasmatch-green py-1 px-2 rounded-full">
               City: {cityFilter}
               <button className="ml-1" onClick={() => setCityFilter("")}>
                 <X className="h-3 w-3" />
@@ -204,7 +181,7 @@ const StudentFilters = ({
             </div>
           )}
           {personalityTagsFilter.length > 0 && (
-            <div className="inline-flex items-center text-xs bg-blue-50 text-blue-700 py-1 px-2 rounded-full">
+            <div className="inline-flex items-center text-xs bg-erasmatch-blue/10 text-erasmatch-blue py-1 px-2 rounded-full">
               {personalityTagsFilter.length} personality tag{personalityTagsFilter.length > 1 ? 's' : ''}
               <button className="ml-1" onClick={() => setPersonalityTagsFilter([])}>
                 <X className="h-3 w-3" />
@@ -218,7 +195,7 @@ const StudentFilters = ({
         <Button 
           variant="outline" 
           onClick={resetFilters} 
-          className="button-hover"
+          className="border-border hover:bg-secondary"
           disabled={!isAnyFilterActive}
         >
           Reset All Filters
