@@ -163,6 +163,7 @@ export const ProfileProvider = ({
         personality_tags: form.personality_tags,
         course: form.course,
         email_notifications: form.email_notifications,
+        arrival_date: form.arrival_date,
       };
       
       // Use the updateProfile function
