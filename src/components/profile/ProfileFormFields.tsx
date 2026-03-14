@@ -53,6 +53,11 @@ export function ProfileFormFields() {
         handleChange={handleChange}
       />
 
+      <LookingForSection
+        selectedOptions={form.looking_for || []}
+        onToggleOption={handleLookingForToggle}
+      />
+
       <PersonalityTagsSection
         selectedTags={form.personality_tags || []}
         onToggleTag={handlePersonalityTagToggle}

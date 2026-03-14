@@ -103,6 +103,7 @@ export const useProfileForm = () => {
     uploadStatus,
     avatarUrl,
     handleRemoveAvatar,
-    handlePersonalityTagToggle
+    handlePersonalityTagToggle,
+    handleLookingForToggle,
   };
 };
