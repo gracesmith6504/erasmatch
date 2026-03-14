@@ -70,13 +70,13 @@ export const FeaturesSection = () => {
             <motion.div
               key={feature.title}
               variants={item}
-              className="group relative p-6 rounded-2xl bg-background border border-border hover:border-border/80 hover:shadow-card hover:scale-105 transition-all duration-300"
+              className="group relative p-6 rounded-2xl bg-background border border-border hover:border-border/80 hover:shadow-card hover:scale-[1.03] transition-all duration-300 cursor-default"
             >
-              <div className={`h-11 w-11 rounded-xl ${feature.color} flex items-center justify-center mb-5`}>
+              <div className={`h-11 w-11 rounded-xl ${feature.color} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300`}>
                 <feature.icon className="h-5 w-5" />
               </div>
               <h3 className="font-semibold text-foreground mb-2">{feature.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
+              <p className="text-sm text-muted-foreground leading-relaxed group-hover:text-foreground/70 transition-colors duration-300">{feature.description}</p>
             </motion.div>
           ))}
         </motion.div>
