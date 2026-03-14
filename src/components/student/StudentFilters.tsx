@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,7 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { School, MapPin, X, User, ChevronDown, ChevronUp } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { School, MapPin, X, User, ChevronDown, ChevronUp, Search } from "lucide-react";
 import { PERSONALITY_TAGS } from "@/components/profile/constants";
 
 interface StudentFiltersProps {
@@ -35,6 +36,24 @@ const StudentFilters = ({
   resetFilters,
 }: StudentFiltersProps) => {
   const [showAllTags, setShowAllTags] = useState(false);
+  const [uniSearch, setUniSearch] = useState("");
+  const [uniDropdownOpen, setUniDropdownOpen] = useState(false);
+  const uniRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (uniRef.current && !uniRef.current.contains(e.target as Node)) {
+        setUniDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const filteredUniversities = uniqueUniversities.filter((uni) =>
+    uni.toLowerCase().includes(uniSearch.toLowerCase())
+  );
+
   const isAnyFilterActive = universityFilter || cityFilter || personalityTagsFilter.length > 0;
   
   const handleTagToggle = (tagValue: string) => {
@@ -67,21 +86,66 @@ const StudentFilters = ({
   return (
     <div className="bg-card shadow-soft rounded-2xl p-6 mb-8 border border-border">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div>
-          <Select value={universityFilter} onValueChange={setUniversityFilter}>
-            <SelectTrigger className="h-12 border-border focus:border-erasmatch-green">
-              <div className="flex items-center">
-                <School className="mr-2 h-4 w-4 text-muted-foreground" />
-                <SelectValue placeholder="University" />
+        {/* Searchable University Filter */}
+        <div ref={uniRef} className="relative">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+            <Input
+              className="h-12 pl-9 pr-9 border-border focus:border-erasmatch-green"
+              placeholder="Search university..."
+              value={universityFilter && !uniDropdownOpen ? universityFilter : uniSearch}
+              onChange={(e) => {
+                setUniSearch(e.target.value);
+                setUniDropdownOpen(true);
+                if (!e.target.value) setUniversityFilter("");
+              }}
+              onFocus={() => {
+                setUniDropdownOpen(true);
+                if (universityFilter) setUniSearch(universityFilter);
+              }}
+            />
+            {universityFilter && (
+              <button
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                onClick={() => {
+                  setUniversityFilter("");
+                  setUniSearch("");
+                }}
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+          {uniDropdownOpen && (
+            <div className="absolute z-50 mt-1 w-full bg-card border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
+              <div
+                className="px-4 py-2 text-sm cursor-pointer hover:bg-accent transition-colors text-muted-foreground"
+                onClick={() => {
+                  setUniversityFilter("");
+                  setUniSearch("");
+                  setUniDropdownOpen(false);
+                }}
+              >
+                All Universities
               </div>
-            </SelectTrigger>
-            <SelectContent className="max-h-80">
-              <SelectItem value="all-universities">All Universities</SelectItem>
-              {uniqueUniversities.map((uni) => (
-                <SelectItem key={uni} value={uni}>{uni}</SelectItem>
+              {filteredUniversities.map((uni) => (
+                <div
+                  key={uni}
+                  className="px-4 py-2 text-sm cursor-pointer hover:bg-accent transition-colors text-foreground"
+                  onClick={() => {
+                    setUniversityFilter(uni);
+                    setUniSearch("");
+                    setUniDropdownOpen(false);
+                  }}
+                >
+                  {uni}
+                </div>
               ))}
-            </SelectContent>
-          </Select>
+              {filteredUniversities.length === 0 && (
+                <div className="px-4 py-2 text-sm text-muted-foreground">No results</div>
+              )}
+            </div>
+          )}
         </div>
 
         <div>
