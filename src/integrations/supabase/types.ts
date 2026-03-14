@@ -46,6 +46,27 @@ export type Database = {
           },
         ]
       }
+      email_notification_log: {
+        Row: {
+          id: string
+          receiver_id: string
+          sender_id: string
+          sent_at: string
+        }
+        Insert: {
+          id?: string
+          receiver_id: string
+          sender_id: string
+          sent_at?: string
+        }
+        Update: {
+          id?: string
+          receiver_id?: string
+          sender_id?: string
+          sent_at?: string
+        }
+        Relationships: []
+      }
       group_messages: {
         Row: {
           content: string
