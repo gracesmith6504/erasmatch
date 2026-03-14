@@ -34,6 +34,7 @@ export const ProfileProvider = ({
     personality_tags: initialProfile?.personality_tags || [],
     course: initialProfile?.course || "",
     email_notifications: initialProfile?.email_notifications !== false,
+    arrival_date: initialProfile?.arrival_date || null,
   });
   const [loading, setLoading] = useState(false);
 
