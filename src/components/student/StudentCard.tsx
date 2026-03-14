@@ -4,10 +4,10 @@ import { Profile } from "@/types";
 import StudentAvatar from "./card/StudentAvatar";
 import StudentCardActions from "./card/StudentCardActions";
 import CountryFlag from "./card/CountryFlag";
-import { Badge } from "@/components/ui/badge";
-import { School, MapPin } from "lucide-react";
+import { Home, MapPin, CalendarClock } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { Badge } from "@/components/ui/badge";
 import { getTagInfo } from "@/components/profile/constants";
 
 interface StudentCardProps {
@@ -40,7 +40,7 @@ const StudentCard = ({ profile, isFeatured = false }: StudentCardProps) => {
   return (
     <Card className="overflow-hidden border-border hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group min-h-[280px] flex flex-col">
       <CardContent className="pt-5 pb-3 flex-1 flex flex-col">
-        {/* Avatar + Name row */}
+        {/* Avatar + Name */}
         <div className="flex items-center gap-3 mb-4">
           <StudentAvatar 
             avatarUrl={profile.avatar_url}
@@ -55,15 +55,19 @@ const StudentCard = ({ profile, isFeatured = false }: StudentCardProps) => {
           </div>
         </div>
 
-        {/* University & City */}
+        {/* Info rows */}
         <div className="space-y-2">
           <div className="flex items-center text-sm text-muted-foreground">
-            <School className="h-4 w-4 mr-2 shrink-0 text-primary/60" />
-            <span className="truncate">{profile.university || "University not specified"}</span>
+            <Home className="h-4 w-4 mr-2 shrink-0 text-primary/60" />
+            <span className="truncate">{profile.home_university || "Home university not specified"}</span>
           </div>
           <div className="flex items-center text-sm text-muted-foreground">
             <MapPin className="h-4 w-4 mr-2 shrink-0 text-primary/60" />
-            <span className="truncate">{universityCity || profile.city || "City not available"}</span>
+            <span className="truncate">{universityCity || profile.city || "City not specified"}</span>
+          </div>
+          <div className="flex items-center text-sm text-muted-foreground">
+            <CalendarClock className="h-4 w-4 mr-2 shrink-0 text-primary/60" />
+            <span className="truncate">{profile.semester || "Semester not specified"}</span>
           </div>
         </div>
 
