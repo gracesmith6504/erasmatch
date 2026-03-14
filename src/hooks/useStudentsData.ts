@@ -7,7 +7,7 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
   const [universityFilter, setUniversityFilter] = useState("");
   const [cityFilter, setCityFilter] = useState("");
   const [personalityTagsFilter, setPersonalityTagsFilter] = useState<string[]>([]);
-  const [arrivalMonthFilter, setArrivalMonthFilter] = useState("");
+  const [semesterFilter, setSemesterFilter] = useState<string[]>([]);
 
   const [uniqueUniversities, setUniqueUniversities] = useState<string[]>([]);
   const [uniqueCities, setUniqueCities] = useState<string[]>([]);
