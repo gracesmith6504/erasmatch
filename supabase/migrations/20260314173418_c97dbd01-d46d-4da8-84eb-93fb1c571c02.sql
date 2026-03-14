@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN arrival_date date NULL;
