@@ -27,7 +27,7 @@ export function useNotifications(currentUserId: string | null) {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("notifications")
       .select("*")
       .eq("user_id", currentUserId)
