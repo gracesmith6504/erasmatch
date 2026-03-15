@@ -69,7 +69,7 @@ export function useNotifications(currentUserId: string | null) {
   const markAllAsRead = useCallback(async () => {
     if (!currentUserId) return;
 
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("notifications")
       .update({ read: true })
       .eq("user_id", currentUserId)
