@@ -144,6 +144,7 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters, featuredProfiles = []
                 key={profile.id} 
                 profile={profile} 
                 isFeatured={currentPage === 1 && featuredProfiles.some(fp => fp.id === profile.id)}
+                universityCity={profile.university ? universityCityMap[profile.university] || null : null}
               />
             ))}
           </div>
