@@ -121,6 +121,15 @@ export const OnboardingFlow = () => {
         );
       case 4:
         return (
+          <SemesterStep
+            initialValue={currentUserProfile?.semester || ""}
+            onNext={goToNextStep}
+            onUpdateProfile={handleUpdateProfile}
+            onBack={goToPreviousStep}
+          />
+        );
+      case 5:
+        return (
           <InterestsStep
             initialValue={currentUserProfile?.personality_tags || []}
             onComplete={handleCompleteOnboarding}
