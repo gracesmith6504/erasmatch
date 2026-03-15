@@ -6,6 +6,7 @@ import { FirstNameStep } from "./steps/FirstNameStep";
 import { DestinationUniversityStep } from "./steps/DestinationUniversityStep";
 import { HomeUniversityStep } from "./steps/HomeUniversityStep";
 import { CourseStep } from "./steps/CourseStep";
+import { SemesterStep } from "./steps/SemesterStep";
 import { InterestsStep } from "./steps/InterestsStep";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
