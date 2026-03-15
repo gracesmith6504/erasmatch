@@ -70,31 +70,40 @@ export const useProfileViewers = (currentUserId: string | null) => {
 export const recordProfileView = async (viewedId: string) => {
   try {
     const { data: authData, error: authError } = await supabase.auth.getUser();
-    const viewerId = authData.user?.id;
+    const authenticatedViewerId = authData.user?.id;
 
-    if (authError || !viewerId) {
+    if (authError || !authenticatedViewerId) {
       console.error("[ProfileView] User not authenticated while recording view", authError);
       return;
     }
 
-    if (viewerId === viewedId) return;
+    if (authenticatedViewerId === viewedId) return;
 
-    console.log("[ProfileView] Recording view:", { viewerId, viewedId });
-
-    const { error } = await supabase
+    const viewedAt = new Date().toISOString();
+    const { error: insertError } = await supabase
       .from('profile_views')
-      .upsert(
-        {
-          viewer_id: viewerId,
-          viewed_id: viewedId,
-          viewed_at: new Date().toISOString(),
-        },
-        { onConflict: 'viewer_id,viewed_id' }
-      );
+      .insert({
+        viewer_id: authenticatedViewerId,
+        viewed_id: viewedId,
+        viewed_at: viewedAt,
+      });
 
-    if (error) {
-      console.error("[ProfileView] Error recording view:", error);
+    if (!insertError) return;
+
+    if (insertError.code === '23505') {
+      const { error: updateError } = await supabase
+        .from('profile_views')
+        .update({ viewed_at: viewedAt })
+        .eq('viewer_id', authenticatedViewerId)
+        .eq('viewed_id', viewedId);
+
+      if (updateError) {
+        console.error("[ProfileView] Error updating duplicate view:", updateError);
+      }
+      return;
     }
+
+    console.error("[ProfileView] Error recording view:", insertError);
   } catch (err) {
     console.error("[ProfileView] Exception recording view:", err);
   }
