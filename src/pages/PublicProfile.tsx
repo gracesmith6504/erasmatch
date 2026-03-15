@@ -8,6 +8,7 @@ import { Home, School, Calendar, User, LogIn } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile } from "@/types";
 import { useAuth } from "@/contexts/AuthContext";
+import { recordProfileView } from "@/hooks/useProfileViewers";
 
 const PublicProfile = () => {
   const { refCode } = useParams<{ refCode: string }>();
