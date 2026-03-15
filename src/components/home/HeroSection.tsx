@@ -97,6 +97,29 @@ export const HeroSection = ({
                 </Link>
               </p>
             }
+
+            {/* Social proof strip */}
+            <motion.div
+              className="flex items-center gap-4 sm:gap-6 mt-8 pt-6 border-t border-border"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+            >
+              <div>
+                <p className="text-xl sm:text-2xl font-bold text-foreground">600+</p>
+                <p className="text-xs text-muted-foreground">Students joined</p>
+              </div>
+              <div className="w-px h-8 bg-border" />
+              <div>
+                <p className="text-xl sm:text-2xl font-bold text-foreground">18+</p>
+                <p className="text-xs text-muted-foreground">Countries</p>
+              </div>
+              <div className="w-px h-8 bg-border" />
+              <div>
+                <p className="text-xl sm:text-2xl font-bold text-foreground">50+</p>
+                <p className="text-xs text-muted-foreground">Universities</p>
+              </div>
+            </motion.div>
           </motion.div>
           
           {/* Right side — Social proof cards (hidden on mobile) */}
