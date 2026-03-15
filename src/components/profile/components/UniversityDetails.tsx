@@ -1,3 +1,4 @@
+import { SEMESTER_OPTIONS } from "@/components/profile/constants";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -28,7 +29,7 @@ type UniversityDetailsProps = {
   handleHomeUniversityChange: (university: string) => void;
 };
 
-const SEMESTERS = ["Full Academic Year 2025–26", "Spring 2026", "Fall 2027", "Full Academic Year 2026–27"];
+
 
 export const UniversityDetails = ({
   form,
@@ -119,7 +120,7 @@ export const UniversityDetails = ({
             <SelectValue placeholder="Select a semester" />
           </SelectTrigger>
           <SelectContent>
-            {SEMESTERS.map((semester) => (
+            {SEMESTER_OPTIONS.map((semester) => (
               <SelectItem key={semester} value={semester}>
                 {semester}
               </SelectItem>
