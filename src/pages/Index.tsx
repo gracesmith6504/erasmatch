@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { HeroSection } from "@/components/home/HeroSection";
 import { FeaturesSection } from "@/components/home/FeaturesSection";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
+import { AlumniAdviceSection } from "@/components/home/AlumniAdviceSection";
 import { StudentStoriesSection } from "@/components/home/StudentStoriesSection";
 import { GroupChatSection } from "@/components/home/GroupChatSection";
 import { CommunitySection } from "@/components/home/CommunitySection";
