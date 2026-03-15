@@ -1,7 +1,8 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Mail, Globe } from "lucide-react";
+import { recordProfileView } from "@/hooks/useProfileViewers";
 
 interface StudentCardActionsProps {
   studentId: string;
@@ -16,21 +17,22 @@ const StudentCardActions: React.FC<StudentCardActionsProps> = ({ studentId }) =>
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleProfileClick = (e: React.MouseEvent) => {
+  const handleProfileClick = async (e: React.MouseEvent) => {
     e.preventDefault();
+    await recordProfileView("", studentId);
     navigate(`/profile/${studentId}`, { state: { fromProfile: true } });
   };
 
   return (
     <>
-      <Button 
-        variant="outline" 
+      <Button
+        variant="outline"
         className="w-1/2 border-border hover:bg-secondary transition-colors"
         onClick={handleMessageClick}
       >
         <Mail className="mr-1 h-4 w-4" /> Message
       </Button>
-      <Button 
+      <Button
         onClick={handleProfileClick}
         className="w-1/2 bg-foreground text-background hover:bg-foreground/90"
       >
