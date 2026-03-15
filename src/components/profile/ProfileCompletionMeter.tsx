@@ -21,8 +21,10 @@ const ProfileCompletionMeter: React.FC<ProfileCompletionMeterProps> = ({ profile
       profile.semester,
       profile.home_university,
       profile.city,
-      profile.country,
-      profile.interests
+      profile.course,
+      profile.personality_tags,
+      profile.looking_for,
+      profile.arrival_date
     ];
     
     const filledFields = fields.filter(Boolean).length;
