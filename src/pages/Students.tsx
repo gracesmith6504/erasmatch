@@ -108,6 +108,16 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
       {showBanner && (
         <WelcomeBanner cityName={cityName} hasAvatar={hasAvatar} />
       )}
+
+      {showSuggested && (
+        <SuggestedStudents
+          profiles={profiles}
+          currentUserId={currentUserId!}
+          cityName={currentProfile?.city || null}
+          universityName={currentProfile?.university || null}
+          onDismiss={handleDismissSuggested}
+        />
+      )}
       
       <h1 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-4">Find Erasmus Students</h1>
 
