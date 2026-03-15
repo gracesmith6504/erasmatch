@@ -11,10 +11,10 @@ interface HeroSectionProps {
   handlePlanning: () => void;
 }
 
-export const HeroSection = ({ 
-  handleFindStudents, 
-  handleJoinChats, 
-  handlePlanning 
+export const HeroSection = ({
+  handleFindStudents,
+  handleJoinChats,
+  handlePlanning
 }: HeroSectionProps) => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ export const HeroSection = ({
     <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-background">
       {/* Subtle grain texture */}
       <div className="absolute inset-0 opacity-[0.03]" style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`
       }} />
 
       {/* Decorative blobs */}
@@ -41,23 +41,23 @@ export const HeroSection = ({
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
         <div className="flex justify-end mb-6">
-          <ShareButton showText={true} link="https://erasmatch.com"/>
+          <ShareButton showText={true} link="https://erasmatch.com" />
         </div>
         
         <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <motion.div 
+          <motion.div
             className="text-left"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          >
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}>
+            
             {/* Eyebrow */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card mb-8"
-            >
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card mb-8">
+              
               <span className="h-2 w-2 rounded-full bg-erasmatch-green animate-pulse" />
               <span className="text-sm font-medium text-muted-foreground">Students in 18+ countries</span>
             </motion.div>
@@ -69,54 +69,54 @@ export const HeroSection = ({
               <span className="font-extrabold gradient-text">social.</span>
             </h1>
             
-            <p className="text-lg sm:text-xl max-w-lg text-muted-foreground mb-10 leading-relaxed">
-              Get advice, make friends, and never feel alone on your exchange. Connect with students headed to the same city — before you arrive.
+            <p className="text-lg sm:text-xl max-w-lg text-muted-foreground mb-10 leading-relaxed">Meet your Erasmus mates before you even arrive.
+
             </p>
             
             {/* CTA */}
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 className="text-base px-8 py-6 bg-foreground text-primary-foreground hover:bg-foreground/90 rounded-full shadow-elevated transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
-                onClick={handleAuthAction}
-              >
+                onClick={handleAuthAction}>
+                
                 {isAuthenticated ? "Explore Students" : "Join for free"}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 variant="outline"
                 className="text-base px-8 py-6 rounded-full border-border hover:bg-secondary hover:text-foreground"
-                onClick={handleFindStudents}
-              >
+                onClick={handleFindStudents}>
+                
                 See how it works
               </Button>
             </div>
             
-            {!isAuthenticated && (
-              <p className="text-sm text-muted-foreground">
+            {!isAuthenticated &&
+            <p className="text-sm text-muted-foreground">
                 Already a member?{" "}
                 <Link to="/auth?mode=login" className="underline underline-offset-4 hover:text-foreground transition-colors">
                   Log in
                 </Link>
               </p>
-            )}
+            }
           </motion.div>
           
           {/* Right side — Social proof cards */}
-          <motion.div 
+          <motion.div
             className="hidden lg:block relative"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          >
+            transition={{ delay: 0.3, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}>
+            
             <div className="relative w-full max-w-md mx-auto">
               {/* Floating cards */}
-              <motion.div 
+              <motion.div
                 className="bg-card rounded-2xl p-5 shadow-card border border-border"
                 animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              >
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}>
+                
                 <div className="flex items-center gap-3 mb-4">
                   <div className="h-10 w-10 rounded-full bg-erasmatch-green/15 flex items-center justify-center text-sm font-bold text-erasmatch-green">L</div>
                   <div>
@@ -152,11 +152,11 @@ export const HeroSection = ({
               </motion.div>
 
               {/* Notification card */}
-              <motion.div 
+              <motion.div
                 className="absolute -bottom-6 -left-8 bg-card rounded-xl p-3.5 shadow-elevated border border-border max-w-[220px]"
                 animate={{ y: [0, -5, 0] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              >
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}>
+                
                 <div className="flex items-center gap-2.5">
                   <div className="h-8 w-8 rounded-full bg-erasmatch-coral/15 flex items-center justify-center">
                     <span className="text-xs">🇫🇷</span>
@@ -169,11 +169,11 @@ export const HeroSection = ({
               </motion.div>
 
               {/* Match card */}
-              <motion.div 
+              <motion.div
                 className="absolute -top-4 -right-6 bg-card rounded-xl p-3.5 shadow-elevated border border-border"
                 animate={{ y: [0, -6, 0] }}
-                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-              >
+                transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2 }}>
+                
                 <div className="flex items-center gap-2.5">
                   <div className="h-8 w-8 rounded-full bg-erasmatch-green/15 flex items-center justify-center">
                     <span className="text-sm">✨</span>
@@ -188,6 +188,6 @@ export const HeroSection = ({
           </motion.div>
         </div>
       </div>
-    </section>
-  );
+    </section>);
+
 };
