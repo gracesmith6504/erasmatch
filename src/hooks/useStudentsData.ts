@@ -14,19 +14,37 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
   const [loadedProfiles, setLoadedProfiles] = useState<Profile[]>(initialProfiles);
   const [loading, setLoading] = useState(true);
   const [featuredProfiles, setFeaturedProfiles] = useState<Profile[]>([]);
+  const [universityCityMap, setUniversityCityMap] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    const fetchProfiles = async () => {
+    const fetchData = async () => {
       try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('id, name, university, city, semester, personality_tags, avatar_url, deleted_at, home_university, featured, arrival_date, last_active_at')
-          .is('deleted_at', null);
-        
-        if (error) throw error;
+        // Fetch profiles and university cities in parallel
+        const [profilesResult, universitiesResult] = await Promise.all([
+          supabase
+            .from('profiles')
+            .select('id, name, university, city, semester, personality_tags, avatar_url, deleted_at, home_university, featured, arrival_date, last_active_at')
+            .is('deleted_at', null),
+          supabase
+            .from('universities')
+            .select('name, city')
+        ]);
 
-        if (data) {
-          const profilesWithRequiredFields = data.map(profile => ({
+        if (profilesResult.error) throw profilesResult.error;
+
+        // Build university → city map
+        const cityMap: Record<string, string> = {};
+        if (universitiesResult.data) {
+          for (const uni of universitiesResult.data) {
+            if (uni.name && uni.city) {
+              cityMap[uni.name] = uni.city;
+            }
+          }
+        }
+        setUniversityCityMap(cityMap);
+
+        if (profilesResult.data) {
+          const profilesWithRequiredFields = profilesResult.data.map(profile => ({
             ...profile,
             country: null,
             interests: null,
@@ -44,7 +62,7 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
       }
     };
 
-    fetchProfiles();
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -103,6 +121,7 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     uniqueSemesters,
     filteredProfiles,
     featuredProfiles,
+    universityCityMap,
     loading,
     resetFilters
   };

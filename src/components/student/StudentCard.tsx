@@ -4,9 +4,7 @@ import { Profile } from "@/types";
 import StudentAvatar from "./card/StudentAvatar";
 import StudentCardActions from "./card/StudentCardActions";
 import CountryFlag from "./card/CountryFlag";
-import { Home, MapPin, CalendarClock, Plane } from "lucide-react";
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { Home, MapPin, CalendarClock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getTagInfo } from "@/components/profile/constants";
 import { LOOKING_FOR_OPTIONS } from "@/components/profile/components/LookingForSection";
@@ -15,25 +13,10 @@ import { format } from "date-fns";
 interface StudentCardProps {
   profile: Profile;
   isFeatured?: boolean;
+  universityCity?: string | null;
 }
 
-const StudentCard = ({ profile, isFeatured = false }: StudentCardProps) => {
-  const [universityCity, setUniversityCity] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchCity = async () => {
-      if (!profile.university) return;
-      try {
-        const { data } = await supabase
-          .from('universities')
-          .select('city')
-          .eq('name', profile.university)
-          .single();
-        setUniversityCity(data?.city || null);
-      } catch {}
-    };
-    fetchCity();
-  }, [profile.university]);
+const StudentCard = ({ profile, isFeatured = false, universityCity = null }: StudentCardProps) => {
 
   const tags = profile.personality_tags || [];
   const visibleTags = tags.slice(0, 3);
