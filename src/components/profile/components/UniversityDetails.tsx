@@ -120,7 +120,7 @@ export const UniversityDetails = ({
             <SelectValue placeholder="Select a semester" />
           </SelectTrigger>
           <SelectContent>
-            {SEMESTERS.map((semester) => (
+            {SEMESTER_OPTIONS.map((semester) => (
               <SelectItem key={semester} value={semester}>
                 {semester}
               </SelectItem>
