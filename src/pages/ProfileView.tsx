@@ -1,5 +1,6 @@
 
 import { useParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, ArrowLeft } from "lucide-react";
 import { Profile } from "@/types";
@@ -8,6 +9,7 @@ import { ProfileDetails } from "@/components/profile/view/ProfileDetails";
 import { MessageDialog } from "@/components/profile/view/MessageDialog";
 import { NotFoundView } from "@/components/profile/view/NotFoundView";
 import { useProfileView } from "@/hooks/useProfileView";
+import { recordProfileView } from "@/hooks/useProfileViewers";
 
 type ProfileViewProps = {
   profiles: Profile[];
@@ -31,6 +33,13 @@ const ProfileView = ({ profiles, currentUserId, onSendMessage }: ProfileViewProp
     handleSendMessage,
     isOwnProfile
   } = useProfileView(profile, currentUserId, onSendMessage);
+
+  // Record profile view
+  useEffect(() => {
+    if (currentUserId && profile?.id && currentUserId !== profile.id) {
+      recordProfileView(currentUserId, profile.id);
+    }
+  }, [currentUserId, profile?.id]);
 
   const handleBackToStudents = () => {
     navigate('/students', { state: { fromProfile: true }});
