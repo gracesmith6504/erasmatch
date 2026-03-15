@@ -6,6 +6,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile, Message } from "@/types";
+import { createNotification } from "@/utils/notifications";
 import { useAuth } from "./AuthContext";
 
 type DataContextType = {
