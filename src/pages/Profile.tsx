@@ -18,6 +18,8 @@ import { useNavigate } from "react-router-dom";
 const Profile = () => {
   const { currentUserId, currentUserProfile, handleProfileUpdate } = useAuth();
   const [emailNotifications, setEmailNotifications] = useState(true);
+  const { viewers, isLoading: isLoadingViewers } = useProfileViewers(currentUserId);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (currentUserProfile) {
