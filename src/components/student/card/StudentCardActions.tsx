@@ -19,7 +19,7 @@ const StudentCardActions: React.FC<StudentCardActionsProps> = ({ studentId }) =>
 
   const handleProfileClick = async (e: React.MouseEvent) => {
     e.preventDefault();
-    await recordProfileView("", studentId);
+    await recordProfileView(studentId);
     navigate(`/profile/${studentId}`, { state: { fromProfile: true } });
   };
 
