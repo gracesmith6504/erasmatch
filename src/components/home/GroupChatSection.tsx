@@ -8,12 +8,37 @@ interface GroupChatSectionProps {
 
 export const GroupChatSection = ({ handleFindStudents }: GroupChatSectionProps) => {
   return (
-    <section className="py-24 bg-background">
+    <section className="py-16 sm:py-24 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
+        <div className="flex flex-col lg:flex-row gap-10 lg:gap-20 items-center">
+          {/* Text content — shown first on mobile, second on desktop */}
+          <motion.div 
+            className="w-full lg:w-1/2 order-1 lg:order-2"
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <p className="text-xs sm:text-sm font-medium tracking-widest uppercase text-erasmatch-green mb-3">Group chats</p>
+            <h2 className="text-2xl sm:text-4xl mb-4 sm:mb-6 text-foreground font-display font-bold">
+              You're not arriving{" "}
+              <span className="text-erasmatch-green">alone.</span>
+            </h2>
+            <p className="text-muted-foreground text-base sm:text-lg leading-relaxed mb-6 sm:mb-8">
+              Join your university and city group chat the moment you sign up. Ask about housing, courses, nightlife or just say hi. Your Erasmus crew is waiting.
+            </p>
+            <Button 
+              size="lg" 
+              className="rounded-full bg-foreground text-primary-foreground hover:bg-foreground/90 shadow-elevated hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 w-full sm:w-auto"
+              onClick={handleFindStudents}
+            >
+              Find your group <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </motion.div>
+
           {/* Chat mockup */}
           <motion.div 
-            className="w-full lg:w-1/2"
+            className="w-full lg:w-1/2 order-2 lg:order-1"
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -21,7 +46,7 @@ export const GroupChatSection = ({ handleFindStudents }: GroupChatSectionProps) 
           >
             <div className="bg-card rounded-2xl border border-border shadow-card overflow-hidden">
               {/* Chat header */}
-              <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+              <div className="px-4 sm:px-5 py-3 sm:py-4 border-b border-border flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="h-9 w-9 rounded-full bg-erasmatch-blue/15 flex items-center justify-center text-sm font-bold text-erasmatch-blue">
                     L
@@ -38,7 +63,7 @@ export const GroupChatSection = ({ handleFindStudents }: GroupChatSectionProps) 
               </div>
               
               {/* Messages */}
-              <div className="p-5 space-y-4">
+              <div className="p-4 sm:p-5 space-y-3 sm:space-y-4">
                 <div className="flex gap-2.5">
                   <div className="h-7 w-7 rounded-full bg-erasmatch-purple/10 flex-shrink-0 flex items-center justify-center text-[10px]">🇩🇪</div>
                   <div>
@@ -69,7 +94,7 @@ export const GroupChatSection = ({ handleFindStudents }: GroupChatSectionProps) 
               </div>
 
               {/* Typing indicator */}
-              <div className="px-5 pb-4">
+              <div className="px-4 sm:px-5 pb-3 sm:pb-4">
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <div className="flex gap-1">
                     <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 animate-pulse" />
@@ -80,31 +105,6 @@ export const GroupChatSection = ({ handleFindStudents }: GroupChatSectionProps) 
                 </div>
               </div>
             </div>
-          </motion.div>
-
-          {/* Text content */}
-          <motion.div 
-            className="w-full lg:w-1/2"
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <p className="text-sm font-medium tracking-widest uppercase text-erasmatch-green mb-3">Group chats</p>
-            <h2 className="text-3xl sm:text-4xl mb-6 text-foreground font-display font-bold">
-              You're not arriving{" "}
-              <span className="text-erasmatch-green">alone.</span>
-            </h2>
-            <p className="text-muted-foreground text-lg leading-relaxed mb-8">
-              Join your university and city group chat the moment you sign up. Ask about housing, courses, nightlife — or just say hi. Your Erasmus crew is waiting.
-            </p>
-            <Button 
-              size="lg" 
-              className="rounded-full bg-foreground text-primary-foreground hover:bg-foreground/90 shadow-elevated hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
-              onClick={handleFindStudents}
-            >
-              Find your group <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
           </motion.div>
         </div>
       </div>
