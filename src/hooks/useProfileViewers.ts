@@ -70,11 +70,19 @@ export const useProfileViewers = (currentUserId: string | null) => {
 export const recordProfileView = async (viewerId: string, viewedId: string) => {
   if (viewerId === viewedId) return;
   try {
-    await (supabase.from('profile_views') as any).upsert(
-      { viewer_id: viewerId, viewed_id: viewedId, viewed_at: new Date().toISOString() },
-      { onConflict: 'viewer_id,viewed_id' }
-    );
+    console.log("[ProfileView] Recording view:", { viewerId, viewedId });
+    const { data, error } = await supabase
+      .from('profile_views')
+      .upsert(
+        { viewer_id: viewerId, viewed_id: viewedId, viewed_at: new Date().toISOString() },
+        { onConflict: 'viewer_id,viewed_id' }
+      );
+    if (error) {
+      console.error("[ProfileView] Error recording view:", error);
+    } else {
+      console.log("[ProfileView] View recorded successfully", data);
+    }
   } catch (err) {
-    // Silently ignore — dedup or RLS errors are expected
+    console.error("[ProfileView] Exception recording view:", err);
   }
 };
