@@ -67,7 +67,7 @@ export const useProfileViewers = (currentUserId: string | null) => {
   return { viewers, isLoading };
 };
 
-export const recordProfileView = async (_viewerId: string, viewedId: string) => {
+export const recordProfileView = async (viewedId: string) => {
   try {
     const { data: authData, error: authError } = await supabase.auth.getUser();
     const viewerId = authData.user?.id;
