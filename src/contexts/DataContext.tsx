@@ -137,6 +137,17 @@ export const DataProvider = ({ children }: DataProviderProps) => {
         }
       }
 
+      // Create in-app notification for the receiver
+      const senderName = senderProfile?.name || 'Someone';
+      createNotification({
+        userId: receiverId,
+        type: 'direct_message',
+        actorId: currentUserId,
+        referenceId: messageData?.id,
+        title: 'New message',
+        body: `${senderName} sent you a message`,
+      });
+
       // Optimistically update local state
       if (messageData) {
         setMessages(prev => [messageData as Message, ...prev]);
