@@ -100,7 +100,7 @@ export const HeroSection = ({
 
             {/* Social proof strip */}
             <motion.div
-              className="flex items-center gap-4 sm:gap-6 mt-8 pt-6 border-t border-border"
+              className="flex items-center justify-center sm:justify-start gap-4 sm:gap-6 mt-8 pt-6 border-t border-border"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.5 }}
