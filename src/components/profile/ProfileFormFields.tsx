@@ -1,5 +1,4 @@
 
-import { Input } from "@/components/ui/input";
 import { useProfileForm } from "./useProfileForm";
 import { ProfileAvatar } from "./components/ProfileAvatar";
 import { NameDisplay } from "./components/NameDisplay";
@@ -23,9 +22,9 @@ export function ProfileFormFields() {
   } = useProfileForm();
 
   return (
-    <>
-      {/* New centered header section with pastel background */}
-      <div className="text-center px-4 pt-6 pb-4 bg-secondary rounded-2xl mb-6">
+    <div className="space-y-8">
+      {/* Avatar & Name header */}
+      <div className="text-center px-4 pt-8 pb-6 bg-secondary/50 rounded-2xl">
         <ProfileAvatar 
           name={form.name}
           avatarUrl={avatarUrl}
@@ -33,35 +32,53 @@ export function ProfileFormFields() {
           handleFileUpload={handleFileUpload}
         />
         
-        <NameDisplay 
-          name={form.name}
-          email={form.email}
-          handleChange={handleChange}
-        />
+        <div className="mt-4">
+          <NameDisplay 
+            name={form.name}
+            email={form.email}
+            handleChange={handleChange}
+          />
+        </div>
       </div>
 
-      <UniversityDetails
-        form={form}
-        handleChange={handleChange}
-        handleSelectChange={handleSelectChange}
-        handleUniversityChange={handleUniversityChange}
-        handleHomeUniversityChange={handleHomeUniversityChange}
-      />
+      {/* University & Academic Details */}
+      <section className="space-y-2">
+        <h3 className="text-base font-display font-semibold text-foreground">🎓 Academic Details</h3>
+        <p className="text-sm text-muted-foreground mb-4">Where you're studying and where you're headed.</p>
+        <UniversityDetails
+          form={form}
+          handleChange={handleChange}
+          handleSelectChange={handleSelectChange}
+          handleUniversityChange={handleUniversityChange}
+          handleHomeUniversityChange={handleHomeUniversityChange}
+        />
+      </section>
 
-      <AboutMeSection
-        bio={form.bio}
-        handleChange={handleChange}
-      />
+      {/* About Me */}
+      <section className="space-y-2">
+        <h3 className="text-base font-display font-semibold text-foreground">✍️ About You</h3>
+        <p className="text-sm text-muted-foreground mb-4">Let other students get to know you.</p>
+        <AboutMeSection
+          bio={form.bio}
+          handleChange={handleChange}
+        />
+      </section>
 
-      <LookingForSection
-        selectedOptions={form.looking_for || []}
-        onToggleOption={handleLookingForToggle}
-      />
+      {/* Looking For */}
+      <section>
+        <LookingForSection
+          selectedOptions={form.looking_for || []}
+          onToggleOption={handleLookingForToggle}
+        />
+      </section>
 
-      <PersonalityTagsSection
-        selectedTags={form.personality_tags || []}
-        onToggleTag={handlePersonalityTagToggle}
-      />
-    </>
+      {/* Personality Tags */}
+      <section>
+        <PersonalityTagsSection
+          selectedTags={form.personality_tags || []}
+          onToggleTag={handlePersonalityTagToggle}
+        />
+      </section>
+    </div>
   );
 }
