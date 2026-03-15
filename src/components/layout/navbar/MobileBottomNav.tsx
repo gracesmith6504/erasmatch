@@ -34,6 +34,7 @@ export const MobileBottomNav = ({ isActive }: MobileBottomNavProps) => {
             )}
           </Link>
         ))}
+        <NotificationBell />
         <Link
           to="/profile"
           className={`p-3.5 rounded-full transition-colors ${
