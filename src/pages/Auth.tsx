@@ -258,9 +258,37 @@ const Auth = ({ onLogin }: AuthProps) => {
             </div>
 
             <div>
-              <Label htmlFor="password" className="block text-sm font-medium text-foreground">
-                Password
-              </Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password" className="block text-sm font-medium text-foreground">
+                  Password
+                </Label>
+                {activeTab === "login" && (
+                  <button
+                    type="button"
+                    className="text-sm text-primary hover:text-primary/80 font-medium"
+                    onClick={async () => {
+                      if (!email) {
+                        toast.error("Please enter your email first");
+                        return;
+                      }
+                      setLoading(true);
+                      try {
+                        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                          redirectTo: `${window.location.origin}/reset-password`,
+                        });
+                        if (error) throw error;
+                        toast.success("Password reset link sent! Check your email.");
+                      } catch (error: any) {
+                        toast.error(error.message || "Failed to send reset link");
+                      } finally {
+                        setLoading(false);
+                      }
+                    }}
+                  >
+                    Forgot password?
+                  </button>
+                )}
+              </div>
               <div className="mt-1 relative">
                 <Input
                   id="password"
