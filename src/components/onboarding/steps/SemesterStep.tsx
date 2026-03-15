@@ -4,6 +4,7 @@ import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SEMESTER_OPTIONS } from "@/components/profile/constants";
 
 type SemesterStepProps = {
   initialValue: string | null;
@@ -11,13 +12,6 @@ type SemesterStepProps = {
   onBack: () => void;
   onUpdateProfile: (data: any) => Promise<boolean>;
 };
-
-const SEMESTER_OPTIONS = [
-  "Fall 2025",
-  "Spring 2026",
-  "Fall 2026",
-  "Spring 2027",
-];
 
 export const SemesterStep = ({
   initialValue,
