@@ -20,31 +20,27 @@ export const HeroSection = ({
   const navigate = useNavigate();
 
   const handleAuthAction = () => {
-    if (isAuthenticated) {
-      navigate("/students");
-    } else {
-      navigate("/auth?mode=signup");
-    }
+    navigate(isAuthenticated ? "/students" : "/auth?mode=signup");
   };
 
   return (
-    <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-background">
+    <section className="relative min-h-[80vh] sm:min-h-[90vh] flex items-center overflow-hidden bg-background">
       {/* Subtle grain texture */}
       <div className="absolute inset-0 opacity-[0.03]" style={{
         backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`
       }} />
 
-      {/* Decorative blobs */}
-      <div className="absolute top-20 right-[15%] w-72 h-72 rounded-full bg-erasmatch-green/10 blur-3xl" />
-      <div className="absolute bottom-20 left-[10%] w-96 h-96 rounded-full bg-erasmatch-blue/8 blur-3xl" />
-      <div className="absolute top-1/2 right-[5%] w-48 h-48 rounded-full bg-erasmatch-coral/8 blur-3xl" />
+      {/* Decorative blobs — smaller on mobile */}
+      <div className="absolute top-20 right-[15%] w-40 h-40 sm:w-72 sm:h-72 rounded-full bg-erasmatch-green/10 blur-3xl" />
+      <div className="absolute bottom-20 left-[10%] w-52 h-52 sm:w-96 sm:h-96 rounded-full bg-erasmatch-blue/8 blur-3xl" />
+      <div className="absolute top-1/2 right-[5%] w-32 h-32 sm:w-48 sm:h-48 rounded-full bg-erasmatch-coral/8 blur-3xl" />
       
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
-        <div className="flex justify-end mb-6">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 w-full">
+        <div className="hidden sm:flex justify-end mb-6">
           <ShareButton showText={true} link="https://erasmatch.com" />
         </div>
         
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           <motion.div
             className="text-left"
             initial={{ opacity: 0, y: 30 }}
@@ -56,28 +52,28 @@ export const HeroSection = ({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card mb-8">
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card mb-6 sm:mb-8">
               
               <span className="h-2 w-2 rounded-full bg-erasmatch-green animate-pulse" />
-              <span className="text-sm font-medium text-muted-foreground">Students in 18+ countries</span>
+              <span className="text-xs sm:text-sm font-medium text-muted-foreground">Students in 18+ countries</span>
             </motion.div>
 
-            <h1 className="text-[2.75rem] sm:text-6xl lg:text-7xl tracking-tight mb-6 leading-[1.05] text-foreground font-display">
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl tracking-tight mb-4 sm:mb-6 leading-[1.08] text-foreground font-display">
               <span className="font-extrabold">Erasmus</span>{" "}
               <span className="font-medium">just got</span>
               <br />
               <span className="font-extrabold gradient-text">social.</span>
             </h1>
             
-            <p className="text-lg sm:text-xl max-w-lg text-muted-foreground mb-10 leading-relaxed">Meet your Erasmus mates before you even arrive.
-
+            <p className="text-base sm:text-xl max-w-lg text-muted-foreground mb-8 sm:mb-10 leading-relaxed">
+              Meet your Erasmus mates before you even arrive.
             </p>
             
             {/* CTA */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-6">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6">
               <Button
                 size="lg"
-                className="text-base px-8 py-6 bg-foreground text-primary-foreground hover:bg-foreground/90 rounded-full shadow-elevated transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+                className="text-base px-8 py-6 bg-foreground text-primary-foreground hover:bg-foreground/90 rounded-full shadow-elevated transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 w-full sm:w-auto"
                 onClick={handleAuthAction}>
                 
                 {isAuthenticated ? "Explore Students" : "Join for free"}
@@ -86,7 +82,7 @@ export const HeroSection = ({
               <Button
                 size="lg"
                 variant="outline"
-                className="text-base px-8 py-6 rounded-full border-border hover:bg-secondary hover:text-foreground"
+                className="text-base px-8 py-6 rounded-full border-border hover:bg-secondary hover:text-foreground w-full sm:w-auto"
                 onClick={handleFindStudents}>
                 
                 See how it works
@@ -103,7 +99,7 @@ export const HeroSection = ({
             }
           </motion.div>
           
-          {/* Right side — Social proof cards */}
+          {/* Right side — Social proof cards (hidden on mobile) */}
           <motion.div
             className="hidden lg:block relative"
             initial={{ opacity: 0, scale: 0.95 }}
@@ -188,6 +184,6 @@ export const HeroSection = ({
           </motion.div>
         </div>
       </div>
-    </section>);
-
+    </section>
+  );
 };
