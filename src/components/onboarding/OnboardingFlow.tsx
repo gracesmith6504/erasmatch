@@ -6,6 +6,7 @@ import { FirstNameStep } from "./steps/FirstNameStep";
 import { DestinationUniversityStep } from "./steps/DestinationUniversityStep";
 import { HomeUniversityStep } from "./steps/HomeUniversityStep";
 import { CourseStep } from "./steps/CourseStep";
+import { SemesterStep } from "./steps/SemesterStep";
 import { InterestsStep } from "./steps/InterestsStep";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,7 +16,7 @@ export const OnboardingFlow = () => {
   const navigate = useNavigate();
   const { currentUserProfile, handleProfileUpdate } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
-  const totalSteps = 5;
+  const totalSteps = 6;
 
   // Handle case where user is already onboarded
   useEffect(() => {
@@ -119,6 +120,15 @@ export const OnboardingFlow = () => {
           />
         );
       case 4:
+        return (
+          <SemesterStep
+            initialValue={currentUserProfile?.semester || ""}
+            onNext={goToNextStep}
+            onUpdateProfile={handleUpdateProfile}
+            onBack={goToPreviousStep}
+          />
+        );
+      case 5:
         return (
           <InterestsStep
             initialValue={currentUserProfile?.personality_tags || []}
