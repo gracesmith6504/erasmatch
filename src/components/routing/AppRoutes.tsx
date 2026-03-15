@@ -20,6 +20,7 @@ import About from "@/pages/About";
 import NotFound from "@/pages/NotFound";
 import Onboarding from "@/pages/Onboarding";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import ResetPassword from "@/pages/ResetPassword";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
