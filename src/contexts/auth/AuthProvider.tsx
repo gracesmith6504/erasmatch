@@ -54,6 +54,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   // Function to handle auth state changes
   const handleAuthChange = async (session: any) => {
+    if (window.location.pathname === '/reset-password') return;
     if (session?.user) {
       setIsAuthenticated(true);
       setCurrentUserId(session.user.id);
