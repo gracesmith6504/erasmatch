@@ -100,22 +100,22 @@ export const HeroSection = ({
 
             {/* Social proof strip */}
             <motion.div
-              className="flex items-center gap-4 sm:gap-6 mt-8 pt-6 border-t border-border"
+              className="flex items-center justify-center sm:justify-start gap-4 sm:gap-6 mt-8 pt-6 border-t border-border"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6, duration: 0.5 }}
             >
-              <div>
+              <div className="text-center sm:text-left">
                 <p className="text-xl sm:text-2xl font-bold text-foreground">600+</p>
                 <p className="text-xs text-muted-foreground">Students joined</p>
               </div>
               <div className="w-px h-8 bg-border" />
-              <div>
+              <div className="text-center sm:text-left">
                 <p className="text-xl sm:text-2xl font-bold text-foreground">18+</p>
                 <p className="text-xs text-muted-foreground">Countries</p>
               </div>
               <div className="w-px h-8 bg-border" />
-              <div>
+              <div className="text-center sm:text-left">
                 <p className="text-xl sm:text-2xl font-bold text-foreground">50+</p>
                 <p className="text-xs text-muted-foreground">Universities</p>
               </div>
