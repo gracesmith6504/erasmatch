@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { NotificationBell } from "./NotificationBell";
 import { useNavigation } from "./useNavigation";
 import { NavigationLink } from "./NavigationLink";
 
