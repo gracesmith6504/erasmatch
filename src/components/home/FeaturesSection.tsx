@@ -1,82 +1,110 @@
-import { UserCheck, MessageSquare, Compass, Globe } from "lucide-react";
+import { Users, MessageCircle, GraduationCap, Calendar, Heart } from "lucide-react";
 import { motion } from "framer-motion";
 
-const features = [
+const reasons = [
   {
-    icon: UserCheck,
-    title: "Match with students",
-    description: "Find others heading to your city or university before you arrive.",
+    icon: GraduationCap,
+    title: "Built only for Erasmus",
+    description:
+      "This isn't a general social app. Every feature exists because Erasmus students actually need it. Your semester, your university, your city.",
     color: "bg-erasmatch-green/10 text-erasmatch-green",
   },
   {
-    icon: MessageSquare,
-    title: "Join group chats",
-    description: "City and university conversations that feel like home from day one.",
+    icon: Users,
+    title: "Find your exact people",
+    description:
+      "Search by destination university and semester to find students landing in the same place at the same time as you. Not random matches, real ones.",
     color: "bg-erasmatch-blue/10 text-erasmatch-blue",
   },
   {
-    icon: Compass,
-    title: "Make plans",
-    description: "Find travel buddies, roommates, and friends before your semester starts.",
+    icon: MessageCircle,
+    title: "Group chats that create themselves",
+    description:
+      "When you pick your city and university, you're automatically added to the right group chats. No searching, no invite links, just conversation.",
     color: "bg-erasmatch-coral/10 text-erasmatch-coral",
   },
   {
-    icon: Globe,
-    title: "Stay connected",
-    description: "Keep in touch throughout your entire exchange experience.",
+    icon: Heart,
+    title: "Advice from students who've been there",
+    description:
+      "Ask real questions to people who already did their Erasmus at your destination. Accommodation tips, nightlife, course reviews, the honest stuff.",
     color: "bg-erasmatch-purple/10 text-erasmatch-purple",
+  },
+  {
+    icon: Calendar,
+    title: "Organised around your timeline",
+    description:
+      "Arrival dates, semester filters, and \"looking for\" tags so you can find roommates before you arrive, travel buddies during, and friends for life after.",
+    color: "bg-erasmatch-orange/10 text-erasmatch-orange",
   },
 ];
 
 const container = {
   hidden: {},
   show: {
-    transition: { staggerChildren: 0.1 },
+    transition: { staggerChildren: 0.12 },
   },
 };
 
 const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
+  hidden: { opacity: 0, y: 24 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+  },
 };
 
 export const FeaturesSection = () => {
   return (
     <section className="py-24 bg-card">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
-          className="text-center mb-16"
+        <motion.div
+          className="text-center mb-16 max-w-2xl mx-auto"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-sm font-medium tracking-widest uppercase text-erasmatch-green mb-3">Why ErasMatch</p>
-          <h2 className="text-3xl sm:text-4xl font-display font-bold text-foreground text-balance">
+          <p className="text-sm font-medium tracking-widest uppercase text-erasmatch-green mb-3">
+            Why ErasMatch
+          </p>
+          <h2 className="text-3xl sm:text-4xl font-display font-bold text-foreground text-balance mb-4">
             Not just where you're going.
             <br className="hidden sm:block" />
             <span className="text-erasmatch-green"> Who you're going with.</span>
           </h2>
+          <p className="text-muted-foreground text-lg leading-relaxed">
+            We're not trying to be everything for everyone. ErasMatch does one thing: help Erasmus students find each other before they arrive.
+          </p>
         </motion.div>
 
-        <motion.div 
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
           variants={container}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-100px" }}
         >
-          {features.map((feature) => (
+          {reasons.map((reason, index) => (
             <motion.div
-              key={feature.title}
+              key={reason.title}
               variants={item}
-              className="group relative p-6 rounded-2xl bg-background border border-border hover:border-border/80 hover:shadow-card hover:scale-[1.03] transition-all duration-300 cursor-default"
+              className={`group relative p-7 rounded-2xl bg-background border border-border hover:border-border/80 hover:shadow-card hover:scale-[1.02] transition-all duration-300 cursor-default ${
+                index >= 3 ? "sm:col-span-1 lg:col-span-1" : ""
+              } ${index === 3 ? "lg:col-start-1" : ""}`}
             >
-              <div className={`h-11 w-11 rounded-xl ${feature.color} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300`}>
-                <feature.icon className="h-5 w-5" />
+              <div
+                className={`h-11 w-11 rounded-xl ${reason.color} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300`}
+              >
+                <reason.icon className="h-5 w-5" />
               </div>
-              <h3 className="font-semibold text-foreground mb-2">{feature.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed group-hover:text-foreground/70 transition-colors duration-300">{feature.description}</p>
+              <h3 className="font-semibold text-foreground mb-2 text-[1.05rem]">
+                {reason.title}
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed group-hover:text-foreground/70 transition-colors duration-300">
+                {reason.description}
+              </p>
             </motion.div>
           ))}
         </motion.div>
