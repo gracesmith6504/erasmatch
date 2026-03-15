@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile } from "@/types";
+import { createNotification } from "@/utils/notifications";
 
 interface ProfileViewer {
   profile: Profile;
