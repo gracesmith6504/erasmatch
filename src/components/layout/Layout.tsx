@@ -43,6 +43,15 @@ const Layout = ({ children }: LayoutProps) => {
 
   const isMessagesPage = location.pathname === "/messages";
   const isHomePage = location.pathname === "/";
+  const isOnboarding = location.pathname === "/onboarding";
+
+  if (isOnboarding) {
+    return (
+      <div className="flex flex-col min-h-screen bg-background">
+        <main className="flex-1 w-full">{children}</main>
+      </div>
+    );
+  }
 
   return (
     <div className={`flex flex-col min-h-screen bg-background overflow-x-hidden w-full max-w-full ${isMessagesPage ? 'overflow-hidden' : ''}`}>
