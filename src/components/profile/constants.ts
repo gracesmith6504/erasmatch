@@ -1,10 +1,10 @@
 
 export const SEMESTER_OPTIONS = [
-  "Fall 2025",
   "Spring 2026",
-  "Full Academic Year 2025–26",
   "Fall 2026",
+  "Full Academic Year 2025–26",
   "Spring 2027",
+  "Fall 2027"
   "Full Academic Year 2026–27",
 ];
 
