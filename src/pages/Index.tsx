@@ -42,11 +42,11 @@ const Index = () => {
         handlePlanning={handlePlanning}
       />
       <FeaturesSection />
-      <div className="h-16 bg-gradient-to-b from-card to-background" />
+      <div className="h-8 sm:h-16 bg-gradient-to-b from-card to-background" />
       <HowItWorksSection />
       <AlumniAdviceSection handleFindStudents={handleFindStudents} />
       <StudentStoriesSection />
-      <div className="h-16 bg-gradient-to-b from-secondary/30 to-background" />
+      <div className="h-8 sm:h-16 bg-gradient-to-b from-secondary/30 to-background" />
       <GroupChatSection handleFindStudents={handleFindStudents} />
       <CommunitySection handleFindStudents={handleFindStudents} />
       <HomeFooter />
