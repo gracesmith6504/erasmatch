@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { HeroSection } from "@/components/home/HeroSection";
 import { FeaturesSection } from "@/components/home/FeaturesSection";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
+import { AlumniAdviceSection } from "@/components/home/AlumniAdviceSection";
 import { StudentStoriesSection } from "@/components/home/StudentStoriesSection";
 import { GroupChatSection } from "@/components/home/GroupChatSection";
 import { CommunitySection } from "@/components/home/CommunitySection";
@@ -43,6 +44,7 @@ const Index = () => {
       <FeaturesSection />
       <div className="h-16 bg-gradient-to-b from-card to-background" />
       <HowItWorksSection />
+      <AlumniAdviceSection handleFindStudents={handleFindStudents} />
       <StudentStoriesSection />
       <div className="h-16 bg-gradient-to-b from-secondary/30 to-background" />
       <GroupChatSection handleFindStudents={handleFindStudents} />
