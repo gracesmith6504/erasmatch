@@ -67,20 +67,33 @@ export const useProfileViewers = (currentUserId: string | null) => {
   return { viewers, isLoading };
 };
 
-export const recordProfileView = async (viewerId: string, viewedId: string) => {
-  if (viewerId === viewedId) return;
+export const recordProfileView = async (_viewerId: string, viewedId: string) => {
   try {
+    const { data: authData, error: authError } = await supabase.auth.getUser();
+    const viewerId = authData.user?.id;
+
+    if (authError || !viewerId) {
+      console.error("[ProfileView] User not authenticated while recording view", authError);
+      return;
+    }
+
+    if (viewerId === viewedId) return;
+
     console.log("[ProfileView] Recording view:", { viewerId, viewedId });
-    const { data, error } = await supabase
+
+    const { error } = await supabase
       .from('profile_views')
       .upsert(
-        { viewer_id: viewerId, viewed_id: viewedId, viewed_at: new Date().toISOString() },
+        {
+          viewer_id: viewerId,
+          viewed_id: viewedId,
+          viewed_at: new Date().toISOString(),
+        },
         { onConflict: 'viewer_id,viewed_id' }
       );
+
     if (error) {
       console.error("[ProfileView] Error recording view:", error);
-    } else {
-      console.log("[ProfileView] View recorded successfully", data);
     }
   } catch (err) {
     console.error("[ProfileView] Exception recording view:", err);
