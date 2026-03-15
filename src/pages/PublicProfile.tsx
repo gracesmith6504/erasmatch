@@ -15,8 +15,15 @@ const PublicProfile = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, currentUserId } = useAuth();
   const navigate = useNavigate();
+
+  // Record profile view when authenticated user views someone else's profile
+  useEffect(() => {
+    if (currentUserId && profile?.id && currentUserId !== profile.id) {
+      recordProfileView(currentUserId, profile.id);
+    }
+  }, [currentUserId, profile?.id]);
 
   useEffect(() => {
     const fetchProfileByRefCode = async () => {
