@@ -14,6 +14,7 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
   const [loadedProfiles, setLoadedProfiles] = useState<Profile[]>(initialProfiles);
   const [loading, setLoading] = useState(true);
   const [featuredProfiles, setFeaturedProfiles] = useState<Profile[]>([]);
+  const [universityCityMap, setUniversityCityMap] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const fetchProfiles = async () => {
