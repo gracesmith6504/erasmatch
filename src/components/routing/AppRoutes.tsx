@@ -44,6 +44,7 @@ const AppRoutes = () => {
         } 
       />
       <Route path="/about" element={<About />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route 
         path="/students" 
