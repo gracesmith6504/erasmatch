@@ -37,7 +37,7 @@ const ProfileView = ({ profiles, currentUserId, onSendMessage }: ProfileViewProp
   // Record profile view
   useEffect(() => {
     if (currentUserId && profile?.id && currentUserId !== profile.id) {
-      recordProfileView(currentUserId, profile.id);
+      recordProfileView(profile.id);
     }
   }, [currentUserId, profile?.id]);
 

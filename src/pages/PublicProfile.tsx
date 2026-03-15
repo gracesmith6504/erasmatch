@@ -21,7 +21,7 @@ const PublicProfile = () => {
   // Record profile view when authenticated user views someone else's profile
   useEffect(() => {
     if (currentUserId && profile?.id && currentUserId !== profile.id) {
-      recordProfileView(currentUserId, profile.id);
+      recordProfileView(profile.id);
     }
   }, [currentUserId, profile?.id]);
 
