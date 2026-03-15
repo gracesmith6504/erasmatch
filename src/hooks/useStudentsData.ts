@@ -121,6 +121,7 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     uniqueSemesters,
     filteredProfiles,
     featuredProfiles,
+    universityCityMap,
     loading,
     resetFilters
   };
