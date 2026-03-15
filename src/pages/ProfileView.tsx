@@ -34,6 +34,13 @@ const ProfileView = ({ profiles, currentUserId, onSendMessage }: ProfileViewProp
     isOwnProfile
   } = useProfileView(profile, currentUserId, onSendMessage);
 
+  // Record profile view
+  useEffect(() => {
+    if (currentUserId && profile?.id && currentUserId !== profile.id) {
+      recordProfileView(currentUserId, profile.id);
+    }
+  }, [currentUserId, profile?.id]);
+
   const handleBackToStudents = () => {
     navigate('/students', { state: { fromProfile: true }});
   };
