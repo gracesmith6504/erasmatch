@@ -17,6 +17,7 @@ interface StudentCardGridProps {
   filteredProfiles: Profile[];
   resetFilters: () => void;
   featuredProfiles?: Profile[];
+  universityCityMap?: Record<string, string>;
 }
 
 const ITEMS_PER_PAGE = 20; // Reduced from 40 to 20 for better performance
