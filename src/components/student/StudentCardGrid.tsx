@@ -23,7 +23,7 @@ interface StudentCardGridProps {
 const ITEMS_PER_PAGE = 20; // Reduced from 40 to 20 for better performance
 const PAGINATION_STATE_KEY = "studentGridPaginationState";
 
-const StudentCardGrid = ({ filteredProfiles, resetFilters, featuredProfiles = [] }: StudentCardGridProps) => {
+const StudentCardGrid = ({ filteredProfiles, resetFilters, featuredProfiles = [], universityCityMap = {} }: StudentCardGridProps) => {
   const location = useLocation();
   const [currentPage, setCurrentPage] = useState(1);
   const isMobile = useIsMobile();
