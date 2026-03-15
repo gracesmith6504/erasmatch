@@ -110,31 +110,6 @@ export const PersonalityTagsSection = ({
         </Button>
       </div>
 
-      {/* Display selected tags */}
-      {selectedTags && selectedTags.length > 0 && (
-        <div className="mt-4">
-          <h4 className="text-sm font-medium text-gray-700 mb-2">Selected Tags:</h4>
-          <div className="flex flex-wrap gap-2">
-            {selectedTags.map((tag) => {
-              const tagInfo = PERSONALITY_TAGS.find(t => t.value === tag);
-              return (
-                <Badge
-                  key={tag}
-                  className={`${getTagColor(tag)}`}
-                >
-                  {tagInfo?.icon} {tagInfo?.label}
-                  <button 
-                    className="ml-1" 
-                    onClick={() => onToggleTag(tag)}
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </Badge>
-              );
-            })}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
