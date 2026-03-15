@@ -31,6 +31,7 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
     uniqueSemesters,
     filteredProfiles,
     featuredProfiles,
+    universityCityMap,
     loading,
     resetFilters
   } = useStudentsData(profiles, currentUserId);
