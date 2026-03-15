@@ -13,11 +13,15 @@ export function useUnreadMessageCount(currentUserId: string | null) {
     const fetchCount = async () => {
       // Get messages where user is receiver and hasn't read them
       // read_by can be null or an array not containing the user
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
       const { count: unread, error } = await supabase
         .from("messages")
         .select("*", { count: "exact", head: true })
         .eq("receiver_id", currentUserId)
-        .not("read_by", "cs", `{${currentUserId}}`);
+        .not("read_by", "cs", `{${currentUserId}}`)
+        .gte("created_at", thirtyDaysAgo.toISOString());
 
       if (error) {
         console.error("Error fetching unread count:", error);
