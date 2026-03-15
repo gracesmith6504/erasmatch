@@ -39,6 +39,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log("Auth state changed:", event, session?.user?.id);
+        if (event === "PASSWORD_RECOVERY") {
+          navigate("/reset-password");
+          return;
+        }
         handleAuthChange(session);
       }
     );
