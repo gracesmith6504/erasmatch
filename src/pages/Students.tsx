@@ -38,8 +38,18 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
   } = useStudentsData(profiles, currentUserId);
 
   const [activeTab, setActiveTab] = useState<"list" | "cities">("list");
+  const [suggestedDismissed, setSuggestedDismissed] = useState(() => sessionStorage.getItem("suggestedStudentsDismissed") === "true");
   const location = useLocation();
   const { showBanner, cityName, hasAvatar } = useOnboardingBanner(currentUserId);
+
+  const fromOnboarding = new URLSearchParams(location.search).get("from") === "onboarding";
+  const currentProfile = profiles.find(p => p.id === currentUserId);
+  const showSuggested = fromOnboarding && !suggestedDismissed && !!currentProfile;
+
+  const handleDismissSuggested = () => {
+    setSuggestedDismissed(true);
+    sessionStorage.setItem("suggestedStudentsDismissed", "true");
+  };
   
   // Store onboarding completion info when coming from onboarding
   useEffect(() => {
