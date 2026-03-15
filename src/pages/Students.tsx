@@ -10,6 +10,7 @@ import { Users, MapPin } from "lucide-react";
 import { useLocation, Link } from "react-router-dom";
 import { WelcomeBanner } from "@/components/WelcomeBanner";
 import { useOnboardingBanner } from "@/hooks/useOnboardingBanner";
+import SuggestedStudents from "@/components/student/SuggestedStudents";
 
 type StudentsProps = {
   profiles: Profile[];
@@ -37,8 +38,18 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
   } = useStudentsData(profiles, currentUserId);
 
   const [activeTab, setActiveTab] = useState<"list" | "cities">("list");
+  const [suggestedDismissed, setSuggestedDismissed] = useState(() => sessionStorage.getItem("suggestedStudentsDismissed") === "true");
   const location = useLocation();
   const { showBanner, cityName, hasAvatar } = useOnboardingBanner(currentUserId);
+
+  const fromOnboarding = new URLSearchParams(location.search).get("from") === "onboarding";
+  const currentProfile = profiles.find(p => p.id === currentUserId);
+  const showSuggested = fromOnboarding && !suggestedDismissed && !!currentProfile;
+
+  const handleDismissSuggested = () => {
+    setSuggestedDismissed(true);
+    sessionStorage.setItem("suggestedStudentsDismissed", "true");
+  };
   
   // Store onboarding completion info when coming from onboarding
   useEffect(() => {
@@ -96,6 +107,16 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
     <div className="max-w-7xl mx-auto py-4 sm:py-6 md:py-8 px-4 sm:px-6 lg:px-8 animate-fade-in overflow-x-hidden w-full">
       {showBanner && (
         <WelcomeBanner cityName={cityName} hasAvatar={hasAvatar} />
+      )}
+
+      {showSuggested && (
+        <SuggestedStudents
+          profiles={profiles}
+          currentUserId={currentUserId!}
+          cityName={currentProfile?.city || null}
+          universityName={currentProfile?.university || null}
+          onDismiss={handleDismissSuggested}
+        />
       )}
       
       <h1 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-4">Find Erasmus Students</h1>
