@@ -27,7 +27,7 @@ export function useNotifications(currentUserId: string | null) {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from("notifications")
       .select("*")
       .eq("user_id", currentUserId)
@@ -47,7 +47,7 @@ export function useNotifications(currentUserId: string | null) {
     }
 
     // Fetch actor profiles
-    const actorIds = [...new Set(data.map((n: any) => n.actor_id))];
+    const actorIds = [...new Set(data.map((n: any) => n.actor_id))] as string[];
     const { data: profiles } = await supabase
       .from("profiles")
       .select("id, name, avatar_url")
@@ -69,7 +69,7 @@ export function useNotifications(currentUserId: string | null) {
   const markAllAsRead = useCallback(async () => {
     if (!currentUserId) return;
 
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("notifications")
       .update({ read: true })
       .eq("user_id", currentUserId)

@@ -20,7 +20,7 @@ export async function createNotification({
   // Don't notify yourself
   if (userId === actorId) return;
 
-  const { error } = await supabase.from("notifications").insert({
+  const { error } = await (supabase as any).from("notifications").insert({
     user_id: userId,
     type,
     actor_id: actorId,
