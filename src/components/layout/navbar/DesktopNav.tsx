@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { NotificationBell } from "./NotificationBell";
 import { useNavigation } from "./useNavigation";
 import { NavigationLink } from "./NavigationLink";
 
@@ -52,6 +53,7 @@ export const DesktopNav = ({ isAuthenticated, isActive, onLogout }: DesktopNavPr
       </div>
 
       <div className="hidden md:flex items-center gap-1">
+        <NotificationBell />
         <Link
           to="/profile"
           className={`p-2 rounded-full transition-colors ${

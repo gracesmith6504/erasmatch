@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile } from "@/types";
+import { createNotification } from "@/utils/notifications";
 
 interface ProfileViewer {
   profile: Profile;
@@ -88,7 +89,24 @@ export const recordProfileView = async (viewedId: string) => {
         viewed_at: viewedAt,
       });
 
-    if (!insertError) return;
+    if (!insertError) {
+      // New view — send notification
+      const { data: viewerProfile } = await supabase
+        .from('profiles')
+        .select('name')
+        .eq('id', authenticatedViewerId)
+        .single();
+
+      createNotification({
+        userId: viewedId,
+        type: 'profile_view',
+        actorId: authenticatedViewerId,
+        referenceId: viewedId,
+        title: 'Profile view',
+        body: `${viewerProfile?.name || 'Someone'} viewed your profile`,
+      });
+      return;
+    }
 
     if (insertError.code === '23505') {
       const { error: updateError } = await supabase

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile, CityMessage } from "@/types";
 import { toast } from "sonner";
+import { createNotification } from "@/utils/notifications";
 import { CityParticipantsInfo } from "./CityParticipantsInfo";
 import { CityMessageList } from "./CityMessageList";
 import { CityInput } from "./CityInput";
@@ -105,6 +106,42 @@ export const CityPanel = ({
         });
       
       if (error) throw error;
+      
+      // If this is the user's first message in the city, notify existing members (if < 50)
+      if (!hasSentMessage) {
+        try {
+          const { data: existingMessages } = await supabase
+            .from("city_messages")
+            .select("sender_id")
+            .eq("city_name", cityName)
+            .neq("sender_id", currentUserId);
+
+          const uniqueMembers = [...new Set((existingMessages || []).map((m: any) => m.sender_id))];
+          
+          if (uniqueMembers.length < 50) {
+            const { data: senderProfile } = await supabase
+              .from("profiles")
+              .select("name")
+              .eq("id", currentUserId)
+              .single();
+
+            const name = senderProfile?.name || "A new student";
+            uniqueMembers.forEach((memberId) => {
+              createNotification({
+                userId: memberId,
+                type: "city_join",
+                actorId: currentUserId,
+                referenceId: cityName,
+                title: "New student in your city",
+                body: `${name} joined the ${cityName} group`,
+              });
+            });
+          }
+        } catch (e) {
+          console.error("Error sending city join notifications:", e);
+        }
+      }
+      
       setHasSentMessage(true);
       
     } catch (error: any) {

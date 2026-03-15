@@ -6,6 +6,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile, Message } from "@/types";
+import { createNotification } from "@/utils/notifications";
 import { useAuth } from "./AuthContext";
 
 type DataContextType = {
@@ -136,6 +137,17 @@ export const DataProvider = ({ children }: DataProviderProps) => {
           console.error('Error sending email notification:', response.error);
         }
       }
+
+      // Create in-app notification for the receiver
+      const senderName = senderProfile?.name || 'Someone';
+      createNotification({
+        userId: receiverId,
+        type: 'direct_message',
+        actorId: currentUserId,
+        referenceId: messageData?.id,
+        title: 'New message',
+        body: `${senderName} sent you a message`,
+      });
 
       // Optimistically update local state
       if (messageData) {
