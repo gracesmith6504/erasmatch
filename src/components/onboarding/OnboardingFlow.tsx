@@ -16,7 +16,7 @@ export const OnboardingFlow = () => {
   const navigate = useNavigate();
   const { currentUserProfile, handleProfileUpdate } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
-  const totalSteps = 5;
+  const totalSteps = 6;
 
   // Handle case where user is already onboarded
   useEffect(() => {
