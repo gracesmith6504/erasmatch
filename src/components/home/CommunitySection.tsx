@@ -67,6 +67,7 @@ export const CommunitySection = ({ handleFindStudents }: CommunitySectionProps) 
           >
             Join ErasMatch <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
+          <p className="mt-4 text-sm text-background/50">Your Erasmus starts here. It's free.</p>
         </motion.div>
       </div>
     </section>
