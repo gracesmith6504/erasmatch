@@ -47,7 +47,7 @@ export function useNotifications(currentUserId: string | null) {
     }
 
     // Fetch actor profiles
-    const actorIds = [...new Set(data.map((n: any) => n.actor_id))];
+    const actorIds = [...new Set(data.map((n: any) => n.actor_id))] as string[];
     const { data: profiles } = await supabase
       .from("profiles")
       .select("id, name, avatar_url")
