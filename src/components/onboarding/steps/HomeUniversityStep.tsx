@@ -90,14 +90,6 @@ export const HomeUniversityStep = ({
               Next
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={handleSkip}
-              className="text-gray-500"
-            >
-              Skip this question
-            </Button>
           </div>
         </form>
       </div>
