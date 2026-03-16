@@ -107,7 +107,7 @@ const AdminUniversities = () => {
   );
 
   // Loading state while checking role
-  if (isAdmin === null) {
+  if (!adminChecked) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <p className="text-muted-foreground">Checking permissions...</p>
