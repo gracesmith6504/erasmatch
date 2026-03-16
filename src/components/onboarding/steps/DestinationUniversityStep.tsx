@@ -48,6 +48,14 @@ export const DestinationUniversityStep = ({
   const [manualName, setManualName] = useState("");
 
   const { universities: allUniversities, loading: unisLoading } = useUniversitiesCache();
+  const [aliases, setAliases] = useState<AliasEntry[]>([]);
+
+  // Load aliases once
+  useEffect(() => {
+    supabase.from("university_aliases").select("alias, university_id").then(({ data }) => {
+      setAliases((data as AliasEntry[]) || []);
+    });
+  }, []);
 
   // Filter universities by selected city
   const filteredUniversities = useMemo(() => {
@@ -58,14 +66,24 @@ export const DestinationUniversityStep = ({
     );
   }, [city, allUniversities]);
 
-  // Further filter by search query inside dropdown
+  // Further filter by search query inside dropdown (with alias support)
   const searchedUniversities = useMemo(() => {
     if (!uniSearch.trim()) return filteredUniversities;
-    const q = uniSearch.trim().toLowerCase();
+    const q = normalizeString(uniSearch);
+    
+    // Find university IDs that match via aliases
+    const aliasMatchIds = new Set<number>();
+    for (const entry of aliases) {
+      const normalizedAlias = normalizeString(entry.alias);
+      if (normalizedAlias.includes(q) || q.includes(normalizedAlias)) {
+        aliasMatchIds.add(entry.university_id);
+      }
+    }
+    
     return filteredUniversities.filter((u) =>
-      u.name.toLowerCase().includes(q)
+      normalizeString(u.name).includes(q) || aliasMatchIds.has(u.id)
     );
-  }, [filteredUniversities, uniSearch]);
+  }, [filteredUniversities, uniSearch, aliases]);
 
   const handleCityChange = (newCity: string) => {
     setCity(newCity);
