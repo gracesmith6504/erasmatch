@@ -14,6 +14,7 @@ interface DesktopNavProps {
 
 export const DesktopNav = ({ isAuthenticated, isActive, onLogout }: DesktopNavProps) => {
   const { navigationItems } = useNavigation();
+  const isAdmin = useIsAdmin();
 
   if (!isAuthenticated) {
     return (
