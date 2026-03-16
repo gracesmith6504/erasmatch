@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { ArrowRight, MapPin, School } from "lucide-react";
 import UniversityAutocomplete from "@/components/UniversityAutocomplete";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,29 +21,33 @@ export const DestinationUniversityStep = ({
   onUpdateProfile,
 }: DestinationUniversityStepProps) => {
   const [university, setUniversity] = useState(initialValue);
-  const [city, setCity] = useState<string | null>(null);
+  const [city, setCity] = useState<string>("");
+  const [cityAutoFilled, setCityAutoFilled] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = async (value: string) => {
     setUniversity(value);
+    setCityAutoFilled(false);
 
     try {
-      // Query the universities table to get city information
       const { data, error } = await supabase
         .from("universities")
         .select("city")
         .eq("name", value)
         .single();
 
-      if (error) {
-        console.error("Failed to fetch city:", error);
-        setCity(null);
+      if (!error && data?.city) {
+        setCity(data.city);
+        setCityAutoFilled(true);
       } else {
-        setCity(data?.city || null);
+        // Don't clear city if user already typed something
+        if (cityAutoFilled) {
+          setCity("");
+          setCityAutoFilled(false);
+        }
       }
     } catch (err) {
       console.error("Lookup error:", err);
-      setCity(null);
     }
   };
 
@@ -51,18 +56,16 @@ export const DestinationUniversityStep = ({
     setIsSubmitting(true);
 
     try {
-      // Save both university and city to the profile
-      const success = await onUpdateProfile({ university, city });
+      const success = await onUpdateProfile({ 
+        university, 
+        city: city.trim() || null 
+      });
       if (success) {
         onNext();
       }
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const handleSkip = () => {
-    onNext();
   };
 
   return (
@@ -93,7 +96,7 @@ export const DestinationUniversityStep = ({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="w-full flex flex-col gap-2 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+          <div className="w-full flex flex-col gap-3 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
             <UniversityAutocomplete
               value={university}
               onChange={handleChange}
@@ -101,13 +104,19 @@ export const DestinationUniversityStep = ({
               required={false}
             />
 
-            {/* City label if university is selected */}
+            {/* Editable city field - always visible when university is set */}
             {university && (
-              <div className="flex items-center text-sm text-gray-600 px-1 mt-1 animate-fade-in">
-                <MapPin className="h-4 w-4 mr-1 text-erasmatch-green shrink-0" />
-                <span className="truncate">
-                  {city ? city : "City not available for this university"}
-                </span>
+              <div className="flex items-center gap-2 animate-fade-in">
+                <MapPin className="h-4 w-4 text-erasmatch-green shrink-0" />
+                <Input
+                  value={city}
+                  onChange={(e) => {
+                    setCity(e.target.value);
+                    setCityAutoFilled(false);
+                  }}
+                  placeholder="Which city? (e.g. Barcelona, Milan)"
+                  className="h-9 text-sm border-dashed"
+                />
               </div>
             )}
           </div>
