@@ -16,7 +16,7 @@ import { UniversitySearchResults } from "./UniversitySearchResults";
 
 type UniversityDropdownProps = {
   value: string;
-  onChange: (value: string) => void;
+  onChange: (value: string, isFromApi?: boolean) => void;
   onManualEntry: () => void;
   universities: University[];
   isLoading: boolean;
@@ -24,6 +24,8 @@ type UniversityDropdownProps = {
   onSearchChange: (query: string) => void;
   popoverRef: React.RefObject<HTMLDivElement>;
   required?: boolean;
+  apiFallbackResults?: University[];
+  isSearchingApi?: boolean;
 };
 
 export function UniversityDropdown({
@@ -36,13 +38,15 @@ export function UniversityDropdown({
   onSearchChange,
   popoverRef,
   required = false,
+  apiFallbackResults = [],
+  isSearchingApi = false,
 }: UniversityDropdownProps) {
   const [open, setOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const handleSelect = (universityName: string) => {
-    onChange(universityName);
+  const handleSelect = (universityName: string, isFromApi?: boolean) => {
+    onChange(universityName, isFromApi);
     setOpen(false);
   };
   
@@ -52,10 +56,9 @@ export function UniversityDropdown({
       const popoverElement = popoverRef.current;
       const viewportWidth = window.innerWidth;
       
-      if (viewportWidth < 640) { // Mobile
+      if (viewportWidth < 640) {
         popoverElement.style.width = `${viewportWidth - 40}px`;
       } else {
-        // On desktop use the button width
         const buttonWidth = buttonRef.current?.offsetWidth;
         if (buttonWidth) {
           popoverElement.style.width = `${buttonWidth}px`;
@@ -64,14 +67,12 @@ export function UniversityDropdown({
     }
   }, [open, popoverRef]);
 
-  // Reset scroll to top when universities list changes
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = 0;
     }
   }, [universities]);
 
-  // Truncate long university names for button display
   const displayValue = value && value.length > 28 
     ? value.substring(0, 28) + "..." 
     : value || "Select university...";
@@ -83,7 +84,7 @@ export function UniversityDropdown({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={`w-full justify-between truncate ${required && !value ? 'border-red-300' : ''}`}
+          className={`w-full justify-between truncate ${required && !value ? 'border-destructive' : ''}`}
           aria-required={required}
           ref={buttonRef}
         >
@@ -103,7 +104,7 @@ export function UniversityDropdown({
             placeholder="Search by name, city, country..." 
             value={searchQuery}
             onValueChange={onSearchChange}
-            className="bg-white"
+            className="bg-background"
           />
           <CommandList ref={scrollRef} className="max-h-[300px] overflow-y-auto">
             <CommandEmpty>
@@ -119,6 +120,8 @@ export function UniversityDropdown({
               onSelect={handleSelect}
               onManualEntry={() => { setOpen(false); onManualEntry(); }}
               searchQuery={searchQuery}
+              apiFallbackResults={apiFallbackResults}
+              isSearchingApi={isSearchingApi}
             />
           </CommandList>
         </Command>

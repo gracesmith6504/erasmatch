@@ -4,10 +4,11 @@ import { Label } from "@/components/ui/label";
 import { UniversityDropdown } from "./university/UniversityDropdown";
 import { ManualUniversityEntry } from "./university/ManualUniversityEntry";
 import { useUniversitySearch } from "./university/useUniversitySearch";
+import { autoAddUniversity } from "./university/useAutoAddUniversity";
 
 type UniversityAutocompleteProps = {
   value: string;
-  onChange: (value: string) => void;
+  onChange: (value: string, isFromApi?: boolean) => void;
   label?: string;
   required?: boolean;
   prioritizeIrish?: boolean;
@@ -24,7 +25,7 @@ const UniversityAutocomplete = ({
 }: UniversityAutocompleteProps) => {
   const [manualEntry, setManualEntry] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
-  const { universities, isLoading, searchQuery, handleSearch } = useUniversitySearch(prioritizeIrish);
+  const { universities, apiFallbackResults, isLoading, isSearchingApi, searchQuery, handleSearch } = useUniversitySearch(prioritizeIrish);
 
   const handleManualEntry = () => {
     setManualEntry(true);
@@ -37,18 +38,28 @@ const UniversityAutocomplete = ({
   const handleReturnToDropdown = () => {
     setManualEntry(false);
   };
+
+  const handleDropdownChange = async (universityName: string, isFromApi?: boolean) => {
+    if (isFromApi) {
+      // Auto-add API result to our DB (without city — user will confirm city separately)
+      await autoAddUniversity(universityName);
+    }
+    onChange(universityName, isFromApi);
+  };
   
   return (
     <div className="space-y-2">
-      <Label htmlFor="university" className="block text-sm font-medium text-gray-700">
-        {label}{required && <span className="text-red-500 ml-1">*</span>}
-      </Label>
+      {label && (
+        <Label htmlFor="university" className="block text-sm font-medium text-muted-foreground">
+          {label}{required && <span className="text-destructive ml-1">*</span>}
+        </Label>
+      )}
       
       {!manualEntry ? (
         <div className="space-y-2">
           <UniversityDropdown
             value={value}
-            onChange={onChange}
+            onChange={handleDropdownChange}
             onManualEntry={handleManualEntry}
             universities={universities}
             isLoading={isLoading}
@@ -56,9 +67,10 @@ const UniversityAutocomplete = ({
             onSearchChange={handleSearch}
             popoverRef={popoverRef}
             required={required}
+            apiFallbackResults={apiFallbackResults}
+            isSearchingApi={isSearchingApi}
           />
           
-          {/* Always visible manual entry button */}
           <button
             type="button"
             onClick={handleManualEntry}
