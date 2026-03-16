@@ -25,8 +25,16 @@ export const DestinationUniversityStep = ({
   const [cityAutoFilled, setCityAutoFilled] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = async (value: string) => {
+  const handleChange = async (value: string, isFromApi?: boolean) => {
     setUniversity(value);
+
+    if (isFromApi) {
+      // From Hipo API — no city data available, prompt user to enter it
+      setCity("");
+      setCityAutoFilled(false);
+      return;
+    }
+
     setCityAutoFilled(false);
 
     try {
@@ -40,7 +48,6 @@ export const DestinationUniversityStep = ({
         setCity(data.city);
         setCityAutoFilled(true);
       } else {
-        // Don't clear city if user already typed something
         if (cityAutoFilled) {
           setCity("");
           setCityAutoFilled(false);
