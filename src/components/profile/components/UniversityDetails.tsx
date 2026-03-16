@@ -103,11 +103,14 @@ export const UniversityDetails = ({
           required={false}
         />
 
-        {/* Display city as read-only information */}
+        {/* Editable city autocomplete */}
         {form.university && (
-          <div className="flex items-center text-sm mt-2 text-gray-600">
-            <MapPin className="h-4 w-4 mr-1 text-erasmatch-green" />
-            <span>{form.city ? form.city : "City not available for this university"}</span>
+          <div className="mt-2">
+            <CityAutocomplete
+              value={form.city || ""}
+              onChange={(val) => handleSelectChange("city", val || null)}
+              placeholder="Select destination city"
+            />
           </div>
         )}
       </div>
