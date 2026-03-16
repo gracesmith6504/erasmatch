@@ -37,8 +37,10 @@ Deno.serve(async (req) => {
     const response = await fetch(apiUrl);
 
     if (!response.ok) {
-      const body = await response.text();
-      throw new Error(`Hipo API error [${response.status}]: ${body}`);
+      console.warn(`Hipo API returned ${response.status}, returning empty results`);
+      return new Response(JSON.stringify([]), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const data = await response.text();
