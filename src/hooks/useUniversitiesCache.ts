@@ -8,6 +8,11 @@ let universitiesCache: University[] | null = null;
 let lastFetchTime = 0;
 const CACHE_EXPIRY = 15 * 60 * 1000; // 15 minutes
 
+export function clearUniversitiesCache() {
+  universitiesCache = null;
+  lastFetchTime = 0;
+}
+
 export function useUniversitiesCache() {
   const [universities, setUniversities] = useState<University[]>([]);
   const [loading, setLoading] = useState(true);
