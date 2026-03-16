@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { University } from "./types";
 import { useUniversitiesCache } from "@/hooks/useUniversitiesCache";
+import { supabase } from "@/integrations/supabase/client";
 
 // Hipo API response type
 type HipoUniversity = {
@@ -12,6 +13,8 @@ type HipoUniversity = {
   domains: string[];
   web_pages: string[];
 };
+
+type AliasEntry = { alias: string; university_id: number };
 
 const IRISH_UNIVERSITIES = [
   "Trinity College Dublin",
@@ -31,14 +34,32 @@ const normalizeString = (str: string) =>
 const SUPABASE_PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID || "ceoflcktscennfmmdrvp";
 const PROXY_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/functions/v1/university-search`;
 
+// Module-level alias cache
+let aliasCache: AliasEntry[] | null = null;
+
+async function fetchAliases(): Promise<AliasEntry[]> {
+  if (aliasCache) return aliasCache;
+  const { data } = await supabase
+    .from("university_aliases")
+    .select("alias, university_id");
+  aliasCache = (data as AliasEntry[]) || [];
+  return aliasCache;
+}
+
 export function useUniversitySearch(prioritizeIrish = false) {
   const { universities: allUniversities, loading: isLoading } = useUniversitiesCache();
   const [universities, setUniversities] = useState<University[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [apiFallbackResults, setApiFallbackResults] = useState<University[]>([]);
   const [isSearchingApi, setIsSearchingApi] = useState(false);
+  const [aliases, setAliases] = useState<AliasEntry[]>([]);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+
+  // Load aliases once
+  useEffect(() => {
+    fetchAliases().then(setAliases);
+  }, []);
 
   useEffect(() => {
     if (allUniversities.length > 0) {
@@ -57,13 +78,24 @@ export function useUniversitySearch(prioritizeIrish = false) {
     };
   }, []);
 
+  // Build a set of university IDs that match a query via aliases
+  const getAliasMatchIds = useCallback((query: string): Set<number> => {
+    const q = normalizeString(query);
+    const matchedIds = new Set<number>();
+    for (const entry of aliases) {
+      if (normalizeString(entry.alias).includes(q) || q.includes(normalizeString(entry.alias))) {
+        matchedIds.add(entry.university_id);
+      }
+    }
+    return matchedIds;
+  }, [aliases]);
+
   const searchHipoApi = useCallback(async (query: string) => {
     if (query.length < 3) {
       setApiFallbackResults([]);
       return;
     }
 
-    // Abort previous request
     if (abortRef.current) abortRef.current.abort();
     const controller = new AbortController();
     abortRef.current = controller;
@@ -91,7 +123,6 @@ export function useUniversitySearch(prioritizeIrish = false) {
       setApiFallbackResults(filtered);
     } catch (err: any) {
       if (err.name !== "AbortError") {
-        // Silently degrade — local results are sufficient
         setApiFallbackResults([]);
       }
     } finally {
@@ -113,14 +144,20 @@ export function useUniversitySearch(prioritizeIrish = false) {
       return;
     }
 
+    // Get IDs matched via aliases
+    const aliasMatchIds = getAliasMatchIds(trimmedQuery);
+
     const filtered = allUniversities.filter((uni) => {
+      // Direct text match
       const nameMatch = normalizeString(uni.name || "").includes(trimmedQuery);
       const cityMatch = normalizeString(uni.city || "").includes(trimmedQuery);
       const countryMatch = normalizeString(uni.country || "").includes(trimmedQuery);
-      return nameMatch || cityMatch || countryMatch;
+      // Alias match
+      const aliasMatch = aliasMatchIds.has(uni.id);
+      return nameMatch || cityMatch || countryMatch || aliasMatch;
     });
 
-    const sorted = sortUniversityResults(filtered, trimmedQuery, prioritizeIrish);
+    const sorted = sortUniversityResults(filtered, trimmedQuery, prioritizeIrish, aliasMatchIds);
     setUniversities(sorted);
 
     // Debounced API fallback when local results are few
@@ -133,7 +170,7 @@ export function useUniversitySearch(prioritizeIrish = false) {
     } else {
       setApiFallbackResults([]);
     }
-  }, [allUniversities, prioritizeIrish, searchHipoApi]);
+  }, [allUniversities, prioritizeIrish, searchHipoApi, getAliasMatchIds]);
 
   const sortUniversitiesByIrishFirst = (universities: University[]): University[] => {
     return [...universities].sort((a, b) => {
@@ -156,7 +193,9 @@ export function useUniversitySearch(prioritizeIrish = false) {
            university.city?.toLowerCase() === "belfast";
   };
 
-  const sortUniversityResults = (results: University[], query: string, prioritizeIrish: boolean): University[] => {
+  const sortUniversityResults = (
+    results: University[], query: string, prioritizeIrish: boolean, aliasMatchIds?: Set<number>
+  ): University[] => {
     return [...results].sort((a, b) => {
       if (prioritizeIrish) {
         const aIsIrish = isIrishUniversity(a);
@@ -164,19 +203,31 @@ export function useUniversitySearch(prioritizeIrish = false) {
         if (aIsIrish && !bIsIrish) return -1;
         if (!aIsIrish && bIsIrish) return 1;
       }
-      const aScore = calculateRelevanceScore(a, query);
-      const bScore = calculateRelevanceScore(b, query);
+      const aScore = calculateRelevanceScore(a, query, aliasMatchIds);
+      const bScore = calculateRelevanceScore(b, query, aliasMatchIds);
       if (bScore === aScore) return a.name.localeCompare(b.name);
       return bScore - aScore;
     });
   };
   
-  const calculateRelevanceScore = (university: University, query: string): number => {
+  const calculateRelevanceScore = (
+    university: University, query: string, aliasMatchIds?: Set<number>
+  ): number => {
     if (!university || !university.name) return 0;
     const nameLower = university.name.toLowerCase();
     const cityLower = university.city?.toLowerCase() || '';
     const countryLower = university.country?.toLowerCase() || '';
     let score = 0;
+
+    // Exact alias match gets high priority
+    if (aliasMatchIds?.has(university.id)) {
+      // Check if query exactly matches an alias for this university
+      const exactAlias = aliases.some(
+        a => a.university_id === university.id && normalizeString(a.alias) === query
+      );
+      score += exactAlias ? 900 : 300;
+    }
+
     if (nameLower === query) score += 1000;
     if (cityLower === query) score += 800;
     if (countryLower === query) score += 700;
