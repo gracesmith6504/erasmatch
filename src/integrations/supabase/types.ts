@@ -339,6 +339,35 @@ export type Database = {
         }
         Relationships: []
       }
+      university_aliases: {
+        Row: {
+          alias: string
+          created_at: string
+          id: string
+          university_id: number
+        }
+        Insert: {
+          alias: string
+          created_at?: string
+          id?: string
+          university_id: number
+        }
+        Update: {
+          alias?: string
+          created_at?: string
+          id?: string
+          university_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "university_aliases_university_id_fkey"
+            columns: ["university_id"]
+            isOneToOne: false
+            referencedRelation: "universities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
