@@ -7,12 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Trash2, Save, Search, AlertTriangle } from "lucide-react";
-
-// Hardcoded admin user IDs - add your admin user IDs here
-const ADMIN_USER_IDS = [
-  // Add admin user UUIDs here
-];
+import { Trash2, Save, Search, AlertTriangle, ShieldAlert } from "lucide-react";
 
 type UniversityRow = {
   id: number;
@@ -23,6 +18,7 @@ type UniversityRow = {
 
 const AdminUniversities = () => {
   const { currentUserId } = useAuth();
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null); // null = loading
   const [universities, setUniversities] = useState<UniversityRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"incomplete" | "all">("incomplete");
@@ -31,12 +27,37 @@ const AdminUniversities = () => {
   const [editCity, setEditCity] = useState("");
   const [editCountry, setEditCountry] = useState("");
 
-  // For now, allow any authenticated user (you can restrict with ADMIN_USER_IDS later)
-  const isAdmin = !!currentUserId;
+  // Check admin role from user_roles table (server-side via RLS)
+  useEffect(() => {
+    const checkAdmin = async () => {
+      if (!currentUserId) {
+        setIsAdmin(false);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", currentUserId)
+        .eq("role", "admin")
+        .maybeSingle();
+
+      if (error) {
+        console.error("Error checking admin role:", error);
+        setIsAdmin(false);
+      } else {
+        setIsAdmin(!!data);
+      }
+    };
+
+    checkAdmin();
+  }, [currentUserId]);
 
   useEffect(() => {
-    fetchUniversities();
-  }, [filter]);
+    if (isAdmin) {
+      fetchUniversities();
+    }
+  }, [filter, isAdmin]);
 
   const fetchUniversities = async () => {
     setLoading(true);
@@ -76,7 +97,7 @@ const AdminUniversities = () => {
       .eq("id", id);
 
     if (error) {
-      toast.error("Failed to update university");
+      toast.error("Failed to update — you may not have admin permissions");
       console.error(error);
     } else {
       toast.success("University updated");
@@ -94,7 +115,7 @@ const AdminUniversities = () => {
       .eq("id", id);
 
     if (error) {
-      toast.error("Failed to delete. Check RLS policies.");
+      toast.error("Failed to delete — you may not have admin permissions");
       console.error(error);
     } else {
       toast.success(`Deleted "${name}"`);
@@ -106,8 +127,26 @@ const AdminUniversities = () => {
     !searchQuery || uni.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Loading state while checking role
+  if (isAdmin === null) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">Checking permissions...</p>
+      </div>
+    );
+  }
+
+  // Not admin — show access denied
   if (!isAdmin) {
-    return <Navigate to="/" />;
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
+        <ShieldAlert className="h-16 w-16 text-destructive" />
+        <h1 className="text-xl font-bold text-foreground">Access Denied</h1>
+        <p className="text-muted-foreground text-center max-w-md">
+          You don't have admin permissions. Contact a team admin to get the admin role assigned to your account.
+        </p>
+      </div>
+    );
   }
 
   return (
@@ -150,12 +189,10 @@ const AdminUniversities = () => {
           </div>
         </div>
 
-        {/* Stats */}
         <div className="flex gap-4 text-sm text-muted-foreground">
           <span>Showing {filteredUniversities.length} universities</span>
         </div>
 
-        {/* Table */}
         {loading ? (
           <p className="text-center text-muted-foreground py-12">Loading...</p>
         ) : filteredUniversities.length === 0 ? (
