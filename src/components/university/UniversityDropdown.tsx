@@ -116,7 +116,9 @@ export function UniversityDropdown({
             <UniversitySearchResults 
               universities={universities} 
               selectedValue={value} 
-              onSelect={handleSelect} 
+              onSelect={handleSelect}
+              onManualEntry={() => { setOpen(false); onManualEntry(); }}
+              searchQuery={searchQuery}
             />
           </CommandList>
         </Command>
