@@ -2,9 +2,9 @@
 import { useState } from "react";
 import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ArrowRight, MapPin, School } from "lucide-react";
+import { ArrowRight, School } from "lucide-react";
 import UniversityAutocomplete from "@/components/UniversityAutocomplete";
+import { CityAutocomplete } from "@/components/CityAutocomplete";
 import { supabase } from "@/integrations/supabase/client";
 
 type DestinationUniversityStepProps = {
