@@ -2,9 +2,9 @@
 import { useState } from "react";
 import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ArrowRight, MapPin, School } from "lucide-react";
+import { ArrowRight, School } from "lucide-react";
 import UniversityAutocomplete from "@/components/UniversityAutocomplete";
+import { CityAutocomplete } from "@/components/CityAutocomplete";
 import { supabase } from "@/integrations/supabase/client";
 
 type DestinationUniversityStepProps = {
@@ -113,16 +113,15 @@ export const DestinationUniversityStep = ({
 
             {/* Editable city field - always visible when university is set */}
             {university && (
-              <div className="flex items-center gap-2 animate-fade-in">
-                <MapPin className="h-4 w-4 text-erasmatch-green shrink-0" />
-                <Input
+              <div className="animate-fade-in">
+                <CityAutocomplete
                   value={city}
-                  onChange={(e) => {
-                    setCity(e.target.value);
+                  onChange={(val) => {
+                    setCity(val);
                     setCityAutoFilled(false);
                   }}
                   placeholder="Which city? (e.g. Barcelona, Milan)"
-                  className="h-9 text-sm border-dashed"
+                  compact
                 />
               </div>
             )}
