@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { clearUniversitiesCache } from "@/hooks/useUniversitiesCache";
 
 /**
  * Attempts to insert a manually entered university into the universities table.
