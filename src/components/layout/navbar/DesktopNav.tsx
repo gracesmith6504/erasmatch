@@ -55,6 +55,19 @@ export const DesktopNav = ({ isAuthenticated, isActive, onLogout }: DesktopNavPr
       </div>
 
       <div className="hidden md:flex items-center gap-1">
+        {isAdmin && (
+          <Link
+            to="/admin/universities"
+            className={`p-2 rounded-full transition-colors ${
+              isActive('/admin/universities')
+                ? 'bg-secondary text-foreground'
+                : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+            }`}
+            title="Admin"
+          >
+            <ShieldCheck className="w-5 h-5" />
+          </Link>
+        )}
         <NotificationBell />
         <Link
           to="/profile"
