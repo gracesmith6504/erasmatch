@@ -1,8 +1,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeftCircle, MapPin } from "lucide-react";
+import { ArrowLeftCircle } from "lucide-react";
 import { autoAddUniversity } from "./useAutoAddUniversity";
+import { CityAutocomplete } from "@/components/CityAutocomplete";
 import { useState } from "react";
 
 type ManualUniversityEntryProps = {
@@ -51,15 +52,12 @@ export function ManualUniversityEntry({
         />
       </div>
       
-      <div className="flex gap-2 items-center">
-        <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
-        <Input
-          value={cityValue}
-          onChange={(e) => setCityValue(e.target.value)}
-          placeholder="City (e.g. Barcelona, Milan)"
-          className="w-full"
-        />
-      </div>
+      <CityAutocomplete
+        value={cityValue}
+        onChange={setCityValue}
+        placeholder="City (e.g. Barcelona, Milan)"
+        compact
+      />
 
       <div className="flex gap-2">
         <Button 
