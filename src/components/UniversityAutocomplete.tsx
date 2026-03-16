@@ -11,6 +11,7 @@ type UniversityAutocompleteProps = {
   label?: string;
   required?: boolean;
   prioritizeIrish?: boolean;
+  onManualSave?: (universityName: string, city: string) => void;
 };
 
 const UniversityAutocomplete = ({ 
@@ -18,7 +19,8 @@ const UniversityAutocomplete = ({
   onChange,
   label = "University", 
   required = false,
-  prioritizeIrish = false
+  prioritizeIrish = false,
+  onManualSave,
 }: UniversityAutocompleteProps) => {
   const [manualEntry, setManualEntry] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -72,6 +74,7 @@ const UniversityAutocomplete = ({
           onChange={handleManualInputChange}
           onReturn={handleReturnToDropdown}
           required={required}
+          onSave={onManualSave}
         />
       )}
     </div>
