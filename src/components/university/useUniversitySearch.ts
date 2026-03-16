@@ -91,7 +91,7 @@ export function useUniversitySearch(prioritizeIrish = false) {
       setApiFallbackResults(filtered);
     } catch (err: any) {
       if (err.name !== "AbortError") {
-        console.error("Hipo API fallback error:", err);
+        // Silently degrade — local results are sufficient
         setApiFallbackResults([]);
       }
     } finally {
