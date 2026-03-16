@@ -399,6 +399,8 @@ export type Database = {
         Returns: boolean
       }
       join_group_by_slug: { Args: never; Returns: undefined }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
       slugify: { Args: { input: string }; Returns: string }
     }
     Enums: {
