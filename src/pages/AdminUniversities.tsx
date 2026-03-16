@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
-import { Navigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Trash2, Save, Search, AlertTriangle, ShieldAlert } from "lucide-react";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 type UniversityRow = {
   id: number;
@@ -17,8 +16,8 @@ type UniversityRow = {
 };
 
 const AdminUniversities = () => {
-  const { currentUserId } = useAuth();
-  const [isAdmin, setIsAdmin] = useState<boolean | null>(null); // null = loading
+  const isAdmin = useIsAdmin();
+  const [adminChecked, setAdminChecked] = useState(false);
   const [universities, setUniversities] = useState<UniversityRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"incomplete" | "all">("incomplete");
@@ -27,31 +26,11 @@ const AdminUniversities = () => {
   const [editCity, setEditCity] = useState("");
   const [editCountry, setEditCountry] = useState("");
 
-  // Check admin role from user_roles table (server-side via RLS)
+  // Small delay to let the hook resolve
   useEffect(() => {
-    const checkAdmin = async () => {
-      if (!currentUserId) {
-        setIsAdmin(false);
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", currentUserId)
-        .eq("role", "admin")
-        .maybeSingle();
-
-      if (error) {
-        console.error("Error checking admin role:", error);
-        setIsAdmin(false);
-      } else {
-        setIsAdmin(!!data);
-      }
-    };
-
-    checkAdmin();
-  }, [currentUserId]);
+    const timer = setTimeout(() => setAdminChecked(true), 500);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (isAdmin) {
