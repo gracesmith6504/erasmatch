@@ -56,15 +56,15 @@ const UniversityAutocomplete = ({
             required={required}
           />
           
-          {/* Always visible manual entry link */}
-          <div className="text-center mt-1">
-            <p
-              onClick={handleManualEntry}
-              className="text-xs text-gray-500 underline cursor-pointer"
-            >
-              Can't find your university? Enter it manually
-            </p>
-          </div>
+          {/* Always visible manual entry button */}
+          <button
+            type="button"
+            onClick={handleManualEntry}
+            className="w-full mt-2 py-2.5 px-4 rounded-lg border-2 border-dashed border-muted-foreground/30 text-sm text-muted-foreground hover:border-primary/50 hover:text-primary transition-colors flex items-center justify-center gap-2"
+          >
+            <span>Can't find your university?</span>
+            <span className="font-medium text-primary">Enter it manually</span>
+          </button>
         </div>
       ) : (
         <ManualUniversityEntry

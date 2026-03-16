@@ -1,7 +1,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeftCircle, SaveIcon } from "lucide-react";
+import { ArrowLeftCircle } from "lucide-react";
+import { autoAddUniversity } from "./useAutoAddUniversity";
 
 type ManualUniversityEntryProps = {
   value: string;
@@ -16,6 +17,13 @@ export function ManualUniversityEntry({
   onReturn,
   required
 }: ManualUniversityEntryProps) {
+  const handleSave = async () => {
+    if (value.trim()) {
+      await autoAddUniversity(value);
+    }
+    onReturn();
+  };
+
   return (
     <div className="space-y-3">
       <div className="flex gap-2">
@@ -31,8 +39,8 @@ export function ManualUniversityEntry({
         />
         <Button 
           type="button"
-          className="shrink-0 bg-erasmatch-green hover:bg-erasmatch-green/90"
-          onClick={onReturn}
+          className="shrink-0 bg-primary hover:bg-primary/90"
+          onClick={handleSave}
           disabled={!value}
         >
           Save
@@ -41,7 +49,7 @@ export function ManualUniversityEntry({
       <Button 
         variant="ghost" 
         onClick={onReturn}
-        className="px-0 text-sm flex gap-1 items-center text-gray-500 hover:text-gray-700"
+        className="px-0 text-sm flex gap-1 items-center text-muted-foreground hover:text-foreground"
         type="button"
       >
         <ArrowLeftCircle className="h-4 w-4" />
