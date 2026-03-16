@@ -1,5 +1,5 @@
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, MapPin, School, Check, ChevronsUpDown, Plus } from "lucide-react";
@@ -18,6 +18,11 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Input } from "@/components/ui/input";
+
+type AliasEntry = { alias: string; university_id: number };
+
+const normalizeString = (str: string) =>
+  str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 
 type DestinationUniversityStepProps = {
   initialValue: string;
