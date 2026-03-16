@@ -1,8 +1,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeftCircle, MapPin } from "lucide-react";
+import { ArrowLeftCircle } from "lucide-react";
 import { autoAddUniversity } from "./useAutoAddUniversity";
+import { CityAutocomplete } from "@/components/CityAutocomplete";
 import { useState } from "react";
 
 type ManualUniversityEntryProps = {
