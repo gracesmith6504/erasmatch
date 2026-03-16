@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
-import { User, LogOut } from "lucide-react";
+import { User, LogOut, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "./NotificationBell";
 import { useNavigation } from "./useNavigation";
 import { NavigationLink } from "./NavigationLink";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 interface DesktopNavProps {
   isAuthenticated: boolean;
