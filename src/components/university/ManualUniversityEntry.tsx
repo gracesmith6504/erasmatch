@@ -1,25 +1,37 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeftCircle } from "lucide-react";
+import { ArrowLeftCircle, MapPin } from "lucide-react";
 import { autoAddUniversity } from "./useAutoAddUniversity";
+import { useState } from "react";
 
 type ManualUniversityEntryProps = {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onReturn: () => void;
   required?: boolean;
+  city?: string;
+  onCityChange?: (city: string) => void;
+  onSave?: (universityName: string, city: string) => void;
 };
 
 export function ManualUniversityEntry({ 
   value, 
   onChange, 
   onReturn,
-  required
+  required,
+  city: externalCity,
+  onCityChange,
+  onSave,
 }: ManualUniversityEntryProps) {
+  const [internalCity, setInternalCity] = useState("");
+  const cityValue = externalCity ?? internalCity;
+  const setCityValue = onCityChange ?? setInternalCity;
+
   const handleSave = async () => {
     if (value.trim()) {
-      await autoAddUniversity(value);
+      await autoAddUniversity(value, cityValue);
+      onSave?.(value.trim(), cityValue.trim());
     }
     onReturn();
   };
@@ -37,6 +49,19 @@ export function ManualUniversityEntry({
           required={required}
           autoFocus
         />
+      </div>
+      
+      <div className="flex gap-2 items-center">
+        <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
+        <Input
+          value={cityValue}
+          onChange={(e) => setCityValue(e.target.value)}
+          placeholder="City (e.g. Barcelona, Milan)"
+          className="w-full"
+        />
+      </div>
+
+      <div className="flex gap-2">
         <Button 
           type="button"
           className="shrink-0 bg-primary hover:bg-primary/90"
@@ -45,16 +70,16 @@ export function ManualUniversityEntry({
         >
           Save
         </Button>
+        <Button 
+          variant="ghost" 
+          onClick={onReturn}
+          className="px-0 text-sm flex gap-1 items-center text-muted-foreground hover:text-foreground"
+          type="button"
+        >
+          <ArrowLeftCircle className="h-4 w-4" />
+          Return to list
+        </Button>
       </div>
-      <Button 
-        variant="ghost" 
-        onClick={onReturn}
-        className="px-0 text-sm flex gap-1 items-center text-muted-foreground hover:text-foreground"
-        type="button"
-      >
-        <ArrowLeftCircle className="h-4 w-4" />
-        Return to university list
-      </Button>
     </div>
   );
 }
