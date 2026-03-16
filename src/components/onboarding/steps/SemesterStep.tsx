@@ -36,8 +36,8 @@ export const SemesterStep = ({
 
   return (
     <OnboardingLayout
-      currentStep={5}
-      totalSteps={6}
+      currentStep={4}
+      totalSteps={5}
       onBack={onBack}
       title="Your Semester"
     >

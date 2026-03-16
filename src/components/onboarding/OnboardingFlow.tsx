@@ -5,7 +5,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { FirstNameStep } from "./steps/FirstNameStep";
 import { DestinationUniversityStep } from "./steps/DestinationUniversityStep";
 import { HomeUniversityStep } from "./steps/HomeUniversityStep";
-import { CourseStep } from "./steps/CourseStep";
 import { SemesterStep } from "./steps/SemesterStep";
 import { InterestsStep } from "./steps/InterestsStep";
 import { toast } from "sonner";
@@ -16,9 +15,8 @@ export const OnboardingFlow = () => {
   const navigate = useNavigate();
   const { currentUserProfile, handleProfileUpdate } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
-  const totalSteps = 6;
+  const totalSteps = 5;
 
-  // Handle case where user is already onboarded
   useEffect(() => {
     if (currentUserProfile?.onboarding_complete) {
       navigate("/students");
@@ -39,7 +37,6 @@ export const OnboardingFlow = () => {
 
   const handleCompleteOnboarding = async () => {
     try {
-      // Generate a unique ref_code based on the user's name
       const refCode = await generateUniqueRefCode(currentUserProfile?.name || '');
       
       await handleProfileUpdate({
@@ -49,19 +46,14 @@ export const OnboardingFlow = () => {
       
       toast.success("Welcome to ErasMatch!");
       
-      // Ensure the welcome banner shows by setting these values
       sessionStorage.setItem("justCompletedOnboarding", "true");
-      localStorage.removeItem("welcomeBannerDismissed"); // Clear any previous dismissal
+      localStorage.removeItem("welcomeBannerDismissed");
       
-      // Store city in sessionStorage if available
       if (currentUserProfile?.city) {
         sessionStorage.setItem("userCity", currentUserProfile.city);
       }
       
-      // Clear the hasVisitedGroups flag to ensure it reloads when visiting /groups
       sessionStorage.removeItem("hasVisitedGroups");
-      
-      // Redirect to students page with onboarding flag
       navigate('/students?from=onboarding');
     } catch (error: any) {
       toast.error("Failed to complete onboarding: " + error.message);
@@ -96,6 +88,7 @@ export const OnboardingFlow = () => {
         return (
           <DestinationUniversityStep
             initialValue={currentUserProfile?.university || ""}
+            initialCity={currentUserProfile?.city || ""}
             onNext={goToNextStep}
             onUpdateProfile={handleUpdateProfile}
             onBack={goToPreviousStep}
@@ -112,15 +105,6 @@ export const OnboardingFlow = () => {
         );
       case 3:
         return (
-          <CourseStep
-            initialValue={currentUserProfile?.course || ""}
-            onNext={goToNextStep}
-            onUpdateProfile={handleUpdateProfile}
-            onBack={goToPreviousStep}
-          />
-        );
-      case 4:
-        return (
           <SemesterStep
             initialValue={currentUserProfile?.semester || ""}
             onNext={goToNextStep}
@@ -128,7 +112,7 @@ export const OnboardingFlow = () => {
             onBack={goToPreviousStep}
           />
         );
-      case 5:
+      case 4:
         return (
           <InterestsStep
             initialValue={currentUserProfile?.personality_tags || []}
