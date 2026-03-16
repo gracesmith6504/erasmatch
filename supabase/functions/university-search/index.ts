@@ -37,8 +37,10 @@ Deno.serve(async (req) => {
     const response = await fetch(apiUrl);
 
     if (!response.ok) {
-      const body = await response.text();
-      throw new Error(`Hipo API error [${response.status}]: ${body}`);
+      console.warn(`Hipo API returned ${response.status}, returning empty results`);
+      return new Response(JSON.stringify([]), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const data = await response.text();
@@ -58,10 +60,9 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("University search proxy error:", error);
-    const msg = error instanceof Error ? error.message : "Unknown error";
-    return new Response(JSON.stringify({ error: msg }), {
-      status: 500,
+    console.warn("University search proxy error (returning empty):", error);
+    // Return empty array instead of 500 so the client degrades gracefully
+    return new Response(JSON.stringify([]), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
