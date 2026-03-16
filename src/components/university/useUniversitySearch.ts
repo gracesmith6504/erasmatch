@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { University } from "./types";
 import { useUniversitiesCache } from "@/hooks/useUniversitiesCache";
 
@@ -13,7 +13,6 @@ type HipoUniversity = {
   web_pages: string[];
 };
 
-// List of Irish universities to prioritize for the "Home University" dropdown
 const IRISH_UNIVERSITIES = [
   "Trinity College Dublin",
   "University College Dublin",
@@ -25,8 +24,12 @@ const IRISH_UNIVERSITIES = [
   "Maynooth University",
   "Queen's University Belfast"
 ];
+
 const normalizeString = (str: string) =>
   str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+const SUPABASE_PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID || "ceoflcktscennfmmdrvp";
+const PROXY_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/functions/v1/university-search`;
 
 export function useUniversitySearch(prioritizeIrish = false) {
   const { universities: allUniversities, loading: isLoading } = useUniversitiesCache();
@@ -34,55 +37,69 @@ export function useUniversitySearch(prioritizeIrish = false) {
   const [searchQuery, setSearchQuery] = useState("");
   const [apiFallbackResults, setApiFallbackResults] = useState<University[]>([]);
   const [isSearchingApi, setIsSearchingApi] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (allUniversities.length > 0) {
       const initialList = prioritizeIrish 
         ? sortUniversitiesByIrishFirst([...allUniversities]) 
         : [...allUniversities];
-      
       setUniversities(initialList.slice(0, 10));
     }
   }, [allUniversities, prioritizeIrish]);
 
-  // Debounced Hipo API fallback search
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      if (abortRef.current) abortRef.current.abort();
+    };
+  }, []);
+
   const searchHipoApi = useCallback(async (query: string) => {
     if (query.length < 3) {
       setApiFallbackResults([]);
       return;
     }
 
+    // Abort previous request
+    if (abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setIsSearchingApi(true);
     try {
       const response = await fetch(
-        `https://universities.hipolabs.com/search?name=${encodeURIComponent(query)}&limit=10`
+        `${PROXY_URL}?name=${encodeURIComponent(query)}`,
+        { signal: controller.signal }
       );
       if (!response.ok) throw new Error("API request failed");
       
       const data: HipoUniversity[] = await response.json();
       
-      // Convert to our University type, using negative IDs to distinguish from DB entries
       const mapped: University[] = data.slice(0, 10).map((item, index) => ({
-        id: -(index + 1), // Negative ID = from API, not in DB
+        id: -(index + 1),
         name: item.name,
-        city: null, // Hipo doesn't provide city
+        city: null,
         country: item.country || null,
       }));
 
-      // Filter out universities already in our local DB (case-insensitive)
       const localNames = new Set(allUniversities.map(u => u.name.toLowerCase()));
       const filtered = mapped.filter(u => !localNames.has(u.name.toLowerCase()));
 
       setApiFallbackResults(filtered);
-    } catch (err) {
-      console.error("Hipo API fallback error:", err);
-      setApiFallbackResults([]);
+    } catch (err: any) {
+      if (err.name !== "AbortError") {
+        console.error("Hipo API fallback error:", err);
+        setApiFallbackResults([]);
+      }
     } finally {
       setIsSearchingApi(false);
     }
   }, [allUniversities]);
 
-  const handleSearch = (query: string) => {
+  const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
     
     const trimmedQuery = normalizeString(query.trim());
@@ -91,13 +108,11 @@ export function useUniversitySearch(prioritizeIrish = false) {
       const defaultList = prioritizeIrish 
         ? sortUniversitiesByIrishFirst([...allUniversities]) 
         : [...allUniversities];
-      
       setUniversities(defaultList.slice(0, 10));
       setApiFallbackResults([]);
       return;
     }
 
-    // Filter local universities
     const filtered = allUniversities.filter((uni) => {
       const nameMatch = normalizeString(uni.name || "").includes(trimmedQuery);
       const cityMatch = normalizeString(uni.city || "").includes(trimmedQuery);
@@ -108,14 +123,18 @@ export function useUniversitySearch(prioritizeIrish = false) {
     const sorted = sortUniversityResults(filtered, trimmedQuery, prioritizeIrish);
     setUniversities(sorted);
 
-    // If local results are few, trigger API fallback
+    // Debounced API fallback when local results are few
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    
     if (sorted.length < 3 && query.trim().length >= 3) {
-      searchHipoApi(query.trim());
+      debounceRef.current = setTimeout(() => {
+        searchHipoApi(query.trim());
+      }, 300);
     } else {
       setApiFallbackResults([]);
     }
-  };
-  
+  }, [allUniversities, prioritizeIrish, searchHipoApi]);
+
   const sortUniversitiesByIrishFirst = (universities: University[]): University[] => {
     return [...universities].sort((a, b) => {
       const aIsIrish = isIrishUniversity(a);
@@ -162,11 +181,11 @@ export function useUniversitySearch(prioritizeIrish = false) {
     if (cityLower === query) score += 800;
     if (countryLower === query) score += 700;
     if (nameLower.startsWith(query)) score += 500;
-    if (cityLower?.startsWith(query)) score += 400;
-    if (countryLower?.startsWith(query)) score += 350;
+    if (cityLower.startsWith(query)) score += 400;
+    if (countryLower.startsWith(query)) score += 350;
     if (nameLower.includes(query)) score += 200;
-    if (cityLower?.includes(query)) score += 150;
-    if (countryLower?.includes(query)) score += 100;
+    if (cityLower.includes(query)) score += 150;
+    if (countryLower.includes(query)) score += 100;
     const nameMatchPos = nameLower.indexOf(query);
     if (nameMatchPos !== -1) score += Math.max(0, 50 - nameMatchPos);
     return score;
