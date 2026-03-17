@@ -111,7 +111,7 @@ export const HeroSection = ({
               </div>
               <div className="w-px h-8 bg-border" />
               <div className="text-center sm:text-left">
-                <p className="text-xl sm:text-2xl font-bold text-foreground">18+</p>
+                <p className="text-xl sm:text-2xl font-bold text-foreground">50+</p>
                 <p className="text-xs text-muted-foreground">Countries</p>
               </div>
               <div className="w-px h-8 bg-border" />
