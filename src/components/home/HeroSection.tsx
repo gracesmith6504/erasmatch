@@ -55,7 +55,7 @@ export const HeroSection = ({
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card mb-6 sm:mb-8">
               
               <span className="h-2 w-2 rounded-full bg-erasmatch-green animate-pulse" />
-              <span className="text-xs sm:text-sm font-medium text-muted-foreground">Students in 18+ countries</span>
+              <span className="text-xs sm:text-sm font-medium text-muted-foreground">Free for all students </span>
             </motion.div>
 
             <h1 className="text-4xl sm:text-6xl lg:text-7xl tracking-tight mb-4 sm:mb-6 leading-[1.08] text-foreground font-display">
