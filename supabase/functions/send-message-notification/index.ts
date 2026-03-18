@@ -11,11 +11,11 @@ const corsHeaders = {
 }
 
 interface EmailRequest {
-  to: string
   senderName: string
   senderAvatarUrl?: string | null
   messageContent: string
   receiverId: string
+  to?: string // deprecated: now looked up server-side
 }
 
 serve(async (req) => {
