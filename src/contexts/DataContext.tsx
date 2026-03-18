@@ -104,15 +104,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
 
       if (messageError) throw messageError;
 
-      // Fetch receiver and sender profiles for the email notification
-      const { data: receiverProfile, error: receiverError } = await supabase
-        .from('profiles')
-        .select('email, name')
-        .eq('id', receiverId)
-        .single();
-
-      if (receiverError) throw receiverError;
-
+      // Fetch sender profile for notification text
       const { data: senderProfile, error: senderError } = await supabase
         .from('profiles')
         .select('name, avatar_url')
@@ -121,21 +113,18 @@ export const DataProvider = ({ children }: DataProviderProps) => {
 
       if (senderError) throw senderError;
 
-      // Send email notification if receiver has an email on file
-      if (receiverProfile?.email) {
-        const response = await supabase.functions.invoke('send-message-notification', {
-          body: {
-            to: receiverProfile.email,
-            senderName: senderProfile?.name || 'Someone',
-            senderAvatarUrl: senderProfile?.avatar_url || null,
-            messageContent: content,
-            receiverId: receiverId
-          }
-        });
-
-        if (response.error) {
-          console.error('Error sending email notification:', response.error);
+      // Send email notification (email lookup happens server-side)
+      const response = await supabase.functions.invoke('send-message-notification', {
+        body: {
+          senderName: senderProfile?.name || 'Someone',
+          senderAvatarUrl: senderProfile?.avatar_url || null,
+          messageContent: content,
+          receiverId: receiverId
         }
+      });
+
+      if (response.error) {
+        console.error('Error sending email notification:', response.error);
       }
 
       // Create in-app notification for the receiver
