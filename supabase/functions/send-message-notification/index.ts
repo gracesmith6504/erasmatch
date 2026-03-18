@@ -24,26 +24,38 @@ serve(async (req) => {
   }
 
   try {
-    const { to, senderName, messageContent, receiverId }: EmailRequest = await req.json()
+    const { senderName, messageContent, receiverId }: EmailRequest = await req.json()
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    // Check receiver's email notification preference
-    if (receiverId) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('email_notifications')
-        .eq('id', receiverId)
-        .single()
+    if (!receiverId) {
+      return new Response(JSON.stringify({ error: "receiverId is required" }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
 
-      if (profile && profile.email_notifications === false) {
-        console.log("Email notifications disabled for user:", receiverId)
-        return new Response(JSON.stringify({ skipped: true, reason: "notifications_disabled" }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        })
-      }
+    // Look up receiver email and notification preference server-side
+    const { data: receiverProfile } = await supabase
+      .from('profiles')
+      .select('email, email_notifications')
+      .eq('id', receiverId)
+      .single()
+
+    const to = receiverProfile?.email
+    if (!to) {
+      return new Response(JSON.stringify({ skipped: true, reason: "no_email" }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    if (receiverProfile.email_notifications === false) {
+      console.log("Email notifications disabled for user:", receiverId)
+      return new Response(JSON.stringify({ skipped: true, reason: "notifications_disabled" }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
     }
 
     // Get sender_id from the auth context (passed via body as receiverId pattern)
