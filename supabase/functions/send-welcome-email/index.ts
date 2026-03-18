@@ -14,6 +14,16 @@ serve(async (req) => {
   }
 
   try {
+    // Only allow calls from the service role (database webhook)
+    const authHeader = req.headers.get('Authorization')
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    if (!authHeader || authHeader !== `Bearer ${serviceRoleKey}`) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
     const { record } = await req.json()
 
     if (!record || !record.email) {
