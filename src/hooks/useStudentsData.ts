@@ -88,7 +88,8 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     if (
       profile.id === currentUserId ||
       profile.deleted_at ||
-      (!profile.university && !profile.home_university)
+      (!profile.university && !profile.home_university) ||
+      blockedIds.includes(profile.id)
     ) return false;
 
     const uniMatch = !universityFilter || universityFilter === "all-universities" || profile.university === universityFilter;
