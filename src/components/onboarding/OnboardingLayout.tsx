@@ -47,7 +47,7 @@ export const OnboardingLayout = ({
       <div className="px-6">
         <div className="w-full h-1.5 bg-secondary rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-erasmatch-blue to-erasmatch-green transition-all duration-700 ease-out rounded-full"
+            className="h-full bg-primary transition-all duration-700 ease-out rounded-full"
             style={{ width: `${progress}%` }}
           />
         </div>

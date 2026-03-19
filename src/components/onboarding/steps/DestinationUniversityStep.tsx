@@ -141,7 +141,7 @@ export const DestinationUniversityStep = ({
               <MapPin className="h-7 w-7 text-primary" />
             </div>
           </div>
-          <h1 className="text-2xl font-display font-bold mb-2 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green bg-clip-text text-transparent">
+          <h1 className="text-2xl font-display font-bold mb-2 text-foreground">
             Where are you headed?
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -303,7 +303,7 @@ export const DestinationUniversityStep = ({
           <Button
             type="submit"
             disabled={isSubmitting || !canSubmit}
-            className="w-full py-6 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green hover:opacity-90"
+            className="w-full py-6 bg-primary hover:bg-primary/90 text-primary-foreground"
           >
             Next
             <ArrowRight className="ml-2 h-4 w-4" />

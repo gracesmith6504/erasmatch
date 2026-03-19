@@ -53,7 +53,7 @@ export const InterestsStep = ({
           <div className="flex justify-center mb-4">
             <span className="text-5xl" role="img" aria-label="sparkles">✨</span>
           </div>
-          <h1 className="text-2xl font-display font-bold mb-2 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green bg-clip-text text-transparent">
+          <h1 className="text-2xl font-display font-bold mb-2 text-foreground">
             What are you into?
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -101,7 +101,7 @@ export const InterestsStep = ({
           <div className="flex flex-col gap-3">
             <Button
               type="submit"
-              className="w-full py-6 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green hover:opacity-90 text-white"
+              className="w-full py-6 bg-primary hover:bg-primary/90 text-primary-foreground"
               disabled={isSubmitting}
             >
               Complete Profile
