@@ -101,7 +101,7 @@ export const InterestsStep = ({
           <div className="flex flex-col gap-3">
             <Button
               type="submit"
-              className="w-full py-6 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green hover:opacity-90 text-white"
+              className="w-full py-6 bg-primary hover:bg-primary/90 text-primary-foreground"
               disabled={isSubmitting}
             >
               Complete Profile

@@ -68,7 +68,7 @@ export const CompletionCelebration = ({ onComplete }: CompletionCelebrationProps
                 initial={{ scale: 1, opacity: 0.5 }}
                 animate={{ scale: 1.8, opacity: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="absolute inset-0 rounded-full bg-gradient-to-br from-erasmatch-blue to-erasmatch-green"
+                className="absolute inset-0 rounded-full bg-primary"
               />
             </motion.div>
           )}
