@@ -18,6 +18,7 @@ interface DirectMessagePanelProps {
   onBack?: () => void;
   onSendMessage: (receiverId: string, content: string) => void;
   onPromptUsed?: () => void;
+  onUserBlocked?: () => void;
 }
 
 export const DirectMessagePanel = ({
@@ -29,6 +30,7 @@ export const DirectMessagePanel = ({
   onBack,
   onSendMessage,
   onPromptUsed = () => {},
+  onUserBlocked,
 }: DirectMessagePanelProps) => {
   const [newMessage, setNewMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
@@ -110,6 +112,7 @@ export const DirectMessagePanel = ({
     isMobile={isMobile}
     onBack={onBack}
     profile={thread.partner}
+    onUserBlocked={onUserBlocked}
   />
 
   {/* 🟢 SCROLLABLE MESSAGES AREA */}

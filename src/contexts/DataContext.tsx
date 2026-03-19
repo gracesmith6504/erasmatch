@@ -92,6 +92,15 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     if (!currentUserId) return;
 
     try {
+      // Check bidirectional block before sending
+      const { data: blocked } = await supabase.rpc("is_blocked", {
+        user_a: currentUserId,
+        user_b: receiverId,
+      });
+      if (blocked) {
+        throw new Error("Unable to send message to this user.");
+      }
+
       const { data: messageData, error: messageError } = await supabase
         .from('messages')
         .insert({

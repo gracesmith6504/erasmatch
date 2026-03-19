@@ -5,8 +5,9 @@ import { DesktopMessagesView } from "./DesktopMessagesView";
 import { useMessageState } from "@/hooks/useMessageState";
 import { useInitialUserSelection } from "@/hooks/useInitialUserSelection";
 import { createMessageHandler } from "./utils/messageUtils";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useBlockedUsers } from "@/hooks/useBlockedUsers";
 
 interface MessagesContainerProps {
   messages: Message[];
@@ -25,6 +26,7 @@ export const MessagesContainer = ({
 }: MessagesContainerProps) => {
   const isMobile = useIsMobile();
   const [showMobileThreadList, setShowMobileThreadList] = useState(true);
+  const { blockedIds, refetch: refetchBlocked } = useBlockedUsers();
   
   const {
     selectedThread,
@@ -37,6 +39,18 @@ export const MessagesContainer = ({
     threads,
     threadMessages
   } = useMessageState(messages, profiles, currentUserId, initialSelectedUser);
+
+  // Filter out threads with blocked users
+  const filteredThreads = useMemo(
+    () => threads.filter(t => !blockedIds.includes(t.partner.id)),
+    [threads, blockedIds]
+  );
+
+  const handleUserBlocked = () => {
+    refetchBlocked();
+    setSelectedThread(null);
+    if (isMobile) setShowMobileThreadList(true);
+  };
 
   useEffect(() => {
     if (isMobile && selectedThread) {
@@ -75,7 +89,7 @@ export const MessagesContainer = ({
     return (
       <ScrollArea className="h-full w-full">
         <MobileMessagesView
-          threads={threads}
+          threads={filteredThreads}
           selectedThread={selectedThread}
           setSelectedThread={(thread) => {
             setSelectedThread(thread);
@@ -93,7 +107,7 @@ export const MessagesContainer = ({
       {!isMobile && <h1 className="text-2xl font-display font-bold text-foreground px-4 py-6">Messages</h1>}
       
       <DesktopMessagesView
-        threads={threads}
+        threads={filteredThreads}
         selectedThread={selectedThread}
         setSelectedThread={setSelectedThread}
         profiles={profiles}
@@ -104,6 +118,7 @@ export const MessagesContainer = ({
         onSendMessage={handleSendMessage}
         onPromptUsed={handlePromptUsed}
         onBack={isMobile ? handleBackToThreadList : undefined}
+        onUserBlocked={handleUserBlocked}
       />
     </div>
   );
