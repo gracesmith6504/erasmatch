@@ -18,6 +18,7 @@ interface DirectMessagePanelProps {
   onBack?: () => void;
   onSendMessage: (receiverId: string, content: string) => void;
   onPromptUsed?: () => void;
+  onUserBlocked?: () => void;
 }
 
 export const DirectMessagePanel = ({
