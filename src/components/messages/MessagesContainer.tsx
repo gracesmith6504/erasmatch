@@ -89,7 +89,7 @@ export const MessagesContainer = ({
     return (
       <ScrollArea className="h-full w-full">
         <MobileMessagesView
-          threads={threads}
+          threads={filteredThreads}
           selectedThread={selectedThread}
           setSelectedThread={(thread) => {
             setSelectedThread(thread);
@@ -107,7 +107,7 @@ export const MessagesContainer = ({
       {!isMobile && <h1 className="text-2xl font-display font-bold text-foreground px-4 py-6">Messages</h1>}
       
       <DesktopMessagesView
-        threads={threads}
+        threads={filteredThreads}
         selectedThread={selectedThread}
         setSelectedThread={setSelectedThread}
         profiles={profiles}
@@ -118,6 +118,11 @@ export const MessagesContainer = ({
         onSendMessage={handleSendMessage}
         onPromptUsed={handlePromptUsed}
         onBack={isMobile ? handleBackToThreadList : undefined}
+        onUserBlocked={handleUserBlocked}
+      />
+    </div>
+  );
+};
       />
     </div>
   );
