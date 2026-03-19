@@ -26,6 +26,7 @@ export const MessagesContainer = ({
 }: MessagesContainerProps) => {
   const isMobile = useIsMobile();
   const [showMobileThreadList, setShowMobileThreadList] = useState(true);
+  const { blockedIds, refetch: refetchBlocked } = useBlockedUsers();
   
   const {
     selectedThread,
@@ -38,6 +39,18 @@ export const MessagesContainer = ({
     threads,
     threadMessages
   } = useMessageState(messages, profiles, currentUserId, initialSelectedUser);
+
+  // Filter out threads with blocked users
+  const filteredThreads = useMemo(
+    () => threads.filter(t => !blockedIds.includes(t.partner.id)),
+    [threads, blockedIds]
+  );
+
+  const handleUserBlocked = () => {
+    refetchBlocked();
+    setSelectedThread(null);
+    if (isMobile) setShowMobileThreadList(true);
+  };
 
   useEffect(() => {
     if (isMobile && selectedThread) {
