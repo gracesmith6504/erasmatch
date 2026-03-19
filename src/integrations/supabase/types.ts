@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      blocked_users: {
+        Row: {
+          blocked_id: string
+          blocker_id: string
+          created_at: string
+          id: string
+          reason: string | null
+          reported: boolean
+        }
+        Insert: {
+          blocked_id: string
+          blocker_id: string
+          created_at?: string
+          id?: string
+          reason?: string | null
+          reported?: boolean
+        }
+        Update: {
+          blocked_id?: string
+          blocker_id?: string
+          created_at?: string
+          id?: string
+          reason?: string | null
+          reported?: boolean
+        }
+        Relationships: []
+      }
       city_messages: {
         Row: {
           city_name: string
@@ -398,6 +425,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_blocked: { Args: { user_a: string; user_b: string }; Returns: boolean }
       join_group_by_slug: { Args: never; Returns: undefined }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
