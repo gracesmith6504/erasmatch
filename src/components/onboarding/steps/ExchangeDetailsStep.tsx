@@ -54,7 +54,7 @@ export const ExchangeDetailsStep = ({
               <Home className="h-7 w-7 text-accent" />
             </div>
           </div>
-          <h1 className="text-2xl font-display font-bold mb-2 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green bg-clip-text text-transparent">
+          <h1 className="text-2xl font-display font-bold mb-2 text-foreground">
             About your exchange
           </h1>
           <p className="text-sm text-muted-foreground">
