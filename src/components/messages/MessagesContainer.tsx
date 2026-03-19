@@ -5,8 +5,9 @@ import { DesktopMessagesView } from "./DesktopMessagesView";
 import { useMessageState } from "@/hooks/useMessageState";
 import { useInitialUserSelection } from "@/hooks/useInitialUserSelection";
 import { createMessageHandler } from "./utils/messageUtils";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useBlockedUsers } from "@/hooks/useBlockedUsers";
 
 interface MessagesContainerProps {
   messages: Message[];
