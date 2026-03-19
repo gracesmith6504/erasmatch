@@ -48,7 +48,7 @@ export const SemesterStep = ({
               <Calendar className="h-8 w-8 text-erasmatch-blue" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold mb-2 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green bg-clip-text text-transparent">
+          <h1 className="text-2xl font-bold mb-2 text-foreground">
             When's your exchange?
           </h1>
           <p className="text-muted-foreground mb-1">
