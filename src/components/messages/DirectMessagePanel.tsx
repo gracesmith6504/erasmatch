@@ -30,6 +30,7 @@ export const DirectMessagePanel = ({
   onBack,
   onSendMessage,
   onPromptUsed = () => {},
+  onUserBlocked,
 }: DirectMessagePanelProps) => {
   const [newMessage, setNewMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
