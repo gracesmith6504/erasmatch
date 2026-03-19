@@ -9,7 +9,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostSignupPrompt } from "@/components/share/PostSignupPrompt";
-import { generateUniqueRefCode } from '@/utils/refCodeGenerator';
+
 import { GoogleAuthHandler } from "@/components/auth/GoogleAuthHandler";
 
 type AuthProps = {
