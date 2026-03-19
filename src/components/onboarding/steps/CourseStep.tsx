@@ -57,7 +57,7 @@ export const CourseStep = ({
               <BookOpen className="h-8 w-8 text-erasmatch-blue" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold mb-2 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green bg-clip-text text-transparent">
+          <h1 className="text-2xl font-bold mb-2 text-foreground">
             What are you studying?
           </h1>
           
