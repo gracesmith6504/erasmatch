@@ -33,7 +33,8 @@ export const FirstNameStep = ({
     }
   };
 
-  const handleSkip = () => {
+  const handleSkip = async () => {
+    await onUpdateProfile({ name: null });
     onNext();
   };
 

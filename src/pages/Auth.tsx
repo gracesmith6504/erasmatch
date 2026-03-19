@@ -42,16 +42,16 @@ const Auth = ({ onLogin }: AuthProps) => {
   const handleGoogleAuth = async () => {
     setGoogleLoading(true);
     
+    // Store referral and return info in sessionStorage before redirect
+    // (Google strips custom queryParams on callback)
+    if (refCode) sessionStorage.setItem("pendingRefCode", refCode);
+    if (returnTo) sessionStorage.setItem("pendingReturnTo", returnTo);
+    
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/auth?mode=google-callback`,
-          queryParams: {
-            ref: refCode || '',
-            returnTo: returnTo || '',
-            privacyConsent: activeTab === "signup" ? 'true' : 'false'
-          }
         }
       });
 
