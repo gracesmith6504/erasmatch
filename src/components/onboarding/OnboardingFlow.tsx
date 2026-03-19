@@ -1,21 +1,37 @@
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { motion, AnimatePresence } from "framer-motion";
 import { FirstNameStep } from "./steps/FirstNameStep";
 import { DestinationUniversityStep } from "./steps/DestinationUniversityStep";
-import { HomeUniversityStep } from "./steps/HomeUniversityStep";
-import { SemesterStep } from "./steps/SemesterStep";
+import { ExchangeDetailsStep } from "./steps/ExchangeDetailsStep";
 import { InterestsStep } from "./steps/InterestsStep";
+import { CompletionCelebration } from "./CompletionCelebration";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { generateUniqueRefCode } from "@/utils/refCodeGenerator";
+
+const slideVariants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? 80 : -80,
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (direction: number) => ({
+    x: direction > 0 ? -80 : 80,
+    opacity: 0,
+  }),
+};
 
 export const OnboardingFlow = () => {
   const navigate = useNavigate();
   const { currentUserProfile, handleProfileUpdate } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
-  const totalSteps = 5;
+  const [direction, setDirection] = useState(1);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const totalSteps = 4;
 
   useEffect(() => {
     if (currentUserProfile?.onboarding_complete) {
@@ -25,9 +41,7 @@ export const OnboardingFlow = () => {
 
   const handleUpdateProfile = async (data: any) => {
     try {
-      await handleProfileUpdate({
-        ...data,
-      });
+      await handleProfileUpdate({ ...data });
       return true;
     } catch (error: any) {
       toast.error("Failed to update profile: " + error.message);
@@ -37,30 +51,33 @@ export const OnboardingFlow = () => {
 
   const handleCompleteOnboarding = async () => {
     try {
-      const refCode = await generateUniqueRefCode(currentUserProfile?.name || '');
-      
+      const refCode = await generateUniqueRefCode(currentUserProfile?.name || "");
+
       await handleProfileUpdate({
         onboarding_complete: true,
-        ref_code: refCode
+        ref_code: refCode,
       });
-      
-      toast.success("Welcome to ErasMatch!");
-      
+
       sessionStorage.setItem("justCompletedOnboarding", "true");
       localStorage.removeItem("welcomeBannerDismissed");
-      
+
       if (currentUserProfile?.city) {
         sessionStorage.setItem("userCity", currentUserProfile.city);
       }
-      
+
       sessionStorage.removeItem("hasVisitedGroups");
-      navigate('/students?from=onboarding');
+      setShowCelebration(true);
     } catch (error: any) {
       toast.error("Failed to complete onboarding: " + error.message);
     }
   };
 
+  const handleCelebrationComplete = useCallback(() => {
+    navigate("/students?from=onboarding");
+  }, [navigate]);
+
   const goToNextStep = () => {
+    setDirection(1);
     if (currentStep < totalSteps - 1) {
       setCurrentStep(currentStep + 1);
     } else {
@@ -69,10 +86,15 @@ export const OnboardingFlow = () => {
   };
 
   const goToPreviousStep = () => {
+    setDirection(-1);
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
   };
+
+  if (showCelebration) {
+    return <CompletionCelebration onComplete={handleCelebrationComplete} />;
+  }
 
   const renderStep = () => {
     switch (currentStep) {
@@ -96,23 +118,15 @@ export const OnboardingFlow = () => {
         );
       case 2:
         return (
-          <HomeUniversityStep
-            initialValue={currentUserProfile?.home_university || ""}
+          <ExchangeDetailsStep
+            initialUniversity={currentUserProfile?.home_university || ""}
+            initialSemester={currentUserProfile?.semester || ""}
             onNext={goToNextStep}
             onUpdateProfile={handleUpdateProfile}
             onBack={goToPreviousStep}
           />
         );
       case 3:
-        return (
-          <SemesterStep
-            initialValue={currentUserProfile?.semester || ""}
-            onNext={goToNextStep}
-            onUpdateProfile={handleUpdateProfile}
-            onBack={goToPreviousStep}
-          />
-        );
-      case 4:
         return (
           <InterestsStep
             initialValue={currentUserProfile?.personality_tags || []}
@@ -126,5 +140,19 @@ export const OnboardingFlow = () => {
     }
   };
 
-  return <>{renderStep()}</>;
+  return (
+    <AnimatePresence mode="wait" custom={direction}>
+      <motion.div
+        key={currentStep}
+        custom={direction}
+        variants={slideVariants}
+        initial="enter"
+        animate="center"
+        exit="exit"
+        transition={{ duration: 0.25, ease: "easeInOut" }}
+      >
+        {renderStep()}
+      </motion.div>
+    </AnimatePresence>
+  );
 };

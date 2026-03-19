@@ -130,19 +130,18 @@ export const DestinationUniversityStep = ({
   return (
     <OnboardingLayout
       currentStep={2}
-      totalSteps={5}
+      totalSteps={4}
       onBack={onBack}
-      title="Your Destination"
     >
       <div className="w-full max-w-md space-y-5">
         {/* Header */}
         <div className="text-center">
           <div className="flex justify-center mb-4">
-            <div className="bg-accent rounded-full w-14 h-14 flex items-center justify-center">
+            <div className="bg-secondary rounded-full w-14 h-14 flex items-center justify-center">
               <MapPin className="h-7 w-7 text-primary" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold mb-2 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green bg-clip-text text-transparent">
+          <h1 className="text-2xl font-display font-bold mb-2 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green bg-clip-text text-transparent">
             Where are you headed?
           </h1>
           <p className="text-sm text-muted-foreground">
