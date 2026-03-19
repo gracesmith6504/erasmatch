@@ -112,6 +112,7 @@ export const DirectMessagePanel = ({
     isMobile={isMobile}
     onBack={onBack}
     profile={thread.partner}
+    onUserBlocked={onUserBlocked}
   />
 
   {/* 🟢 SCROLLABLE MESSAGES AREA */}
