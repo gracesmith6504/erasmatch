@@ -167,17 +167,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
-      
-      // Show success toast
       toast.success("You've been logged out");
-      
-      // Redirect to login page
       navigate("/auth?mode=login");
-      
-      // Auth listener will handle state changes but force a reload to ensure UI updates
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
     } catch (error) {
       console.error('Error signing out:', error);
       toast.error("Failed to log out. Please try again.");
