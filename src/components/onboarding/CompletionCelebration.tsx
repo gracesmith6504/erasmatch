@@ -61,14 +61,14 @@ export const CompletionCelebration = ({ onComplete }: CompletionCelebrationProps
               transition={{ type: "spring", stiffness: 200, damping: 15 }}
               className="relative"
             >
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-erasmatch-blue to-erasmatch-green flex items-center justify-center shadow-lg">
+              <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center shadow-lg">
                 <Check className="h-12 w-12 text-white" strokeWidth={3} />
               </div>
               <motion.div
                 initial={{ scale: 1, opacity: 0.5 }}
                 animate={{ scale: 1.8, opacity: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="absolute inset-0 rounded-full bg-gradient-to-br from-erasmatch-blue to-erasmatch-green"
+                className="absolute inset-0 rounded-full bg-primary"
               />
             </motion.div>
           )}

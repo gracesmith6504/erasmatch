@@ -40,7 +40,7 @@ export const FirstNameStep = ({
           <div className="flex justify-center mb-5">
             <span className="text-5xl" role="img" aria-label="wave">👋</span>
           </div>
-          <h1 className="text-2xl font-display font-bold mb-2 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green bg-clip-text text-transparent">
+          <h1 className="text-2xl font-display font-bold mb-2 text-foreground">
             Let's get to know you
           </h1>
           <p className="text-muted-foreground mb-1">
@@ -65,7 +65,7 @@ export const FirstNameStep = ({
             <Button
               type="submit"
               disabled={isSubmitting || !name.trim()}
-              className="w-full py-6 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green hover:opacity-90 text-white"
+              className="w-full py-6 bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               Next
               <ArrowRight className="ml-2 h-4 w-4" />
