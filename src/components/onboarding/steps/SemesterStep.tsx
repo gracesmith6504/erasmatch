@@ -90,7 +90,10 @@ export const SemesterStep = ({
             <Button
               type="button"
               variant="ghost"
-              onClick={onNext}
+              onClick={async () => {
+                await onUpdateProfile({ semester: null });
+                onNext();
+              }}
               className="text-muted-foreground"
             >
               Skip this question
