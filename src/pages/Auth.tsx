@@ -90,6 +90,12 @@ const Auth = ({ onLogin }: AuthProps) => {
 
     try {
       if (isSignUp) {
+        // Store referral info in sessionStorage so AuthProvider can use it
+        const ref = searchParams.get("ref");
+        if (ref) {
+          sessionStorage.setItem("pendingRefCode", ref);
+        }
+
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
@@ -98,22 +104,6 @@ const Auth = ({ onLogin }: AuthProps) => {
         if (error) throw error;
         
         if (data.user) {
-          const refCode = await generateUniqueRefCode('');
-          
-          const { error: updateError } = await supabase
-            .from('profiles')
-            .upsert({
-              id: data.user.id,
-              email,
-              ref_code: refCode,
-              invited_by: searchParams.get("ref") || null,
-              privacy_consent_at: new Date().toISOString()
-            });
-            
-          if (updateError) {
-            console.error("Error updating profile:", updateError);
-          }
-          
           onLogin(email);
           toast.success("Account created successfully!");
           navigate("/onboarding");

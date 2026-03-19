@@ -26,8 +26,12 @@ export const fetchUserProfile = async (userId: string): Promise<Profile | null> 
 export const createUserProfile = async (
   userId: string, 
   email: string, 
-  defaultName: string | null
+  defaultName: string | null,
+  options?: { invitedBy?: string | null }
 ): Promise<Profile | null> => {
+  const { generateUniqueRefCode } = await import("@/utils/refCodeGenerator");
+  const refCode = await generateUniqueRefCode(defaultName || '');
+
   const newProfile = {
     id: userId,
     name: defaultName,
@@ -41,6 +45,9 @@ export const createUserProfile = async (
     home_university: null,
     personality_tags: [],
     course: null,
+    ref_code: refCode,
+    invited_by: options?.invitedBy || null,
+    privacy_consent_at: new Date().toISOString(),
   };
   
   try {
@@ -49,7 +56,9 @@ export const createUserProfile = async (
       .upsert(newProfile);
       
     if (error) throw error;
-    return newProfile as Profile;
+    
+    // Fetch the full profile from DB to ensure completeness
+    return await fetchUserProfile(userId);
   } catch (error) {
     console.error("Error creating profile:", error);
     return null;
