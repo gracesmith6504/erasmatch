@@ -190,12 +190,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const success = await updateUserProfile(currentUserId, updatedProfile);
       
-      if (success && currentUserProfile) {
-        // Update the local state with the updated profile
-        setCurrentUserProfile({
-          ...currentUserProfile,
-          ...updatedProfile,
-        });
+      if (success) {
+        // Re-fetch full profile from DB to ensure state is fresh
+        const freshProfile = await fetchUserProfile(currentUserId);
+        if (freshProfile) {
+          setCurrentUserProfile(freshProfile);
+        }
       }
       
       return Promise.resolve();
