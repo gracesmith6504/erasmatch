@@ -57,7 +57,7 @@ export const HomeUniversityStep = ({
               <Home className="h-8 w-8 text-erasmatch-blue" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold mb-3 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green bg-clip-text text-transparent">
+          <h1 className="text-2xl font-bold mb-3 text-foreground">
             Where are you coming from?
           </h1>
           
