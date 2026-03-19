@@ -16,6 +16,7 @@ interface DesktopMessagesViewProps {
   onSendMessage: (receiverId: string, content: string) => Promise<void>;
   onPromptUsed?: () => void;
   onBack?: () => void;
+  onUserBlocked?: () => void;
 }
 
 export const DesktopMessagesView = ({
@@ -30,6 +31,7 @@ export const DesktopMessagesView = ({
   onSendMessage,
   onPromptUsed = () => {},
   onBack,
+  onUserBlocked,
 }: DesktopMessagesViewProps) => {
   return (
     <div className="flex flex-1 bg-card rounded-2xl shadow-soft border border-border overflow-hidden h-full">
@@ -57,6 +59,7 @@ export const DesktopMessagesView = ({
           onBack={onBack}
           onSendMessage={onSendMessage}
           onPromptUsed={onPromptUsed}
+          onUserBlocked={onUserBlocked}
         />
       </div>
       ) : (
