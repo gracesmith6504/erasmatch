@@ -137,7 +137,7 @@ export const DestinationUniversityStep = ({
         {/* Header */}
         <div className="text-center">
           <div className="flex justify-center mb-4">
-            <div className="bg-accent rounded-full w-14 h-14 flex items-center justify-center">
+            <div className="bg-secondary rounded-full w-14 h-14 flex items-center justify-center">
               <MapPin className="h-7 w-7 text-primary" />
             </div>
           </div>
