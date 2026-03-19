@@ -123,7 +123,3 @@ export const MessagesContainer = ({
     </div>
   );
 };
-      />
-    </div>
-  );
-};
