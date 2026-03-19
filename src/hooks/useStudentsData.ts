@@ -2,8 +2,10 @@
 import { useState, useEffect } from "react";
 import { Profile } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
+import { useBlockedUsers } from "@/hooks/useBlockedUsers";
 
 export const useStudentsData = (initialProfiles: Profile[], currentUserId: string | null) => {
+  const { blockedIds } = useBlockedUsers();
   const [universityFilter, setUniversityFilter] = useState("");
   const [cityFilter, setCityFilter] = useState("");
   const [personalityTagsFilter, setPersonalityTagsFilter] = useState<string[]>([]);
