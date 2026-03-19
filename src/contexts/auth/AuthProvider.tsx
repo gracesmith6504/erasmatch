@@ -124,26 +124,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           const userData = session.user.user_metadata || {};
           const defaultName = userData.name || userData.full_name || null;
           
-          // Create a new profile for this new user
+          // Check for pending referral code from signup flow
+          const pendingRef = sessionStorage.getItem("pendingRefCode");
+          if (pendingRef) sessionStorage.removeItem("pendingRefCode");
+          
+          // Create a new profile for this new user (includes ref_code and privacy_consent)
           const newProfile = await createUserProfile(
             session.user.id, 
             session.user.email, 
-            defaultName
+            defaultName,
+            { invitedBy: pendingRef }
           );
           
           if (newProfile) {
-            // Add privacy consent timestamp for new users
-            const { error: consentError } = await supabase
-              .from('profiles')
-              .update({
-                privacy_consent_at: new Date().toISOString()
-              })
-              .eq('id', session.user.id);
-
-            if (consentError) {
-              console.error("Error updating consent timestamp:", consentError);
-            }
-
             setCurrentUserProfile(newProfile);
             
             // New user, redirect to onboarding
@@ -197,12 +190,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const success = await updateUserProfile(currentUserId, updatedProfile);
       
-      if (success && currentUserProfile) {
-        // Update the local state with the updated profile
-        setCurrentUserProfile({
-          ...currentUserProfile,
-          ...updatedProfile,
-        });
+      if (success) {
+        // Re-fetch full profile from DB to ensure state is fresh
+        const freshProfile = await fetchUserProfile(currentUserId);
+        if (freshProfile) {
+          setCurrentUserProfile(freshProfile);
+        }
       }
       
       return Promise.resolve();

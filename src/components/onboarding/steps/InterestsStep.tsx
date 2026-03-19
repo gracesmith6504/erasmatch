@@ -55,7 +55,6 @@ export const InterestsStep = ({
     try {
       const success = await onUpdateProfile({ 
         personality_tags: selectedTags,
-        onboarding_complete: true
       });
       if (success) {
         onComplete();
