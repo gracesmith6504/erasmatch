@@ -53,7 +53,7 @@ export const InterestsStep = ({
           <div className="flex justify-center mb-4">
             <span className="text-5xl" role="img" aria-label="sparkles">✨</span>
           </div>
-          <h1 className="text-2xl font-display font-bold mb-2 bg-gradient-to-r from-erasmatch-blue to-erasmatch-green bg-clip-text text-transparent">
+          <h1 className="text-2xl font-display font-bold mb-2 text-foreground">
             What are you into?
           </h1>
           <p className="text-sm text-muted-foreground">
