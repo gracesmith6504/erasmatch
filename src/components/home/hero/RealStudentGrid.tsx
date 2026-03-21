@@ -11,10 +11,10 @@ interface LandingProfile {
 
 const fallbackProfiles: LandingProfile[] = [
   { first_name: "Emma", avatar_url: "", city: "Barcelona" },
-  { first_name: "Matteo", avatar_url: "", city: "Barcelona" },
-  { first_name: "Annika", avatar_url: "", city: "Amsterdam" },
-  { first_name: "Jules", avatar_url: "", city: "Amsterdam" },
-  { first_name: "Petra", avatar_url: "", city: "Lisbon" },
+  { first_name: "Matteo", avatar_url: "", city: "Budapest" },
+  { first_name: "Annika", avatar_url: "", city: "Madrid" },
+  { first_name: "Jules", avatar_url: "", city: "Bordeaux" },
+  { first_name: "Petra", avatar_url: "", city: "Vienna" },
   { first_name: "Sofia", avatar_url: "", city: "Lisbon" },
 ];
 
@@ -79,16 +79,12 @@ export const RealStudentGrid = () => {
                 transition={{ delay: 0.5 + cityIndex * 0.15 + i * 0.08, duration: 0.3 }}
               >
                 <Avatar className="h-10 w-10 border-2 border-card shadow-soft">
-                  {student.avatar_url ? (
-                    <AvatarImage src={student.avatar_url} loading="lazy" />
-                  ) : null}
+                  {student.avatar_url ? <AvatarImage src={student.avatar_url} loading="lazy" /> : null}
                   <AvatarFallback className="text-xs bg-secondary text-foreground">
                     {student.first_name?.charAt(0) || "?"}
                   </AvatarFallback>
                 </Avatar>
-                <span className="text-[10px] text-muted-foreground truncate max-w-[48px]">
-                  {student.first_name}
-                </span>
+                <span className="text-[10px] text-muted-foreground truncate max-w-[48px]">{student.first_name}</span>
               </motion.div>
             ))}
           </div>
