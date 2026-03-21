@@ -13,7 +13,7 @@ import { School, MapPin, X, User, ChevronDown, ChevronUp, Search, Plane } from "
 import { PERSONALITY_TAGS } from "@/components/profile/constants";
 import { format } from "date-fns";
 
-const SEMESTER_OPTIONS = ["Spring 2025", "Fall 2025", "Spring 2026", "Full Academic Year 2025–26", "Fall 2026", "Full Academic Year 2026–27"];
+const SEMESTER_OPTIONS = ["Spring 2025", "Fall 2025", "Spring 2026", "Full Academic Year 2025–26", "Fall 2026", "Spring 2027", "Full Academic Year 2026–27"];
 
 interface StudentFiltersProps {
   universityFilter: string;
