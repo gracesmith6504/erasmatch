@@ -418,6 +418,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_featured_activity_profiles: {
+        Args: never
+        Returns: {
+          avatar_url: string
+          country: string
+          first_name: string
+        }[]
+      }
       get_landing_page_profiles: {
         Args: never
         Returns: {
