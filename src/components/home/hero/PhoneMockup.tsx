@@ -42,6 +42,42 @@ const countryToFlag: Record<string, string> = {
   Croatia: "🇭🇷",
   Turkey: "🇹🇷",
   Switzerland: "🇨🇭",
+  ES: "🇪🇸",
+  FR: "🇫🇷",
+  DE: "🇩🇪",
+  IT: "🇮🇹",
+  NL: "🇳🇱",
+  PT: "🇵🇹",
+  GR: "🇬🇷",
+  GB: "🇬🇧",
+  SE: "🇸🇪",
+  PL: "🇵🇱",
+  CZ: "🇨🇿",
+  AT: "🇦🇹",
+  BE: "🇧🇪",
+  DK: "🇩🇰",
+  FI: "🇫🇮",
+  NO: "🇳🇴",
+  IE: "🇮🇪",
+  HU: "🇭🇺",
+  RO: "🇷🇴",
+  HR: "🇭🇷",
+  TR: "🇹🇷",
+  CH: "🇨🇭",
+  LT: "🇱🇹",
+  LV: "🇱🇻",
+  EE: "🇪🇪",
+  SK: "🇸🇰",
+  SI: "🇸🇮",
+  BG: "🇧🇬",
+  RS: "🇷🇸",
+  Lithuania: "🇱🇹",
+  Latvia: "🇱🇻",
+  Estonia: "🇪🇪",
+  Slovakia: "🇸🇰",
+  Slovenia: "🇸🇮",
+  Bulgaria: "🇧🇬",
+  Serbia: "🇷🇸",
 };
 
 const fallbackProfiles: FeaturedProfile[] = [
@@ -115,54 +151,47 @@ export const PhoneMockup = () => {
 
   return (
     <div className="flex justify-center">
-      {/* Phone frame */}
-      <div className="relative w-[280px] h-[520px] rounded-[2.5rem] border-[6px] border-foreground bg-background shadow-elevated overflow-hidden">
-        {/* Notch */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-foreground rounded-b-2xl z-10" />
+      <div className="relative w-[320px] rounded-2xl bg-card border border-border shadow-lg overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+          <p className="text-xs font-semibold text-foreground">Activity</p>
+          <span className="h-2 w-2 rounded-full bg-erasmatch-green animate-pulse" />
+        </div>
 
-        {/* Screen content */}
-        <div className="absolute inset-0 pt-10 px-3 pb-3 flex flex-col">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-3 px-1">
-            <p className="text-xs font-semibold text-foreground">Activity</p>
-            <span className="h-2 w-2 rounded-full bg-erasmatch-green animate-pulse" />
-          </div>
-
-          {/* Feed */}
-          <div className="flex-1 overflow-hidden relative">
-            <div className="absolute inset-0 flex flex-col justify-end gap-2">
-              <AnimatePresence initial={false}>
-                {cards.slice(-5).map((card) => (
-                  <motion.div
-                    key={card.id}
-                    initial={{ opacity: 0, y: 40, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                    className="flex items-center gap-2.5 p-2.5 rounded-xl bg-card border border-border shadow-sm"
-                  >
-                    <Avatar className="h-8 w-8 shrink-0 border border-border">
-                      {card.profile.avatar_url ? (
-                        <AvatarImage src={card.profile.avatar_url} loading="lazy" />
-                      ) : null}
-                      <AvatarFallback className="text-[10px] bg-secondary text-foreground">
-                        {card.profile.first_name?.charAt(0) || "?"}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[11px] leading-tight text-foreground">
-                        <span className="font-semibold">{card.profile.first_name}</span>
-                        {card.profile.country && countryToFlag[card.profile.country] && (
-                          <span className="ml-1">{countryToFlag[card.profile.country]}</span>
-                        )}
-                        {" "}
-                        <span className="text-muted-foreground">{card.action}</span>
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
+        {/* Feed */}
+        <div className="h-[360px] overflow-hidden relative">
+          <div className="absolute inset-0 flex flex-col justify-end gap-2 p-3">
+            <AnimatePresence initial={false}>
+              {cards.slice(-5).map((card) => (
+                <motion.div
+                  key={card.id}
+                  initial={{ opacity: 0, y: 40, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  className="flex items-center gap-2.5 p-2.5 rounded-xl bg-background border border-border shadow-sm"
+                >
+                  <Avatar className="h-8 w-8 shrink-0 border border-border">
+                    {card.profile.avatar_url ? (
+                      <AvatarImage src={card.profile.avatar_url} loading="lazy" />
+                    ) : null}
+                    <AvatarFallback className="text-[10px] bg-secondary text-foreground">
+                      {card.profile.first_name?.charAt(0) || "?"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[11px] leading-tight text-foreground">
+                      <span className="font-semibold">{card.profile.first_name}</span>
+                      {card.profile.country && countryToFlag[card.profile.country] && (
+                        <span className="ml-1">{countryToFlag[card.profile.country]}</span>
+                      )}
+                      {" "}
+                      <span className="text-muted-foreground">{card.action}</span>
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         </div>
       </div>
