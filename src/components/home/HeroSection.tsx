@@ -4,6 +4,7 @@ import { ShareButton } from "@/components/share/ShareButton";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { AvatarMosaic } from "./AvatarMosaic";
 
 interface HeroSectionProps {
   handleFindStudents: () => void;
