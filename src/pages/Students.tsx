@@ -88,12 +88,21 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
     return Math.round((filled / fields.length) * 100);
   };
 
+  const isFilterActive = Boolean(universityFilter) || Boolean(cityFilter);
+
   const sortedProfiles = [...filteredProfiles].sort((a, b) => {
     const hasPhotoA = Boolean(a.avatar_url);
     const hasPhotoB = Boolean(b.avatar_url);
 
     if (hasPhotoA && !hasPhotoB) return -1;
     if (!hasPhotoA && hasPhotoB) return 1;
+
+    if (isFilterActive) {
+      // When filtering, sort by most recently active within photo groups
+      const activeA = a.last_active_at ? new Date(a.last_active_at).getTime() : 0;
+      const activeB = b.last_active_at ? new Date(b.last_active_at).getTime() : 0;
+      return activeB - activeA;
+    }
 
     return getCompletionPercentage(b) - getCompletionPercentage(a);
   });
