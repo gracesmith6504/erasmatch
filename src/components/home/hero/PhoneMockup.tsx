@@ -93,7 +93,7 @@ const fallbackProfiles: FeaturedProfile[] = [
 const mockChatMessages = [
   { name: "Mia", message: "Anyone arriving Sept 1? Looking for people to explore with!", isRight: false },
   { name: "Lucas", message: "Yes! I land on Aug 31. Let's meet up", isRight: true },
-  { name: "Sofia", message: "Count me in! Already found a flat near campus", isRight: false },
+  { name: "Sofia", message: "Class, already found a flat near campus", isRight: false },
 ];
 
 interface ActivityCard {
@@ -182,9 +182,7 @@ export const PhoneMockup = () => {
                     className="flex items-center gap-2 p-2 rounded-lg bg-background border border-border"
                   >
                     <Avatar className="h-7 w-7 shrink-0 border border-border">
-                      {card.profile.avatar_url ? (
-                        <AvatarImage src={card.profile.avatar_url} loading="lazy" />
-                      ) : null}
+                      {card.profile.avatar_url ? <AvatarImage src={card.profile.avatar_url} loading="lazy" /> : null}
                       <AvatarFallback className="text-[9px] bg-secondary text-foreground">
                         {card.profile.first_name?.charAt(0) || "?"}
                       </AvatarFallback>
@@ -193,8 +191,7 @@ export const PhoneMockup = () => {
                       <span className="font-semibold">{card.profile.first_name}</span>
                       {card.profile.country && countryToFlag[card.profile.country] && (
                         <span className="ml-0.5">{countryToFlag[card.profile.country]}</span>
-                      )}
-                      {" "}
+                      )}{" "}
                       <span className="text-muted-foreground">{card.action}</span>
                     </p>
                   </motion.div>
@@ -208,7 +205,7 @@ export const PhoneMockup = () => {
         <div className="rounded-2xl bg-card border border-border shadow-lg overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3 border-b border-border">
             <div className="flex items-center gap-2">
-              <p className="text-xs font-semibold text-foreground">Barcelona 2025</p>
+              <p className="text-xs font-semibold text-foreground">University of Barcelona</p>
               <span className="text-[10px] text-muted-foreground">12 members</span>
             </div>
             <div className="flex -space-x-1.5">
@@ -239,9 +236,7 @@ export const PhoneMockup = () => {
                       : "bg-secondary text-foreground rounded-bl-sm"
                   }`}
                 >
-                  {!msg.isRight && (
-                    <p className="font-semibold mb-0.5 text-[9px] text-muted-foreground">{msg.name}</p>
-                  )}
+                  {!msg.isRight && <p className="font-semibold mb-0.5 text-[9px] text-muted-foreground">{msg.name}</p>}
                   {msg.message}
                 </div>
               </motion.div>
