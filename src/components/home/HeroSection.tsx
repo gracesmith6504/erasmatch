@@ -3,7 +3,6 @@ import { ArrowRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { RotatingNotification } from "./hero/RotatingNotification";
 import { AnimatedCityHeadline } from "./hero/AnimatedCityHeadline";
 import { PhoneMockup } from "./hero/PhoneMockup";
 
@@ -35,19 +34,17 @@ export const HeroSection = ({
       />
 
       <div className="relative max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12 sm:py-20 w-full">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <motion.div
             className="text-left"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            <RotatingNotification />
-
             <AnimatedCityHeadline />
 
-            <p className="text-base sm:text-xl max-w-lg text-muted-foreground mb-8 sm:mb-10 leading-relaxed">
-              Meet your Erasmus mates before you even arrive.
+            <p className="text-base sm:text-lg max-w-md text-muted-foreground mb-8 sm:mb-10 leading-relaxed">
+              Find flatmates, join group chats, and meet your crew before you even arrive.
             </p>
 
             {/* CTA */}
@@ -57,7 +54,7 @@ export const HeroSection = ({
                 className="text-base px-8 py-6 bg-foreground text-primary-foreground hover:bg-foreground/90 rounded-full shadow-elevated transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 w-full sm:w-auto"
                 onClick={handleAuthAction}
               >
-                {isAuthenticated ? "Explore Students" : "Join free — takes 10 sec"}
+                {isAuthenticated ? "Explore Students" : "Get started for free"}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
               <Button
@@ -106,7 +103,7 @@ export const HeroSection = ({
             </motion.div>
           </motion.div>
 
-          {/* Right side social proof cards */}
+          {/* Right side floating activity card */}
           <motion.div
             className="hidden lg:block"
             initial={{ opacity: 0, scale: 0.95 }}
