@@ -5,7 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { RotatingNotification } from "./hero/RotatingNotification";
 import { AnimatedCityHeadline } from "./hero/AnimatedCityHeadline";
-import { RealStudentGrid } from "./hero/RealStudentGrid";
+import { PhoneMockup } from "./hero/PhoneMockup";
 
 interface HeroSectionProps {
   handleFindStudents: () => void;
@@ -116,7 +116,7 @@ export const HeroSection = ({
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            <RealStudentGrid />
+            <PhoneMockup />
           </motion.div>
         </div>
       </div>
