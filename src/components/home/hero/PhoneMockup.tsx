@@ -78,7 +78,7 @@ const FloatingToasts = ({ profiles }: { profiles: FeaturedProfile[] }) => {
   }, [profiles]);
 
   return (
-    <div className="absolute -right-4 top-12 flex flex-col gap-2 w-[220px] z-10">
+    <div className="absolute -right-4 -top-8 flex flex-col gap-2 w-[220px] z-10">
       <AnimatePresence>
         {toasts.map((toast) => (
           <motion.div
