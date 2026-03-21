@@ -36,7 +36,7 @@ export const RotatingNotification = () => {
           {current.flag} {current.name} just joined {current.city}
         </motion.span>
       </AnimatePresence>
-      <span className="text-[10px] text-muted-foreground/60 flex-shrink-0">2m ago</span>
+      <span className="text-[10px] text-muted-foreground/60 flex-shrink-0">{current.time}</span>
     </div>
   );
 };

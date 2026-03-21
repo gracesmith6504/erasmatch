@@ -418,6 +418,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_landing_page_profiles: {
+        Args: never
+        Returns: {
+          avatar_url: string
+          city: string
+          first_name: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
