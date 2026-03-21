@@ -35,9 +35,8 @@ export const HeroSection = ({
       />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 w-full">
-        <div className="hidden sm:flex justify-end mb-6">
-          <ShareButton showText={true} link="https://erasmatch.com" />
-        </div>
+
+
 
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           <motion.div
