@@ -44,7 +44,7 @@ export const HeroSection = ({
             <AnimatedCityHeadline />
 
             <p className="text-base sm:text-lg max-w-md text-muted-foreground mb-8 sm:mb-10 leading-relaxed">
-              Find flatmates, join group chats, and meet your crew before you even arrive.
+              Meet your people before you land.
             </p>
 
             {/* CTA */}
