@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 const notifications = [
-  { name: "Mia", city: "Barcelona", flag: "🇩🇪" },
-  { name: "Lucas", city: "Lisbon", flag: "🇫🇷" },
-  { name: "Sofia", city: "Berlin", flag: "🇮🇹" },
-  { name: "Erik", city: "Amsterdam", flag: "🇸🇪" },
-  { name: "Clara", city: "Prague", flag: "🇪🇸" },
+  { name: "Mia", city: "Barcelona", flag: "🇩🇪", time: "2m ago" },
+  { name: "Lucas", city: "Lisbon", flag: "🇫🇷", time: "5m ago" },
+  { name: "Sofia", city: "Berlin", flag: "🇮🇹", time: "12m ago" },
+  { name: "Erik", city: "Amsterdam", flag: "🇸🇪", time: "1h ago" },
+  { name: "Clara", city: "Prague", flag: "🇪🇸", time: "3h ago" },
 ];
 
 export const RotatingNotification = () => {
@@ -36,7 +36,7 @@ export const RotatingNotification = () => {
           {current.flag} {current.name} just joined {current.city}
         </motion.span>
       </AnimatePresence>
-      <span className="text-[10px] text-muted-foreground/60 flex-shrink-0">2m ago</span>
+      <span className="text-[10px] text-muted-foreground/60 flex-shrink-0">{current.time}</span>
     </div>
   );
 };

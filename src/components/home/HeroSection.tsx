@@ -1,12 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { ShareButton } from "@/components/share/ShareButton";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { RotatingNotification } from "./hero/RotatingNotification";
 import { AnimatedCityHeadline } from "./hero/AnimatedCityHeadline";
-import { SocialProofCards } from "./hero/SocialProofCards";
+import { RealStudentGrid } from "./hero/RealStudentGrid";
 
 interface HeroSectionProps {
   handleFindStudents: () => void;
@@ -36,9 +35,8 @@ export const HeroSection = ({
       />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 w-full">
-        <div className="hidden sm:flex justify-end mb-6">
-          <ShareButton showText={true} link="https://erasmatch.com" />
-        </div>
+
+
 
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           <motion.div
@@ -118,7 +116,7 @@ export const HeroSection = ({
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            <SocialProofCards />
+            <RealStudentGrid />
           </motion.div>
         </div>
       </div>
