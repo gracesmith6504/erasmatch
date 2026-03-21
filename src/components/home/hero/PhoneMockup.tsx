@@ -177,6 +177,8 @@ export const PhoneMockup = () => {
 
   return (
     <div className="relative flex justify-end">
+      {/* Floating toast notifications */}
+      <FloatingToasts profiles={profiles.length > 0 ? profiles : fallbackProfiles} />
 
       {/* Phone frame */}
       <div className="relative w-[280px]">
