@@ -34,11 +34,8 @@ export const HeroSection = ({
         }}
       />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 w-full">
-
-
-
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+      <div className="relative max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12 sm:py-20 w-full">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           <motion.div
             className="text-left"
             initial={{ opacity: 0, y: 30 }}

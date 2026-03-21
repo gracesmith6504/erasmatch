@@ -14,7 +14,7 @@ export const AnimatedCityHeadline = () => {
   }, []);
 
   return (
-    <h1 className="text-4xl sm:text-6xl lg:text-7xl tracking-tight mb-4 sm:mb-6 leading-[1.08] text-foreground font-display">
+    <h1 className="text-3xl sm:text-5xl lg:text-6xl tracking-tight mb-4 sm:mb-6 leading-[1.08] text-foreground font-display">
       <span className="font-extrabold">Your Erasmus starts</span>
       <br />
       <span className="font-medium">in </span>
