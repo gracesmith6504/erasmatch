@@ -116,7 +116,7 @@ export const HeroSection = ({
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            <SocialProofCards />
+            <RealStudentGrid />
           </motion.div>
         </div>
       </div>
