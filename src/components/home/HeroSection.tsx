@@ -1,12 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { ShareButton } from "@/components/share/ShareButton";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { RotatingNotification } from "./hero/RotatingNotification";
 import { AnimatedCityHeadline } from "./hero/AnimatedCityHeadline";
-import { SocialProofCards } from "./hero/SocialProofCards";
+import { RealStudentGrid } from "./hero/RealStudentGrid";
 
 interface HeroSectionProps {
   handleFindStudents: () => void;
