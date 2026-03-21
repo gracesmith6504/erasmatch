@@ -44,7 +44,7 @@ export const HeroSection = ({
             <AnimatedCityHeadline />
 
             <p className="text-base sm:text-lg max-w-md text-muted-foreground mb-8 sm:mb-10 leading-relaxed">
-              Find flatmates, join group chats, and meet your crew before you even arrive.
+              Meet your people before you land.
             </p>
 
             {/* CTA */}
@@ -54,7 +54,7 @@ export const HeroSection = ({
                 className="text-base px-8 py-6 bg-foreground text-primary-foreground hover:bg-foreground/90 rounded-full shadow-elevated transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 w-full sm:w-auto"
                 onClick={handleAuthAction}
               >
-                {isAuthenticated ? "Explore Students" : "Get started for free"}
+                {isAuthenticated ? "Explore Students" : "Join free - takes 10 sec"}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
               <Button
