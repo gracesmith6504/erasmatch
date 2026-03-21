@@ -29,7 +29,7 @@ const countryToFlag: Record<string, string> = {
   "United Kingdom": "🇬🇧",
   Sweden: "🇸🇪",
   Poland: "🇵🇱",
-  Czech Republic: "🇨🇿",
+  "Czech Republic": "🇨🇿",
   Czechia: "🇨🇿",
   Austria: "🇦🇹",
   Belgium: "🇧🇪",
