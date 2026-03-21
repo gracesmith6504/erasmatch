@@ -125,7 +125,7 @@ export const PhoneMockup = () => {
           {/* Header */}
           <div className="flex items-center justify-between mb-3 px-1">
             <p className="text-xs font-semibold text-foreground">Activity</p>
-            <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+            <span className="h-2 w-2 rounded-full bg-erasmatch-green animate-pulse" />
           </div>
 
           {/* Feed */}
