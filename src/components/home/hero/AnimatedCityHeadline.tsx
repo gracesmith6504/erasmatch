@@ -17,8 +17,9 @@ export const AnimatedCityHeadline = () => {
     <h1 className="text-3xl sm:text-5xl lg:text-[3.5rem] tracking-tight mb-4 sm:mb-6 leading-[1.1] text-foreground font-display">
       <span className="font-extrabold">Connect with Erasmus</span>
       <br />
-      <span className="font-extrabold">students in </span>
-      <span className="inline-block relative font-extrabold text-accent overflow-hidden">
+      <span className="font-extrabold">students in{" "}</span>
+      <br className="sm:hidden" />
+      <span className="inline-block relative font-extrabold text-accent overflow-hidden min-w-[140px] sm:min-w-[200px]">
         <AnimatePresence mode="wait">
           <motion.span
             key={cities[index]}
