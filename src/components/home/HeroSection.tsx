@@ -5,7 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { RotatingNotification } from "./hero/RotatingNotification";
 import { AnimatedCityHeadline } from "./hero/AnimatedCityHeadline";
-import { RealStudentGrid } from "./hero/RealStudentGrid";
+import { PhoneMockup } from "./hero/PhoneMockup";
 
 interface HeroSectionProps {
   handleFindStudents: () => void;
