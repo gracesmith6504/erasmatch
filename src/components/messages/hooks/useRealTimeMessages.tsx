@@ -29,7 +29,7 @@ export function useRealTimeMessages({
 
     // Subscribe to new messages between current user and thread partner
     const channel = supabase
-      .channel('direct-messages')
+      .channel(`direct-messages-${currentUserId}-${partnerId}`)
       .on('postgres_changes', 
         { 
           event: 'INSERT', 
