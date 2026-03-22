@@ -43,9 +43,7 @@ export const HeroSection = ({
           >
             <AnimatedCityHeadline />
 
-            <p className="text-base sm:text-lg max-w-md text-muted-foreground mb-8 sm:mb-10 leading-relaxed">
-              Meet your people before you land.
-            </p>
+            <div className="mb-8 sm:mb-10" />
 
             {/* CTA */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6">
