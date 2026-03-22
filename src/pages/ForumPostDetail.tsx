@@ -1,7 +1,7 @@
-
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useForumPost } from '@/hooks/useForumPost';
+import { useAuth } from '@/contexts/AuthContext';
 import { CommentCard } from '@/components/forum/CommentCard';
 import { Button } from '@/components/ui/button';
 import { Avatar } from '@/components/ui/avatar';
@@ -17,7 +17,7 @@ export default function ForumPostDetail() {
   const { post, comments, loading, addComment } = useForumPost(postId || '');
   const [commentContent, setCommentContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const currentUserId = localStorage.getItem('userId'); // Temporary solution, replace with proper auth
+  const { currentUserId } = useAuth();
 
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
