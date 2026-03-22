@@ -15,11 +15,10 @@ import { toast } from "sonner";
 
 const Groups = () => {
   const location = useLocation();
-  const currentUserId = localStorage.getItem('userId');
+  const { currentUserId } = useAuth();
   const { showBanner, cityName } = useOnboardingBanner(currentUserId);
   
   const { profiles } = useData();
-  const { currentUserId: authCurrentUserId } = useAuth();
   const { profile: currentUserProfile } = useProfileContext();
   const isMobile = useIsMobile();
   

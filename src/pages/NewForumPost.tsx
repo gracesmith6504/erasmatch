@@ -1,7 +1,7 @@
-
 import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useCityForums } from '@/hooks/useCityForums';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -17,7 +17,7 @@ export default function NewForumPost() {
   const [content, setContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const { createPost } = useCityForums(city || '');
-  const currentUserId = localStorage.getItem('userId'); // Temporary solution, replace with proper auth
+  const { currentUserId } = useAuth();
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
