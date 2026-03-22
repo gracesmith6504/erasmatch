@@ -18,13 +18,24 @@ interface EmailRequest {
   to?: string // deprecated: now looked up server-side
 }
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
   try {
-    const { senderName, messageContent, receiverId }: EmailRequest = await req.json()
+    const { senderName: rawSenderName, messageContent: rawMessageContent, receiverId }: EmailRequest = await req.json()
+    const senderName = escapeHtml(rawSenderName || '')
+    const messageContent = escapeHtml(rawMessageContent || '')
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
