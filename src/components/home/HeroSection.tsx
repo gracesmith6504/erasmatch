@@ -5,6 +5,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { AnimatedCityHeadline } from "./hero/AnimatedCityHeadline";
 import { PhoneMockup } from "./hero/PhoneMockup";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface HeroSectionProps {
   handleFindStudents: () => void;
@@ -17,6 +19,19 @@ export const HeroSection = ({
 }: HeroSectionProps) => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const [featuredAvatars, setFeaturedAvatars] = useState<string[]>([]);
+
+  useEffect(() => {
+    supabase
+      .from("profiles")
+      .select("avatar_url")
+      .eq("featured", true)
+      .not("avatar_url", "is", null)
+      .limit(8)
+      .then(({ data }) => {
+        if (data) setFeaturedAvatars(data.map((p) => p.avatar_url!));
+      });
+  }, []);
 
   const handleAuthAction = () => {
     navigate(isAuthenticated ? "/students" : "/auth?mode=signup");
@@ -43,7 +58,30 @@ export const HeroSection = ({
           >
             <AnimatedCityHeadline />
 
-            <div className="mb-8 sm:mb-10" />
+            {/* Featured student avatars */}
+            {featuredAvatars.length > 0 && (
+              <motion.div
+                className="mt-6 mb-8 sm:mb-10"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+              >
+                <div className="flex items-center">
+                  {featuredAvatars.map((url, i) => (
+                    <img
+                      key={i}
+                      src={url}
+                      alt=""
+                      className="w-9 h-9 rounded-full border-2 border-background object-cover"
+                      style={{ marginLeft: i === 0 ? 0 : -8 }}
+                    />
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground mt-1.5">already signed up</p>
+              </motion.div>
+            )}
+
+            {featuredAvatars.length === 0 && <div className="mb-8 sm:mb-10" />}
 
             {/* CTA */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6">
