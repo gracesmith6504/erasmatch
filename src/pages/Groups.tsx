@@ -68,7 +68,7 @@ const Groups = () => {
           {selectedGroupChat ? (
             <GroupChatPanel 
               universityName={selectedGroupChat}
-              currentUserId={authCurrentUserId!}
+              currentUserId={currentUserId!}
               profiles={profiles}
               onBack={handleBack}
               isFullScreen={true}
