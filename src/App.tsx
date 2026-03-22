@@ -11,7 +11,16 @@ import AppRoutes from "./components/routing/AppRoutes";
 import { AuthProvider } from "./contexts/auth";
 import { DataProvider } from "./contexts/DataContext";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60000,
+      gcTime: 300000,
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => {
   return (
