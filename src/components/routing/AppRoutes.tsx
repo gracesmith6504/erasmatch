@@ -27,10 +27,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
 
 const AppRoutes = () => {
-  const { isAuthenticated, currentUserId, handleLogin } = useAuth();
+  const { isAuthenticated, currentUserId, currentUserProfile, handleLogin } = useAuth();
   const { profiles, messages, handleSendMessage, updateProfile, fetchProfile } = useData();
-
-  const currentUserProfile = profiles.find(p => p.id === currentUserId) || null;
 
   return (
     <Routes>
