@@ -23,13 +23,13 @@ export const HeroSection = ({
 
   useEffect(() => {
     supabase
-      .from("profiles")
-      .select("avatar_url")
-      .eq("featured", true)
-      .not("avatar_url", "is", null)
-      .limit(8)
+      .rpc("get_featured_activity_profiles")
       .then(({ data }) => {
-        if (data) setFeaturedAvatars(data.map((p) => p.avatar_url!));
+        if (data) {
+          setFeaturedAvatars(
+            data.filter((p) => p.avatar_url).map((p) => p.avatar_url!)
+          );
+        }
       });
   }, []);
 
