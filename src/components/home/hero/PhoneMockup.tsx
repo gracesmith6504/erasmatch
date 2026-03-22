@@ -130,7 +130,7 @@ const AnimatedChat = () => {
   }, [visibleCount]);
 
   return (
-    <div className="p-3 flex flex-col gap-2 min-h-[160px]">
+    <div className="p-3 flex flex-col gap-2 h-[160px] overflow-hidden">
       <AnimatePresence mode="sync">
         {chatMessages.slice(0, visibleCount).map((msg, i) => (
           <motion.div
