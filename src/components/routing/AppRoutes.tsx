@@ -40,7 +40,7 @@ const AppRoutes = () => {
         path="/auth" 
         element={
           isAuthenticated ? 
-          <Navigate to="/onboarding" /> : 
+          <Navigate to={currentUserProfile?.onboarding_complete ? "/students" : "/onboarding"} /> : 
           <Auth onLogin={handleLogin} />
         } 
       />
