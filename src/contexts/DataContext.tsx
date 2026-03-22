@@ -49,7 +49,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('*');
+        .select('id, name, avatar_url, university, city, deleted_at, personality_tags, bio, home_university, semester, course, looking_for, ref_code, arrival_date, onboarding_complete, email_notifications, last_active_at');
       
       if (error) throw error;
       
@@ -73,7 +73,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     try {
       const { data: userMessages, error } = await supabase
         .from('messages')
-        .select('*')
+        .select('id, sender_id, receiver_id, content, created_at, read_by')
         .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
         .order('created_at', { ascending: false });
       
@@ -189,7 +189,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('*')
+        .select('id, name, avatar_url, university, city, deleted_at, personality_tags, bio, home_university, semester, course, looking_for, ref_code, arrival_date, onboarding_complete, email_notifications, last_active_at')
         .eq('id', currentUserId)
         .single();
 
