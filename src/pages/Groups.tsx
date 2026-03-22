@@ -76,7 +76,7 @@ const Groups = () => {
           ) : selectedCityChat ? (
             <CityPanel
               cityName={selectedCityChat}
-              currentUserId={authCurrentUserId!}
+              currentUserId={currentUserId!}
               profiles={profiles}
               onBack={handleBack}
               isFullScreen={true}
