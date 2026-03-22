@@ -28,7 +28,7 @@ import { useData } from "@/contexts/DataContext";
 
 const AppRoutes = () => {
   const { isAuthenticated, currentUserId, handleLogin } = useAuth();
-  const { profiles, handleSendMessage, updateProfile, fetchProfile } = useData();
+  const { profiles, messages, handleSendMessage, updateProfile, fetchProfile } = useData();
 
   const currentUserProfile = profiles.find(p => p.id === currentUserId) || null;
 
@@ -91,7 +91,7 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Messages 
-              messages={useData().messages}
+              messages={messages}
               profiles={profiles}
               currentUserId={currentUserId!}
               onSendMessage={handleSendMessage}
