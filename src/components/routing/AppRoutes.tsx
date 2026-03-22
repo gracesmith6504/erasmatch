@@ -91,7 +91,7 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Messages 
-              messages={useData().messages}
+              messages={messages}
               profiles={profiles}
               currentUserId={currentUserId!}
               onSendMessage={handleSendMessage}
