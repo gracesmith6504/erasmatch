@@ -49,7 +49,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, name, avatar_url, university, city, deleted_at, personality_tags, bio, home_university, semester, course, looking_for, ref_code, arrival_date, onboarding_complete, email_notifications, last_active_at');
+        .select('id, name, avatar_url, university, city, deleted_at, personality_tags, bio, home_university, semester, course, looking_for, ref_code, arrival_date, last_active_at');
       
       if (error) throw error;
       
