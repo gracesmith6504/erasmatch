@@ -108,7 +108,7 @@ export const DataProvider = ({ children }: DataProviderProps) => {
           receiver_id: receiverId,
           content
         })
-        .select()
+        .select('id, sender_id, receiver_id, content, created_at')
         .single();
 
       if (messageError) throw messageError;
