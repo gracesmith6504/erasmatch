@@ -7,6 +7,8 @@ import { SuggestedPrompts } from "./SuggestedPrompts";
 import { Profile } from "@/types";
 import { useIsMobile } from "@/hooks/use-mobile";
 
+const MAX_LENGTH = 500;
+
 interface MessageInputProps {
   onSendMessage: () => Promise<void>;
   isSending: boolean;
@@ -14,7 +16,7 @@ interface MessageInputProps {
   setNewMessage: (message: string) => void;
   showSuggestedPrompts?: boolean;
   onDismissSuggestedPrompts?: () => void;
-  onPromptUsed?: () => void;  // Callback for when a prompt is used
+  onPromptUsed?: () => void;
   currentUser?: Profile | null;
   selectedUser?: Profile | null;
 }
@@ -31,6 +33,7 @@ export const MessageInput = ({
   selectedUser,
 }: MessageInputProps) => {
   const isMobile = useIsMobile();
+  const remaining = MAX_LENGTH - newMessage.length;
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,7 +48,7 @@ export const MessageInput = ({
 
   const handleSelectPrompt = (prompt: string) => {
     setNewMessage(prompt);
-    onPromptUsed(); // Notify parent component that a prompt was used
+    onPromptUsed();
   };
 
   return (
@@ -63,13 +66,19 @@ export const MessageInput = ({
           className="flex-1"
           placeholder="Type a message..."
           value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
+          onChange={(e) => setNewMessage(e.target.value.slice(0, MAX_LENGTH))}
+          maxLength={MAX_LENGTH}
           disabled={isSending}
         />
         <Button type="submit" disabled={!newMessage.trim() || isSending} className="flex-shrink-0">
           <Send className="h-4 w-4" />
         </Button>
       </form>
+      {remaining <= 100 && (
+        <p className={`text-xs mt-1 text-right ${remaining <= 20 ? 'text-red-500' : 'text-amber-500'}`}>
+          {newMessage.length}/{MAX_LENGTH}
+        </p>
+      )}
     </div>
   );
 };
