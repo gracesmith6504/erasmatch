@@ -66,20 +66,18 @@ export const HeroSection = ({
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4, duration: 0.5 }}
               >
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center flex-shrink-0">
-                    {featuredAvatars.map((url, i) => (
-                      <img
-                        key={i}
-                        src={url}
-                        alt=""
-                        className="w-9 h-9 rounded-full border-2 border-background object-cover"
-                        style={{ marginLeft: i === 0 ? 0 : -8 }}
-                      />
-                    ))}
-                  </div>
-                  <p className="text-xs text-muted-foreground">600+ students already joined</p>
+                <div className="flex items-center">
+                  {featuredAvatars.map((url, i) => (
+                    <img
+                      key={i}
+                      src={url}
+                      alt=""
+                      className="w-9 h-9 rounded-full border-2 border-background object-cover"
+                      style={{ marginLeft: i === 0 ? 0 : -8 }}
+                    />
+                  ))}
                 </div>
+                <p className="text-xs text-muted-foreground mt-1.5">already signed up</p>
               </motion.div>
             )}
 
