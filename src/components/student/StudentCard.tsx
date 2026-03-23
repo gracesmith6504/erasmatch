@@ -108,7 +108,12 @@ const StudentCard = ({ profile, isFeatured = false, universityCity = null }: Stu
         )}
       </CardContent>
       <CardFooter className="pt-1 flex justify-center space-x-2">
-        <StudentCardActions studentId={profile.id} />
+        <StudentCardActions
+          studentId={profile.id}
+          studentName={profile.name || "Student"}
+          studentCity={profile.city}
+          studentUniversity={profile.university}
+        />
       </CardFooter>
     </Card>
   );
