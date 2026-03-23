@@ -53,24 +53,15 @@ export function useUnreadMessageCount(currentUserId: string | null) {
  * Marks all messages in a thread from a specific sender as read by the current user.
  */
 export async function markMessagesAsRead(currentUserId: string, partnerId: string) {
-  // First fetch unread messages from the partner
-  const { data: unreadMessages, error: fetchError } = await supabase
+  // Single batch update: append currentUserId to read_by for all unread messages from partner
+  const { error } = await supabase
     .from("messages")
-    .select("id, read_by")
+    .update({ read_by: [currentUserId] })
     .eq("sender_id", partnerId)
     .eq("receiver_id", currentUserId)
     .not("read_by", "cs", `{${currentUserId}}`);
 
-  if (fetchError || !unreadMessages?.length) return;
-
-  // Update each message's read_by to include current user
-  const updates = unreadMessages.map((msg) => {
-    const currentReadBy = msg.read_by || [];
-    return supabase
-      .from("messages")
-      .update({ read_by: [...currentReadBy, currentUserId] })
-      .eq("id", msg.id);
-  });
-
-  await Promise.all(updates);
+  if (error) {
+    console.error("Error marking messages as read:", error);
+  }
 }
