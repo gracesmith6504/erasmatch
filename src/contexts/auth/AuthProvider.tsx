@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const navigate = useNavigate();
 
   // Function to handle auth state changes — memoised with navigate dependency
-  const handleAuthChange = useCallback(async (session: any) => {
+  const handleAuthChange = useCallback(async (session: Session | null) => {
     if (window.location.pathname === '/reset-password') return;
     if (session?.user) {
       setIsAuthenticated(true);
