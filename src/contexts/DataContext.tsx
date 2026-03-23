@@ -4,7 +4,6 @@
  */
 import { createContext, useContext, ReactNode } from "react";
 import { Profile } from "@/types";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./AuthContext";
 
 type DataContextType = {
@@ -27,20 +26,16 @@ type DataProviderProps = {
 };
 
 export const DataProvider = ({ children }: DataProviderProps) => {
-  const { currentUserId, handleProfileUpdate } = useAuth();
+  const { handleProfileUpdate, refreshProfile } = useAuth();
 
-  /** Updates the current user's profile via AuthProvider. */
+  /** Updates the current user's profile. */
   const updateProfile = async (updatedProfile: Partial<Profile>): Promise<void> => {
     await handleProfileUpdate(updatedProfile);
   };
 
-  /** Re-fetches the current user's profile via AuthProvider. */
+  /** Re-fetches the current user's profile. */
   const fetchProfile = async (): Promise<void> => {
-    // handleProfileUpdate with empty object triggers a re-fetch in AuthProvider
-    // But we need a dedicated path — for now delegate to handleProfileUpdate
-    if (!currentUserId) return;
-    // Directly re-fetch via AuthProvider's handleProfileUpdate mechanism
-    await handleProfileUpdate({});
+    await refreshProfile();
   };
 
   return (
