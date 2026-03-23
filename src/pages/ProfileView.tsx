@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, ArrowLeft, MoreVertical, Ban } from "lucide-react";
-import { Profile } from "@/types";
 import { ProfileHeader } from "@/components/profile/view/ProfileHeader";
 import { ProfileDetails } from "@/components/profile/view/ProfileDetails";
 import { MessageDialog } from "@/components/profile/view/MessageDialog";
@@ -12,6 +11,8 @@ import { useProfileView } from "@/hooks/useProfileView";
 import { recordProfileView } from "@/hooks/useProfileViewers";
 import { useBlockedUsers } from "@/hooks/useBlockedUsers";
 import { BlockUserDialog } from "@/components/block/BlockUserDialog";
+import { useProfiles } from "@/hooks/useProfiles";
+import { useSendMessage } from "@/hooks/useSendMessage";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,14 +22,14 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 
 type ProfileViewProps = {
-  profiles: Profile[];
   currentUserId: string | null;
-  onSendMessage: (receiverId: string, content: string) => void;
 };
 
-const ProfileView = ({ profiles, currentUserId, onSendMessage }: ProfileViewProps) => {
+const ProfileView = ({ currentUserId }: ProfileViewProps) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { data: profiles = [] } = useProfiles();
+  const sendMessage = useSendMessage();
   const profile = profiles.find((p) => p.id === id);
   const { blockUser, isBlocked } = useBlockedUsers();
   const [isBlockedByOther, setIsBlockedByOther] = useState(false);
@@ -44,7 +45,7 @@ const ProfileView = ({ profiles, currentUserId, onSendMessage }: ProfileViewProp
     isSending,
     handleSendMessage,
     isOwnProfile
-  } = useProfileView(profile, currentUserId, onSendMessage);
+  } = useProfileView(profile, currentUserId, sendMessage);
 
   // Check if the other user has blocked us (bidirectional)
   useEffect(() => {

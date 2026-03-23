@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Profile } from "@/types";
 import { useStudentsData } from "@/hooks/useStudentsData";
+import { useProfiles } from "@/hooks/useProfiles";
 import StudentLoadingSkeleton from "@/components/student/StudentLoadingSkeleton";
 import StudentFilters from "@/components/student/StudentFilters";
 import StudentCardGrid from "@/components/student/StudentCardGrid";
@@ -13,11 +14,12 @@ import { useOnboardingBanner } from "@/hooks/useOnboardingBanner";
 import SuggestedStudents from "@/components/student/SuggestedStudents";
 
 type StudentsProps = {
-  profiles: Profile[];
   currentUserId: string | null;
 };
 
-const Students = ({ profiles, currentUserId }: StudentsProps) => {
+const Students = ({ currentUserId }: StudentsProps) => {
+  const { data: profiles = [], isLoading: profilesLoading } = useProfiles();
+
   const {
     universityFilter,
     setUniversityFilter,
@@ -98,7 +100,6 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
     if (!hasPhotoA && hasPhotoB) return 1;
 
     if (isFilterActive) {
-      // When filtering, sort by most recently active within photo groups
       const activeA = a.last_active_at ? new Date(a.last_active_at).getTime() : 0;
       const activeB = b.last_active_at ? new Date(b.last_active_at).getTime() : 0;
       return activeB - activeA;
@@ -108,7 +109,7 @@ const Students = ({ profiles, currentUserId }: StudentsProps) => {
   });
 
   // Rendering skeleton loaders during loading state
-  if (loading) {
+  if (loading || profilesLoading) {
     return <StudentLoadingSkeleton />;
   }
 
