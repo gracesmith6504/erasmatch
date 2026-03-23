@@ -1,11 +1,10 @@
 
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, ArrowLeft, MoreVertical, Ban } from "lucide-react";
+import { MessageSquare, ArrowLeft, MoreVertical, Ban, UserPlus } from "lucide-react";
 import { ProfileHeader } from "@/components/profile/view/ProfileHeader";
 import { ProfileDetails } from "@/components/profile/view/ProfileDetails";
-import { MessageDialog } from "@/components/profile/view/MessageDialog";
 import { NotFoundView } from "@/components/profile/view/NotFoundView";
 import { useProfileView } from "@/hooks/useProfileView";
 import { recordProfileView } from "@/hooks/useProfileViewers";
@@ -13,6 +12,8 @@ import { useBlockedUsers } from "@/hooks/useBlockedUsers";
 import { BlockUserDialog } from "@/components/block/BlockUserDialog";
 import { useProfiles } from "@/hooks/useProfiles";
 import { useSendMessage } from "@/hooks/useSendMessage";
+import { useDirectMessages } from "@/hooks/useDirectMessages";
+import ConnectModal from "@/components/student/ConnectModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,7 +35,20 @@ const ProfileView = ({ currentUserId }: ProfileViewProps) => {
   const { blockUser, isBlocked } = useBlockedUsers();
   const [isBlockedByOther, setIsBlockedByOther] = useState(false);
   const [showBlockDialog, setShowBlockDialog] = useState(false);
-  
+  const [connectOpen, setConnectOpen] = useState(false);
+
+  const { data: messages = [] } = useDirectMessages(currentUserId);
+
+  // Check if a conversation already exists with this user
+  const hasExistingConversation = useMemo(() => {
+    if (!id || !currentUserId) return false;
+    return messages.some(
+      (m) =>
+        (m.sender_id === currentUserId && m.receiver_id === id) ||
+        (m.sender_id === id && m.receiver_id === currentUserId)
+    );
+  }, [messages, id, currentUserId]);
+
   const {
     universityCity,
     isLoadingCity,
@@ -73,6 +87,25 @@ const ProfileView = ({ currentUserId }: ProfileViewProps) => {
   const handleBlockAndReport = (reason: string) => {
     if (id) blockUser(id, reason, true);
   };
+
+  const handleMessageOrConnect = () => {
+    if (hasExistingConversation) {
+      navigate(`/messages?user=${id}`);
+    } else {
+      setConnectOpen(true);
+    }
+  };
+
+  // Shared context for connect modal placeholder
+  const currentProfile = profiles.find((p) => p.id === currentUserId);
+  const sharedCity =
+    currentProfile?.city && profile?.city && currentProfile.city === profile.city
+      ? profile.city
+      : null;
+  const sharedUniversity =
+    currentProfile?.university && profile?.university && currentProfile.university === profile.university
+      ? profile.university
+      : null;
 
   if (!profile) {
     return <NotFoundView />;
@@ -118,11 +151,20 @@ const ProfileView = ({ currentUserId }: ProfileViewProps) => {
           {!isOwnProfile && currentUserId && (
             <div className="mt-5 sm:mt-0 flex justify-end gap-2">
               <Button 
-                onClick={() => setIsMessageDialogOpen(true)}
+                onClick={handleMessageOrConnect}
                 className="flex items-center"
               >
-                <MessageSquare className="mr-2 h-4 w-4" />
-                Send Message
+                {hasExistingConversation ? (
+                  <>
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    Message
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Connect
+                  </>
+                )}
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -151,15 +193,16 @@ const ProfileView = ({ currentUserId }: ProfileViewProps) => {
         </div>
       </div>
 
-      <MessageDialog
-        isOpen={isMessageDialogOpen}
-        onOpenChange={setIsMessageDialogOpen}
-        onSendMessage={handleSendMessage}
-        messageContent={messageContent}
-        setMessageContent={setMessageContent}
-        isSending={isSending}
-        recipientName={profile.name || ""}
-      />
+      {profile && id && (
+        <ConnectModal
+          open={connectOpen}
+          onOpenChange={setConnectOpen}
+          studentId={id}
+          studentName={profile.name || "Student"}
+          sharedCity={sharedCity}
+          sharedUniversity={sharedUniversity}
+        />
+      )}
 
       <BlockUserDialog
         isOpen={showBlockDialog}
