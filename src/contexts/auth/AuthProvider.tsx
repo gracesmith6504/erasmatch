@@ -177,6 +177,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+  /** Re-fetches the current user's profile from the database. */
+  const refreshProfile = useCallback(async () => {
+    if (!currentUserId) return;
+    const freshProfile = await fetchUserProfile(currentUserId);
+    if (freshProfile) {
+      setCurrentUserProfile(freshProfile);
+    }
+  }, [currentUserId]);
+
   return (
     <AuthContext.Provider
       value={{
@@ -187,7 +196,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         loading,
         handleLogin,
         handleLogout,
-        handleProfileUpdate
+        handleProfileUpdate,
+        refreshProfile
       }}
     >
       {children}

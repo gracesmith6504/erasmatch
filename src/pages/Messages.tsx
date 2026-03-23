@@ -1,22 +1,25 @@
 
 import { useState, useEffect } from "react";
-import { Message, Profile } from "@/types";
 import { MessagesContainer } from "@/components/messages/MessagesContainer";
 import { useSearchParams } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useProfiles } from "@/hooks/useProfiles";
+import { useDirectMessages } from "@/hooks/useDirectMessages";
+import { useSendMessage } from "@/hooks/useSendMessage";
 
 type MessagesProps = {
-  messages: Message[];
-  profiles: Profile[];
   currentUserId: string;
-  onSendMessage: (receiverId: string, content: string) => Promise<void>;
 };
 
-const Messages = ({ messages, profiles, currentUserId, onSendMessage }: MessagesProps) => {
+const Messages = ({ currentUserId }: MessagesProps) => {
   const [searchParams] = useSearchParams();
   const [initialSelectedUser, setInitialSelectedUser] = useState<string | null>(null);
   const isMobile = useIsMobile();
   
+  const { data: profiles = [] } = useProfiles();
+  const { data: messages = [] } = useDirectMessages(currentUserId);
+  const sendMessage = useSendMessage();
+
   // Check for a user param in the URL (e.g., from StudentCard navigation)
   useEffect(() => {
     const userParam = searchParams.get('user');
@@ -25,7 +28,6 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
       console.log("URL parameter 'user' found:", userParam);
       setInitialSelectedUser(userParam);
     } else {
-      // Clear the initial selection if no user param exists
       setInitialSelectedUser(null);
     }
   }, [searchParams]);
@@ -40,24 +42,10 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
 
   // Filter out messages with deleted users
   const activeMessages = messages.filter(message => {
-    // Find the profiles for both the sender and receiver
     const senderProfile = profiles.find(p => p.id === message.sender_id);
     const receiverProfile = profiles.find(p => p.id === message.receiver_id);
-    
-    // Check if either sender or receiver has been deleted
     return !(senderProfile?.deleted_at || receiverProfile?.deleted_at);
   });
-
-  // Wrapper for onSendMessage to ensure proper state updates
-  const handleSendMessage = async (receiverId: string, content: string): Promise<void> => {
-    try {
-      await onSendMessage(receiverId, content);
-      return;
-    } catch (error) {
-      console.error("Error in Messages handleSendMessage:", error);
-      throw error;
-    }
-  };
 
   // Filter active profiles (not deleted)
   const activeProfiles = profiles.filter(profile => !profile.deleted_at);
@@ -68,7 +56,7 @@ const Messages = ({ messages, profiles, currentUserId, onSendMessage }: Messages
         messages={activeMessages}
         profiles={activeProfiles}
         currentUserId={currentUserId}
-        onSendMessage={handleSendMessage}
+        onSendMessage={sendMessage}
         initialSelectedUser={initialSelectedUser}
       />
     </div>
