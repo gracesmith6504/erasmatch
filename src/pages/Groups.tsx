@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { WelcomeBanner } from "@/components/WelcomeBanner";
 import { useOnboardingBanner } from "@/hooks/useOnboardingBanner";
-import { useData } from "@/contexts/DataContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProfileContext } from "@/components/profile/ProfileContext";
+import { useProfiles } from "@/hooks/useProfiles";
 import { GroupChatPanel } from "@/components/messages/GroupChatPanel";
 import { CityPanel } from "@/components/messages/CityPanel";
 import { Card } from "@/components/ui/card";
@@ -17,7 +17,7 @@ const Groups = () => {
   const { currentUserId } = useAuth();
   const { showBanner, cityName } = useOnboardingBanner(currentUserId);
   
-  const { profiles } = useData();
+  const { data: profiles = [] } = useProfiles();
   const { profile: currentUserProfile } = useProfileContext();
   const isMobile = useIsMobile();
   

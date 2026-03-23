@@ -28,7 +28,7 @@ import { useData } from "@/contexts/DataContext";
 
 const AppRoutes = () => {
   const { isAuthenticated, currentUserId, currentUserProfile, handleLogin } = useAuth();
-  const { profiles, messages, handleSendMessage, updateProfile, fetchProfile } = useData();
+  const { updateProfile, fetchProfile } = useData();
 
   return (
     <Routes>
@@ -47,15 +47,13 @@ const AppRoutes = () => {
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route 
         path="/students" 
-        element={<Students profiles={profiles} currentUserId={currentUserId} />} 
+        element={<Students currentUserId={currentUserId} />} 
       />
       <Route 
         path="/profile/:id" 
         element={
           <ProfileView 
-            profiles={profiles}
             currentUserId={currentUserId}
-            onSendMessage={handleSendMessage}
           />
         } 
       />
@@ -89,10 +87,7 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Messages 
-              messages={messages}
-              profiles={profiles}
               currentUserId={currentUserId!}
-              onSendMessage={handleSendMessage}
             />
           </ProtectedRoute>
         } 
