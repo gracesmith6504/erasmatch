@@ -10,4 +10,5 @@ export type AuthContextType = {
   handleLogin: (email: string) => void;
   handleLogout: () => Promise<void>;
   handleProfileUpdate: (updatedProfile: Partial<Profile>) => Promise<void>;
+  refreshProfile: () => Promise<void>;
 };
