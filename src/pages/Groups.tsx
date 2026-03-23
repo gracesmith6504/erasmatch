@@ -11,7 +11,6 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, GraduationCap } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { toast } from "sonner";
 
 const Groups = () => {
   const location = useLocation();
@@ -26,23 +25,10 @@ const Groups = () => {
   const [selectedCityChat, setSelectedCityChat] = useState<string | null>(null);
   
   useEffect(() => {
-    const hasVisitedGroups = sessionStorage.getItem("hasVisitedGroups");
-    const fromOnboarding = sessionStorage.getItem("justCompletedOnboarding");
-    const isFirstVisit = !hasVisitedGroups && fromOnboarding === "true";
-    
-    if (isFirstVisit) {
-      sessionStorage.setItem("hasVisitedGroups", "true");
-      toast.info("Loading group chats...");
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
-    }
-  }, []);
-  
-  useEffect(() => {
     const params = new URLSearchParams(location.search);
     if (params.get("from") === "onboarding") {
-      sessionStorage.setItem("justCompletedOnboarding", "true");
+      // Clean up onboarding flag — no reload needed
+      sessionStorage.removeItem("justCompletedOnboarding");
     }
   }, [location]);
   

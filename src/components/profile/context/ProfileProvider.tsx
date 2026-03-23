@@ -176,19 +176,9 @@ export const ProfileProvider = ({
       
       // Check if university has changed
       if (updatedProfile.university && updatedProfile.university !== initialUniversity) {
-        // Show loading toast
-        toast.loading("Updating your group chats...");
-        
-        // Navigate to groups page with a slight delay to allow Supabase to sync
-        setTimeout(() => {
-          navigate("/groups");
-          // Force page reload after navigation
-          setTimeout(() => {
-            window.location.reload();
-          }, 200);
-        }, 300);
+        setInitialUniversity(updatedProfile.university);
+        navigate("/groups");
       } else {
-        // No university change, navigate to students page instead
         navigate("/students");
       }
     } catch (error: any) {
