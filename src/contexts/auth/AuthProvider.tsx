@@ -1,5 +1,4 @@
-
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,60 +18,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Initialize and listen for auth changes
-  useEffect(() => {
-    // Fetch current session
-    const fetchSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        handleAuthChange(session);
-      } catch (error) {
-        console.error("Error fetching session:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSession();
-
-    // Set up auth listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        console.log("Auth state changed:", event, session?.user?.id);
-        if (event === "PASSWORD_RECOVERY") {
-          navigate("/reset-password");
-          return;
-        }
-        handleAuthChange(session);
-      }
-    );
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  // Function to handle auth state changes
-  const handleAuthChange = async (session: any) => {
+  // Function to handle auth state changes — memoised with navigate dependency
+  const handleAuthChange = useCallback(async (session: any) => {
     if (window.location.pathname === '/reset-password') return;
     if (session?.user) {
       setIsAuthenticated(true);
       setCurrentUserId(session.user.id);
-      // Store user ID in localStorage for forum functionality
       localStorage.setItem('userId', session.user.id);
       setCurrentUserEmail(session.user.email);
 
-      // Fetch user profile
       try {
         const profileData = await fetchUserProfile(session.user.id);
 
         if (profileData) {
-          // Check if the user account is marked as deleted
           if (profileData.deleted_at) {
             console.log("User has a deleted account, handling re-registration");
             
-            // This is a re-registration after deletion
-            // Reset the deleted_at timestamp and restore basic info
             const userData = session.user.user_metadata || {};
             const defaultName = userData.name || userData.full_name || null;
             
@@ -94,13 +55,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
               return;
             }
 
-            // Fetch the updated profile
             const updatedProfile = await fetchUserProfile(session.user.id);
             if (updatedProfile) {
               setCurrentUserProfile(updatedProfile);
               toast.success("Welcome back! Please complete your profile setup.");
               
-              // Redirect to onboarding for profile completion
               if (!window.location.pathname.includes('/onboarding') && !window.location.pathname.includes('/auth')) {
                 navigate("/onboarding");
               }
@@ -110,25 +69,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           
           setCurrentUserProfile(profileData);
           
-          // Check if this is a new user who needs onboarding
           if (!profileData.onboarding_complete) {
-            // Check if we're not already on the onboarding or auth page
             if (!window.location.pathname.includes('/onboarding') && !window.location.pathname.includes('/auth')) {
               navigate("/onboarding");
             }
           }
         } else {
-          // No profile found - this is a completely new user
           console.log("No profile found, creating new profile for user:", session.user.id);
           
           const userData = session.user.user_metadata || {};
           const defaultName = userData.name || userData.full_name || null;
           
-          // Check for pending referral code from signup flow
           const pendingRef = sessionStorage.getItem("pendingRefCode");
           if (pendingRef) sessionStorage.removeItem("pendingRefCode");
           
-          // Create a new profile for this new user (includes ref_code and privacy_consent)
           const newProfile = await createUserProfile(
             session.user.id, 
             session.user.email, 
@@ -139,7 +93,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           if (newProfile) {
             setCurrentUserProfile(newProfile);
             
-            // New user, redirect to onboarding
             if (!window.location.pathname.includes('/onboarding') && !window.location.pathname.includes('/auth')) {
               navigate("/onboarding");
             }
@@ -151,16 +104,44 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     } else {
       setIsAuthenticated(false);
       setCurrentUserId(null);
-      // Remove user ID from localStorage
       localStorage.removeItem('userId');
       setCurrentUserEmail(null);
       setCurrentUserProfile(null);
     }
-  };
+  }, [navigate]);
+
+  // Initialize and listen for auth changes
+  useEffect(() => {
+    const fetchSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        handleAuthChange(session);
+      } catch (error) {
+        console.error("Error fetching session:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        console.log("Auth state changed:", event, session?.user?.id);
+        if (event === "PASSWORD_RECOVERY") {
+          navigate("/reset-password");
+          return;
+        }
+        handleAuthChange(session);
+      }
+    );
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [navigate, handleAuthChange]);
 
   const handleLogin = (email: string) => {
-    // The actual login happens in the Auth component
-    // This is just for additional state management if needed
     setCurrentUserEmail(email);
   };
 
@@ -182,7 +163,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const success = await updateUserProfile(currentUserId, updatedProfile);
       
       if (success) {
-        // Re-fetch full profile from DB to ensure state is fresh
         const freshProfile = await fetchUserProfile(currentUserId);
         if (freshProfile) {
           setCurrentUserProfile(freshProfile);
