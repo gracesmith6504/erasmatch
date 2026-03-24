@@ -6,6 +6,7 @@ import { FirstNameStep } from "./steps/FirstNameStep";
 import { DestinationUniversityStep } from "./steps/DestinationUniversityStep";
 import { ExchangeDetailsStep } from "./steps/ExchangeDetailsStep";
 import { InterestsStep } from "./steps/InterestsStep";
+import { PhotoStep } from "./steps/PhotoStep";
 import { CompletionCelebration } from "./CompletionCelebration";
 import { toast } from "sonner";
 import { generateUniqueRefCode } from "@/utils/refCodeGenerator";
