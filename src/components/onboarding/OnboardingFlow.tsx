@@ -6,6 +6,7 @@ import { FirstNameStep } from "./steps/FirstNameStep";
 import { DestinationUniversityStep } from "./steps/DestinationUniversityStep";
 import { ExchangeDetailsStep } from "./steps/ExchangeDetailsStep";
 import { InterestsStep } from "./steps/InterestsStep";
+import { PhotoStep } from "./steps/PhotoStep";
 import { CompletionCelebration } from "./CompletionCelebration";
 import { toast } from "sonner";
 import { generateUniqueRefCode } from "@/utils/refCodeGenerator";
@@ -31,7 +32,7 @@ export const OnboardingFlow = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [showCelebration, setShowCelebration] = useState(false);
-  const totalSteps = 4;
+  const totalSteps = 5;
 
   useEffect(() => {
     if (currentUserProfile?.onboarding_complete) {
@@ -130,7 +131,15 @@ export const OnboardingFlow = () => {
         return (
           <InterestsStep
             initialValue={currentUserProfile?.personality_tags || []}
-            onComplete={handleCompleteOnboarding}
+            onComplete={goToNextStep}
+            onUpdateProfile={handleUpdateProfile}
+            onBack={goToPreviousStep}
+          />
+        );
+      case 4:
+        return (
+          <PhotoStep
+            onNext={handleCompleteOnboarding}
             onUpdateProfile={handleUpdateProfile}
             onBack={goToPreviousStep}
           />
