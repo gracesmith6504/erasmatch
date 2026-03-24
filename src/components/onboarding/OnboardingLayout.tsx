@@ -11,7 +11,7 @@ type OnboardingLayoutProps = {
   title?: string;
 };
 
-const STEP_LABELS = ["", "You", "Destination", "Details", "Interests"];
+const STEP_LABELS = ["", "You", "Destination", "Details", "Interests", "Photo"];
 
 export const OnboardingLayout = ({
   children,
