@@ -7,21 +7,24 @@ const reasons = [
     title: "Find your exact people",
     description:
       "Search by destination university and semester to find students going to the same place at the same time.",
-    color: "bg-erasmatch-blue/10 text-erasmatch-blue",
+    color: "bg-erasmatch-blue/15 text-erasmatch-blue border-erasmatch-blue/20",
+    bg: "bg-erasmatch-blue/5",
   },
   {
     icon: MessageCircle,
     title: "Group chats that create themselves",
     description:
       "Pick your city and university, and you're automatically in the right conversations.",
-    color: "bg-erasmatch-coral/10 text-erasmatch-coral",
+    color: "bg-erasmatch-green/15 text-erasmatch-green border-erasmatch-green/20",
+    bg: "bg-erasmatch-green/5",
   },
   {
     icon: Heart,
     title: "Advice from those who've been there",
     description:
       "Ask real questions to students who already did Erasmus at your destination.",
-    color: "bg-erasmatch-purple/10 text-erasmatch-purple",
+    color: "bg-erasmatch-purple/15 text-erasmatch-purple border-erasmatch-purple/20",
+    bg: "bg-erasmatch-purple/5",
   },
 ];
 
@@ -73,12 +76,12 @@ export const FeaturesSection = () => {
             <motion.div
               key={reason.title}
               variants={item}
-              className="group relative p-5 sm:p-7 rounded-2xl bg-background border border-border hover:border-border/80 hover:shadow-card hover:scale-[1.02] transition-all duration-300 cursor-default"
+              className={`group relative p-5 sm:p-7 rounded-2xl ${reason.bg} border border-border hover:border-border/80 hover:shadow-card hover:scale-[1.02] transition-all duration-300 cursor-default`}
             >
               <div
-                className={`h-10 w-10 sm:h-11 sm:w-11 rounded-xl ${reason.color} flex items-center justify-center mb-4 sm:mb-5 group-hover:scale-110 transition-transform duration-300`}
+                className={`h-12 w-12 sm:h-14 sm:w-14 rounded-xl ${reason.color} flex items-center justify-center mb-4 sm:mb-5 group-hover:scale-110 transition-transform duration-300`}
               >
-                <reason.icon className="h-5 w-5" />
+                <reason.icon className="h-6 w-6 sm:h-7 sm:w-7" />
               </div>
               <h3 className="font-semibold text-foreground mb-1.5 sm:mb-2 text-base sm:text-[1.05rem]">
                 {reason.title}
