@@ -32,7 +32,7 @@ export const OnboardingFlow = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [showCelebration, setShowCelebration] = useState(false);
-  const totalSteps = 4;
+  const totalSteps = 5;
 
   useEffect(() => {
     if (currentUserProfile?.onboarding_complete) {
