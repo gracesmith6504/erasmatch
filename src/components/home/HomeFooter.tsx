@@ -16,7 +16,6 @@ export const HomeFooter = () => {
           <div className="flex flex-wrap justify-center gap-6 text-sm">
             <Link to="/about" className="text-muted-foreground hover:text-foreground transition-colors">About</Link>
             <Link to="/privacy-policy" className="text-muted-foreground hover:text-foreground transition-colors">Privacy</Link>
-            <a href="https://instagram.com/erasmatch" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">Instagram</a>
           </div>
         </div>
         <div className="mt-8 pt-6 border-t border-border text-center">
