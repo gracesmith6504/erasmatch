@@ -7,21 +7,24 @@ const reasons = [
     title: "Find your exact people",
     description:
       "Search by destination university and semester to find students going to the same place at the same time.",
-    color: "bg-erasmatch-blue/10 text-erasmatch-blue",
+    color: "bg-erasmatch-blue/15 text-erasmatch-blue border-erasmatch-blue/20",
+    bg: "bg-erasmatch-blue/5",
   },
   {
     icon: MessageCircle,
     title: "Group chats that create themselves",
     description:
       "Pick your city and university, and you're automatically in the right conversations.",
-    color: "bg-erasmatch-coral/10 text-erasmatch-coral",
+    color: "bg-erasmatch-green/15 text-erasmatch-green border-erasmatch-green/20",
+    bg: "bg-erasmatch-green/5",
   },
   {
     icon: Heart,
     title: "Advice from those who've been there",
     description:
       "Ask real questions to students who already did Erasmus at your destination.",
-    color: "bg-erasmatch-purple/10 text-erasmatch-purple",
+    color: "bg-erasmatch-purple/15 text-erasmatch-purple border-erasmatch-purple/20",
+    bg: "bg-erasmatch-purple/5",
   },
 ];
 
