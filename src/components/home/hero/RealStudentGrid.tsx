@@ -79,7 +79,7 @@ export const RealStudentGrid = () => {
                 transition={{ delay: 0.5 + cityIndex * 0.15 + i * 0.08, duration: 0.3 }}
               >
                 <Avatar className="h-10 w-10 border-2 border-card shadow-soft">
-                  {student.avatar_url ? <AvatarImage src={student.avatar_url} loading="lazy" /> : null}
+                  {student.avatar_url ? <AvatarImage src={`${student.avatar_url}?width=80&height=80&resize=cover`} loading="lazy" /> : null}
                   <AvatarFallback className="text-xs bg-secondary text-foreground">
                     {student.first_name?.charAt(0) || "?"}
                   </AvatarFallback>
