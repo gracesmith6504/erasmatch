@@ -70,8 +70,12 @@ export const HeroSection = ({
                   {featuredAvatars.map((url, i) =>
                 <img
                   key={i}
-                  src={url}
+                  src={url ? `${url}?width=72&height=72&resize=cover` : url}
                   alt=""
+                  loading="lazy"
+                  decoding="async"
+                  width={36}
+                  height={36}
                   className="w-9 h-9 rounded-full border-2 border-background object-cover"
                   style={{ marginLeft: i === 0 ? 0 : -8 }} />
 
