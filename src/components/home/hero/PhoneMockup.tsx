@@ -91,7 +91,7 @@ const FloatingToasts = ({ profiles }: { profiles: FeaturedProfile[] }) => {
           >
             <Avatar className="h-6 w-6 shrink-0 border border-border">
               {toast.profile.avatar_url ? (
-                <AvatarImage src={toast.profile.avatar_url} loading="lazy" />
+                <AvatarImage src={`${toast.profile.avatar_url}?width=48&height=48&resize=cover`} loading="lazy" />
               ) : null}
               <AvatarFallback className="text-[8px] bg-secondary text-foreground">
                 {toast.profile.first_name?.charAt(0) || "?"}
