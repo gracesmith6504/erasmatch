@@ -33,6 +33,7 @@ export const OnboardingFlow = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [showCityPayoff, setShowCityPayoff] = useState(false);
   const totalSteps = 5;
 
   useEffect(() => {
