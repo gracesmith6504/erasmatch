@@ -8,6 +8,7 @@ import { ExchangeDetailsStep } from "./steps/ExchangeDetailsStep";
 import { InterestsStep } from "./steps/InterestsStep";
 import { PhotoStep } from "./steps/PhotoStep";
 import { CompletionCelebration } from "./CompletionCelebration";
+import { CityPayoff } from "./CityPayoff";
 import { toast } from "sonner";
 import { generateUniqueRefCode } from "@/utils/refCodeGenerator";
 
