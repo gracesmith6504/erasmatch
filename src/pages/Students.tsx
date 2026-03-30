@@ -11,7 +11,7 @@ import { Users, MapPin } from "lucide-react";
 import { useLocation, Link } from "react-router-dom";
 import { WelcomeBanner } from "@/components/WelcomeBanner";
 import { useOnboardingBanner } from "@/hooks/useOnboardingBanner";
-import SuggestedStudents from "@/components/student/SuggestedStudents";
+import PeopleToMeet from "@/components/student/PeopleToMeet";
 
 type StudentsProps = {
   currentUserId: string | null;
