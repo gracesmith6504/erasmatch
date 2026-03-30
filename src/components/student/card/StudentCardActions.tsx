@@ -69,6 +69,7 @@ const StudentCardActions: React.FC<StudentCardActionsProps> = ({
         studentName={studentName}
         sharedCity={sharedCity}
         sharedUniversity={sharedUniversity}
+        initialNote={initialNote}
       />
     </>
   );
