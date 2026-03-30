@@ -46,12 +46,9 @@ const Students = ({ currentUserId }: StudentsProps) => {
 
   const fromOnboarding = new URLSearchParams(location.search).get("from") === "onboarding";
   const currentProfile = profiles.find(p => p.id === currentUserId);
-  const showSuggested = fromOnboarding && !suggestedDismissed && !!currentProfile;
-
-  const handleDismissSuggested = () => {
-    setSuggestedDismissed(true);
-    sessionStorage.setItem("suggestedStudentsDismissed", "true");
-  };
+  const showPeopleToMeet = !!currentProfile && !!currentUserId && (
+    fromOnboarding || (!!currentProfile.city && !!currentProfile.university)
+  );
   
   // Store onboarding completion info when coming from onboarding
   useEffect(() => {
