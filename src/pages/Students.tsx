@@ -116,13 +116,11 @@ const Students = ({ currentUserId }: StudentsProps) => {
         <WelcomeBanner cityName={cityName} hasAvatar={hasAvatar} />
       )}
 
-      {showSuggested && (
-        <SuggestedStudents
+      {showPeopleToMeet && currentProfile && currentUserId && (
+        <PeopleToMeet
           profiles={profiles}
-          currentUserId={currentUserId!}
-          cityName={currentProfile?.city || null}
-          universityName={currentProfile?.university || null}
-          onDismiss={handleDismissSuggested}
+          currentUserId={currentUserId}
+          currentProfile={currentProfile}
         />
       )}
       
