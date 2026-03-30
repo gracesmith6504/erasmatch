@@ -11,6 +11,7 @@ interface StudentCardActionsProps {
   studentName: string;
   studentCity?: string | null;
   studentUniversity?: string | null;
+  initialNote?: string;
 }
 
 const StudentCardActions: React.FC<StudentCardActionsProps> = ({
