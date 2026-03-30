@@ -1,55 +1,68 @@
+The plan looks good to me with those fixes applied. Here's the final version:
 
+---
 
-## Connect Button Feature Plan
+## City Payoff Interstitial + "People You Should Meet"
 
-### Summary
+### Files to create
 
-Replace the current "Message" button on student cards (and profile views) with a "Connect" button that opens a small modal requiring a short note (max 100 chars). That note gets sent as a regular DM using the existing messaging infrastructure. No new database tables needed.
+`src/components/onboarding/CityPayoff.tsx` Full-screen interstitial shown after `CompletionCelebration` completes, before navigating to `/students`.
 
-### What Changes
+- Queries `profiles` filtered by `city`, excludes current user, `deleted_at` is null, orders by `avatar_url` not null first, limit 3 for display
+- Gets total count separately (or from the same query — count all, display 3)
+- Headline: `"X students are already going to [city] 🎉"` where X is total count
+- Shows up to 3 avatar bubbles in a row using the existing `Avatar` component
+- Zero-match fallback: `"You're the first one heading to [city]! More students are joining every day."`
+- CTA: `"Meet them →"` (or `"Explore students →"` if zero matches) — navigates to `/students?from=onboarding`
+- Auto-advances after **6 seconds** if matches exist, **4 seconds** if zero matches
+- Framer Motion fade-in consistent with `CompletionCelebration` style
 
-**1. New Component: ConnectModal**
-- File: `src/components/student/ConnectModal.tsx`
-- A dialog with a text input (100 char max, mandatory), character counter, and Send button
-- Accepts `studentId`, `studentName`, and optional context props (shared city/university) for placeholder hints
-- Uses the existing `useSendMessage` hook to send the note as a normal DM
-- On success: toast confirmation, close modal, optionally navigate to the chat
+`src/components/student/PeopleToMeet.tsx` Scored recommendation section shown at the top of `/students`.
 
-**2. Update StudentCardActions**
-- File: `src/components/student/card/StudentCardActions.tsx`
-- Replace the "Message" button with a "Connect" button (use `UserPlus` icon instead of `Mail`)
-- Clicking opens the ConnectModal instead of navigating to `/messages?user=`
-- Keep the "Profile" button unchanged
+- Props: `profiles`, `currentUserId`, `currentProfile`
+- Scoring per candidate: same city +10 · same university +8 · same semester +6 · each shared personality tag +3 · has avatar +2
+- Exclusion set: query `messages` where `sender_id = currentUserId OR receiver_id = currentUserId`, collect all unique partner IDs from both columns — exclude anyone in that set
+- Use `useQuery(['messaged-users', currentUserId])` with a stable key, not a bare `useEffect`
+- Take top 5 by score
+- Layout: horizontally scrollable row on mobile (`overflow-x-auto flex gap-3`), `grid grid-cols-5` on desktop
+- Use `StudentAvatar` + `StudentInfo` + `PersonalityTags` directly instead of the full `StudentCard` — avoids grid layout conflicts
+- Each card has a `"Say hi"` button that opens `ConnectModal` with `initialNote` pre-filled: `"Hey [name]! I saw we're both going to [city] — are you excited yet? 😄"` (trimmed to stay safely under 100 chars)
+- Dismissible via X button — persists to `localStorage` (not `sessionStorage`) so it survives new browser sessions
+- Only re-appears if the user clears storage or a new higher-scored candidate appears (optional, can be a v2 concern)
 
-**3. Update ProfileView page**
-- File: `src/pages/ProfileView.tsx` (and `src/components/profile/view/ProfileHeader.tsx`)
-- The "Send Message" action on another user's profile should also use the ConnectModal for first contact
-- If a conversation already exists (check via `useDirectMessages`), show "Message" and navigate to chat directly instead
+---
 
-**4. Personalized placeholder hints**
-- Reuse the logic from `SuggestedPrompts.tsx` (shared city/university detection) to show a placeholder like *"e.g. Also heading to Barcelona in Sept!"* inside the ConnectModal input
-- Keep it as placeholder text only, not pre-filled — user must type their own note
+### Files to modify
 
-### Technical Details
+`src/components/onboarding/OnboardingFlow.tsx`
 
-- **No new tables or migrations.** The connect note is inserted into the existing `messages` table as a regular DM.
-- **No new edge functions.** The existing `send-message-notification` function and in-app notification flow handle the notification automatically via `useSendMessage`.
-- **ConnectModal** uses `Dialog` from `@/components/ui/dialog`, `Input` from `@/components/ui/input`, and `Button` from `@/components/ui/button`.
-- Character limit enforced with `maxLength={100}` and a visible counter.
-- Send button disabled when input is empty or whitespace-only.
-- After sending, the modal closes and a toast confirms *"Connect request sent!"*
+- Add `showCityPayoff: boolean` state, initially false
+- In `handleCelebrationComplete`, instead of navigating to `/students`, set `showCityPayoff = true`
+- Render `<CityPayoff>` when `showCityPayoff` is true, passing `city` and `userId`
+- `CityPayoff.onComplete` navigates to `/students?from=onboarding`
 
-### Files to Create
-- `src/components/student/ConnectModal.tsx`
+`src/pages/Students.tsx`
 
-### Files to Modify
-- `src/components/student/card/StudentCardActions.tsx` — swap Message → Connect button, wire modal
-- `src/pages/ProfileView.tsx` — add Connect flow for first-time contact
-- `src/components/profile/view/ProfileHeader.tsx` — add Connect button for non-own profiles
+- Remove `SuggestedStudents` import and usage entirely
+- Add `PeopleToMeet` in its place
+- Show condition: URL has `?from=onboarding` **OR** current profile has both `city` and `university` set — not just the onboarding path
 
-### What This Does NOT Change
-- No mutual matching or accept/reject flow
-- No new connections table or friends list
-- No changes to the Messages page, chat UI, or message delivery
-- The suggested prompts inside existing chats remain untouched
+`src/components/student/ConnectModal.tsx`
 
+- Add optional `initialNote?: string` prop
+- Initialize the note state with `initialNote ?? ''` instead of `''`
+- Keep the 100-char hard limit — the pre-filled template is short enough if you trim it
+
+`src/components/student/card/StudentCardActions.tsx`
+
+- Add optional `initialNote?: string` prop
+- Pass it through to `ConnectModal`
+
+---
+
+### What's explicitly out of scope
+
+- No new database tables or migrations
+- No changes to the messages page, chat UI, or message delivery
+- No accept/reject connection flow
+- `SuggestedStudents.tsx` can be deleted once `PeopleToMeet` is confirmed working
