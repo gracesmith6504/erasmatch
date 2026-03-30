@@ -11,7 +11,7 @@ import { Users, MapPin } from "lucide-react";
 import { useLocation, Link } from "react-router-dom";
 import { WelcomeBanner } from "@/components/WelcomeBanner";
 import { useOnboardingBanner } from "@/hooks/useOnboardingBanner";
-import SuggestedStudents from "@/components/student/SuggestedStudents";
+import PeopleToMeet from "@/components/student/PeopleToMeet";
 
 type StudentsProps = {
   currentUserId: string | null;
@@ -40,18 +40,15 @@ const Students = ({ currentUserId }: StudentsProps) => {
   } = useStudentsData(profiles, currentUserId);
 
   const [activeTab, setActiveTab] = useState<"list" | "cities">("list");
-  const [suggestedDismissed, setSuggestedDismissed] = useState(() => sessionStorage.getItem("suggestedStudentsDismissed") === "true");
+  const [peopleDismissed] = useState(false);
   const location = useLocation();
   const { showBanner, cityName, hasAvatar } = useOnboardingBanner(currentUserId);
 
   const fromOnboarding = new URLSearchParams(location.search).get("from") === "onboarding";
   const currentProfile = profiles.find(p => p.id === currentUserId);
-  const showSuggested = fromOnboarding && !suggestedDismissed && !!currentProfile;
-
-  const handleDismissSuggested = () => {
-    setSuggestedDismissed(true);
-    sessionStorage.setItem("suggestedStudentsDismissed", "true");
-  };
+  const showPeopleToMeet = !!currentProfile && !!currentUserId && (
+    fromOnboarding || (!!currentProfile.city && !!currentProfile.university)
+  );
   
   // Store onboarding completion info when coming from onboarding
   useEffect(() => {
@@ -119,13 +116,11 @@ const Students = ({ currentUserId }: StudentsProps) => {
         <WelcomeBanner cityName={cityName} hasAvatar={hasAvatar} />
       )}
 
-      {showSuggested && (
-        <SuggestedStudents
+      {showPeopleToMeet && currentProfile && currentUserId && (
+        <PeopleToMeet
           profiles={profiles}
-          currentUserId={currentUserId!}
-          cityName={currentProfile?.city || null}
-          universityName={currentProfile?.university || null}
-          onDismiss={handleDismissSuggested}
+          currentUserId={currentUserId}
+          currentProfile={currentProfile}
         />
       )}
       

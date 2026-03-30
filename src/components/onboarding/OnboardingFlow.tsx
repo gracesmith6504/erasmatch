@@ -8,6 +8,7 @@ import { ExchangeDetailsStep } from "./steps/ExchangeDetailsStep";
 import { InterestsStep } from "./steps/InterestsStep";
 import { PhotoStep } from "./steps/PhotoStep";
 import { CompletionCelebration } from "./CompletionCelebration";
+import { CityPayoff } from "./CityPayoff";
 import { toast } from "sonner";
 import { generateUniqueRefCode } from "@/utils/refCodeGenerator";
 
@@ -32,6 +33,7 @@ export const OnboardingFlow = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [showCityPayoff, setShowCityPayoff] = useState(false);
   const totalSteps = 5;
 
   useEffect(() => {
@@ -74,6 +76,10 @@ export const OnboardingFlow = () => {
   };
 
   const handleCelebrationComplete = useCallback(() => {
+    setShowCityPayoff(true);
+  }, []);
+
+  const handleCityPayoffComplete = useCallback(() => {
     navigate("/students?from=onboarding");
   }, [navigate]);
 
@@ -92,6 +98,16 @@ export const OnboardingFlow = () => {
       setCurrentStep(currentStep - 1);
     }
   };
+
+  if (showCityPayoff) {
+    return (
+      <CityPayoff
+        city={currentUserProfile?.city ?? null}
+        userId={currentUserProfile?.id ?? ""}
+        onComplete={handleCityPayoffComplete}
+      />
+    );
+  }
 
   if (showCelebration) {
     return <CompletionCelebration onComplete={handleCelebrationComplete} />;

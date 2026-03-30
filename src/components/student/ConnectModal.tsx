@@ -23,6 +23,8 @@ interface ConnectModalProps {
   sharedCity?: string | null;
   /** Optional shared university for placeholder hint */
   sharedUniversity?: string | null;
+  /** Optional pre-filled note */
+  initialNote?: string;
 }
 
 const ConnectModal: React.FC<ConnectModalProps> = ({
@@ -32,8 +34,9 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
   studentName,
   sharedCity,
   sharedUniversity,
+  initialNote,
 }) => {
-  const [note, setNote] = useState("");
+  const [note, setNote] = useState(initialNote ?? "");
   const [sending, setSending] = useState(false);
   const sendMessage = useSendMessage();
 
