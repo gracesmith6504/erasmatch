@@ -99,6 +99,16 @@ export const OnboardingFlow = () => {
     }
   };
 
+  if (showCityPayoff) {
+    return (
+      <CityPayoff
+        city={currentUserProfile?.city ?? null}
+        userId={currentUserProfile?.id ?? ""}
+        onComplete={handleCityPayoffComplete}
+      />
+    );
+  }
+
   if (showCelebration) {
     return <CompletionCelebration onComplete={handleCelebrationComplete} />;
   }
