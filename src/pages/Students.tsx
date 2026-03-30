@@ -40,7 +40,7 @@ const Students = ({ currentUserId }: StudentsProps) => {
   } = useStudentsData(profiles, currentUserId);
 
   const [activeTab, setActiveTab] = useState<"list" | "cities">("list");
-  const [suggestedDismissed, setSuggestedDismissed] = useState(() => sessionStorage.getItem("suggestedStudentsDismissed") === "true");
+  const [peopleDismissed] = useState(false);
   const location = useLocation();
   const { showBanner, cityName, hasAvatar } = useOnboardingBanner(currentUserId);
 
