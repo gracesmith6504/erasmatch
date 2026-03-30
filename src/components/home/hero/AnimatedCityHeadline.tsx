@@ -14,6 +14,7 @@ export const AnimatedCityHeadline = () => {
   }, []);
 
   return (
+    <>
     <h1 className="text-3xl sm:text-5xl lg:text-[3.5rem] tracking-tight mb-4 sm:mb-6 leading-[1.1] text-foreground font-display">
       <span className="font-extrabold">Meet your Erasmus mates</span>
       <br />
@@ -34,5 +35,9 @@ export const AnimatedCityHeadline = () => {
         </AnimatePresence>
       </span>
     </h1>
+    <p className="text-base sm:text-lg text-muted-foreground mt-3 sm:mt-4 max-w-md leading-relaxed">
+      Connect with students heading to the same place &ndash; or those who've already been.
+    </p>
+    </>
   );
 };
