@@ -23,6 +23,8 @@ interface ConnectModalProps {
   sharedCity?: string | null;
   /** Optional shared university for placeholder hint */
   sharedUniversity?: string | null;
+  /** Optional pre-filled note */
+  initialNote?: string;
 }
 
 const ConnectModal: React.FC<ConnectModalProps> = ({
