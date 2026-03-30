@@ -34,8 +34,9 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
   studentName,
   sharedCity,
   sharedUniversity,
+  initialNote,
 }) => {
-  const [note, setNote] = useState("");
+  const [note, setNote] = useState(initialNote ?? "");
   const [sending, setSending] = useState(false);
   const sendMessage = useSendMessage();
 
