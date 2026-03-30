@@ -15,6 +15,9 @@ export const AnimatedCityHeadline = () => {
 
   return (
     <>
+    <span className="inline-flex items-center rounded-full bg-accent/15 text-accent px-3 py-1 text-xs font-semibold mb-4 tracking-wide uppercase">
+      Free for all students
+    </span>
     <h1 className="text-3xl sm:text-5xl lg:text-[3.5rem] tracking-tight mb-4 sm:mb-6 leading-[1.1] text-foreground font-display">
       <span className="font-extrabold">Meet your Erasmus mates</span>
       <br />
