@@ -19,6 +19,7 @@ const StudentCardActions: React.FC<StudentCardActionsProps> = ({
   studentName,
   studentCity,
   studentUniversity,
+  initialNote,
 }) => {
   const navigate = useNavigate();
   const { currentUserProfile } = useAuth();
