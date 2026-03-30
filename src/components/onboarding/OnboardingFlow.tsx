@@ -76,6 +76,10 @@ export const OnboardingFlow = () => {
   };
 
   const handleCelebrationComplete = useCallback(() => {
+    setShowCityPayoff(true);
+  }, []);
+
+  const handleCityPayoffComplete = useCallback(() => {
     navigate("/students?from=onboarding");
   }, [navigate]);
 
