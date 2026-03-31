@@ -45,6 +45,7 @@ const Students = ({ currentUserId }: StudentsProps) => {
   const { showBanner, cityName, hasAvatar } = useOnboardingBanner(currentUserId);
 
   const fromOnboarding = new URLSearchParams(location.search).get("from") === "onboarding";
+  const [showFullRecommendations, setShowFullRecommendations] = useState(fromOnboarding);
   const currentProfile = profiles.find(p => p.id === currentUserId);
   const showPeopleToMeet = !!currentProfile && !!currentUserId && (
     fromOnboarding || (!!currentProfile.city && !!currentProfile.university)
