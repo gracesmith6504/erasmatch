@@ -130,7 +130,7 @@ export const DestinationUniversityStep = ({
   return (
     <OnboardingLayout
       currentStep={2}
-      totalSteps={4}
+      totalSteps={5}
       onBack={onBack}
     >
       <div className="w-full max-w-md space-y-5">
