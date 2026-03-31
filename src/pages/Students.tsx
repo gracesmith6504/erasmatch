@@ -127,7 +127,7 @@ const Students = ({ currentUserId }: StudentsProps) => {
           currentUserId={currentUserId}
           currentProfile={currentProfile}
           fullPage={showFullRecommendations}
-          onShowAll={() => setShowFullRecommendations(false)}
+          onShowAll={handleShowAll}
         />
       )}
       
