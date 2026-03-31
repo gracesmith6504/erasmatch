@@ -34,12 +34,13 @@ export const OnboardingFlow = () => {
   const [direction, setDirection] = useState(1);
   const [showCelebration, setShowCelebration] = useState(false);
   const [showCityPayoff, setShowCityPayoff] = useState(false);
+  const completingRef = useRef(false);
   const totalSteps = 5;
 
   useEffect(() => {
     // Only redirect if onboarding was already complete on mount (returning user).
-    // Don't redirect during the celebration/city payoff sequence.
-    if (currentUserProfile?.onboarding_complete && !showCelebration && !showCityPayoff) {
+    // Don't redirect during the completion sequence (celebration → city payoff).
+    if (currentUserProfile?.onboarding_complete && !completingRef.current && !showCelebration && !showCityPayoff) {
       navigate("/students");
     }
   }, [currentUserProfile, navigate, showCelebration, showCityPayoff]);
