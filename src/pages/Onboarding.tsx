@@ -12,20 +12,13 @@ const Onboarding = () => {
   useEffect(() => {
     setPageLoaded(true);
     
-    const checkUserStatus = async () => {
-      if (!loading && !isAuthenticated) {
-        navigate("/auth?mode=login");
-        return;
-      }
-      if (!loading && currentUserProfile?.onboarding_complete) {
-        setLoadingRedirect(true);
-        navigate("/students");
-        setLoadingRedirect(false);
-      }
-    };
-    
-    checkUserStatus();
-  }, [isAuthenticated, currentUserProfile, loading, navigate]);
+    // Only redirect if not authenticated. Don't redirect when onboarding_complete
+    // because OnboardingFlow manages the celebration/city payoff sequence
+    // before navigating to /students?from=onboarding itself.
+    if (!loading && !isAuthenticated) {
+      navigate("/auth?mode=login");
+    }
+  }, [isAuthenticated, loading, navigate]);
 
   if (loading || loadingRedirect) {
     return (
