@@ -46,6 +46,10 @@ const Students = ({ currentUserId }: StudentsProps) => {
 
   const fromOnboarding = new URLSearchParams(location.search).get("from") === "onboarding";
   const [showFullRecommendations, setShowFullRecommendations] = useState(fromOnboarding);
+  const handleShowAll = () => {
+    setShowFullRecommendations(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
   const currentProfile = profiles.find(p => p.id === currentUserId);
   const showPeopleToMeet = !!currentProfile && !!currentUserId && (
     fromOnboarding || (!!currentProfile.city && !!currentProfile.university)
