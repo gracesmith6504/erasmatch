@@ -15,6 +15,8 @@ interface PeopleToMeetProps {
   profiles: Profile[];
   currentUserId: string;
   currentProfile: Profile;
+  fullPage?: boolean;
+  onShowAll?: () => void;
 }
 
 const STORAGE_KEY = "peopleToMeetDismissed";
