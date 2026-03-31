@@ -82,6 +82,9 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
       .slice(0, fullPage ? 12 : 5);
   }, [profiles, currentUserId, currentProfile, messagedIds]);
 
+  // If fullPage requested but fewer than 4 results, fall back to compact mode
+  const effectiveFullPage = fullPage && scored.length >= 4;
+
   if (dismissed || scored.length === 0) return null;
 
   const handleDismiss = () => {
