@@ -25,6 +25,8 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
   profiles,
   currentUserId,
   currentProfile,
+  fullPage = false,
+  onShowAll,
 }) => {
   const navigate = useNavigate();
   const [dismissed, setDismissed] = useState(
