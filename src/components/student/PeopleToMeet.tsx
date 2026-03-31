@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getTagInfo, getTagBgColor } from "@/components/profile/constants";
 import ConnectModal from "@/components/student/ConnectModal";
+import StudentCard from "@/components/student/StudentCard";
 import { useNavigate } from "react-router-dom";
 import { recordProfileView } from "@/hooks/useProfileViewers";
 
@@ -109,7 +110,7 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
 
   return (
     <>
-      <div className={`mb-6 rounded-xl bg-primary/5 border border-primary/10 relative ${effectiveFullPage ? 'p-6 sm:p-8' : 'p-4 sm:p-5'}`}>
+      <div className={`mb-6 rounded-xl bg-primary/5 border border-primary/10 relative ${effectiveFullPage ? 'p-4 sm:p-6 md:p-8' : 'p-4 sm:p-5'}`}>
         {!effectiveFullPage && (
           <button
             onClick={handleDismiss}
@@ -121,82 +122,82 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
         )}
 
         <div className={effectiveFullPage ? 'text-center mb-6' : 'mb-4 pr-8'}>
-          <h2 className={`font-display font-semibold text-foreground flex items-center gap-2 ${effectiveFullPage ? 'text-2xl justify-center' : 'text-lg'}`}>
-            <Sparkles className={`text-primary ${effectiveFullPage ? 'h-6 w-6' : 'h-5 w-5'}`} />
+          <h2 className={`font-display font-semibold text-foreground flex items-center gap-2 ${effectiveFullPage ? 'text-xl sm:text-2xl justify-center' : 'text-lg'}`}>
+            <Sparkles className={`text-primary ${effectiveFullPage ? 'h-5 w-5 sm:h-6 sm:w-6' : 'h-5 w-5'}`} />
             People you should meet 👋
           </h2>
           {effectiveFullPage && (
-            <p className="text-muted-foreground mt-2">Based on your city, university, and interests</p>
+            <p className="text-muted-foreground mt-2 text-sm sm:text-base">Based on your city, university, and interests</p>
           )}
         </div>
 
-        <div className={
-          effectiveFullPage
-            ? "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
-            : "flex gap-3 overflow-x-auto pb-2 sm:pb-0 sm:grid sm:grid-cols-5 scrollbar-hide"
-        }>
-          {scored.map(({ profile: p, sharedTags }) => (
-            <div
-              key={p.id}
-              className={`rounded-lg border border-border bg-card flex flex-col items-center text-center gap-2 ${
-                effectiveFullPage
-                  ? 'p-5'
-                  : 'flex-shrink-0 w-[200px] sm:w-auto p-4'
-              }`}
-            >
-              <button
-                onClick={async () => {
-                  await recordProfileView(p.id);
-                  navigate(`/profile/${p.id}`, { state: { fromProfile: true } });
-                }}
-                className="flex flex-col items-center gap-2"
+        {effectiveFullPage ? (
+          /* Full-page mode: use real StudentCard components */
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {scored.map(({ profile: p }) => (
+              <StudentCard
+                key={p.id}
+                profile={p}
+                universityCity={p.city}
+              />
+            ))}
+          </div>
+        ) : (
+          /* Compact mode: small avatar cards in a row */
+          <div className="flex gap-3 overflow-x-auto pb-2 sm:pb-0 sm:grid sm:grid-cols-5 scrollbar-hide">
+            {scored.map(({ profile: p, sharedTags }) => (
+              <div
+                key={p.id}
+                className="rounded-lg border border-border bg-card flex flex-col items-center text-center gap-2 flex-shrink-0 w-[200px] sm:w-auto p-4"
               >
-                <Avatar className={`border-2 border-card shadow-sm ${effectiveFullPage ? 'h-20 w-20' : 'h-14 w-14'}`}>
-                  {p.avatar_url ? <AvatarImage src={p.avatar_url} loading="lazy" /> : null}
-                  <AvatarFallback className={`bg-secondary text-foreground ${effectiveFullPage ? 'text-base' : 'text-sm'}`}>
-                    {getInitials(p.name)}
-                  </AvatarFallback>
-                </Avatar>
-                <span className={`font-medium text-foreground truncate max-w-[160px] ${effectiveFullPage ? 'text-base' : 'text-sm'}`}>
-                  {p.name?.split(" ")[0] ?? "Student"}
-                </span>
-              </button>
+                <button
+                  onClick={async () => {
+                    await recordProfileView(p.id);
+                    navigate(`/profile/${p.id}`, { state: { fromProfile: true } });
+                  }}
+                  className="flex flex-col items-center gap-2"
+                >
+                  <Avatar className="h-14 w-14 border-2 border-card shadow-sm">
+                    {p.avatar_url ? <AvatarImage src={p.avatar_url} loading="lazy" /> : null}
+                    <AvatarFallback className="bg-secondary text-foreground text-sm">
+                      {getInitials(p.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="font-medium text-foreground truncate max-w-[160px] text-sm">
+                    {p.name?.split(" ")[0] ?? "Student"}
+                  </span>
+                </button>
 
-              {p.city && (
-                <span className="text-xs text-muted-foreground truncate max-w-[160px]">
-                  📍 {p.city}
-                </span>
-              )}
+                {p.city && (
+                  <span className="text-xs text-muted-foreground truncate max-w-[160px]">
+                    📍 {p.city}
+                  </span>
+                )}
 
-              {effectiveFullPage && p.university && (
-                <span className="text-xs text-muted-foreground truncate max-w-[180px]">
-                  🎓 {p.university}
-                </span>
-              )}
+                {sharedTags.length > 0 && (
+                  <div className="flex flex-wrap justify-center gap-1 mt-1">
+                    {sharedTags.slice(0, 2).map((tag) => {
+                      const info = getTagInfo(tag);
+                      return (
+                        <Badge key={tag} className={`${getTagBgColor(tag)} text-xs px-2 py-0.5`}>
+                          {info?.icon} {info?.label}
+                        </Badge>
+                      );
+                    })}
+                  </div>
+                )}
 
-              {sharedTags.length > 0 && (
-                <div className="flex flex-wrap justify-center gap-1 mt-1">
-                  {sharedTags.slice(0, effectiveFullPage ? 3 : 2).map((tag) => {
-                    const info = getTagInfo(tag);
-                    return (
-                      <Badge key={tag} className={`${getTagBgColor(tag)} text-xs px-2 py-0.5`}>
-                        {info?.icon} {info?.label}
-                      </Badge>
-                    );
-                  })}
-                </div>
-              )}
-
-              <Button
-                size="sm"
-                className="w-full mt-auto text-xs"
-                onClick={() => handleSayHi(p)}
-              >
-                Say hi 👋
-              </Button>
-            </div>
-          ))}
-        </div>
+                <Button
+                  size="sm"
+                  className="w-full mt-auto text-xs"
+                  onClick={() => handleSayHi(p)}
+                >
+                  Say hi 👋
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
 
         {effectiveFullPage && onShowAll && (
           <div className="text-center mt-6">
