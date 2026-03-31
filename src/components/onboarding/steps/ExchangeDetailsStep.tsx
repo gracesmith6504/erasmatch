@@ -44,7 +44,7 @@ export const ExchangeDetailsStep = ({
   return (
     <OnboardingLayout
       currentStep={3}
-      totalSteps={4}
+      totalSteps={5}
       onBack={onBack}
     >
       <div className="w-full max-w-md space-y-5">
