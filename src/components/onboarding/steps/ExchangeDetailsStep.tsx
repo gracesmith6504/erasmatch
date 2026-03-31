@@ -39,7 +39,7 @@ export const ExchangeDetailsStep = ({
     }
   };
 
-  const canSubmit = homeUniversity.trim().length > 0;
+  const canSubmit = homeUniversity.trim().length > 0 || semester.length > 0;
 
   return (
     <OnboardingLayout
