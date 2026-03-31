@@ -79,7 +79,7 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
       })
       .filter((s) => s.score > 0)
       .sort((a, b) => b.score - a.score)
-      .slice(0, 5);
+      .slice(0, fullPage ? 12 : 5);
   }, [profiles, currentUserId, currentProfile, messagedIds]);
 
   if (dismissed || scored.length === 0) return null;
