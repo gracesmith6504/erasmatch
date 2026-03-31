@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -34,13 +34,16 @@ export const OnboardingFlow = () => {
   const [direction, setDirection] = useState(1);
   const [showCelebration, setShowCelebration] = useState(false);
   const [showCityPayoff, setShowCityPayoff] = useState(false);
+  const completingRef = useRef(false);
   const totalSteps = 5;
 
   useEffect(() => {
-    if (currentUserProfile?.onboarding_complete) {
+    // Only redirect if onboarding was already complete on mount (returning user).
+    // Don't redirect during the completion sequence (celebration → city payoff).
+    if (currentUserProfile?.onboarding_complete && !completingRef.current && !showCelebration && !showCityPayoff) {
       navigate("/students");
     }
-  }, [currentUserProfile, navigate]);
+  }, [currentUserProfile, navigate, showCelebration, showCityPayoff]);
 
   const handleUpdateProfile = async (data: any) => {
     try {
@@ -54,6 +57,7 @@ export const OnboardingFlow = () => {
 
   const handleCompleteOnboarding = async () => {
     try {
+      completingRef.current = true;
       const refCode = await generateUniqueRefCode(currentUserProfile?.name || "");
 
       await handleProfileUpdate({
