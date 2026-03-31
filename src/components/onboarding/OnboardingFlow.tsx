@@ -57,6 +57,7 @@ export const OnboardingFlow = () => {
 
   const handleCompleteOnboarding = async () => {
     try {
+      completingRef.current = true;
       const refCode = await generateUniqueRefCode(currentUserProfile?.name || "");
 
       await handleProfileUpdate({
