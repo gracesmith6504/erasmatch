@@ -1,3 +1,4 @@
+import { FunctionsHttpError } from "@supabase/supabase-js";
 import { useState } from "react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
@@ -24,38 +25,22 @@ export const DeleteAccountDialog = ({ userId }: DeleteAccountDialogProps) => {
     try {
       setIsDeleting(true);
 
-      // Get current session to check auth method
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        toast.error("No active session found");
-        return;
+      const { error } = await supabase.functions.invoke("delete-account", {
+        body: { userId },
+      });
+
+      if (error) {
+        let message = error.message || "Failed to delete account";
+
+        if (error instanceof FunctionsHttpError) {
+          const response = await error.context.json().catch(() => null);
+          if (response?.error) {
+            message = response.error;
+          }
+        }
+
+        throw new Error(message);
       }
-
-      console.log("Starting account deletion process for user:", userId);
-
-      // Mark the profile as deleted with timestamp instead of actually deleting it
-      // This approach allows us to handle re-registration properly
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({ 
-          deleted_at: new Date().toISOString(),
-          // Clear sensitive data but keep the record
-          email: null,
-          name: null,
-          bio: null,
-          avatar_url: null,
-          onboarding_complete: false
-        })
-        .eq('id', userId);
-
-      if (profileError) {
-        console.error("Error marking profile as deleted:", profileError);
-        toast.error("Failed to delete account data");
-        return;
-      }
-
-      console.log("Profile marked as deleted successfully");
 
       // Sign out the user
       const { error: signOutError } = await supabase.auth.signOut();
