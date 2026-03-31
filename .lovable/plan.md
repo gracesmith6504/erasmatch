@@ -1,68 +1,38 @@
-The plan looks good to me with those fixes applied. Here's the final version:
+## Plan: Full-Page Recommended Students After Onboarding
 
----
+### What changes
 
-## City Payoff Interstitial + "People You Should Meet"
+When `?from=onboarding` is in the URL, the `/students` page will show an expanded, full-page version of the "People you should meet" section instead of the small 5-card row. The regular student grid, filters, and tabs will be hidden until the user dismisses the recommendations or scrolls past them.
 
-### Files to create
+### Approach
 
-`src/components/onboarding/CityPayoff.tsx` Full-screen interstitial shown after `CompletionCelebration` completes, before navigating to `/students`.
+**Modify `src/components/student/PeopleToMeet.tsx**`
 
-- Queries `profiles` filtered by `city`, excludes current user, `deleted_at` is null, orders by `avatar_url` not null first, limit 3 for display
-- Gets total count separately (or from the same query — count all, display 3)
-- Headline: `"X students are already going to [city] 🎉"` where X is total count
-- Shows up to 3 avatar bubbles in a row using the existing `Avatar` component
-- Zero-match fallback: `"You're the first one heading to [city]! More students are joining every day."`
-- CTA: `"Meet them →"` (or `"Explore students →"` if zero matches) — navigates to `/students?from=onboarding`
-- Auto-advances after **6 seconds** if matches exist, **4 seconds** if zero matches
-- Framer Motion fade-in consistent with `CompletionCelebration` style
+- Accept a new prop `fullPage?: boolean` (true when `?from=onboarding`)
+- When `fullPage` is true:
+  - Increase the candidate limit from 5 to 12 (or however many score > 0)
+  - Render as a full grid (`grid-cols-2 sm:grid-cols-3 lg:grid-cols-4`) instead of a single scrollable row
+  - Use larger cards with bigger avatars (h-20 w-20), more visible shared tags (show up to 3), and university info
+  - Show a header: "People you should meet 👋" with subtext: "Based on your city, university, and interests"
+  - Add a "Show all students →" button at the bottom that dismisses the full-page view (sets `fullPage` to false via a callback, does NOT persist to localStorage — only the X dismiss is permanent)
+- When `fullPage` is false: keep current compact 5-card row behaviour unchanged
 
-`src/components/student/PeopleToMeet.tsx` Scored recommendation section shown at the top of `/students`.
+**Modify `src/pages/Students.tsx**`
 
-- Props: `profiles`, `currentUserId`, `currentProfile`
-- Scoring per candidate: same city +10 · same university +8 · same semester +6 · each shared personality tag +3 · has avatar +2
-- Exclusion set: query `messages` where `sender_id = currentUserId OR receiver_id = currentUserId`, collect all unique partner IDs from both columns — exclude anyone in that set
-- Use `useQuery(['messaged-users', currentUserId])` with a stable key, not a bare `useEffect`
-- Take top 5 by score
-- Layout: horizontally scrollable row on mobile (`overflow-x-auto flex gap-3`), `grid grid-cols-5` on desktop
-- Use `StudentAvatar` + `StudentInfo` + `PersonalityTags` directly instead of the full `StudentCard` — avoids grid layout conflicts
-- Each card has a `"Say hi"` button that opens `ConnectModal` with `initialNote` pre-filled: `"Hey [name]! I saw we're both going to [city] — are you excited yet? 😄"` (trimmed to stay safely under 100 chars)
-- Dismissible via X button — persists to `localStorage` (not `sessionStorage`) so it survives new browser sessions
-- Only re-appears if the user clears storage or a new higher-scored candidate appears (optional, can be a v2 concern)
+- Pass `fullPage={fromOnboarding}` to `PeopleToMeet`
+- Add state `showFullRecommendations` initialized to `fromOnboarding`
+- When `fullPage` mode is active and not dismissed, hide the "Find Erasmus Students" heading, tabs, filters, and student grid
+- When user clicks "Show all students →" in PeopleToMeet, set `showFullRecommendations` to false, revealing the normal page
+- The compact PeopleToMeet row still shows at the top of the normal view (existing behaviour)
 
----
+note: **Make sure the empty state is handled.** If someone signs up for a niche city with only 1 or 2 other users, the full page grid looks sad with 2 cards on it. Set a minimum threshold — if fewer than 4 scored profiles exist, skip the full page mode entirely and go straight to the normal students page with just the compact row.
 
-### Files to modify
+**The "Show all students" button copy could be better.** "Show all students →" feels like a dismissal. Try "Browse everyone going →" — same action but frames it as exploration rather than giving up on the recommendations.
 
-`src/components/onboarding/OnboardingFlow.tsx`
+**Don't hide the header.** Hiding the "Find Erasmus Students" heading and tabs is fine, but make sure there's still enough context on screen that the user knows where they are. First time on the platform, they're still orienting.
 
-- Add `showCityPayoff: boolean` state, initially false
-- In `handleCelebrationComplete`, instead of navigating to `/students`, set `showCityPayoff = true`
-- Render `<CityPayoff>` when `showCityPayoff` is true, passing `city` and `userId`
-- `CityPayoff.onComplete` navigates to `/students?from=onboarding`
+### Technical details
 
-`src/pages/Students.tsx`
-
-- Remove `SuggestedStudents` import and usage entirely
-- Add `PeopleToMeet` in its place
-- Show condition: URL has `?from=onboarding` **OR** current profile has both `city` and `university` set — not just the onboarding path
-
-`src/components/student/ConnectModal.tsx`
-
-- Add optional `initialNote?: string` prop
-- Initialize the note state with `initialNote ?? ''` instead of `''`
-- Keep the 100-char hard limit — the pre-filled template is short enough if you trim it
-
-`src/components/student/card/StudentCardActions.tsx`
-
-- Add optional `initialNote?: string` prop
-- Pass it through to `ConnectModal`
-
----
-
-### What's explicitly out of scope
-
-- No new database tables or migrations
-- No changes to the messages page, chat UI, or message delivery
-- No accept/reject connection flow
-- `SuggestedStudents.tsx` can be deleted once `PeopleToMeet` is confirmed working
+- No new files, no new database queries — just UI layout changes
+- The scoring logic stays the same, only `.slice(0, N)` changes based on `fullPage`
+- The "Show all students" action is a callback prop (`onShowAll`) passed from Students.tsx
