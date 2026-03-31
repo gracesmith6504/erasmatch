@@ -45,6 +45,7 @@ const Students = ({ currentUserId }: StudentsProps) => {
   const { showBanner, cityName, hasAvatar } = useOnboardingBanner(currentUserId);
 
   const fromOnboarding = new URLSearchParams(location.search).get("from") === "onboarding";
+  const [showFullRecommendations, setShowFullRecommendations] = useState(fromOnboarding);
   const currentProfile = profiles.find(p => p.id === currentUserId);
   const showPeopleToMeet = !!currentProfile && !!currentUserId && (
     fromOnboarding || (!!currentProfile.city && !!currentProfile.university)
@@ -121,51 +122,57 @@ const Students = ({ currentUserId }: StudentsProps) => {
           profiles={profiles}
           currentUserId={currentUserId}
           currentProfile={currentProfile}
+          fullPage={showFullRecommendations}
+          onShowAll={() => setShowFullRecommendations(false)}
         />
       )}
       
-      <h1 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-4">Find Erasmus Students</h1>
+      {!showFullRecommendations && (
+        <>
+          <h1 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-4">Find Erasmus Students</h1>
 
-      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "list" | "cities")} className="mb-4 w-full overflow-hidden">
-        <TabsList className="w-full md:w-auto bg-muted/50 mb-4">
-          <TabsTrigger value="list" className="flex items-center space-x-1.5 px-3 sm:px-4 py-2 text-sm sm:text-base flex-1 md:flex-none">
-            <Users className="h-4 w-4 mr-1 sm:mr-1.5" />
-            <span>All Students</span>
-          </TabsTrigger>
-          <TabsTrigger value="cities" className="flex items-center space-x-1.5 px-3 sm:px-4 py-2 text-sm sm:text-base flex-1 md:flex-none">
-            <MapPin className="h-4 w-4 mr-1 sm:mr-1.5" />
-            <span>By City</span>
-          </TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="list" className="mt-0 w-full">
-          <StudentFilters
-            universityFilter={universityFilter}
-            setUniversityFilter={setUniversityFilter}
-            cityFilter={cityFilter}
-            setCityFilter={setCityFilter}
-            personalityTagsFilter={personalityTagsFilter}
-            setPersonalityTagsFilter={setPersonalityTagsFilter}
-            semesterFilter={semesterFilter}
-            setSemesterFilter={setSemesterFilter}
-            uniqueUniversities={uniqueUniversities}
-            uniqueCities={uniqueCities}
-            uniqueSemesters={uniqueSemesters}
-            resetFilters={resetFilters}
-          />
+          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "list" | "cities")} className="mb-4 w-full overflow-hidden">
+            <TabsList className="w-full md:w-auto bg-muted/50 mb-4">
+              <TabsTrigger value="list" className="flex items-center space-x-1.5 px-3 sm:px-4 py-2 text-sm sm:text-base flex-1 md:flex-none">
+                <Users className="h-4 w-4 mr-1 sm:mr-1.5" />
+                <span>All Students</span>
+              </TabsTrigger>
+              <TabsTrigger value="cities" className="flex items-center space-x-1.5 px-3 sm:px-4 py-2 text-sm sm:text-base flex-1 md:flex-none">
+                <MapPin className="h-4 w-4 mr-1 sm:mr-1.5" />
+                <span>By City</span>
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="list" className="mt-0 w-full">
+              <StudentFilters
+                universityFilter={universityFilter}
+                setUniversityFilter={setUniversityFilter}
+                cityFilter={cityFilter}
+                setCityFilter={setCityFilter}
+                personalityTagsFilter={personalityTagsFilter}
+                setPersonalityTagsFilter={setPersonalityTagsFilter}
+                semesterFilter={semesterFilter}
+                setSemesterFilter={setSemesterFilter}
+                uniqueUniversities={uniqueUniversities}
+                uniqueCities={uniqueCities}
+                uniqueSemesters={uniqueSemesters}
+                resetFilters={resetFilters}
+              />
 
-          <StudentCardGrid 
-            filteredProfiles={sortedProfiles} 
-            resetFilters={resetFilters}
-            featuredProfiles={featuredProfiles}
-            universityCityMap={universityCityMap}
-          />
-        </TabsContent>
-        
-        <TabsContent value="cities" className="mt-0 w-full">
-          <CitiesView profiles={profiles} currentUserId={currentUserId} />
-        </TabsContent>
-      </Tabs>
+              <StudentCardGrid 
+                filteredProfiles={sortedProfiles} 
+                resetFilters={resetFilters}
+                featuredProfiles={featuredProfiles}
+                universityCityMap={universityCityMap}
+              />
+            </TabsContent>
+            
+            <TabsContent value="cities" className="mt-0 w-full">
+              <CitiesView profiles={profiles} currentUserId={currentUserId} />
+            </TabsContent>
+          </Tabs>
+        </>
+      )}
     </div>
   );
 };

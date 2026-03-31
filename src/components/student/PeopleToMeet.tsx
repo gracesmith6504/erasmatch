@@ -15,6 +15,8 @@ interface PeopleToMeetProps {
   profiles: Profile[];
   currentUserId: string;
   currentProfile: Profile;
+  fullPage?: boolean;
+  onShowAll?: () => void;
 }
 
 const STORAGE_KEY = "peopleToMeetDismissed";
@@ -23,6 +25,8 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
   profiles,
   currentUserId,
   currentProfile,
+  fullPage = false,
+  onShowAll,
 }) => {
   const navigate = useNavigate();
   const [dismissed, setDismissed] = useState(
@@ -75,8 +79,11 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
       })
       .filter((s) => s.score > 0)
       .sort((a, b) => b.score - a.score)
-      .slice(0, 5);
+      .slice(0, fullPage ? 12 : 5);
   }, [profiles, currentUserId, currentProfile, messagedIds]);
+
+  // If fullPage requested but fewer than 4 results, fall back to compact mode
+  const effectiveFullPage = fullPage && scored.length >= 4;
 
   if (dismissed || scored.length === 0) return null;
 
@@ -102,25 +109,40 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
 
   return (
     <>
-      <div className="mb-6 rounded-xl bg-primary/5 border border-primary/10 p-4 sm:p-5 relative">
-        <button
-          onClick={handleDismiss}
-          className="absolute top-3 right-3 text-muted-foreground hover:text-foreground transition-colors z-10"
-        >
-          <X className="h-4 w-4" />
-          <span className="sr-only">Dismiss</span>
-        </button>
+      <div className={`mb-6 rounded-xl bg-primary/5 border border-primary/10 relative ${effectiveFullPage ? 'p-6 sm:p-8' : 'p-4 sm:p-5'}`}>
+        {!effectiveFullPage && (
+          <button
+            onClick={handleDismiss}
+            className="absolute top-3 right-3 text-muted-foreground hover:text-foreground transition-colors z-10"
+          >
+            <X className="h-4 w-4" />
+            <span className="sr-only">Dismiss</span>
+          </button>
+        )}
 
-        <h2 className="text-lg font-display font-semibold text-foreground mb-4 pr-8 flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-primary" />
-          People you should meet 👋
-        </h2>
+        <div className={effectiveFullPage ? 'text-center mb-6' : 'mb-4 pr-8'}>
+          <h2 className={`font-display font-semibold text-foreground flex items-center gap-2 ${effectiveFullPage ? 'text-2xl justify-center' : 'text-lg'}`}>
+            <Sparkles className={`text-primary ${effectiveFullPage ? 'h-6 w-6' : 'h-5 w-5'}`} />
+            People you should meet 👋
+          </h2>
+          {effectiveFullPage && (
+            <p className="text-muted-foreground mt-2">Based on your city, university, and interests</p>
+          )}
+        </div>
 
-        <div className="flex gap-3 overflow-x-auto pb-2 sm:pb-0 sm:grid sm:grid-cols-5 scrollbar-hide">
+        <div className={
+          effectiveFullPage
+            ? "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
+            : "flex gap-3 overflow-x-auto pb-2 sm:pb-0 sm:grid sm:grid-cols-5 scrollbar-hide"
+        }>
           {scored.map(({ profile: p, sharedTags }) => (
             <div
               key={p.id}
-              className="flex-shrink-0 w-[200px] sm:w-auto rounded-lg border border-border bg-card p-4 flex flex-col items-center text-center gap-2"
+              className={`rounded-lg border border-border bg-card flex flex-col items-center text-center gap-2 ${
+                effectiveFullPage
+                  ? 'p-5'
+                  : 'flex-shrink-0 w-[200px] sm:w-auto p-4'
+              }`}
             >
               <button
                 onClick={async () => {
@@ -129,13 +151,13 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
                 }}
                 className="flex flex-col items-center gap-2"
               >
-                <Avatar className="h-14 w-14 border-2 border-card shadow-sm">
+                <Avatar className={`border-2 border-card shadow-sm ${effectiveFullPage ? 'h-20 w-20' : 'h-14 w-14'}`}>
                   {p.avatar_url ? <AvatarImage src={p.avatar_url} loading="lazy" /> : null}
-                  <AvatarFallback className="bg-secondary text-foreground text-sm">
+                  <AvatarFallback className={`bg-secondary text-foreground ${effectiveFullPage ? 'text-base' : 'text-sm'}`}>
                     {getInitials(p.name)}
                   </AvatarFallback>
                 </Avatar>
-                <span className="font-medium text-sm text-foreground truncate max-w-[160px]">
+                <span className={`font-medium text-foreground truncate max-w-[160px] ${effectiveFullPage ? 'text-base' : 'text-sm'}`}>
                   {p.name?.split(" ")[0] ?? "Student"}
                 </span>
               </button>
@@ -146,9 +168,15 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
                 </span>
               )}
 
+              {effectiveFullPage && p.university && (
+                <span className="text-xs text-muted-foreground truncate max-w-[180px]">
+                  🎓 {p.university}
+                </span>
+              )}
+
               {sharedTags.length > 0 && (
                 <div className="flex flex-wrap justify-center gap-1 mt-1">
-                  {sharedTags.slice(0, 2).map((tag) => {
+                  {sharedTags.slice(0, effectiveFullPage ? 3 : 2).map((tag) => {
                     const info = getTagInfo(tag);
                     return (
                       <Badge key={tag} className={`${getTagBgColor(tag)} text-xs px-2 py-0.5`}>
@@ -169,6 +197,14 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
             </div>
           ))}
         </div>
+
+        {effectiveFullPage && onShowAll && (
+          <div className="text-center mt-6">
+            <Button variant="outline" onClick={onShowAll} className="px-6">
+              Browse everyone going →
+            </Button>
+          </div>
+        )}
       </div>
 
       {connectTarget && (
