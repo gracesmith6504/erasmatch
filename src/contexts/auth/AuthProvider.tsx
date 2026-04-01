@@ -11,6 +11,15 @@ type AuthProviderProps = {
   children: ReactNode;
 };
 
+const clearLocalAuthStorage = () => {
+  localStorage.removeItem("userId");
+  Object.keys(localStorage).forEach((key) => {
+    if (key.startsWith("sb-") && key.endsWith("-auth-token")) {
+      localStorage.removeItem(key);
+    }
+  });
+};
+
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -33,41 +42,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
         if (profileData) {
           if (profileData.deleted_at) {
-            console.log("User has a deleted account, handling re-registration");
-            
-            const userData = session.user.user_metadata || {};
-            const defaultName = userData.name || userData.full_name || null;
-            
-            const { error: restoreError } = await supabase
-              .from('profiles')
-              .update({
-                deleted_at: null,
-                email: session.user.email,
-                name: defaultName,
-                onboarding_complete: false,
-                privacy_consent_at: new Date().toISOString()
-              })
-              .eq('id', session.user.id);
+            sessionStorage.removeItem("accountDeletionInProgress");
+            await supabase.auth.signOut({ scope: "local" }).catch(() => undefined);
+            clearLocalAuthStorage();
+            setIsAuthenticated(false);
+            setCurrentUserId(null);
+            setCurrentUserEmail(null);
+            setCurrentUserProfile(null);
 
-            if (restoreError) {
-              console.error("Error restoring profile:", restoreError);
-              toast.error("Error restoring your account. Please try again.");
-              await supabase.auth.signOut();
-              return;
-            }
-
-            const updatedProfile = await fetchUserProfile(session.user.id);
-            if (updatedProfile) {
-              setCurrentUserProfile(updatedProfile);
-              toast.success("Welcome back! Please complete your profile setup.");
-              
-              if (!window.location.pathname.includes('/onboarding') && !window.location.pathname.includes('/auth')) {
-                navigate("/onboarding");
-              }
+            if (!window.location.pathname.includes('/auth')) {
+              navigate("/auth?mode=signup", { replace: true });
             }
             return;
           }
-          
+
           setCurrentUserProfile(profileData);
           
           if (!profileData.onboarding_complete) {
@@ -105,7 +93,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     } else {
       setIsAuthenticated(false);
       setCurrentUserId(null);
-      localStorage.removeItem('userId');
+      clearLocalAuthStorage();
       setCurrentUserEmail(null);
       setCurrentUserProfile(null);
     }
