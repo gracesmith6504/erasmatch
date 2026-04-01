@@ -63,9 +63,7 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
           .eq("sender_id", currentUserId);
 
         if (count === 1) {
-          onOpenChange(false);
-          // Small delay so ConnectModal closes first
-          setTimeout(() => setShowInviteModal(true), 300);
+          setShowInviteModal(true);
           setSending(false);
           return;
         }
@@ -90,7 +88,7 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
+      <Dialog open={open && !showInviteModal} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Connect with {studentName}</DialogTitle>
@@ -127,6 +125,7 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
           open={showInviteModal}
           onOpenChange={(v) => {
             setShowInviteModal(v);
+            if (!v) onOpenChange(false);
           }}
           refCode={refCode}
         />
