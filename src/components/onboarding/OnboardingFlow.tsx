@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { FirstNameStep } from "./steps/FirstNameStep";
 import { DestinationUniversityStep } from "./steps/DestinationUniversityStep";
+import { HomeUniversityStep } from "./steps/HomeUniversityStep";
 import { ExchangeDetailsStep } from "./steps/ExchangeDetailsStep";
 import { InterestsStep } from "./steps/InterestsStep";
 import { PhotoStep } from "./steps/PhotoStep";
@@ -35,7 +36,7 @@ export const OnboardingFlow = () => {
   const [showCelebration, setShowCelebration] = useState(false);
   const [showCityPayoff, setShowCityPayoff] = useState(false);
   const completingRef = useRef(false);
-  const totalSteps = 5;
+  const totalSteps = 6;
 
   useEffect(() => {
     // Only redirect if onboarding was already complete on mount (returning user).
@@ -139,8 +140,16 @@ export const OnboardingFlow = () => {
         );
       case 2:
         return (
+          <HomeUniversityStep
+            initialValue={currentUserProfile?.home_university || ""}
+            onNext={goToNextStep}
+            onUpdateProfile={handleUpdateProfile}
+            onBack={goToPreviousStep}
+          />
+        );
+      case 3:
+        return (
           <ExchangeDetailsStep
-            initialUniversity={currentUserProfile?.home_university || ""}
             initialSemester={currentUserProfile?.semester || ""}
             initialArrivalDate={currentUserProfile?.arrival_date || null}
             onNext={goToNextStep}
@@ -148,7 +157,7 @@ export const OnboardingFlow = () => {
             onBack={goToPreviousStep}
           />
         );
-      case 3:
+      case 4:
         return (
           <InterestsStep
             initialValue={currentUserProfile?.personality_tags || []}
@@ -157,7 +166,7 @@ export const OnboardingFlow = () => {
             onBack={goToPreviousStep}
           />
         );
-      case 4:
+      case 5:
         return (
           <PhotoStep
             onNext={handleCompleteOnboarding}

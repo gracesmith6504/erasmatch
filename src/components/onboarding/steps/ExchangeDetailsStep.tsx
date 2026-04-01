@@ -1,14 +1,12 @@
 import { useState } from "react";
 import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Home, Calendar, Plane } from "lucide-react";
-import UniversityAutocomplete from "@/components/UniversityAutocomplete";
+import { ArrowRight, Calendar, Plane } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SEMESTER_OPTIONS } from "@/components/profile/constants";
 import { Input } from "@/components/ui/input";
 
 type ExchangeDetailsStepProps = {
-  initialUniversity: string;
   initialSemester: string | null;
   initialArrivalDate: string | null;
   onNext: () => void;
@@ -17,14 +15,12 @@ type ExchangeDetailsStepProps = {
 };
 
 export const ExchangeDetailsStep = ({
-  initialUniversity,
   initialSemester,
   initialArrivalDate,
   onNext,
   onBack,
   onUpdateProfile,
 }: ExchangeDetailsStepProps) => {
-  const [homeUniversity, setHomeUniversity] = useState(initialUniversity);
   const [semester, setSemester] = useState(initialSemester || "");
   const [arrivalDate, setArrivalDate] = useState(initialArrivalDate || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,7 +30,6 @@ export const ExchangeDetailsStep = ({
     setIsSubmitting(true);
     try {
       const success = await onUpdateProfile({
-        home_university: homeUniversity.trim() || null,
         semester: semester || null,
         arrival_date: arrivalDate || null,
       });
@@ -44,19 +39,19 @@ export const ExchangeDetailsStep = ({
     }
   };
 
-  const canSubmit = homeUniversity.trim().length > 0 || semester.length > 0;
+  const canSubmit = semester.length > 0;
 
   return (
     <OnboardingLayout
-      currentStep={3}
-      totalSteps={5}
+      currentStep={4}
+      totalSteps={6}
       onBack={onBack}
     >
       <div className="w-full max-w-md space-y-5">
         <div className="text-center">
           <div className="flex justify-center mb-4">
             <div className="bg-secondary rounded-full w-14 h-14 flex items-center justify-center">
-              <Home className="h-7 w-7 text-accent" />
+              <Calendar className="h-7 w-7 text-accent" />
             </div>
           </div>
           <h1 className="text-2xl font-display font-bold mb-2 text-foreground">
@@ -68,21 +63,6 @@ export const ExchangeDetailsStep = ({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Home University */}
-          <div className="bg-card rounded-xl p-4 shadow-sm border border-border space-y-1">
-            <p className="text-xs font-medium text-muted-foreground mb-1.5 ml-0.5 flex items-center gap-1">
-              <Home className="h-3 w-3" />
-              Home university
-            </p>
-            <UniversityAutocomplete
-              value={homeUniversity}
-              onChange={setHomeUniversity}
-              label=""
-              required={false}
-              prioritizeIrish={true}
-            />
-          </div>
-
           {/* Semester */}
           <div className="bg-card rounded-xl p-4 shadow-sm border border-border space-y-3">
             <p className="text-xs font-medium text-muted-foreground ml-0.5 flex items-center gap-1">
@@ -135,7 +115,7 @@ export const ExchangeDetailsStep = ({
               type="button"
               variant="outline"
               onClick={async () => {
-                await onUpdateProfile({ home_university: null, semester: null, arrival_date: null });
+                await onUpdateProfile({ semester: null, arrival_date: null });
                 onNext();
               }}
               className="text-muted-foreground"
