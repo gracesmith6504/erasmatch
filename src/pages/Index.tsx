@@ -31,7 +31,7 @@ const Index = () => {
   };
 
   const handleJoinChats = () => {
-    navigate(isAuthenticated ? "/groups" : "/auth?mode=signup");
+    navigate(isAuthenticated ? "/groups" : `/auth?mode=signup${refParam}`);
   };
 
   const handlePlanning = () => {
