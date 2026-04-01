@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect } from "react";
 import { HeroSection } from "@/components/home/HeroSection";
@@ -13,6 +13,8 @@ import { HomeFooter } from "@/components/home/HomeFooter";
 const Index = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const refCode = searchParams.get("ref");
 
   useEffect(() => {
     document.title = "ErasMatch - Connect with Erasmus Students";
@@ -22,16 +24,18 @@ const Index = () => {
     }
   }, []);
 
+  const refParam = refCode ? `&ref=${refCode}` : "";
+
   const handleFindStudents = () => {
-    navigate(isAuthenticated ? "/students" : "/auth?mode=signup");
+    navigate(isAuthenticated ? "/students" : `/auth?mode=signup${refParam}`);
   };
 
   const handleJoinChats = () => {
-    navigate(isAuthenticated ? "/groups" : "/auth?mode=signup");
+    navigate(isAuthenticated ? "/groups" : `/auth?mode=signup${refParam}`);
   };
 
   const handlePlanning = () => {
-    navigate(isAuthenticated ? "/students" : "/auth?mode=signup");
+    navigate(isAuthenticated ? "/students" : `/auth?mode=signup${refParam}`);
   };
 
   return (

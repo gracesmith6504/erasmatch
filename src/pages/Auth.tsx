@@ -1,9 +1,10 @@
-import { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,10 +29,30 @@ const Auth = ({ onLogin }: AuthProps) => {
   const [showPostSignup, setShowPostSignup] = useState(false);
   const [signupCity, setSignupCity] = useState<string | undefined>(undefined);
   const [privacyConsent, setPrivacyConsent] = useState(false);
+  const [referrerProfile, setReferrerProfile] = useState<{name: string | null; avatar_url: string | null} | null>(null);
   
   const activeTab = searchParams.get("mode") || "login";
   const refCode = searchParams.get("ref");
   const returnTo = searchParams.get("returnTo");
+
+  // Fetch the referrer's profile when ref code is present
+  useEffect(() => {
+    if (!refCode) return;
+    const fetchReferrer = async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("name, avatar_url")
+        .eq("ref_code", refCode)
+        .maybeSingle();
+      if (data) setReferrerProfile(data);
+    };
+    fetchReferrer();
+  }, [refCode]);
+
+  const referrerFirstName = useMemo(() => {
+    if (!referrerProfile?.name) return null;
+    return referrerProfile.name.split(" ")[0];
+  }, [referrerProfile]);
 
   const handleTabChange = (value: string) => {
     const newParams = new URLSearchParams(searchParams);
@@ -188,15 +209,32 @@ const Auth = ({ onLogin }: AuthProps) => {
                 <p className="mt-2 text-sm text-muted-foreground">
                   Join Erasmus students heading to your destination
                 </p>
-                {refCode && (
-                  <p className="mt-2 text-sm font-medium text-erasmatch-green">
-                    You were invited by a friend!
-                  </p>
-                )}
               </div>
             </TabsContent>
           </Tabs>
         </div>
+
+        {/* Referral welcome banner */}
+        {refCode && referrerProfile && activeTab === "signup" && (
+          <div className="flex items-center gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
+            <Avatar className="h-10 w-10 border-2 border-primary/30">
+              {referrerProfile.avatar_url ? (
+                <AvatarImage src={referrerProfile.avatar_url} alt={referrerFirstName || "Referrer"} />
+              ) : null}
+              <AvatarFallback className="bg-primary/10 text-primary text-sm font-bold">
+                {referrerFirstName?.[0]?.toUpperCase() || "?"}
+              </AvatarFallback>
+            </Avatar>
+            <div className="text-left">
+              <p className="text-sm font-semibold text-foreground">
+                {referrerFirstName} invited you to ErasMatch! 🎉
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Sign up to connect with {referrerFirstName} and other Erasmus students
+              </p>
+            </div>
+          </div>
+        )}
 
         <div className="bg-card py-8 px-6 shadow-card rounded-2xl border border-border">
           {/* Google Sign In Button */}
