@@ -214,6 +214,28 @@ const Auth = ({ onLogin }: AuthProps) => {
           </Tabs>
         </div>
 
+        {/* Referral welcome banner */}
+        {refCode && referrerProfile && activeTab === "signup" && (
+          <div className="flex items-center gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
+            <Avatar className="h-10 w-10 border-2 border-primary/30">
+              {referrerProfile.avatar_url ? (
+                <AvatarImage src={referrerProfile.avatar_url} alt={referrerFirstName || "Referrer"} />
+              ) : null}
+              <AvatarFallback className="bg-primary/10 text-primary text-sm font-bold">
+                {referrerFirstName?.[0]?.toUpperCase() || "?"}
+              </AvatarFallback>
+            </Avatar>
+            <div className="text-left">
+              <p className="text-sm font-semibold text-foreground">
+                {referrerFirstName} invited you to ErasMatch! 🎉
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Sign up to connect with {referrerFirstName} and other Erasmus students
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className="bg-card py-8 px-6 shadow-card rounded-2xl border border-border">
           {/* Google Sign In Button */}
           <div className="mb-6">
