@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { UserCog, ShieldCheck, Eye, MessageSquare, Loader2 } from "lucide-react";
+import { UserCog, ShieldCheck, Eye, MessageSquare, Loader2, Share2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useProfileViewers } from "@/hooks/useProfileViewers";
