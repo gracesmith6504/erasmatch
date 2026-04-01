@@ -209,11 +209,6 @@ const Auth = ({ onLogin }: AuthProps) => {
                 <p className="mt-2 text-sm text-muted-foreground">
                   Join Erasmus students heading to your destination
                 </p>
-                {refCode && (
-                  <p className="mt-2 text-sm font-medium text-erasmatch-green">
-                    You were invited by a friend!
-                  </p>
-                )}
               </div>
             </TabsContent>
           </Tabs>
