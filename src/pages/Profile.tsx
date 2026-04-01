@@ -9,17 +9,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { UserCog, ShieldCheck, Eye, MessageSquare, Loader2 } from "lucide-react";
+import { UserCog, ShieldCheck, Eye, MessageSquare, Loader2, Share2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useProfileViewers } from "@/hooks/useProfileViewers";
 import { useNavigate } from "react-router-dom";
+import { ShareModal } from "@/components/share/ShareModal";
 
 const Profile = () => {
   const { currentUserId, currentUserProfile, handleProfileUpdate } = useAuth();
   const [emailNotifications, setEmailNotifications] = useState(true);
+  const [showShareModal, setShowShareModal] = useState(false);
   const { viewers, isLoading: isLoadingViewers } = useProfileViewers(currentUserId);
   const navigate = useNavigate();
+
+  const refCode = currentUserProfile?.ref_code || "";
+  const shareLink = `https://erasmatch.lovable.app/?ref=${refCode}`;
 
   useEffect(() => {
     if (currentUserProfile) {
@@ -45,12 +50,26 @@ const Profile = () => {
   const fetchProfile = async () => {};
 
   return (
+    <>
     <div className="min-h-screen bg-background py-8">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-card rounded-2xl shadow-card border border-border p-6 md:p-8">
-          <h1 className="text-2xl md:text-3xl font-display font-bold text-center mb-8 text-foreground">
-            Your Profile
-          </h1>
+          <div className="flex items-center justify-between mb-8">
+            <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground">
+              Your Profile
+            </h1>
+            {refCode && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1.5 rounded-full"
+                onClick={() => setShowShareModal(true)}
+              >
+                <Share2 className="h-4 w-4" />
+                Invite friends
+              </Button>
+            )}
+          </div>
 
           <Tabs defaultValue="edit" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-8">
@@ -160,6 +179,14 @@ const Profile = () => {
         </div>
       </div>
     </div>
+
+    <ShareModal
+      isOpen={showShareModal}
+      onClose={() => setShowShareModal(false)}
+      city={currentUserProfile?.city || undefined}
+      link={shareLink}
+    />
+    </>
   );
 };
 
