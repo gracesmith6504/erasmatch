@@ -41,6 +41,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
+      <ReferralBanner />
       <HeroSection 
         handleFindStudents={handleFindStudents}
         handleJoinChats={handleJoinChats}
