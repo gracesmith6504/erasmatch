@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -19,8 +19,19 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
   const [avatarUrl, setAvatarUrl] = useState<string | null>(currentUserProfile?.avatar_url || null);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [featuredProfiles, setFeaturedProfiles] = useState<{ avatar_url: string; first_name: string }[]>([]);
 
   const name = currentUserProfile?.name || "";
+
+  useEffect(() => {
+    const fetchFeatured = async () => {
+      const { data } = await supabase.rpc("get_featured_activity_profiles");
+      if (data && data.length > 0) {
+        setFeaturedProfiles(data.slice(0, 3));
+      }
+    };
+    fetchFeatured();
+  }, []);
 
   const getInitials = (name: string) => {
     if (!name) return "?";
@@ -78,7 +89,7 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
       <div className="flex flex-col items-center text-center space-y-6">
         <h2 className="text-2xl font-bold text-foreground">Add a profile photo</h2>
         <p className="text-muted-foreground text-sm">
-          Students with a photo get 3x more connections
+          Students with a photo get <strong>5x more connections</strong>
         </p>
 
         <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
@@ -91,6 +102,21 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
           <div className="absolute inset-0 flex items-center justify-center rounded-full bg-foreground/0 group-hover:bg-foreground/40 transition-all duration-200">
             <Camera className="h-8 w-8 text-card opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
           </div>
+        </div>
+
+        {/* Social proof */}
+        <div className="flex items-center gap-2">
+          <div className="flex -space-x-2">
+            {featuredProfiles.map((p, i) => (
+              <Avatar key={i} className="w-7 h-7 border-2 border-card">
+                <AvatarImage src={p.avatar_url} alt={p.first_name} className="object-cover" />
+                <AvatarFallback className="text-[10px] bg-muted">{p.first_name?.[0]}</AvatarFallback>
+              </Avatar>
+            ))}
+          </div>
+          <span className="text-xs text-muted-foreground">
+            Join 600+ students already on ErasMatch
+          </span>
         </div>
 
         <input
@@ -119,13 +145,12 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
           )}
         </Button>
 
-        <button
-          type="button"
+        <span
           onClick={onNext}
-          className="text-sm text-muted-foreground hover:text-foreground transition-colors underline-offset-2 hover:underline"
+          className="text-[11px] text-muted-foreground/50 cursor-pointer select-none mt-2"
         >
-          Skip for now
-        </button>
+          I'll do this later
+        </span>
       </div>
     </OnboardingLayout>
   );
