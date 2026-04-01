@@ -53,9 +53,22 @@ const Profile = () => {
     <div className="min-h-screen bg-background py-8">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-card rounded-2xl shadow-card border border-border p-6 md:p-8">
-          <h1 className="text-2xl md:text-3xl font-display font-bold text-center mb-8 text-foreground">
-            Your Profile
-          </h1>
+          <div className="flex items-center justify-between mb-8">
+            <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground">
+              Your Profile
+            </h1>
+            {refCode && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1.5 rounded-full"
+                onClick={() => setShowShareModal(true)}
+              >
+                <Share2 className="h-4 w-4" />
+                Invite friends
+              </Button>
+            )}
+          </div>
 
           <Tabs defaultValue="edit" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-8">
