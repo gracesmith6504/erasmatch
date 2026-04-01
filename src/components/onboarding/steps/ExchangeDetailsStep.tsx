@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Home, Calendar } from "lucide-react";
+import { ArrowRight, Home, Calendar, Plane } from "lucide-react";
 import UniversityAutocomplete from "@/components/UniversityAutocomplete";
 import { cn } from "@/lib/utils";
 import { SEMESTER_OPTIONS } from "@/components/profile/constants";
+import { Input } from "@/components/ui/input";
 
 type ExchangeDetailsStepProps = {
   initialUniversity: string;
   initialSemester: string | null;
+  initialArrivalDate: string | null;
   onNext: () => void;
   onBack: () => void;
   onUpdateProfile: (data: any) => Promise<boolean>;
@@ -17,12 +19,14 @@ type ExchangeDetailsStepProps = {
 export const ExchangeDetailsStep = ({
   initialUniversity,
   initialSemester,
+  initialArrivalDate,
   onNext,
   onBack,
   onUpdateProfile,
 }: ExchangeDetailsStepProps) => {
   const [homeUniversity, setHomeUniversity] = useState(initialUniversity);
   const [semester, setSemester] = useState(initialSemester || "");
+  const [arrivalDate, setArrivalDate] = useState(initialArrivalDate || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -32,6 +36,7 @@ export const ExchangeDetailsStep = ({
       const success = await onUpdateProfile({
         home_university: homeUniversity.trim() || null,
         semester: semester || null,
+        arrival_date: arrivalDate || null,
       });
       if (success) onNext();
     } finally {
@@ -103,6 +108,20 @@ export const ExchangeDetailsStep = ({
             </div>
           </div>
 
+          {/* Arrival Date */}
+          <div className="bg-card rounded-xl p-4 shadow-sm border border-border space-y-1">
+            <p className="text-xs font-medium text-muted-foreground mb-1.5 ml-0.5 flex items-center gap-1">
+              <Plane className="h-3 w-3" />
+              Arrival date
+            </p>
+            <Input
+              type="date"
+              value={arrivalDate}
+              onChange={(e) => setArrivalDate(e.target.value)}
+              className="bg-background"
+            />
+          </div>
+
           <div className="flex flex-col gap-3">
             <Button
               type="submit"
@@ -116,7 +135,7 @@ export const ExchangeDetailsStep = ({
               type="button"
               variant="outline"
               onClick={async () => {
-                await onUpdateProfile({ home_university: null, semester: null });
+                await onUpdateProfile({ home_university: null, semester: null, arrival_date: null });
                 onNext();
               }}
               className="text-muted-foreground"
