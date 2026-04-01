@@ -39,12 +39,10 @@ const Auth = ({ onLogin }: AuthProps) => {
   useEffect(() => {
     if (!refCode) return;
     const fetchReferrer = async () => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("name, avatar_url")
-        .eq("ref_code", refCode)
-        .maybeSingle();
-      if (data) setReferrerProfile(data);
+      const { data } = await supabase.rpc("get_referrer_profile", { _ref_code: refCode });
+      if (data && data.length > 0) {
+        setReferrerProfile({ name: data[0].first_name, avatar_url: data[0].avatar_url });
+      }
     };
     fetchReferrer();
   }, [refCode]);
