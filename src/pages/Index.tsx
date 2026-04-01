@@ -13,6 +13,8 @@ import { HomeFooter } from "@/components/home/HomeFooter";
 const Index = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const refCode = searchParams.get("ref");
 
   useEffect(() => {
     document.title = "ErasMatch - Connect with Erasmus Students";
