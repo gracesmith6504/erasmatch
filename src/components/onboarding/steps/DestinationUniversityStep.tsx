@@ -170,7 +170,7 @@ export const DestinationUniversityStep = ({
                 <p className="text-xs font-medium text-muted-foreground mb-1.5 ml-0.5 flex items-center gap-1">
                   <School className="h-3 w-3" />
                   University in {city}
-                  <span className="text-muted-foreground/60">(optional)</span>
+                  <span className="text-muted-foreground/60"></span>
                 </p>
 
                 {!manualEntry ? (
