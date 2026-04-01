@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { FirstNameStep } from "./steps/FirstNameStep";
 import { DestinationUniversityStep } from "./steps/DestinationUniversityStep";
+import { HomeUniversityStep } from "./steps/HomeUniversityStep";
 import { ExchangeDetailsStep } from "./steps/ExchangeDetailsStep";
 import { InterestsStep } from "./steps/InterestsStep";
 import { PhotoStep } from "./steps/PhotoStep";
