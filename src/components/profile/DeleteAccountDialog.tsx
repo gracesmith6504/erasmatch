@@ -5,16 +5,23 @@ import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
 
 interface DeleteAccountDialogProps {
   userId: string | null;
 }
 
+const clearLocalAuthState = () => {
+  localStorage.removeItem("userId");
+  Object.keys(localStorage).forEach((key) => {
+    if (key.startsWith("sb-") && key.endsWith("-auth-token")) {
+      localStorage.removeItem(key);
+    }
+  });
+};
+
 export const DeleteAccountDialog = ({ userId }: DeleteAccountDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const navigate = useNavigate();
 
   const handleDeleteAccount = async () => {
     if (!userId) {
@@ -24,6 +31,7 @@ export const DeleteAccountDialog = ({ userId }: DeleteAccountDialogProps) => {
 
     try {
       setIsDeleting(true);
+      sessionStorage.setItem("accountDeletionInProgress", "true");
 
       const { error } = await supabase.functions.invoke("delete-account", {
         body: { userId },
@@ -42,24 +50,16 @@ export const DeleteAccountDialog = ({ userId }: DeleteAccountDialogProps) => {
         throw new Error(message);
       }
 
-      // Sign out the user
-      const { error: signOutError } = await supabase.auth.signOut();
-      
-      if (signOutError) {
-        console.error("Error signing out:", signOutError);
-        // Continue anyway as the profile is already marked as deleted
-      }
+      await supabase.auth.signOut({ scope: "local" }).catch((signOutError) => {
+        console.error("Error clearing local session:", signOutError);
+      });
 
-      // Close the dialog
+      clearLocalAuthState();
+      sessionStorage.removeItem("accountDeletionInProgress");
       setIsOpen(false);
-      
-      // Show success message
-      toast.success("Your account has been deleted successfully. You can create a new account with the same email address.");
-      
-      // Redirect to signup page
-      navigate("/auth?mode=signup");
-      
+      window.location.replace("/auth?mode=signup");
     } catch (error: any) {
+      sessionStorage.removeItem("accountDeletionInProgress");
       console.error("Error during account deletion:", error);
       toast.error(`Failed to delete account: ${error.message}`);
     } finally {
