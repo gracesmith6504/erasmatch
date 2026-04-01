@@ -88,7 +88,7 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
+      <Dialog open={open && !showInviteModal} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Connect with {studentName}</DialogTitle>
