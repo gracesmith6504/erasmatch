@@ -63,9 +63,7 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
           .eq("sender_id", currentUserId);
 
         if (count === 1) {
-          onOpenChange(false);
-          // Small delay so ConnectModal closes first
-          setTimeout(() => setShowInviteModal(true), 300);
+          setShowInviteModal(true);
           setSending(false);
           return;
         }
