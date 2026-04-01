@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -14,19 +14,15 @@ export const ReferralBanner = () => {
   useEffect(() => {
     if (!refCode) return;
     supabase
-      .from("profiles")
-      .select("name, avatar_url")
-      .eq("ref_code", refCode)
-      .maybeSingle()
+      .rpc("get_referrer_profile", { _ref_code: refCode })
       .then(({ data }) => {
-        if (data) setReferrer(data);
+        if (data && data.length > 0) {
+          setReferrer({ name: data[0].first_name, avatar_url: data[0].avatar_url });
+        }
       });
   }, [refCode]);
 
-  const firstName = useMemo(() => {
-    if (!referrer?.name) return null;
-    return referrer.name.split(" ")[0];
-  }, [referrer]);
+  const firstName = referrer?.name || null;
 
   if (!refCode || !referrer) return null;
 

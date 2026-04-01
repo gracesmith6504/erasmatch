@@ -434,6 +434,13 @@ export type Database = {
           first_name: string
         }[]
       }
+      get_referrer_profile: {
+        Args: { _ref_code: string }
+        Returns: {
+          avatar_url: string
+          first_name: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
