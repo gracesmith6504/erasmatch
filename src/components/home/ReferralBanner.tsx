@@ -22,10 +22,7 @@ export const ReferralBanner = () => {
       });
   }, [refCode]);
 
-  const firstName = useMemo(() => {
-    if (!referrer?.name) return null;
-    return referrer.name.split(" ")[0];
-  }, [referrer]);
+  const firstName = referrer?.name || null;
 
   if (!refCode || !referrer) return null;
 
