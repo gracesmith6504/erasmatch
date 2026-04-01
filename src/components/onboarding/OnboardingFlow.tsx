@@ -140,8 +140,16 @@ export const OnboardingFlow = () => {
         );
       case 2:
         return (
+          <HomeUniversityStep
+            initialValue={currentUserProfile?.home_university || ""}
+            onNext={goToNextStep}
+            onUpdateProfile={handleUpdateProfile}
+            onBack={goToPreviousStep}
+          />
+        );
+      case 3:
+        return (
           <ExchangeDetailsStep
-            initialUniversity={currentUserProfile?.home_university || ""}
             initialSemester={currentUserProfile?.semester || ""}
             initialArrivalDate={currentUserProfile?.arrival_date || null}
             onNext={goToNextStep}
@@ -149,7 +157,7 @@ export const OnboardingFlow = () => {
             onBack={goToPreviousStep}
           />
         );
-      case 3:
+      case 4:
         return (
           <InterestsStep
             initialValue={currentUserProfile?.personality_tags || []}
@@ -158,7 +166,7 @@ export const OnboardingFlow = () => {
             onBack={goToPreviousStep}
           />
         );
-      case 4:
+      case 5:
         return (
           <PhotoStep
             onNext={handleCompleteOnboarding}
