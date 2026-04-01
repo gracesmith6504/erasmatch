@@ -29,10 +29,30 @@ const Auth = ({ onLogin }: AuthProps) => {
   const [showPostSignup, setShowPostSignup] = useState(false);
   const [signupCity, setSignupCity] = useState<string | undefined>(undefined);
   const [privacyConsent, setPrivacyConsent] = useState(false);
+  const [referrerProfile, setReferrerProfile] = useState<{name: string | null; avatar_url: string | null} | null>(null);
   
   const activeTab = searchParams.get("mode") || "login";
   const refCode = searchParams.get("ref");
   const returnTo = searchParams.get("returnTo");
+
+  // Fetch the referrer's profile when ref code is present
+  useEffect(() => {
+    if (!refCode) return;
+    const fetchReferrer = async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("name, avatar_url")
+        .eq("ref_code", refCode)
+        .maybeSingle();
+      if (data) setReferrerProfile(data);
+    };
+    fetchReferrer();
+  }, [refCode]);
+
+  const referrerFirstName = useMemo(() => {
+    if (!referrerProfile?.name) return null;
+    return referrerProfile.name.split(" ")[0];
+  }, [referrerProfile]);
 
   const handleTabChange = (value: string) => {
     const newParams = new URLSearchParams(searchParams);
