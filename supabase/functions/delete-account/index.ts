@@ -10,6 +10,29 @@ type DeleteAccountBody = {
   userId?: string;
 };
 
+const deleteWhereEquals = async (
+  adminClient: ReturnType<typeof createClient>,
+  table: string,
+  column: string,
+  userId: string,
+) => {
+  const { error } = await adminClient.from(table).delete().eq(column, userId);
+  if (error) {
+    throw new Error(`Failed to delete ${table}: ${error.message}`);
+  }
+};
+
+const deleteWhereMatchesEither = async (
+  adminClient: ReturnType<typeof createClient>,
+  table: string,
+  filter: string,
+) => {
+  const { error } = await adminClient.from(table).delete().or(filter);
+  if (error) {
+    throw new Error(`Failed to delete ${table}: ${error.message}`);
+  }
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -67,49 +90,50 @@ serve(async (req) => {
       },
     });
 
-    const { data: existingProfile, error: profileFetchError } = await adminClient
-      .from("profiles")
-      .select("deleted_at, email, name, bio, avatar_url, onboarding_complete")
-      .eq("id", user.id)
-      .maybeSingle();
+    const { data: avatarFiles, error: avatarListError } = await adminClient.storage
+      .from("avatars")
+      .list(user.id, { limit: 100 });
 
-    if (profileFetchError) {
-      throw profileFetchError;
+    if (avatarListError) {
+      throw new Error(`Failed to load avatar files: ${avatarListError.message}`);
     }
 
-    if (existingProfile) {
-      const { error: profileUpdateError } = await adminClient
-        .from("profiles")
-        .update({
-          deleted_at: new Date().toISOString(),
-          email: null,
-          name: null,
-          bio: null,
-          avatar_url: null,
-          onboarding_complete: false,
-        })
-        .eq("id", user.id);
+    if (avatarFiles.length > 0) {
+      const avatarPaths = avatarFiles.map((file) => `${user.id}/${file.name}`);
+      const { error: avatarRemoveError } = await adminClient.storage
+        .from("avatars")
+        .remove(avatarPaths);
 
-      if (profileUpdateError) {
-        throw profileUpdateError;
+      if (avatarRemoveError) {
+        throw new Error(`Failed to remove avatar files: ${avatarRemoveError.message}`);
       }
     }
 
-    const { error: deleteUserError } = await adminClient.auth.admin.deleteUser(user.id, true);
+    await Promise.all([
+      deleteWhereMatchesEither(adminClient, "blocked_users", `blocker_id.eq.${user.id},blocked_id.eq.${user.id}`),
+      deleteWhereEquals(adminClient, "city_messages", "sender_id", user.id),
+      deleteWhereEquals(adminClient, "group_messages", "sender_id", user.id),
+      deleteWhereEquals(adminClient, "message_reactions", "user_id", user.id),
+      deleteWhereMatchesEither(adminClient, "messages", `sender_id.eq.${user.id},receiver_id.eq.${user.id}`),
+      deleteWhereMatchesEither(adminClient, "notifications", `user_id.eq.${user.id},actor_id.eq.${user.id}`),
+      deleteWhereMatchesEither(adminClient, "profile_views", `viewer_id.eq.${user.id},viewed_id.eq.${user.id}`),
+      deleteWhereMatchesEither(adminClient, "email_notification_log", `sender_id.eq.${user.id},receiver_id.eq.${user.id}`),
+      deleteWhereEquals(adminClient, "user_roles", "user_id", user.id),
+    ]);
+
+    const { error: profileDeleteError } = await adminClient
+      .from("profiles")
+      .delete()
+      .eq("id", user.id);
+
+    if (profileDeleteError) {
+      throw new Error(`Failed to delete profile: ${profileDeleteError.message}`);
+    }
+
+    const { error: deleteUserError } = await adminClient.auth.admin.deleteUser(user.id);
 
     if (deleteUserError) {
-      if (existingProfile) {
-        const { error: restoreError } = await adminClient
-          .from("profiles")
-          .update(existingProfile)
-          .eq("id", user.id);
-
-        if (restoreError) {
-          console.error("Failed to restore profile after delete failure:", restoreError);
-        }
-      }
-
-      throw deleteUserError;
+      throw new Error(`Failed to delete auth user: ${deleteUserError.message}`);
     }
 
     return new Response(JSON.stringify({ success: true }), {
