@@ -14,7 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useProfileViewers } from "@/hooks/useProfileViewers";
 import { useNavigate } from "react-router-dom";
-import ShareModal from "@/components/share/ShareModal";
+import { ShareModal } from "@/components/share/ShareModal";
 
 const Profile = () => {
   const { currentUserId, currentUserProfile, handleProfileUpdate } = useAuth();
