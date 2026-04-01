@@ -19,8 +19,12 @@ import { ShareModal } from "@/components/share/ShareModal";
 const Profile = () => {
   const { currentUserId, currentUserProfile, handleProfileUpdate } = useAuth();
   const [emailNotifications, setEmailNotifications] = useState(true);
+  const [showShareModal, setShowShareModal] = useState(false);
   const { viewers, isLoading: isLoadingViewers } = useProfileViewers(currentUserId);
   const navigate = useNavigate();
+
+  const refCode = currentUserProfile?.ref_code || "";
+  const shareLink = `https://erasmatch.lovable.app/?ref=${refCode}`;
 
   useEffect(() => {
     if (currentUserProfile) {
