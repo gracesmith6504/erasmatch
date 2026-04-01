@@ -21,7 +21,7 @@ const InviteFriendModal: React.FC<InviteFriendModalProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
 
-  const referralUrl = `https://erasmatch.com/?ref=${refCode}`;
+  const referralUrl = `https://erasmatch.lovable.app/?ref=${refCode}`;
   const whatsappUrl = `https://wa.me/?text=hey%20are%20you%20doing%20erasmus%3F%20i%20found%20this%20site%20where%20you%20can%20find%20people%20going%20to%20the%20same%20city%20before%20you%20arrive%20%E2%80%94%20use%20my%20link%20and%20you%27ll%20see%20my%20profile%20${encodeURIComponent(referralUrl)}`;
 
   const dismiss = () => {
