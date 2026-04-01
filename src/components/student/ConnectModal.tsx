@@ -125,6 +125,7 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
           open={showInviteModal}
           onOpenChange={(v) => {
             setShowInviteModal(v);
+            if (!v) onOpenChange(false);
           }}
           refCode={refCode}
         />
