@@ -83,7 +83,6 @@ export const ExchangeDetailsStep = ({
             <p className="text-xs font-medium text-muted-foreground ml-0.5 flex items-center gap-1">
               <Calendar className="h-3 w-3" />
               Exchange semester
-              <span className="text-muted-foreground/60">(optional)</span>
             </p>
             <div className="grid grid-cols-2 gap-2">
               {SEMESTER_OPTIONS.map((option) => (
