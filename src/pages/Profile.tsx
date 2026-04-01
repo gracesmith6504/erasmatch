@@ -178,7 +178,14 @@ const Profile = () => {
         </div>
       </div>
     </div>
-  );
+
+    <ShareModal
+      isOpen={showShareModal}
+      onClose={() => setShowShareModal(false)}
+      city={currentUserProfile?.city || undefined}
+      link={shareLink}
+    />
+  </>;
 };
 
 export default Profile;
