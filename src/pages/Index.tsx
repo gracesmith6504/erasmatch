@@ -2,6 +2,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect } from "react";
 import { HeroSection } from "@/components/home/HeroSection";
+import { ReferralBanner } from "@/components/home/ReferralBanner";
 import { FeaturesSection } from "@/components/home/FeaturesSection";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
 import { AlumniAdviceSection } from "@/components/home/AlumniAdviceSection";
