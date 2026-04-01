@@ -142,6 +142,7 @@ export const OnboardingFlow = () => {
           <ExchangeDetailsStep
             initialUniversity={currentUserProfile?.home_university || ""}
             initialSemester={currentUserProfile?.semester || ""}
+            initialArrivalDate={currentUserProfile?.arrival_date || null}
             onNext={goToNextStep}
             onUpdateProfile={handleUpdateProfile}
             onBack={goToPreviousStep}
