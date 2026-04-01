@@ -24,8 +24,10 @@ const Index = () => {
     }
   }, []);
 
+  const refParam = refCode ? `&ref=${refCode}` : "";
+
   const handleFindStudents = () => {
-    navigate(isAuthenticated ? "/students" : "/auth?mode=signup");
+    navigate(isAuthenticated ? "/students" : `/auth?mode=signup${refParam}`);
   };
 
   const handleJoinChats = () => {
