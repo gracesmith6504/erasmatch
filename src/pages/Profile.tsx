@@ -186,7 +186,8 @@ const Profile = () => {
       city={currentUserProfile?.city || undefined}
       link={shareLink}
     />
-  </>;
+    </>
+  );
 };
 
 export default Profile;
