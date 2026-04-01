@@ -35,7 +35,7 @@ const Index = () => {
   };
 
   const handlePlanning = () => {
-    navigate(isAuthenticated ? "/students" : "/auth?mode=signup");
+    navigate(isAuthenticated ? "/students" : `/auth?mode=signup${refParam}`);
   };
 
   return (
