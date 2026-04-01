@@ -24,7 +24,7 @@ const Profile = () => {
   const navigate = useNavigate();
 
   const refCode = currentUserProfile?.ref_code || "";
-  const shareLink = `https://erasmatch.lovable.app/?ref=${refCode}`;
+  const shareLink = `https://erasmatch.com/?ref=${refCode}`;
 
   useEffect(() => {
     if (currentUserProfile) {
