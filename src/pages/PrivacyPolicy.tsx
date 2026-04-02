@@ -88,7 +88,7 @@ const PrivacyPolicy = () => {
         <section className="mb-8">
           <h2 className="text-lg md:text-xl font-medium text-gray-800 mb-3">Cookies & Analytics</h2>
           <p className="text-sm md:text-base text-gray-600 mb-4">
-            ErasMatch does not currently use cookies or analytics tools. If this changes, we will update this policy and request your explicit consent for any non-essential cookies.
+            ErasMatch uses PostHog for product analytics to understand how students use the platform and improve the experience. All analytics data is processed and stored on EU servers (eu.posthog.com) in compliance with GDPR. We do not use cookies for tracking. If you would like to opt out of analytics, please contact us at <a href="mailto:erasmatchbusiness@gmail.com" className="text-blue-600 hover:text-blue-800">erasmatchbusiness@gmail.com</a>.
           </p>
         </section>
 
