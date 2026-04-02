@@ -157,7 +157,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
-      posthog.reset();
+      window.posthog?.reset();
       toast.success("You've been logged out");
       navigate("/auth?mode=login");
     } catch (error) {
