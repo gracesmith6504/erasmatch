@@ -53,6 +53,7 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
     setSending(true);
     try {
       await sendMessage(studentId, note.trim());
+      posthog.capture("say_hi_sent");
       toast({ title: "Connect request sent!", description: `Your note was sent to ${studentName}.` });
       setNote("");
 

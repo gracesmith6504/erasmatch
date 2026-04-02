@@ -40,6 +40,7 @@ const InviteFriendModal: React.FC<InviteFriendModalProps> = ({
   const handleCopy = async () => {
     await navigator.clipboard.writeText(referralUrl);
     localStorage.setItem("invitePromptSeen", "true");
+    posthog.capture("invite_link_copied");
     setCopied(true);
     setTimeout(() => {
       setCopied(false);
