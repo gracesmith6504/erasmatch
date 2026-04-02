@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { MessageCircle, Copy, Check } from "lucide-react";
+import posthog from "posthog-js";
 
 interface InviteFriendModalProps {
   open: boolean;
@@ -31,6 +32,7 @@ const InviteFriendModal: React.FC<InviteFriendModalProps> = ({
 
   const handleWhatsApp = () => {
     localStorage.setItem("invitePromptSeen", "true");
+    posthog.capture("invite_whatsapp_clicked");
     window.open(whatsappUrl, "_blank");
     setTimeout(() => onOpenChange(false), 500);
   };
@@ -38,6 +40,7 @@ const InviteFriendModal: React.FC<InviteFriendModalProps> = ({
   const handleCopy = async () => {
     await navigator.clipboard.writeText(referralUrl);
     localStorage.setItem("invitePromptSeen", "true");
+    posthog.capture("invite_link_copied");
     setCopied(true);
     setTimeout(() => {
       setCopied(false);

@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
+import posthog from "posthog-js";
 
 type ProfileViewProps = {
   currentUserId: string | null;
@@ -73,6 +74,7 @@ const ProfileView = ({ currentUserId }: ProfileViewProps) => {
   useEffect(() => {
     if (currentUserId && profile?.id && currentUserId !== profile.id) {
       recordProfileView(profile.id);
+      posthog.capture("profile_viewed");
     }
   }, [currentUserId, profile?.id]);
 
