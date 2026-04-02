@@ -12,6 +12,7 @@ import { CompletionCelebration } from "./CompletionCelebration";
 import { CityPayoff } from "./CityPayoff";
 import { toast } from "sonner";
 import { generateUniqueRefCode } from "@/utils/refCodeGenerator";
+import posthog from "posthog-js";
 
 const slideVariants = {
   enter: (direction: number) => ({
@@ -58,6 +59,18 @@ export const OnboardingFlow = () => {
 
   const handleCompleteOnboarding = async () => {
     try {
+      posthog.capture("onboarding_step_submitted", {
+        step: 5,
+        step_name: "photo",
+        filled: !!currentUserProfile?.avatar_url,
+        skipped: !currentUserProfile?.avatar_url,
+      });
+      posthog.capture("onboarding_completed", {
+        city: currentUserProfile?.city,
+        university: currentUserProfile?.university,
+        has_avatar: !!currentUserProfile?.avatar_url,
+        tags_count: currentUserProfile?.personality_tags?.length || 0,
+      });
       completingRef.current = true;
       const refCode = await generateUniqueRefCode(currentUserProfile?.name || "");
 
@@ -89,6 +102,19 @@ export const OnboardingFlow = () => {
   }, [navigate]);
 
   const goToNextStep = () => {
+    const stepNames = ["first_name", "destination_university", "home_university", "exchange_details", "interests"];
+    if (currentStep < stepNames.length) {
+      const extras: Record<string, unknown> = { step: currentStep, step_name: stepNames[currentStep] };
+      switch (currentStep) {
+        case 0: extras.filled = !!currentUserProfile?.name?.trim(); break;
+        case 1: extras.filled = !!(currentUserProfile?.university && currentUserProfile?.city); break;
+        case 2: extras.filled = !!currentUserProfile?.home_university; break;
+        case 3: extras.filled = !!currentUserProfile?.semester; extras.had_arrival_date = !!currentUserProfile?.arrival_date; break;
+        case 4: extras.tags_selected = currentUserProfile?.personality_tags?.length || 0; extras.skipped = !currentUserProfile?.personality_tags?.length; break;
+      }
+      posthog.capture("onboarding_step_submitted", extras);
+    }
+
     setDirection(1);
     if (currentStep < totalSteps - 1) {
       setCurrentStep(currentStep + 1);
