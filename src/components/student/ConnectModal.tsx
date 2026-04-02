@@ -13,7 +13,7 @@ import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import InviteFriendModal from "@/components/share/InviteFriendModal";
-import posthog from "posthog-js";
+
 
 const MAX_CHARS = 100;
 

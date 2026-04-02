@@ -12,7 +12,7 @@ import { CompletionCelebration } from "./CompletionCelebration";
 import { CityPayoff } from "./CityPayoff";
 import { toast } from "sonner";
 import { generateUniqueRefCode } from "@/utils/refCodeGenerator";
-import posthog from "posthog-js";
+
 
 const slideVariants = {
   enter: (direction: number) => ({
