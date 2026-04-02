@@ -58,6 +58,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           }
 
           setCurrentUserProfile(profileData);
+
+          posthog.identify(profileData.id, {
+            city: profileData.city,
+            university: profileData.university,
+            semester: profileData.semester,
+            has_avatar: !!profileData.avatar_url,
+            home_university: profileData.home_university,
+          });
           
           if (!profileData.onboarding_complete) {
             if (!window.location.pathname.includes('/onboarding') && !window.location.pathname.includes('/auth')) {
