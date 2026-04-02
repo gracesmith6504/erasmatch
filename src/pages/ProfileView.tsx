@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
+import posthog from "posthog-js";
 
 type ProfileViewProps = {
   currentUserId: string | null;
