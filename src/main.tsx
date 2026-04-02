@@ -4,22 +4,27 @@
  */
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from "react-router-dom";
-import posthog from 'posthog-js';
+import { PostHogProvider } from '@posthog/react';
 import App from './App.tsx'
 import './index.css'
 
 document.title = "ErasMatch";
 
-posthog.init(import.meta.env.VITE_PUBLIC_POSTHOG_PROJECT_TOKEN, {
+const options = {
   api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
-  person_profiles: 'identified_only',
+  person_profiles: 'identified_only' as const,
   autocapture: true,
   capture_pageview: true,
   disable_cookie: true,
-});
+};
 
 createRoot(document.getElementById("root")!).render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>
+  <PostHogProvider
+    apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_PROJECT_TOKEN}
+    options={options}
+  >
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </PostHogProvider>
 );
