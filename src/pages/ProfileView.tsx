@@ -74,7 +74,7 @@ const ProfileView = ({ currentUserId }: ProfileViewProps) => {
   useEffect(() => {
     if (currentUserId && profile?.id && currentUserId !== profile.id) {
       recordProfileView(profile.id);
-      posthog.capture("profile_viewed");
+      window.posthog?.capture("profile_viewed");
     }
   }, [currentUserId, profile?.id]);
 

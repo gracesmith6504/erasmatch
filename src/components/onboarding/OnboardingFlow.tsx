@@ -59,13 +59,13 @@ export const OnboardingFlow = () => {
 
   const handleCompleteOnboarding = async () => {
     try {
-      posthog.capture("onboarding_step_submitted", {
+      window.posthog?.capture("onboarding_step_submitted", {
         step: 5,
         step_name: "photo",
         filled: !!currentUserProfile?.avatar_url,
         skipped: !currentUserProfile?.avatar_url,
       });
-      posthog.capture("onboarding_completed", {
+      window.posthog?.capture("onboarding_completed", {
         city: currentUserProfile?.city,
         university: currentUserProfile?.university,
         has_avatar: !!currentUserProfile?.avatar_url,
@@ -112,7 +112,7 @@ export const OnboardingFlow = () => {
         case 3: extras.filled = !!currentUserProfile?.semester; extras.had_arrival_date = !!currentUserProfile?.arrival_date; break;
         case 4: extras.tags_selected = currentUserProfile?.personality_tags?.length || 0; extras.skipped = !currentUserProfile?.personality_tags?.length; break;
       }
-      posthog.capture("onboarding_step_submitted", extras);
+      window.posthog?.capture("onboarding_step_submitted", extras);
     }
 
     setDirection(1);
