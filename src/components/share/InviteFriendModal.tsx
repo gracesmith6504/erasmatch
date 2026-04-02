@@ -32,7 +32,7 @@ const InviteFriendModal: React.FC<InviteFriendModalProps> = ({
 
   const handleWhatsApp = () => {
     localStorage.setItem("invitePromptSeen", "true");
-    posthog.capture("invite_whatsapp_clicked");
+    window.posthog?.capture("invite_whatsapp_clicked");
     window.open(whatsappUrl, "_blank");
     setTimeout(() => onOpenChange(false), 500);
   };
@@ -40,7 +40,7 @@ const InviteFriendModal: React.FC<InviteFriendModalProps> = ({
   const handleCopy = async () => {
     await navigator.clipboard.writeText(referralUrl);
     localStorage.setItem("invitePromptSeen", "true");
-    posthog.capture("invite_link_copied");
+    window.posthog?.capture("invite_link_copied");
     setCopied(true);
     setTimeout(() => {
       setCopied(false);
