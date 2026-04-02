@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Profile } from "@/types";
 import { AuthContext } from "./AuthContext";
 import { fetchUserProfile, createUserProfile, updateUserProfile } from "./authUtils";
+import posthog from "posthog-js";
 
 type AuthProviderProps = {
   children: ReactNode;
