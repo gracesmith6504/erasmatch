@@ -13,7 +13,7 @@ import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import InviteFriendModal from "@/components/share/InviteFriendModal";
-import posthog from "posthog-js";
+
 
 const MAX_CHARS = 100;
 
@@ -53,7 +53,7 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
     setSending(true);
     try {
       await sendMessage(studentId, note.trim());
-      posthog.capture("say_hi_sent");
+      window.posthog?.capture("say_hi_sent");
       toast({ title: "Connect request sent!", description: `Your note was sent to ${studentName}.` });
       setNote("");
 
