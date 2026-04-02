@@ -32,6 +32,7 @@ const InviteFriendModal: React.FC<InviteFriendModalProps> = ({
 
   const handleWhatsApp = () => {
     localStorage.setItem("invitePromptSeen", "true");
+    posthog.capture("invite_whatsapp_clicked");
     window.open(whatsappUrl, "_blank");
     setTimeout(() => onOpenChange(false), 500);
   };
