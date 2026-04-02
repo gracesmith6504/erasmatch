@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { MessageCircle, Copy, Check } from "lucide-react";
+import posthog from "posthog-js";
 
 interface InviteFriendModalProps {
   open: boolean;
