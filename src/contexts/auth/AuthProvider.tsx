@@ -6,7 +6,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { Profile } from "@/types";
 import { AuthContext } from "./AuthContext";
 import { fetchUserProfile, createUserProfile, updateUserProfile } from "./authUtils";
-import posthog from "posthog-js";
+// Use window.posthog (initialised via HTML snippet) for reliable production tracking
+declare global {
+  interface Window {
+    posthog?: {
+      identify: (id: string, properties?: Record<string, any>) => void;
+      reset: () => void;
+      capture: (event: string, properties?: Record<string, any>) => void;
+    };
+  }
+}
 
 type AuthProviderProps = {
   children: ReactNode;
