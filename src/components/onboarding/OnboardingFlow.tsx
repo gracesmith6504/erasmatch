@@ -59,6 +59,18 @@ export const OnboardingFlow = () => {
 
   const handleCompleteOnboarding = async () => {
     try {
+      posthog.capture("onboarding_step_submitted", {
+        step: 5,
+        step_name: "photo",
+        filled: !!currentUserProfile?.avatar_url,
+        skipped: !currentUserProfile?.avatar_url,
+      });
+      posthog.capture("onboarding_completed", {
+        city: currentUserProfile?.city,
+        university: currentUserProfile?.university,
+        has_avatar: !!currentUserProfile?.avatar_url,
+        tags_count: currentUserProfile?.personality_tags?.length || 0,
+      });
       completingRef.current = true;
       const refCode = await generateUniqueRefCode(currentUserProfile?.name || "");
 
