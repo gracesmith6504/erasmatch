@@ -60,6 +60,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           setCurrentUserProfile(profileData);
 
           posthog.identify(profileData.id, {
+            email: profileData.email,
+            name: profileData.name,
             city: profileData.city,
             university: profileData.university,
             semester: profileData.semester,
@@ -146,6 +148,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
+      posthog.reset();
       toast.success("You've been logged out");
       navigate("/auth?mode=login");
     } catch (error) {
