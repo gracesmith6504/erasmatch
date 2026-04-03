@@ -12,13 +12,16 @@ const Onboarding = () => {
   useEffect(() => {
     setPageLoaded(true);
     
-    // Only redirect if not authenticated. Don't redirect when onboarding_complete
-    // because OnboardingFlow manages the celebration/city payoff sequence
-    // before navigating to /students?from=onboarding itself.
     if (!loading && !isAuthenticated) {
       navigate("/auth?mode=login");
+      return;
     }
-  }, [isAuthenticated, loading, navigate]);
+
+    // If the user already has name and city, they don't need onboarding
+    if (!loading && isAuthenticated && currentUserProfile?.name && currentUserProfile?.city) {
+      navigate("/students", { replace: true });
+    }
+  }, [isAuthenticated, loading, navigate, currentUserProfile]);
 
   if (loading || loadingRedirect) {
     return (
