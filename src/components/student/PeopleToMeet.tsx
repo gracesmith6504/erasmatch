@@ -22,6 +22,24 @@ interface PeopleToMeetProps {
 
 const STORAGE_KEY = "peopleToMeetDismissed";
 
+const scoreProfile = (
+  p: Profile,
+  currentProfile: Profile
+) => {
+  const myUni = currentProfile.university;
+  const mySemester = currentProfile.semester;
+  const myTags = currentProfile.personality_tags ?? [];
+
+  let score = 0;
+  if (myUni && p.university === myUni) score += 8;
+  if (mySemester && p.semester === mySemester) score += 6;
+  const pTags = p.personality_tags ?? [];
+  const shared = myTags.filter((t) => pTags.includes(t));
+  score += shared.length * 3;
+  if (p.avatar_url) score += 2;
+  return { score, sharedTags: shared };
+};
+
 const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
   profiles,
   currentUserId,
@@ -58,30 +76,104 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
     staleTime: 60_000,
   });
 
-  const scored = useMemo(() => {
-    const myCity = currentProfile.city;
-    const myUni = currentProfile.university;
-    const mySemester = currentProfile.semester;
-    const myTags = currentProfile.personality_tags ?? [];
-    const excludeSet = new Set([currentUserId, ...messagedIds]);
+  // Fetch university → country map
+  const { data: uniCountryMap = {} } = useQuery({
+    queryKey: ["university-country-map"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("universities")
+        .select("name, country");
+      if (!data) return {};
+      const map: Record<string, string> = {};
+      data.forEach((u) => {
+        if (u.name && u.country) map[u.name] = u.country;
+      });
+      return map;
+    },
+    staleTime: 300_000,
+  });
 
-    return profiles
-      .filter((p) => !excludeSet.has(p.id) && !p.deleted_at)
-      .map((p) => {
-        let score = 0;
-        if (myCity && p.city === myCity) score += 10;
-        if (myUni && p.university === myUni) score += 8;
-        if (mySemester && p.semester === mySemester) score += 6;
-        const pTags = p.personality_tags ?? [];
-        const shared = myTags.filter((t) => pTags.includes(t));
-        score += shared.length * 3;
-        if (p.avatar_url) score += 2;
-        return { profile: p, score, sharedTags: shared };
-      })
-      .filter((s) => s.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, fullPage ? 12 : 5);
-  }, [profiles, currentUserId, currentProfile, messagedIds]);
+  const { scored, sectionTitle } = useMemo(() => {
+    const myCity = currentProfile.city;
+    const excludeSet = new Set([currentUserId, ...messagedIds]);
+    const eligible = profiles.filter((p) => !excludeSet.has(p.id) && !p.deleted_at);
+    const limit = fullPage ? 12 : 5;
+
+    // Step 1: same city
+    if (myCity) {
+      const cityMatches = eligible
+        .filter((p) => p.city === myCity)
+        .map((p) => ({ profile: p, ...scoreProfile(p, currentProfile) }))
+        .sort((a, b) => b.score - a.score);
+
+      if (cityMatches.length >= 3) {
+        return {
+          scored: cityMatches.slice(0, limit),
+          sectionTitle: `People going to ${myCity} 👋`,
+        };
+      }
+
+      // Step 2: country fallback — fill remaining slots
+      const myCountry = currentProfile.university
+        ? uniCountryMap[currentProfile.university]
+        : undefined;
+
+      if (myCountry) {
+        const cityMatchIds = new Set(cityMatches.map((m) => m.profile.id));
+        const countryMatches = eligible
+          .filter(
+            (p) =>
+              !cityMatchIds.has(p.id) &&
+              p.university &&
+              uniCountryMap[p.university] === myCountry
+          )
+          .map((p) => ({ profile: p, ...scoreProfile(p, currentProfile) }))
+          .sort((a, b) => b.score - a.score);
+
+        const combined = [...cityMatches, ...countryMatches].slice(0, limit);
+        if (combined.length > 0) {
+          const title =
+            cityMatches.length > 0
+              ? `People going to ${myCity} 👋`
+              : `People going to ${myCountry} 👋`;
+          return { scored: combined, sectionTitle: title };
+        }
+      }
+
+      // City matches exist but < 3 and no country fallback
+      if (cityMatches.length > 0) {
+        return {
+          scored: cityMatches.slice(0, limit),
+          sectionTitle: `People going to ${myCity} 👋`,
+        };
+      }
+    }
+
+    // No city set — try country only
+    const myCountry = currentProfile.university
+      ? uniCountryMap[currentProfile.university]
+      : undefined;
+
+    if (myCountry) {
+      const countryMatches = eligible
+        .filter(
+          (p) => p.university && uniCountryMap[p.university] === myCountry
+        )
+        .map((p) => ({ profile: p, ...scoreProfile(p, currentProfile) }))
+        .sort((a, b) => b.score - a.score)
+        .slice(0, limit);
+
+      if (countryMatches.length > 0) {
+        return {
+          scored: countryMatches,
+          sectionTitle: `People going to ${myCountry} 👋`,
+        };
+      }
+    }
+
+    // Step 3: nothing
+    return { scored: [], sectionTitle: "" };
+  }, [profiles, currentUserId, currentProfile, messagedIds, uniCountryMap, fullPage]);
 
   // If fullPage requested but fewer than 4 results, fall back to compact mode
   const effectiveFullPage = fullPage && scored.length >= 4;
@@ -124,7 +216,7 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
         <div className={effectiveFullPage ? 'text-center mb-6' : 'mb-4 pr-8'}>
           <h2 className={`font-display font-semibold text-foreground flex items-center gap-2 ${effectiveFullPage ? 'text-xl sm:text-2xl justify-center' : 'text-lg'}`}>
             <Sparkles className={`text-primary ${effectiveFullPage ? 'h-5 w-5 sm:h-6 sm:w-6' : 'h-5 w-5'}`} />
-            People you should meet 👋
+            {sectionTitle}
           </h2>
           {effectiveFullPage && (
             <p className="text-muted-foreground mt-2 text-sm sm:text-base">Based on your city, university, and interests</p>
@@ -132,7 +224,6 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
         </div>
 
         {effectiveFullPage ? (
-          /* Full-page mode: use real StudentCard components */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {scored.map(({ profile: p }) => (
               <StudentCard
@@ -143,7 +234,6 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
             ))}
           </div>
         ) : (
-          /* Compact mode: small avatar cards in a row */
           <div className="flex gap-3 overflow-x-auto pb-2 sm:pb-0 sm:grid sm:grid-cols-5 scrollbar-hide">
             {scored.map(({ profile: p, sharedTags }) => (
               <div
