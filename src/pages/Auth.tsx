@@ -144,7 +144,7 @@ const Auth = ({ onLogin }: AuthProps) => {
         if (returnTo) {
           navigate(returnTo);
         } else {
-          navigate("/");
+          navigate("/students");
         }
       }
     } catch (error: any) {
