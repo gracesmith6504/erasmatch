@@ -12,24 +12,24 @@ type LayoutProps = {
 
 const Layout = ({ children }: LayoutProps) => {
   const navigate = useNavigate();
-  const { isAuthenticated, handleLogout } = useAuth();
+  const { isAuthenticated, currentUserId, handleLogout } = useAuth();
   const location = useLocation();
 
   useEffect(() => {
-    const updateActivity = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase
-          .from("profiles")
-          .update({ last_active_at: new Date().toISOString() })
-          .eq("id", user.id);
-      }
+    if (!currentUserId) return;
+
+    const updateActivity = () => {
+      supabase
+        .from("profiles")
+        .update({ last_active_at: new Date().toISOString() })
+        .eq("id", currentUserId)
+        .then();
     };
 
     updateActivity();
     const interval = setInterval(updateActivity, 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [currentUserId]);
 
   const handleLogoutClick = () => {
     handleLogout();
