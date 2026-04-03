@@ -11,13 +11,11 @@ import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Command,
-  CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Input } from "@/components/ui/input";
 
 type AliasEntry = { alias: string; university_id: number };
 
@@ -44,8 +42,7 @@ export const DestinationUniversityStep = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uniOpen, setUniOpen] = useState(false);
   const [uniSearch, setUniSearch] = useState("");
-  const [manualEntry, setManualEntry] = useState(false);
-  const [manualName, setManualName] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
 
   const { universities: allUniversities, loading: unisLoading } = useUniversitiesCache();
   const [aliases, setAliases] = useState<AliasEntry[]>([]);
@@ -85,12 +82,18 @@ export const DestinationUniversityStep = ({
     );
   }, [filteredUniversities, uniSearch, aliases]);
 
+  // Check if the search query exactly matches an existing result
+  const hasExactMatch = useMemo(() => {
+    if (!uniSearch.trim()) return true;
+    const q = normalizeString(uniSearch);
+    return filteredUniversities.some((u) => normalizeString(u.name) === q);
+  }, [filteredUniversities, uniSearch]);
+
+  const showAddOption = uniSearch.trim().length > 1 && !hasExactMatch && !isAdding;
+
   const handleCityChange = (newCity: string) => {
     setCity(newCity);
-    // Reset university when city changes (it may not exist in new city)
     setUniversity("");
-    setManualEntry(false);
-    setManualName("");
   };
 
   const handleSelectUniversity = (name: string) => {
@@ -99,13 +102,18 @@ export const DestinationUniversityStep = ({
     setUniSearch("");
   };
 
-  const handleManualSave = async () => {
-    const trimmed = manualName.trim();
-    if (!trimmed) return;
-    await autoAddUniversity(trimmed, city);
-    setUniversity(trimmed);
-    setManualEntry(false);
-    setManualName("");
+  const handleAddCustomUniversity = async () => {
+    const trimmed = uniSearch.trim();
+    if (!trimmed || isAdding) return;
+    setIsAdding(true);
+    try {
+      await autoAddUniversity(trimmed, city);
+      setUniversity(trimmed);
+      setUniOpen(false);
+      setUniSearch("");
+    } finally {
+      setIsAdding(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -170,125 +178,74 @@ export const DestinationUniversityStep = ({
                 <p className="text-xs font-medium text-muted-foreground mb-1.5 ml-0.5 flex items-center gap-1">
                   <School className="h-3 w-3" />
                   University in {city}
-                  <span className="text-muted-foreground/60"></span>
                 </p>
 
-                {!manualEntry ? (
-                  <div className="space-y-2">
-                    {filteredUniversities.length > 0 ? (
-                      /* Dropdown with universities in this city */
-                      <Popover open={uniOpen} onOpenChange={setUniOpen}>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            aria-expanded={uniOpen}
-                            className={cn(
-                              "w-full justify-between",
-                              !university && "text-muted-foreground"
-                            )}
-                          >
-                            <span className="truncate">
-                              {university || "Select your university..."}
-                            </span>
-                            <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent
-                          className="w-[--radix-popover-trigger-width] p-0"
-                          align="start"
-                        >
-                          <Command>
-                            <CommandInput
-                              placeholder="Search universities..."
-                              value={uniSearch}
-                              onValueChange={setUniSearch}
-                              className="bg-background"
-                            />
-                            <CommandList className="max-h-[200px]">
-                              <CommandEmpty>
-                                No match found in {city}
-                              </CommandEmpty>
-                              <CommandGroup>
-                                {searchedUniversities.map((uni) => (
-                                  <CommandItem
-                                    key={uni.id}
-                                    value={uni.name}
-                                    onSelect={() =>
-                                      handleSelectUniversity(uni.name)
-                                    }
-                                  >
-                                    <Check
-                                      className={cn(
-                                        "mr-2 h-4 w-4",
-                                        university === uni.name
-                                          ? "opacity-100"
-                                          : "opacity-0"
-                                      )}
-                                    />
-                                    {uni.name}
-                                  </CommandItem>
-                                ))}
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-                    ) : (
-                      /* No universities found for this city */
-                      <p className="text-sm text-muted-foreground py-2">
-                        No universities listed in {city} yet.
-                      </p>
-                    )}
-
-                    {/* Manual entry toggle */}
-                    <button
-                      type="button"
-                      onClick={() => setManualEntry(true)}
-                      className="w-full py-2 px-3 rounded-lg border-2 border-dashed border-muted-foreground/30 text-sm text-muted-foreground hover:border-primary/50 hover:text-primary transition-colors flex items-center justify-center gap-2"
+                <Popover open={uniOpen} onOpenChange={setUniOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={uniOpen}
+                      className={cn(
+                        "w-full justify-between",
+                        !university && "text-muted-foreground"
+                      )}
                     >
-                      <Plus className="h-3.5 w-3.5" />
-                      <span>
-                        {filteredUniversities.length > 0
-                          ? "Can't find yours? Add it manually"
-                          : "Add your university manually"}
+                      <span className="truncate">
+                        {university || "Select your university..."}
                       </span>
-                    </button>
-                  </div>
-                ) : (
-                  /* Manual entry form */
-                  <div className="space-y-2 animate-fade-in">
-                    <Input
-                      value={manualName}
-                      onChange={(e) => setManualName(e.target.value)}
-                      placeholder="Enter university name"
-                      autoFocus
-                    />
-                    <div className="flex gap-2">
-                      <Button
-                        type="button"
-                        size="sm"
-                        onClick={handleManualSave}
-                        disabled={!manualName.trim()}
-                        className="bg-primary hover:bg-primary/90"
-                      >
-                        Save
-                      </Button>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => {
-                          setManualEntry(false);
-                          setManualName("");
-                        }}
-                        className="text-muted-foreground"
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  </div>
-                )}
+                      <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-[--radix-popover-trigger-width] p-0"
+                    align="start"
+                  >
+                    <Command>
+                      <CommandInput
+                        placeholder="Search universities..."
+                        value={uniSearch}
+                        onValueChange={setUniSearch}
+                        className="bg-background"
+                      />
+                      <CommandList className="max-h-[200px]">
+                        <CommandGroup>
+                          {searchedUniversities.map((uni) => (
+                            <CommandItem
+                              key={uni.id}
+                              value={uni.name}
+                              onSelect={() => handleSelectUniversity(uni.name)}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  university === uni.name ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                              {uni.name}
+                            </CommandItem>
+                          ))}
+                          {showAddOption && (
+                            <CommandItem
+                              value={`custom-add-${uniSearch}`}
+                              onSelect={handleAddCustomUniversity}
+                              className="text-primary"
+                            >
+                              <Plus className="mr-2 h-4 w-4" />
+                              Add "{uniSearch.trim()}"
+                            </CommandItem>
+                          )}
+                          {isAdding && (
+                            <CommandItem value="adding-indicator" disabled className="text-muted-foreground">
+                              <Plus className="mr-2 h-4 w-4 animate-spin" />
+                              Adding...
+                            </CommandItem>
+                          )}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
             )}
           </div>
