@@ -32,7 +32,7 @@ export const FirstNameStep = ({
   return (
     <OnboardingLayout
       currentStep={1}
-      totalSteps={5}
+      totalSteps={6}
       showBackButton={false}
     >
       <div className="w-full max-w-md space-y-6">
