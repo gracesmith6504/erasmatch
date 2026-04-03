@@ -44,8 +44,8 @@ export const InterestsStep = ({
 
   return (
     <OnboardingLayout
-      currentStep={4}
-      totalSteps={5}
+      currentStep={5}
+      totalSteps={6}
       onBack={onBack}
     >
       <div className="w-full max-w-md space-y-5">

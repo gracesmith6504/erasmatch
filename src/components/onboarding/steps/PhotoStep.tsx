@@ -85,7 +85,7 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
   };
 
   return (
-    <OnboardingLayout currentStep={5} totalSteps={5} onBack={onBack}>
+    <OnboardingLayout currentStep={6} totalSteps={6} onBack={onBack}>
       <div className="flex flex-col items-center text-center space-y-6">
         <h2 className="text-2xl font-bold text-foreground">Add a profile photo</h2>
         <p className="text-muted-foreground text-sm">
