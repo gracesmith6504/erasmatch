@@ -102,7 +102,7 @@ export const OnboardingFlow = () => {
   }, [navigate]);
 
   const goToNextStep = () => {
-    const stepNames = ["first_name", "destination_university", "home_university", "exchange_details", "interests"];
+    const stepNames = ["first_name", "destination_university", "home_university", "exchange_details", "interests", "photo"];
     if (currentStep < stepNames.length) {
       const extras: Record<string, unknown> = { step: currentStep, step_name: stepNames[currentStep] };
       switch (currentStep) {
