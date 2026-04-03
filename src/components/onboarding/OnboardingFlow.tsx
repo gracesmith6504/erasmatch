@@ -102,7 +102,7 @@ export const OnboardingFlow = () => {
   }, [navigate]);
 
   const goToNextStep = () => {
-    const stepNames = ["first_name", "destination_university", "home_university", "exchange_details", "interests"];
+    const stepNames = ["first_name", "destination_university", "home_university", "exchange_details", "interests", "photo"];
     if (currentStep < stepNames.length) {
       const extras: Record<string, unknown> = { step: currentStep, step_name: stepNames[currentStep] };
       switch (currentStep) {
@@ -129,6 +129,14 @@ export const OnboardingFlow = () => {
       setCurrentStep(currentStep - 1);
     }
   };
+
+  if (!currentUserProfile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    );
+  }
 
   if (showCityPayoff) {
     return (
