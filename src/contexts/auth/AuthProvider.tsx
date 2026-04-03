@@ -103,7 +103,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             setCurrentUserProfile(newProfile);
             
             if (!window.location.pathname.includes('/onboarding') && !window.location.pathname.includes('/auth')) {
-              navigate("/onboarding");
+              navigate("/onboarding", { replace: true });
             }
           }
         }
