@@ -5,6 +5,7 @@ import { ArrowLeftCircle } from "lucide-react";
 import { autoAddUniversity } from "./useAutoAddUniversity";
 import { CityAutocomplete } from "@/components/CityAutocomplete";
 import { useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type ManualUniversityEntryProps = {
   value: string;
