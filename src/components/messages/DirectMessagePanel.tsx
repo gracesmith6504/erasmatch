@@ -58,9 +58,9 @@ export const DirectMessagePanel = ({
     }
   }, [currentUserId, thread?.partner?.id]);
 
-  function scrollToBottom() {
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }
+  }, []);
 
   useEffect(() => {
     scrollToBottom();

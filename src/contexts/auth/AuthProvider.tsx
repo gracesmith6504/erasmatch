@@ -158,7 +158,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       await supabase.auth.signOut();
       window.posthog?.reset();
-      toast.success("You've been logged out");
       navigate("/auth?mode=login");
     } catch (error) {
       console.error('Error signing out:', error);
