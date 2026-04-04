@@ -40,6 +40,10 @@ export const DirectMessagePanel = ({
   const [isScrollingUp, setIsScrollingUp] = useState(false);
   const lastScrollTop = useRef(0);
 
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
+
   const { localMessages, setLocalMessages } = useRealTimeMessages({
     messages,
     currentUserId,
@@ -58,13 +62,9 @@ export const DirectMessagePanel = ({
     }
   }, [currentUserId, thread?.partner?.id]);
 
-  const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, []);
-
   useEffect(() => {
     scrollToBottom();
-  }, [localMessages]);
+  }, [localMessages, scrollToBottom]);
 
   const handleSendMessage = async () => {
     if (!thread || !newMessage.trim()) return;
