@@ -59,7 +59,7 @@ export const FirstNameStep = ({
             onChange={(e) => setName(e.target.value)}
             placeholder="Your first name"
             className="text-center text-xl h-14 shadow-sm border-border rounded-xl bg-card"
-            autoFocus
+            autoFocus={!isMobile}
           />
 
           <Button

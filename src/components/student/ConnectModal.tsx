@@ -106,7 +106,7 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
               maxLength={MAX_CHARS}
-              autoFocus
+              autoFocus={!isMobile}
             />
             <p className={`text-xs text-right ${note.length > 80 ? "text-destructive" : "text-muted-foreground"}`}>
               {note.length}/{MAX_CHARS}

@@ -79,7 +79,7 @@ export const CourseStep = ({
               onChange={handleChange}
               placeholder="Your course name"
               className="text-center text-xl h-12 border-gray-200 focus:border-erasmatch-blue focus:ring-erasmatch-blue/20"
-              autoFocus
+              autoFocus={!isMobile}
             />
           </div>
 
