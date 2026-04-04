@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -12,6 +13,8 @@ import { CompletionCelebration } from "./CompletionCelebration";
 import { CityPayoff } from "./CityPayoff";
 import { toast } from "sonner";
 import { generateUniqueRefCode } from "@/utils/refCodeGenerator";
+import { supabase } from "@/integrations/supabase/client";
+import { Profile } from "@/types";
 
 
 const slideVariants = {
@@ -31,6 +34,7 @@ const slideVariants = {
 
 export const OnboardingFlow = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { currentUserProfile, handleProfileUpdate } = useAuth();
   const [currentStep, setCurrentStep] = useState(currentUserProfile?.onboarding_step ?? 0);
   const [direction, setDirection] = useState(1);
@@ -95,6 +99,27 @@ export const OnboardingFlow = () => {
       }
 
       sessionStorage.removeItem("hasVisitedGroups");
+
+      // Pre-fetch profiles so /students loads instantly
+      queryClient.prefetchQuery({
+        queryKey: ["profiles"],
+        queryFn: async () => {
+          const { data, error } = await supabase
+            .from("profiles")
+            .select(
+              "id, name, avatar_url, university, city, personality_tags, bio, home_university, semester, course, looking_for, ref_code, arrival_date, last_active_at, featured"
+            )
+            .is("deleted_at", null);
+          if (error) throw error;
+          return (data ?? []).map((profile) => ({
+            ...profile,
+            country: null,
+            interests: null,
+            personality_tags: profile.personality_tags || [],
+          })) as Profile[];
+        },
+      });
+
       setShowCelebration(true);
     } catch (error: any) {
       toast.error("Failed to complete onboarding: " + error.message);
