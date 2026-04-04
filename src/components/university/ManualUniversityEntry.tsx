@@ -49,7 +49,7 @@ export function ManualUniversityEntry({
           placeholder="Enter your university name"
           className="w-full"
           required={required}
-          autoFocus
+          autoFocus={!isMobile}
         />
       </div>
       

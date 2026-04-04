@@ -33,7 +33,7 @@ export const NameDisplay = ({ name, email, handleChange }: NameDisplayProps) => 
             onChange={handleChange}
             placeholder="Your full name"
             required
-            autoFocus
+            autoFocus={!isMobile}
             className="text-center text-lg font-semibold border-none focus:ring-0 bg-transparent"
           />
           <Button 
