@@ -1,17 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { School, MapPin, X, User, ChevronDown, ChevronUp, Search, Plane } from "lucide-react";
 import { PERSONALITY_TAGS } from "@/components/profile/constants";
 import { format } from "date-fns";
+import { CityAutocomplete } from "@/components/CityAutocomplete";
 
 const SEMESTER_OPTIONS = ["Spring 2025", "Fall 2025", "Spring 2026", "Full Academic Year 2025–26", "Fall 2026", "Spring 2027", "Full Academic Year 2026–27"];
 
@@ -165,22 +159,12 @@ const StudentFilters = ({
           )}
         </div>
 
-        <div>
-          <Select value={cityFilter} onValueChange={setCityFilter}>
-            <SelectTrigger className="h-12 border-border focus:border-erasmatch-green">
-              <div className="flex items-center">
-                <MapPin className="mr-2 h-4 w-4 text-muted-foreground" />
-                <SelectValue placeholder="City" />
-              </div>
-            </SelectTrigger>
-            <SelectContent className="max-h-80">
-              <SelectItem value="all-cities">All Cities</SelectItem>
-              {uniqueCities.map((city) => (
-                <SelectItem key={city} value={city}>{city}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <CityAutocomplete
+          value={cityFilter}
+          onChange={(city) => setCityFilter(city)}
+          placeholder="Search city..."
+          className="h-12 border-border"
+        />
 
       </div>
 
