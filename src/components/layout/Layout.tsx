@@ -76,17 +76,17 @@ const Layout = ({ children }: LayoutProps) => {
               </div>
               <div className="mt-6 md:mt-0">
                 <h3 className="text-sm font-semibold mb-3 md:mb-4 text-foreground">Quick Links</h3>
-                <ul className="space-y-2 text-sm">
-                  <li><a href="/" className="text-muted-foreground hover:text-foreground transition-colors">Home</a></li>
-                  <li><a href="/students" className="text-muted-foreground hover:text-foreground transition-colors">Find Students</a></li>
-                  <li><a href="/groups" className="text-muted-foreground hover:text-foreground transition-colors">Your Group Chats</a></li>
+              <ul className="space-y-2 text-sm">
+                  <li><Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">Home</Link></li>
+                  <li><Link to="/students" className="text-muted-foreground hover:text-foreground transition-colors">Find Students</Link></li>
+                  <li><Link to="/groups" className="text-muted-foreground hover:text-foreground transition-colors">Your Group Chats</Link></li>
                 </ul>
               </div>
               <div className="mt-6 md:mt-0">
                 <h3 className="text-sm font-semibold mb-3 md:mb-4 text-foreground">Connect</h3>
                 <ul className="space-y-2 text-sm">
                   <li><a href="mailto:erasmatchbusiness@gmail.com" className="text-muted-foreground hover:text-foreground transition-colors">Contact</a></li>
-                  <li><a href="/about" className="text-muted-foreground hover:text-foreground transition-colors">About</a></li>
+                  <li><Link to="/about" className="text-muted-foreground hover:text-foreground transition-colors">About</Link></li>
                   <li><Link to="/privacy-policy" className="text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</Link></li>
                 </ul>
               </div>

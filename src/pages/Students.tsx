@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Profile } from "@/types";
 import { useStudentsData } from "@/hooks/useStudentsData";
 import { useProfiles } from "@/hooks/useProfiles";
@@ -75,7 +75,7 @@ const Students = ({ currentUserId }: StudentsProps) => {
     });
   }, [location, profiles, currentUserId]);
 
-  const getCompletionPercentage = (profile: Profile) => {
+  const getCompletionPercentage = useCallback((profile: Profile) => {
     const fields = [
       profile.name,
       profile.email,
@@ -90,11 +90,11 @@ const Students = ({ currentUserId }: StudentsProps) => {
     ];
     const filled = fields.filter(Boolean).length;
     return Math.round((filled / fields.length) * 100);
-  };
+  }, []);
 
   const isFilterActive = Boolean(universityFilter) || Boolean(cityFilter);
 
-  const sortedProfiles = [...filteredProfiles].sort((a, b) => {
+  const sortedProfiles = useMemo(() => [...filteredProfiles].sort((a, b) => {
     const hasPhotoA = Boolean(a.avatar_url);
     const hasPhotoB = Boolean(b.avatar_url);
 
@@ -108,7 +108,7 @@ const Students = ({ currentUserId }: StudentsProps) => {
     }
 
     return getCompletionPercentage(b) - getCompletionPercentage(a);
-  });
+  }), [filteredProfiles, isFilterActive, getCompletionPercentage]);
 
   // Rendering skeleton loaders during loading state
   if (loading || profilesLoading) {
