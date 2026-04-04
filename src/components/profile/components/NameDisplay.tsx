@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Edit2, Check } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type NameDisplayProps = {
   name: string | null;
@@ -11,6 +12,7 @@ type NameDisplayProps = {
 };
 
 export const NameDisplay = ({ name, email, handleChange }: NameDisplayProps) => {
+  const isMobile = useIsMobile();
   const [isEditing, setIsEditing] = useState(false);
   
   const toggleEdit = () => {
@@ -32,7 +34,7 @@ export const NameDisplay = ({ name, email, handleChange }: NameDisplayProps) => 
             onChange={handleChange}
             placeholder="Your full name"
             required
-            autoFocus
+            autoFocus={!isMobile}
             className="text-center text-lg font-semibold border-none focus:ring-0 bg-transparent"
           />
           <Button 

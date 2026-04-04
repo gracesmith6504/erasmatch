@@ -13,6 +13,7 @@ import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import InviteFriendModal from "@/components/share/InviteFriendModal";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 
 const MAX_CHARS = 100;
@@ -36,6 +37,7 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
   sharedUniversity,
   initialNote,
 }) => {
+  const isMobile = useIsMobile();
   const [note, setNote] = useState(initialNote ?? "");
   const [sending, setSending] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
@@ -105,7 +107,7 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
               maxLength={MAX_CHARS}
-              autoFocus
+              autoFocus={!isMobile}
             />
             <p className={`text-xs text-right ${note.length > 80 ? "text-destructive" : "text-muted-foreground"}`}>
               {note.length}/{MAX_CHARS}

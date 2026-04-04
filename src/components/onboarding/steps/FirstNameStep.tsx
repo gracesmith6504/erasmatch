@@ -3,6 +3,7 @@ import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type FirstNameStepProps = {
   initialValue: string;
@@ -15,6 +16,7 @@ export const FirstNameStep = ({
   onNext,
   onUpdateProfile,
 }: FirstNameStepProps) => {
+  const isMobile = useIsMobile();
   const [name, setName] = useState(initialValue);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -58,7 +60,7 @@ export const FirstNameStep = ({
             onChange={(e) => setName(e.target.value)}
             placeholder="Your first name"
             className="text-center text-xl h-14 shadow-sm border-border rounded-xl bg-card"
-            autoFocus
+            autoFocus={!isMobile}
           />
 
           <Button
