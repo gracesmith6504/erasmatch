@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Edit2, Check } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type NameDisplayProps = {
   name: string | null;
