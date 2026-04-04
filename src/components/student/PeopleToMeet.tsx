@@ -22,10 +22,7 @@ interface PeopleToMeetProps {
 
 const STORAGE_KEY = "peopleToMeetDismissed";
 
-const scoreProfile = (
-  p: Profile,
-  currentProfile: Profile
-) => {
+const scoreProfile = (p: Profile, currentProfile: Profile) => {
   const myUni = currentProfile.university;
   const mySemester = currentProfile.semester;
   const myTags = currentProfile.personality_tags ?? [];
@@ -37,16 +34,6 @@ const scoreProfile = (
   const shared = myTags.filter((t) => pTags.includes(t));
   score += shared.length * 3;
   if (p.avatar_url) score += 2;
-
-  // Recency: up to +4 based on last_active_at (full points if <1 day, 0 if 8+ days)
-  if (p.last_active_at) {
-    const msAgo = Date.now() - new Date(p.last_active_at).getTime();
-    const daysAgo = msAgo / (1000 * 60 * 60 * 24);
-    if (daysAgo < 8) {
-      score += Math.round(4 * Math.max(0, 1 - daysAgo / 8));
-    }
-  }
-
   return { score, sharedTags: shared };
 };
 
@@ -58,9 +45,7 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
   onShowAll,
 }) => {
   const navigate = useNavigate();
-  const [dismissed, setDismissed] = useState(
-    () => localStorage.getItem(STORAGE_KEY) === "true"
-  );
+  const [dismissed, setDismissed] = useState(() => localStorage.getItem(STORAGE_KEY) === "true");
   const [connectTarget, setConnectTarget] = useState<{
     id: string;
     name: string;
@@ -90,9 +75,7 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
   const { data: uniCountryMap = {} } = useQuery({
     queryKey: ["university-country-map"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("universities")
-        .select("name, country");
+      const { data } = await supabase.from("universities").select("name, country");
       if (!data) return {};
       const map: Record<string, string> = {};
       data.forEach((u) => {
@@ -107,7 +90,7 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
     const myCity = currentProfile.city;
     const excludeSet = new Set([currentUserId, ...messagedIds]);
     const eligible = profiles.filter((p) => !excludeSet.has(p.id) && !p.deleted_at);
-    const limit = fullPage ? 12 : 5;
+    const limit = fullPage ? 12 : 10;
 
     // Step 1: same city
     if (myCity) {
@@ -124,28 +107,18 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
       }
 
       // Step 2: country fallback — fill remaining slots
-      const myCountry = currentProfile.university
-        ? uniCountryMap[currentProfile.university]
-        : undefined;
+      const myCountry = currentProfile.university ? uniCountryMap[currentProfile.university] : undefined;
 
       if (myCountry) {
         const cityMatchIds = new Set(cityMatches.map((m) => m.profile.id));
         const countryMatches = eligible
-          .filter(
-            (p) =>
-              !cityMatchIds.has(p.id) &&
-              p.university &&
-              uniCountryMap[p.university] === myCountry
-          )
+          .filter((p) => !cityMatchIds.has(p.id) && p.university && uniCountryMap[p.university] === myCountry)
           .map((p) => ({ profile: p, ...scoreProfile(p, currentProfile) }))
           .sort((a, b) => b.score - a.score);
 
         const combined = [...cityMatches, ...countryMatches].slice(0, limit);
         if (combined.length > 0) {
-          const title =
-            cityMatches.length > 0
-              ? `People going to ${myCity} 👋`
-              : `People going to ${myCountry} 👋`;
+          const title = cityMatches.length > 0 ? `People going to ${myCity} 👋` : `People going to ${myCountry} 👋`;
           return { scored: combined, sectionTitle: title };
         }
       }
@@ -160,15 +133,11 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
     }
 
     // No city set — try country only
-    const myCountry = currentProfile.university
-      ? uniCountryMap[currentProfile.university]
-      : undefined;
+    const myCountry = currentProfile.university ? uniCountryMap[currentProfile.university] : undefined;
 
     if (myCountry) {
       const countryMatches = eligible
-        .filter(
-          (p) => p.university && uniCountryMap[p.university] === myCountry
-        )
+        .filter((p) => p.university && uniCountryMap[p.university] === myCountry)
         .map((p) => ({ profile: p, ...scoreProfile(p, currentProfile) }))
         .sort((a, b) => b.score - a.score)
         .slice(0, limit);
@@ -207,12 +176,19 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
 
   const getInitials = (name: string | null) => {
     if (!name) return "?";
-    return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
   };
 
   return (
     <>
-      <div className={`mb-6 rounded-xl bg-primary/5 border border-primary/10 relative ${effectiveFullPage ? 'p-4 sm:p-6 md:p-8' : 'p-4 sm:p-5'}`}>
+      <div
+        className={`mb-6 rounded-xl bg-primary/5 border border-primary/10 relative ${effectiveFullPage ? "p-4 sm:p-6 md:p-8" : "p-4 sm:p-5"}`}
+      >
         {!effectiveFullPage && (
           <button
             onClick={handleDismiss}
@@ -223,24 +199,24 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
           </button>
         )}
 
-        <div className={effectiveFullPage ? 'text-center mb-6' : 'mb-4 pr-8'}>
-          <h2 className={`font-display font-semibold text-foreground flex items-center gap-2 ${effectiveFullPage ? 'text-xl sm:text-2xl justify-center' : 'text-lg'}`}>
-            <Sparkles className={`text-primary ${effectiveFullPage ? 'h-5 w-5 sm:h-6 sm:w-6' : 'h-5 w-5'}`} />
+        <div className={effectiveFullPage ? "text-center mb-6" : "mb-4 pr-8"}>
+          <h2
+            className={`font-display font-semibold text-foreground flex items-center gap-2 ${effectiveFullPage ? "text-xl sm:text-2xl justify-center" : "text-lg"}`}
+          >
+            <Sparkles className={`text-primary ${effectiveFullPage ? "h-5 w-5 sm:h-6 sm:w-6" : "h-5 w-5"}`} />
             {sectionTitle}
           </h2>
           {effectiveFullPage && (
-            <p className="text-muted-foreground mt-2 text-sm sm:text-base">Based on your city, university, and interests</p>
+            <p className="text-muted-foreground mt-2 text-sm sm:text-base">
+              Based on your city, university, and interests
+            </p>
           )}
         </div>
 
         {effectiveFullPage ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {scored.map(({ profile: p }) => (
-              <StudentCard
-                key={p.id}
-                profile={p}
-                universityCity={p.city}
-              />
+              <StudentCard key={p.id} profile={p} universityCity={p.city} />
             ))}
           </div>
         ) : (
@@ -268,11 +244,7 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
                   </span>
                 </button>
 
-                {p.city && (
-                  <span className="text-xs text-muted-foreground truncate max-w-[160px]">
-                    📍 {p.city}
-                  </span>
-                )}
+                {p.city && <span className="text-xs text-muted-foreground truncate max-w-[160px]">📍 {p.city}</span>}
 
                 {sharedTags.length > 0 && (
                   <div className="flex flex-wrap justify-center gap-1 mt-1">
@@ -287,11 +259,7 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
                   </div>
                 )}
 
-                <Button
-                  size="sm"
-                  className="w-full mt-auto text-xs"
-                  onClick={() => handleSayHi(p)}
-                >
+                <Button size="sm" className="w-full mt-auto text-xs" onClick={() => handleSayHi(p)}>
                   Say hi 👋
                 </Button>
               </div>
