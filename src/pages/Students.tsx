@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Profile } from "@/types";
 import { useStudentsData } from "@/hooks/useStudentsData";
 import { useProfiles } from "@/hooks/useProfiles";
