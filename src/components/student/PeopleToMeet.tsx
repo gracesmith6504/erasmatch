@@ -37,6 +37,16 @@ const scoreProfile = (
   const shared = myTags.filter((t) => pTags.includes(t));
   score += shared.length * 3;
   if (p.avatar_url) score += 2;
+
+  // Recency: up to +4 based on last_active_at (full points if <1 day, 0 if 8+ days)
+  if (p.last_active_at) {
+    const msAgo = Date.now() - new Date(p.last_active_at).getTime();
+    const daysAgo = msAgo / (1000 * 60 * 60 * 24);
+    if (daysAgo < 8) {
+      score += Math.round(4 * Math.max(0, 1 - daysAgo / 8));
+    }
+  }
+
   return { score, sharedTags: shared };
 };
 
