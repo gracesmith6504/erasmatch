@@ -16,6 +16,7 @@ export const FirstNameStep = ({
   onNext,
   onUpdateProfile,
 }: FirstNameStepProps) => {
+  const isMobile = useIsMobile();
   const [name, setName] = useState(initialValue);
   const [isSubmitting, setIsSubmitting] = useState(false);
 

@@ -26,6 +26,7 @@ export function ManualUniversityEntry({
   onCityChange,
   onSave,
 }: ManualUniversityEntryProps) {
+  const isMobile = useIsMobile();
   const [internalCity, setInternalCity] = useState("");
   const cityValue = externalCity ?? internalCity;
   const setCityValue = onCityChange ?? setInternalCity;
