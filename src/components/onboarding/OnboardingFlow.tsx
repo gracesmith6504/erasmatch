@@ -13,6 +13,8 @@ import { CompletionCelebration } from "./CompletionCelebration";
 import { CityPayoff } from "./CityPayoff";
 import { toast } from "sonner";
 import { generateUniqueRefCode } from "@/utils/refCodeGenerator";
+import { supabase } from "@/integrations/supabase/client";
+import { Profile } from "@/types";
 
 
 const slideVariants = {
