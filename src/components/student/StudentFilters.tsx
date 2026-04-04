@@ -42,6 +42,9 @@ const StudentFilters = ({
   const [uniSearch, setUniSearch] = useState("");
   const [uniDropdownOpen, setUniDropdownOpen] = useState(false);
   const uniRef = useRef<HTMLDivElement>(null);
+  const [citySearch, setCitySearch] = useState("");
+  const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
+  const cityRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
