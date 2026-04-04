@@ -117,7 +117,9 @@ export const OnboardingFlow = () => {
 
     setDirection(1);
     if (currentStep < totalSteps - 1) {
-      setCurrentStep(currentStep + 1);
+      const nextStep = currentStep + 1;
+      setCurrentStep(nextStep);
+      handleUpdateProfile({ onboarding_step: nextStep });
     } else {
       handleCompleteOnboarding();
     }
