@@ -36,8 +36,16 @@ export const OnboardingFlow = () => {
   const [direction, setDirection] = useState(1);
   const [showCelebration, setShowCelebration] = useState(false);
   const [showCityPayoff, setShowCityPayoff] = useState(false);
+  const [showWelcomeBack, setShowWelcomeBack] = useState(() => (currentUserProfile?.onboarding_step ?? 0) > 0);
   const completingRef = useRef(false);
   const totalSteps = 6;
+
+  useEffect(() => {
+    if (showWelcomeBack) {
+      const timer = setTimeout(() => setShowWelcomeBack(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showWelcomeBack]);
 
   useEffect(() => {
     // Only redirect if onboarding was already complete on mount (returning user).
