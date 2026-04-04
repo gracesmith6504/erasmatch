@@ -4,6 +4,7 @@ import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, BookOpen } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type CourseStepProps = {
   initialValue: string | null;
@@ -18,6 +19,7 @@ export const CourseStep = ({
   onBack,
   onUpdateProfile,
 }: CourseStepProps) => {
+  const isMobile = useIsMobile();
   const [course, setCourse] = useState(initialValue || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -78,7 +80,7 @@ export const CourseStep = ({
               onChange={handleChange}
               placeholder="Your course name"
               className="text-center text-xl h-12 border-gray-200 focus:border-erasmatch-blue focus:ring-erasmatch-blue/20"
-              autoFocus
+              autoFocus={!isMobile}
             />
           </div>
 

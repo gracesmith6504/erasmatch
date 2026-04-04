@@ -5,6 +5,7 @@ import { ArrowLeftCircle } from "lucide-react";
 import { autoAddUniversity } from "./useAutoAddUniversity";
 import { CityAutocomplete } from "@/components/CityAutocomplete";
 import { useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type ManualUniversityEntryProps = {
   value: string;
@@ -25,6 +26,7 @@ export function ManualUniversityEntry({
   onCityChange,
   onSave,
 }: ManualUniversityEntryProps) {
+  const isMobile = useIsMobile();
   const [internalCity, setInternalCity] = useState("");
   const cityValue = externalCity ?? internalCity;
   const setCityValue = onCityChange ?? setInternalCity;
@@ -48,7 +50,7 @@ export function ManualUniversityEntry({
           placeholder="Enter your university name"
           className="w-full"
           required={required}
-          autoFocus
+          autoFocus={!isMobile}
         />
       </div>
       
