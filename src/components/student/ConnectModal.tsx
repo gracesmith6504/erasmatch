@@ -37,6 +37,7 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
   sharedUniversity,
   initialNote,
 }) => {
+  const isMobile = useIsMobile();
   const [note, setNote] = useState(initialNote ?? "");
   const [sending, setSending] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);

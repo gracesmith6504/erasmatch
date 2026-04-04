@@ -12,6 +12,7 @@ type NameDisplayProps = {
 };
 
 export const NameDisplay = ({ name, email, handleChange }: NameDisplayProps) => {
+  const isMobile = useIsMobile();
   const [isEditing, setIsEditing] = useState(false);
   
   const toggleEdit = () => {

@@ -19,6 +19,7 @@ export const CourseStep = ({
   onBack,
   onUpdateProfile,
 }: CourseStepProps) => {
+  const isMobile = useIsMobile();
   const [course, setCourse] = useState(initialValue || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
