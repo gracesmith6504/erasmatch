@@ -99,6 +99,27 @@ export const OnboardingFlow = () => {
       }
 
       sessionStorage.removeItem("hasVisitedGroups");
+
+      // Pre-fetch profiles so /students loads instantly
+      queryClient.prefetchQuery({
+        queryKey: ["profiles"],
+        queryFn: async () => {
+          const { data, error } = await supabase
+            .from("profiles")
+            .select(
+              "id, name, avatar_url, university, city, personality_tags, bio, home_university, semester, course, looking_for, ref_code, arrival_date, last_active_at, featured"
+            )
+            .is("deleted_at", null);
+          if (error) throw error;
+          return (data ?? []).map((profile) => ({
+            ...profile,
+            country: null,
+            interests: null,
+            personality_tags: profile.personality_tags || [],
+          })) as Profile[];
+        },
+      });
+
       setShowCelebration(true);
     } catch (error: any) {
       toast.error("Failed to complete onboarding: " + error.message);
