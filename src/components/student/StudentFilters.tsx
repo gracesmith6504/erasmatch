@@ -165,12 +165,69 @@ const StudentFilters = ({
           )}
         </div>
 
-        <CityAutocomplete
-          value={cityFilter}
-          onChange={(city) => setCityFilter(city)}
-          placeholder="Search city..."
-          className="h-12 border-border"
-        />
+        {/* Searchable City Filter */}
+        <div ref={cityRef} className="relative">
+          <div className="relative">
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+            <Input
+              className="h-12 pl-9 pr-9 border-border focus:border-erasmatch-green"
+              placeholder="Search city..."
+              value={cityFilter && !cityDropdownOpen ? cityFilter : citySearch}
+              onChange={(e) => {
+                setCitySearch(e.target.value);
+                setCityDropdownOpen(true);
+                if (!e.target.value) setCityFilter("");
+              }}
+              onFocus={() => {
+                setCityDropdownOpen(true);
+                if (cityFilter) setCitySearch(cityFilter);
+              }}
+            />
+            {cityFilter && (
+              <button
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                onClick={() => {
+                  setCityFilter("");
+                  setCitySearch("");
+                }}
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+          {cityDropdownOpen && (
+            <div className="absolute z-50 mt-1 w-full bg-card border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
+              <div
+                className="px-4 py-2 text-sm cursor-pointer hover:bg-accent transition-colors text-muted-foreground"
+                onClick={() => {
+                  setCityFilter("");
+                  setCitySearch("");
+                  setCityDropdownOpen(false);
+                }}
+              >
+                All Cities
+              </div>
+              {uniqueCities
+                .filter((city) => city.toLowerCase().includes(citySearch.toLowerCase()))
+                .map((city) => (
+                  <div
+                    key={city}
+                    className="px-4 py-2 text-sm cursor-pointer hover:bg-accent transition-colors text-foreground"
+                    onClick={() => {
+                      setCityFilter(city);
+                      setCitySearch("");
+                      setCityDropdownOpen(false);
+                    }}
+                  >
+                    {city}
+                  </div>
+                ))}
+              {uniqueCities.filter((city) => city.toLowerCase().includes(citySearch.toLowerCase())).length === 0 && (
+                <div className="px-4 py-2 text-sm text-muted-foreground">No results</div>
+              )}
+            </div>
+          )}
+        </div>
 
       </div>
 
