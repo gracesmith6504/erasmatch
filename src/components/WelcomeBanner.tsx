@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { X, Camera } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
@@ -12,13 +12,6 @@ interface WelcomeBannerProps {
 
 export const WelcomeBanner = ({ cityName, variant = "default", hasAvatar = false }: WelcomeBannerProps) => {
   const [dismissed, setDismissed] = useState(false);
-  
-  useEffect(() => {
-    const isDismissed = localStorage.getItem("welcomeBannerDismissed");
-    if (isDismissed === "true") {
-      setDismissed(true);
-    }
-  }, []);
 
   const handleDismiss = () => {
     setDismissed(true);
