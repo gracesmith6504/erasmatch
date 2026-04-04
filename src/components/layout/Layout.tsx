@@ -86,7 +86,7 @@ const Layout = ({ children }: LayoutProps) => {
                 <h3 className="text-sm font-semibold mb-3 md:mb-4 text-foreground">Connect</h3>
                 <ul className="space-y-2 text-sm">
                   <li><a href="mailto:erasmatchbusiness@gmail.com" className="text-muted-foreground hover:text-foreground transition-colors">Contact</a></li>
-                  <li><a href="/about" className="text-muted-foreground hover:text-foreground transition-colors">About</a></li>
+                  <li><Link to="/about" className="text-muted-foreground hover:text-foreground transition-colors">About</Link></li>
                   <li><Link to="/privacy-policy" className="text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</Link></li>
                 </ul>
               </div>
