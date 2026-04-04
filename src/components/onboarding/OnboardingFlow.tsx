@@ -34,6 +34,7 @@ const slideVariants = {
 
 export const OnboardingFlow = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { currentUserProfile, handleProfileUpdate } = useAuth();
   const [currentStep, setCurrentStep] = useState(currentUserProfile?.onboarding_step ?? 0);
   const [direction, setDirection] = useState(1);
