@@ -51,6 +51,9 @@ const StudentFilters = ({
       if (uniRef.current && !uniRef.current.contains(e.target as Node)) {
         setUniDropdownOpen(false);
       }
+      if (cityRef.current && !cityRef.current.contains(e.target as Node)) {
+        setCityDropdownOpen(false);
+      }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
