@@ -17,8 +17,8 @@ const Onboarding = () => {
       return;
     }
 
-    // If the user already has name and city, they don't need onboarding
-    if (!loading && isAuthenticated && currentUserProfile?.name && currentUserProfile?.city) {
+    // Only skip onboarding if it's been fully completed
+    if (!loading && isAuthenticated && currentUserProfile?.onboarding_complete) {
       navigate("/students", { replace: true });
     }
   }, [isAuthenticated, loading, navigate, currentUserProfile]);
