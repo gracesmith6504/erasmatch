@@ -159,22 +159,12 @@ const StudentFilters = ({
           )}
         </div>
 
-        <div>
-          <Select value={cityFilter} onValueChange={setCityFilter}>
-            <SelectTrigger className="h-12 border-border focus:border-erasmatch-green">
-              <div className="flex items-center">
-                <MapPin className="mr-2 h-4 w-4 text-muted-foreground" />
-                <SelectValue placeholder="City" />
-              </div>
-            </SelectTrigger>
-            <SelectContent className="max-h-80">
-              <SelectItem value="all-cities">All Cities</SelectItem>
-              {uniqueCities.map((city) => (
-                <SelectItem key={city} value={city}>{city}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <CityAutocomplete
+          value={cityFilter}
+          onChange={(city) => setCityFilter(city)}
+          placeholder="Search city..."
+          className="h-12 border-border"
+        />
 
       </div>
 
