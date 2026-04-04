@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { School, MapPin, X, User, ChevronDown, ChevronUp, Search, Plane } from "lucide-react";
 import { PERSONALITY_TAGS } from "@/components/profile/constants";
 import { format } from "date-fns";
-import { CityAutocomplete } from "@/components/CityAutocomplete";
+
 
 const SEMESTER_OPTIONS = ["Spring 2025", "Fall 2025", "Spring 2026", "Full Academic Year 2025–26", "Fall 2026", "Spring 2027", "Full Academic Year 2026–27"];
 
@@ -42,11 +42,17 @@ const StudentFilters = ({
   const [uniSearch, setUniSearch] = useState("");
   const [uniDropdownOpen, setUniDropdownOpen] = useState(false);
   const uniRef = useRef<HTMLDivElement>(null);
+  const [citySearch, setCitySearch] = useState("");
+  const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
+  const cityRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (uniRef.current && !uniRef.current.contains(e.target as Node)) {
         setUniDropdownOpen(false);
+      }
+      if (cityRef.current && !cityRef.current.contains(e.target as Node)) {
+        setCityDropdownOpen(false);
       }
     };
     document.addEventListener("mousedown", handler);
@@ -159,12 +165,69 @@ const StudentFilters = ({
           )}
         </div>
 
-        <CityAutocomplete
-          value={cityFilter}
-          onChange={(city) => setCityFilter(city)}
-          placeholder="Search city..."
-          className="h-12 border-border"
-        />
+        {/* Searchable City Filter */}
+        <div ref={cityRef} className="relative">
+          <div className="relative">
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+            <Input
+              className="h-12 pl-9 pr-9 border-border focus:border-erasmatch-green"
+              placeholder="Search city..."
+              value={cityFilter && !cityDropdownOpen ? cityFilter : citySearch}
+              onChange={(e) => {
+                setCitySearch(e.target.value);
+                setCityDropdownOpen(true);
+                if (!e.target.value) setCityFilter("");
+              }}
+              onFocus={() => {
+                setCityDropdownOpen(true);
+                if (cityFilter) setCitySearch(cityFilter);
+              }}
+            />
+            {cityFilter && (
+              <button
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                onClick={() => {
+                  setCityFilter("");
+                  setCitySearch("");
+                }}
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+          {cityDropdownOpen && (
+            <div className="absolute z-50 mt-1 w-full bg-card border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
+              <div
+                className="px-4 py-2 text-sm cursor-pointer hover:bg-accent transition-colors text-muted-foreground"
+                onClick={() => {
+                  setCityFilter("");
+                  setCitySearch("");
+                  setCityDropdownOpen(false);
+                }}
+              >
+                All Cities
+              </div>
+              {uniqueCities
+                .filter((city) => city.toLowerCase().includes(citySearch.toLowerCase()))
+                .map((city) => (
+                  <div
+                    key={city}
+                    className="px-4 py-2 text-sm cursor-pointer hover:bg-accent transition-colors text-foreground"
+                    onClick={() => {
+                      setCityFilter(city);
+                      setCitySearch("");
+                      setCityDropdownOpen(false);
+                    }}
+                  >
+                    {city}
+                  </div>
+                ))}
+              {uniqueCities.filter((city) => city.toLowerCase().includes(citySearch.toLowerCase())).length === 0 && (
+                <div className="px-4 py-2 text-sm text-muted-foreground">No results</div>
+              )}
+            </div>
+          )}
+        </div>
 
       </div>
 
