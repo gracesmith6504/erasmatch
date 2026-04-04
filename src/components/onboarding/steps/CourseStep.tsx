@@ -4,6 +4,7 @@ import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, BookOpen } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type CourseStepProps = {
   initialValue: string | null;
