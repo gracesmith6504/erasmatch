@@ -32,7 +32,7 @@ const slideVariants = {
 export const OnboardingFlow = () => {
   const navigate = useNavigate();
   const { currentUserProfile, handleProfileUpdate } = useAuth();
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(currentUserProfile?.onboarding_step ?? 0);
   const [direction, setDirection] = useState(1);
   const [showCelebration, setShowCelebration] = useState(false);
   const [showCityPayoff, setShowCityPayoff] = useState(false);
@@ -117,7 +117,9 @@ export const OnboardingFlow = () => {
 
     setDirection(1);
     if (currentStep < totalSteps - 1) {
-      setCurrentStep(currentStep + 1);
+      const nextStep = currentStep + 1;
+      setCurrentStep(nextStep);
+      handleUpdateProfile({ onboarding_step: nextStep });
     } else {
       handleCompleteOnboarding();
     }
