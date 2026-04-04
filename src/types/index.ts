@@ -39,6 +39,7 @@ export interface Profile {
   email_notifications?: boolean;
   arrival_date?: string | null;
   looking_for?: string[] | null;
+  onboarding_step?: number;
 }
 
 /** Preview of the most recent message in a chat thread. */

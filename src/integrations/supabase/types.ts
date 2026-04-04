@@ -271,6 +271,7 @@ export type Database = {
           looking_for: string[] | null
           name: string | null
           onboarding_complete: boolean | null
+          onboarding_step: number
           personality_tags: string[] | null
           privacy_consent_at: string | null
           ref_code: string | null
@@ -295,6 +296,7 @@ export type Database = {
           looking_for?: string[] | null
           name?: string | null
           onboarding_complete?: boolean | null
+          onboarding_step?: number
           personality_tags?: string[] | null
           privacy_consent_at?: string | null
           ref_code?: string | null
@@ -319,6 +321,7 @@ export type Database = {
           looking_for?: string[] | null
           name?: string | null
           onboarding_complete?: boolean | null
+          onboarding_step?: number
           personality_tags?: string[] | null
           privacy_consent_at?: string | null
           ref_code?: string | null
