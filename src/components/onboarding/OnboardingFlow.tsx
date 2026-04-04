@@ -36,8 +36,16 @@ export const OnboardingFlow = () => {
   const [direction, setDirection] = useState(1);
   const [showCelebration, setShowCelebration] = useState(false);
   const [showCityPayoff, setShowCityPayoff] = useState(false);
+  const [showWelcomeBack, setShowWelcomeBack] = useState(() => (currentUserProfile?.onboarding_step ?? 0) > 0);
   const completingRef = useRef(false);
   const totalSteps = 6;
+
+  useEffect(() => {
+    if (showWelcomeBack) {
+      const timer = setTimeout(() => setShowWelcomeBack(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showWelcomeBack]);
 
   useEffect(() => {
     // Only redirect if onboarding was already complete on mount (returning user).
@@ -216,18 +224,34 @@ export const OnboardingFlow = () => {
   };
 
   return (
-    <AnimatePresence mode="wait" custom={direction}>
-      <motion.div
-        key={currentStep}
-        custom={direction}
-        variants={slideVariants}
-        initial="enter"
-        animate="center"
-        exit="exit"
-        transition={{ duration: 0.25, ease: "easeInOut" }}
-      >
-        {renderStep()}
-      </motion.div>
-    </AnimatePresence>
+    <div className="relative">
+      <AnimatePresence>
+        {showWelcomeBack && (
+          <motion.div
+            key="welcome-back"
+            initial={{ y: -60, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -60, opacity: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="fixed top-0 left-0 right-0 z-50 bg-primary text-primary-foreground text-center py-2.5 text-sm font-medium shadow-md"
+          >
+            Welcome back! Let's pick up where you left off 👋
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence mode="wait" custom={direction}>
+        <motion.div
+          key={currentStep}
+          custom={direction}
+          variants={slideVariants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{ duration: 0.25, ease: "easeInOut" }}
+        >
+          {renderStep()}
+        </motion.div>
+      </AnimatePresence>
+    </div>
   );
 };
