@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { getTagInfo, getTagBgColor } from "@/components/profile/constants";
 import ConnectModal from "@/components/student/ConnectModal";
 import StudentCard from "@/components/student/StudentCard";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { recordProfileView } from "@/hooks/useProfileViewers";
 
 interface PeopleToMeetProps {
