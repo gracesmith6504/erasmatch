@@ -13,7 +13,7 @@ export function useProfiles(enabled = true) {
       const { data, error } = await supabase
         .from("profiles")
         .select(
-          "id, name, avatar_url, university, city, personality_tags, bio, home_university, semester, course, looking_for, ref_code, arrival_date, last_active_at, featured"
+          "id, name, avatar_url, university, city, personality_tags, bio, home_university, semester, course, looking_for, ref_code, arrival_date, last_active_at, featured, created_at"
         )
         .is("deleted_at", null);
 
