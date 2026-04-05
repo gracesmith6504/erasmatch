@@ -17,7 +17,6 @@ interface StudentCardProps {
 }
 
 const StudentCard = ({ profile, isFeatured = false, universityCity = null }: StudentCardProps) => {
-
   const tags = profile.personality_tags || [];
   const visibleTags = tags.slice(0, 3);
   const extraCount = tags.length - 3;
@@ -25,7 +24,7 @@ const StudentCard = ({ profile, isFeatured = false, universityCity = null }: Stu
   const lookingFor = profile.looking_for || [];
   const visibleLookingFor = lookingFor.slice(0, 3);
 
-  const isNew = new Date().getTime() - new Date(profile.created_at).getTime() < 7 * 24 * 60 * 60 * 1000;
+  const isNew = new Date().getTime() - new Date(profile.created_at).getTime() < 21 * 24 * 60 * 60 * 1000;
 
   return (
     <Card className="overflow-hidden border-border hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group min-h-[280px] flex flex-col relative">
@@ -37,7 +36,7 @@ const StudentCard = ({ profile, isFeatured = false, universityCity = null }: Stu
       <CardContent className="pt-5 pb-3 flex-1 flex flex-col">
         {/* Avatar + Name */}
         <div className="flex items-center gap-3 mb-4">
-          <StudentAvatar 
+          <StudentAvatar
             avatarUrl={profile.avatar_url}
             name={profile.name}
             className="h-14 w-14"
@@ -77,7 +76,7 @@ const StudentCard = ({ profile, isFeatured = false, universityCity = null }: Stu
         {visibleLookingFor.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-3">
             {visibleLookingFor.map((item) => {
-              const info = LOOKING_FOR_OPTIONS.find(o => o.value === item);
+              const info = LOOKING_FOR_OPTIONS.find((o) => o.value === item);
               return (
                 <Badge
                   key={item}
