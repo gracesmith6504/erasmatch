@@ -101,7 +101,10 @@ const Profile = () => {
                   <div className="space-y-3">
                     {viewers.map(({ profile: viewer, viewedAt }) => (
                       <div key={viewer.id} className="flex items-center justify-between gap-3 rounded-lg border border-border bg-card p-3">
-                        <div className="flex items-center gap-3 min-w-0">
+                        <div
+                          className="flex items-center gap-3 min-w-0 cursor-pointer"
+                          onClick={() => navigate(`/profile/${viewer.id}`)}
+                        >
                           <Avatar className="h-10 w-10 shrink-0">
                             <AvatarImage src={viewer.avatar_url || undefined} alt={viewer.name || "User"} />
                             <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">
