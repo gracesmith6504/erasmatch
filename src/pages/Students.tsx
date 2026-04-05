@@ -19,6 +19,12 @@ type StudentsProps = {
 
 const Students = ({ currentUserId }: StudentsProps) => {
   const { data: profiles = [], isLoading: profilesLoading } = useProfiles();
+  const location = useLocation();
+
+  // Read URL query params for initial filters
+  const urlParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
+  const urlCity = urlParams.get("city") || undefined;
+  const urlUniversity = urlParams.get("university") || undefined;
 
   const {
     universityFilter,
@@ -35,16 +41,17 @@ const Students = ({ currentUserId }: StudentsProps) => {
     filteredProfiles,
     featuredProfiles,
     universityCityMap,
+    universityCountryMap,
     loading,
     resetFilters
   } = useStudentsData(profiles, currentUserId);
 
   const [activeTab, setActiveTab] = useState<"list" | "cities">("list");
   const [peopleDismissed] = useState(false);
-  const location = useLocation();
   const { showBanner, cityName, hasAvatar } = useOnboardingBanner(currentUserId);
 
-  const fromOnboarding = new URLSearchParams(location.search).get("from") === "onboarding";
+  const fromOnboarding = urlParams.get("from") === "onboarding";
+  const hasUrlTierSort = Boolean(urlCity);
   const [showFullRecommendations, setShowFullRecommendations] = useState(fromOnboarding);
   const handleShowAll = () => {
     setShowFullRecommendations(false);
@@ -94,21 +101,39 @@ const Students = ({ currentUserId }: StudentsProps) => {
 
   const isFilterActive = Boolean(universityFilter) || Boolean(cityFilter);
 
-  const sortedProfiles = useMemo(() => [...filteredProfiles].sort((a, b) => {
-    const hasPhotoA = Boolean(a.avatar_url);
-    const hasPhotoB = Boolean(b.avatar_url);
+  // 3-tier sorting when arriving via "View all" URL params
+  const sortedProfiles = useMemo(() => {
+    const getTier = (p: Profile): number => {
+      if (hasUrlTierSort && urlUniversity && p.university === urlUniversity) return 0; // same university
+      if (hasUrlTierSort && urlCity && p.city === urlCity) return 1; // same city, different uni
+      if (hasUrlTierSort && urlUniversity) {
+        const userCountry = universityCountryMap[urlUniversity];
+        if (userCountry && p.university && universityCountryMap[p.university] === userCountry) return 2; // same country
+      }
+      return 3;
+    };
 
-    if (hasPhotoA && !hasPhotoB) return -1;
-    if (!hasPhotoA && hasPhotoB) return 1;
+    return [...filteredProfiles].sort((a, b) => {
+      if (hasUrlTierSort) {
+        const tierA = getTier(a);
+        const tierB = getTier(b);
+        if (tierA !== tierB) return tierA - tierB;
+      }
 
-    if (isFilterActive) {
-      const activeA = a.last_active_at ? new Date(a.last_active_at).getTime() : 0;
-      const activeB = b.last_active_at ? new Date(b.last_active_at).getTime() : 0;
-      return activeB - activeA;
-    }
+      const hasPhotoA = Boolean(a.avatar_url);
+      const hasPhotoB = Boolean(b.avatar_url);
+      if (hasPhotoA && !hasPhotoB) return -1;
+      if (!hasPhotoA && hasPhotoB) return 1;
 
-    return getCompletionPercentage(b) - getCompletionPercentage(a);
-  }), [filteredProfiles, isFilterActive, getCompletionPercentage]);
+      if (isFilterActive) {
+        const activeA = a.last_active_at ? new Date(a.last_active_at).getTime() : 0;
+        const activeB = b.last_active_at ? new Date(b.last_active_at).getTime() : 0;
+        return activeB - activeA;
+      }
+
+      return getCompletionPercentage(b) - getCompletionPercentage(a);
+    });
+  }, [filteredProfiles, isFilterActive, getCompletionPercentage, hasUrlTierSort, urlCity, urlUniversity, universityCountryMap]);
 
   // Rendering skeleton loaders during loading state
   if (loading || profilesLoading) {
