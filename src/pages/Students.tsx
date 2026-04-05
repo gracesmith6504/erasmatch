@@ -19,6 +19,12 @@ type StudentsProps = {
 
 const Students = ({ currentUserId }: StudentsProps) => {
   const { data: profiles = [], isLoading: profilesLoading } = useProfiles();
+  const location = useLocation();
+
+  // Read URL query params for initial filters
+  const urlParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
+  const urlCity = urlParams.get("city") || undefined;
+  const urlUniversity = urlParams.get("university") || undefined;
 
   const {
     universityFilter,
@@ -35,9 +41,10 @@ const Students = ({ currentUserId }: StudentsProps) => {
     filteredProfiles,
     featuredProfiles,
     universityCityMap,
+    universityCountryMap,
     loading,
     resetFilters
-  } = useStudentsData(profiles, currentUserId);
+  } = useStudentsData(profiles, currentUserId, { city: urlCity, university: urlUniversity });
 
   const [activeTab, setActiveTab] = useState<"list" | "cities">("list");
   const [peopleDismissed] = useState(false);
