@@ -44,7 +44,10 @@ const Students = ({ currentUserId }: StudentsProps) => {
     universityCountryMap,
     loading,
     resetFilters
-  } = useStudentsData(profiles, currentUserId);
+  } = useStudentsData(profiles, currentUserId, {
+    city: urlCity,
+    university: urlUniversity,
+  });
 
   const [activeTab, setActiveTab] = useState<"list" | "cities">("list");
   const [peopleDismissed] = useState(false);
