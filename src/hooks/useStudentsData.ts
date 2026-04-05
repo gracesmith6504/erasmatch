@@ -4,41 +4,48 @@ import { Profile } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
 import { useBlockedUsers } from "@/hooks/useBlockedUsers";
 
-export const useStudentsData = (initialProfiles: Profile[], currentUserId: string | null) => {
+interface InitialFilters {
+  city?: string;
+  university?: string;
+}
+
+export const useStudentsData = (initialProfiles: Profile[], currentUserId: string | null, initialFilters?: InitialFilters) => {
   const { blockedIds } = useBlockedUsers();
-  const [universityFilter, setUniversityFilter] = useState("");
-  const [cityFilter, setCityFilter] = useState("");
+  const [universityFilter, setUniversityFilter] = useState(initialFilters?.university || "");
+  const [cityFilter, setCityFilter] = useState(initialFilters?.city || "");
   const [personalityTagsFilter, setPersonalityTagsFilter] = useState<string[]>([]);
   const [semesterFilter, setSemesterFilter] = useState<string[]>([]);
 
   const [universityCityMap, setUniversityCityMap] = useState<Record<string, string>>({});
+  const [universityCountryMap, setUniversityCountryMap] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
 
-  // Fetch only university→city mapping (profiles come from initialProfiles)
+  // Fetch university→city and university→country mappings
   useEffect(() => {
-    const fetchUniversityCities = async () => {
+    const fetchUniversityData = async () => {
       try {
         const { data } = await supabase
           .from('universities')
-          .select('name, city');
+          .select('name, city, country');
 
         const cityMap: Record<string, string> = {};
+        const countryMap: Record<string, string> = {};
         if (data) {
           for (const uni of data) {
-            if (uni.name && uni.city) {
-              cityMap[uni.name] = uni.city;
-            }
+            if (uni.name && uni.city) cityMap[uni.name] = uni.city;
+            if (uni.name && uni.country) countryMap[uni.name] = uni.country;
           }
         }
         setUniversityCityMap(cityMap);
+        setUniversityCountryMap(countryMap);
       } catch (error) {
-        console.error('Error fetching university cities:', error);
+        console.error('Error fetching university data:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUniversityCities();
+    fetchUniversityData();
   }, []);
 
   // Mark loading as false once initialProfiles arrive
@@ -113,6 +120,7 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     filteredProfiles,
     featuredProfiles,
     universityCityMap,
+    universityCountryMap,
     loading,
     resetFilters
   };
