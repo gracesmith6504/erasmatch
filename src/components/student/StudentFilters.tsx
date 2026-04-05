@@ -2,10 +2,16 @@ import React, { useState, useRef, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { School, MapPin, X, User, ChevronDown, ChevronUp, Search, Plane } from "lucide-react";
+import { School, MapPin, X, User, ChevronDown, ChevronUp, Search, Plane, SlidersHorizontal } from "lucide-react";
 import { PERSONALITY_TAGS } from "@/components/profile/constants";
-import { format } from "date-fns";
-
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 const SEMESTER_OPTIONS = ["Spring 2025", "Fall 2025", "Spring 2026", "Full Academic Year 2025–26", "Fall 2026", "Spring 2027", "Full Academic Year 2026–27"];
 
@@ -38,6 +44,7 @@ const StudentFilters = ({
   uniqueSemesters,
   resetFilters,
 }: StudentFiltersProps) => {
+  const isMobile = useIsMobile();
   const [showAllTags, setShowAllTags] = useState(false);
   const [uniSearch, setUniSearch] = useState("");
   const [uniDropdownOpen, setUniDropdownOpen] = useState(false);
@@ -45,6 +52,7 @@ const StudentFilters = ({
   const [citySearch, setCitySearch] = useState("");
   const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
   const cityRef = useRef<HTMLDivElement>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -71,8 +79,14 @@ const StudentFilters = ({
     }
   };
 
-  const isAnyFilterActive = universityFilter || cityFilter || personalityTagsFilter.length > 0 || semesterFilter.length > 0;
-  
+  const activeFilterCount =
+    (universityFilter ? 1 : 0) +
+    (cityFilter ? 1 : 0) +
+    (personalityTagsFilter.length > 0 ? 1 : 0) +
+    (semesterFilter.length > 0 ? 1 : 0);
+
+  const isAnyFilterActive = activeFilterCount > 0;
+
   const handleTagToggle = (tagValue: string) => {
     if (personalityTagsFilter.includes(tagValue)) {
       setPersonalityTagsFilter(personalityTagsFilter.filter(tag => tag !== tagValue));
@@ -100,8 +114,8 @@ const StudentFilters = ({
   const priorityTagsData = PERSONALITY_TAGS.filter(tag => defaultVisibleTags.includes(tag.value));
   const otherTagsData = PERSONALITY_TAGS.filter(tag => !defaultVisibleTags.includes(tag.value));
 
-  return (
-    <div className="bg-card shadow-soft rounded-2xl p-6 mb-8 border border-border">
+  const filterContent = (
+    <>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {/* Searchable University Filter */}
         <div ref={uniRef} className="relative">
@@ -228,7 +242,6 @@ const StudentFilters = ({
             </div>
           )}
         </div>
-
       </div>
 
       {/* Semester Filter */}
@@ -282,7 +295,7 @@ const StudentFilters = ({
             );
           })}
           
-          <div className={`${showAllTags ? 'flex' : 'hidden sm:flex'} flex-wrap gap-2 w-full sm:w-auto`}>
+          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
             {otherTagsData.map((tag) => {
               const isSelected = personalityTagsFilter.includes(tag.value);
               return (
@@ -301,19 +314,6 @@ const StudentFilters = ({
             })}
           </div>
         </div>
-        
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setShowAllTags(!showAllTags)}
-          className="mt-2 text-sm text-erasmatch-green sm:hidden flex items-center"
-        >
-          {showAllTags ? (
-            <>Show Less <ChevronUp className="ml-1 h-4 w-4" /></>
-          ) : (
-            <>View More <ChevronDown className="ml-1 h-4 w-4" /></>
-          )}
-        </Button>
       </div>
 
       {isAnyFilterActive && (
@@ -357,13 +357,53 @@ const StudentFilters = ({
       <div className="mt-4 flex justify-end">
         <Button 
           variant="outline" 
-          onClick={resetFilters} 
+          onClick={() => {
+            resetFilters();
+            if (isMobile) setSheetOpen(false);
+          }}
           className="border-border hover:bg-secondary"
           disabled={!isAnyFilterActive}
         >
           Reset All Filters
         </Button>
       </div>
+    </>
+  );
+
+  // Mobile: show a button that opens a bottom sheet
+  if (isMobile) {
+    return (
+      <div className="mb-4">
+        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+          <SheetTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full justify-between border-border"
+            >
+              <span className="flex items-center gap-2">
+                <SlidersHorizontal className="h-4 w-4" />
+                Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
+              </span>
+              <ChevronDown className="h-4 w-4 text-muted-foreground" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-2xl">
+            <SheetHeader>
+              <SheetTitle className="text-left">Filters</SheetTitle>
+            </SheetHeader>
+            <div className="pt-4">
+              {filterContent}
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+    );
+  }
+
+  // Desktop: show filters inline as before
+  return (
+    <div className="bg-card shadow-soft rounded-2xl p-6 mb-8 border border-border">
+      {filterContent}
     </div>
   );
 };
