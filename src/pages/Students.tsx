@@ -48,10 +48,10 @@ const Students = ({ currentUserId }: StudentsProps) => {
 
   const [activeTab, setActiveTab] = useState<"list" | "cities">("list");
   const [peopleDismissed] = useState(false);
-  const location = useLocation();
   const { showBanner, cityName, hasAvatar } = useOnboardingBanner(currentUserId);
 
-  const fromOnboarding = new URLSearchParams(location.search).get("from") === "onboarding";
+  const fromOnboarding = urlParams.get("from") === "onboarding";
+  const hasUrlTierSort = Boolean(urlCity);
   const [showFullRecommendations, setShowFullRecommendations] = useState(fromOnboarding);
   const handleShowAll = () => {
     setShowFullRecommendations(false);
