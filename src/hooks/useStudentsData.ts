@@ -55,6 +55,11 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     }
   }, [initialProfiles]);
 
+  useEffect(() => {
+    setUniversityFilter(initialFilters?.university || "");
+    setCityFilter(initialFilters?.city || "");
+  }, [initialFilters?.university, initialFilters?.city]);
+
   const uniqueUniversities = useMemo(() =>
     [...new Set(initialProfiles.map(p => p.university).filter(Boolean))]
       .sort((a, b) => a!.localeCompare(b!)) as string[],
