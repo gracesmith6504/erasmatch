@@ -31,7 +31,7 @@ const StudentCard = ({ profile, isFeatured = false, universityCity = null }: Stu
     <Card className="overflow-hidden border-border hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group min-h-[280px] flex flex-col relative">
       {isNew && (
         <span className="absolute top-2 right-2 z-10 bg-green-500 text-white text-[12px] font-medium px-2 py-0.5 rounded-full">
-          Just joined 🌱
+          Just joined ✨
         </span>
       )}
       <CardContent className="pt-5 pb-3 flex-1 flex flex-col">
