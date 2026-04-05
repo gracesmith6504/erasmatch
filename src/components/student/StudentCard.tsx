@@ -25,8 +25,15 @@ const StudentCard = ({ profile, isFeatured = false, universityCity = null }: Stu
   const lookingFor = profile.looking_for || [];
   const visibleLookingFor = lookingFor.slice(0, 3);
 
+  const isNew = new Date().getTime() - new Date(profile.created_at).getTime() < 7 * 24 * 60 * 60 * 1000;
+
   return (
-    <Card className="overflow-hidden border-border hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group min-h-[280px] flex flex-col">
+    <Card className="overflow-hidden border-border hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group min-h-[280px] flex flex-col relative">
+      {isNew && (
+        <span className="absolute top-2 right-2 z-10 bg-green-500 text-white text-[12px] font-medium px-2 py-0.5 rounded-full">
+          Just joined 🌱
+        </span>
+      )}
       <CardContent className="pt-5 pb-3 flex-1 flex flex-col">
         {/* Avatar + Name */}
         <div className="flex items-center gap-3 mb-4">
