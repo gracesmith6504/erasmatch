@@ -277,17 +277,17 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
 
         {!effectiveFullPage && scored.length > 0 && (
           <div className="text-right mt-3">
-            <button
-              onClick={() => {
+            <Link
+              to={`/students?${(() => {
                 const params = new URLSearchParams();
                 if (currentProfile.city) params.set("city", currentProfile.city);
                 if (currentProfile.university) params.set("university", currentProfile.university);
-                navigate(`/students?${params.toString()}`);
-              }}
+                return params.toString();
+              })()}`}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               View all →
-            </button>
+            </Link>
           </div>
         )}
       </div>
