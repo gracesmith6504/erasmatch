@@ -38,6 +38,10 @@ export function useSendMessage() {
 
       if (messageError) throw messageError;
 
+      if (typeof window !== 'undefined' && window.posthog) {
+        window.posthog.capture('direct_message_sent');
+      }
+
       // Fetch sender profile for notification text
       const { data: senderProfile, error: senderError } = await supabase
         .from("profiles")
