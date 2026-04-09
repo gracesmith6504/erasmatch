@@ -37,6 +37,9 @@ const StudentCardActions: React.FC<StudentCardActionsProps> = ({
 
   const handleConnectClick = (e: React.MouseEvent) => {
     e.preventDefault();
+    if (typeof window !== 'undefined' && window.posthog) {
+      window.posthog.capture('message_button_clicked');
+    }
     setConnectOpen(true);
   };
 
