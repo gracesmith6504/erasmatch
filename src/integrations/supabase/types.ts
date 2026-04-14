@@ -421,6 +421,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_city_stats: {
+        Args: { _city_name: string }
+        Returns: {
+          student_count: number
+          university_count: number
+        }[]
+      }
       get_featured_activity_profiles: {
         Args: never
         Returns: {
