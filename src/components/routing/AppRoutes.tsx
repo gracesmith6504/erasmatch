@@ -59,6 +59,7 @@ const AppRoutes = () => {
         } 
       />
       <Route path="/u/:refCode" element={<PublicProfile />} />
+      <Route path="/erasmus/:citySlug" element={<CityLanding />} />
 
       {/* Protected routes — require authentication */}
       <Route 
