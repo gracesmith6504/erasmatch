@@ -104,7 +104,7 @@ const CityLanding = () => {
                 variant="outline"
                 className="text-base px-8 py-6 rounded-full border-border"
               >
-                <Link to="/students">See who's going</Link>
+                <Link to="/auth?mode=signup">See who's going</Link>
               </Button>
             </div>
           </div>
