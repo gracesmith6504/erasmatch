@@ -22,6 +22,7 @@ import Onboarding from "@/pages/Onboarding";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import ResetPassword from "@/pages/ResetPassword";
 import AdminUniversities from "@/pages/AdminUniversities";
+import CityLanding from "@/pages/CityLanding";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
@@ -58,6 +59,7 @@ const AppRoutes = () => {
         } 
       />
       <Route path="/u/:refCode" element={<PublicProfile />} />
+      <Route path="/erasmus/:citySlug" element={<CityLanding />} />
 
       {/* Protected routes — require authentication */}
       <Route 
