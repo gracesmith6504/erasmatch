@@ -421,6 +421,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_city_preview_avatars: {
+        Args: { _city_name: string }
+        Returns: {
+          avatar_url: string
+        }[]
+      }
       get_city_stats: {
         Args: { _city_name: string }
         Returns: {

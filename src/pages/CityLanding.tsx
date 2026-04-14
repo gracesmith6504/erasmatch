@@ -1,6 +1,6 @@
 import { useParams, Link, Navigate } from "react-router-dom";
 import { useEffect } from "react";
-import { getCityBySlug } from "@/data/cityLandingData";
+import { getCityBySlug, cityLandingData } from "@/data/cityLandingData";
 import { useCityLandingData } from "@/hooks/useCityLandingData";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,7 +14,7 @@ import { GraduationCap, Users, ArrowRight, MapPin } from "lucide-react";
 const CityLanding = () => {
   const { citySlug } = useParams<{ citySlug: string }>();
   const cityInfo = citySlug ? getCityBySlug(citySlug) : undefined;
-  const { studentCount, universityCount, universities, loading } =
+  const { studentCount, universityCount, universities, avatars, loading } =
     useCityLandingData(cityInfo?.name ?? "");
 
   useEffect(() => {
@@ -38,39 +38,81 @@ const CityLanding = () => {
 
   if (!cityInfo) return <Navigate to="/students" replace />;
 
+  const otherCities = cityLandingData.filter((c) => c.slug !== citySlug);
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary/90 to-accent/80 text-primary-foreground">
-        <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4zIj48cGF0aCBkPSJNMzYgMzRoLTJ2LTRoMnYtNGgydjRoNHYyaC00djRoLTJ2LTR6bS0yMC0xMmgtMnYtNGgydi00aDJ2NGg0djJoLTR2NGgtMnYtNHoiLz48L2c+PC9nPjwvc3ZnPg==')]" />
-        <div className="container mx-auto px-4 py-20 md:py-28 relative z-10">
+      {/* Hero — clean light design */}
+      <section className="relative overflow-hidden bg-card border-b">
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `radial-gradient(circle, hsl(var(--foreground)) 1px, transparent 1px)`,
+            backgroundSize: "24px 24px",
+          }}
+        />
+        <div className="container mx-auto px-4 py-16 md:py-24 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm mb-6">
+            <div className="inline-flex items-center gap-2 bg-secondary rounded-full px-4 py-1.5 text-sm text-muted-foreground mb-6">
               <MapPin className="h-4 w-4" />
               {cityInfo.flag} {cityInfo.country}
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-display mb-4">
-              Erasmus in {cityInfo.name}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-display mb-3 text-foreground">
+              Erasmus in{" "}
+              <span className="text-accent">{cityInfo.name}</span>
             </h1>
-            <p className="text-lg md:text-xl opacity-90 mb-8 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
               {cityInfo.tagline}
             </p>
-            <Button
-              asChild
-              size="lg"
-              className="bg-accent text-accent-foreground hover:bg-accent/90 text-base px-8"
-            >
-              <Link to="/auth?mode=signup">
-                Join students in {cityInfo.name}
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
+
+            {/* Student avatars for FOMO */}
+            {avatars.length > 0 && (
+              <div className="flex flex-col items-center mb-8">
+                <div className="flex items-center justify-center">
+                  {avatars.map((url, i) => (
+                    <img
+                      key={i}
+                      src={`${url}?width=72&height=72&resize=cover`}
+                      alt=""
+                      className="w-9 h-9 rounded-full border-2 border-background object-cover"
+                      style={{ marginLeft: i === 0 ? 0 : -8 }}
+                    />
+                  ))}
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">
+                  {studentCount >= 5
+                    ? `${studentCount}+ students already joined for ${cityInfo.name}`
+                    : "Students are already signing up"}
+                </p>
+              </div>
+            )}
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button
+                asChild
+                size="lg"
+                className="text-base px-8 py-6 bg-foreground text-primary-foreground hover:bg-foreground/90 rounded-full shadow-elevated"
+              >
+                <Link to="/auth?mode=signup">
+                  Join students in {cityInfo.name}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="text-base px-8 py-6 rounded-full border-border"
+              >
+                <Link to="/students">See who's going</Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Stats strip */}
-      <section className="border-b bg-card">
+      <section className="border-b bg-background">
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-wrap justify-center gap-8 md:gap-16">
             <div className="flex items-center gap-3">
@@ -121,19 +163,22 @@ const CityLanding = () => {
         </div>
       </section>
 
-      {/* Universities */}
+      {/* Universities — links to signup, not /students */}
       {universities.length > 0 && (
         <section className="bg-muted/50 py-12 md:py-16">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto">
-              <h2 className="text-2xl md:text-3xl font-bold font-display mb-6 text-foreground">
+              <h2 className="text-2xl md:text-3xl font-bold font-display mb-2 text-foreground">
                 Universities in {cityInfo.name}
               </h2>
+              <p className="text-muted-foreground mb-6">
+                Sign up to see students at each university and join their group chats.
+              </p>
               <div className="grid gap-3">
                 {universities.map((uni) => (
                   <Link
                     key={uni.name}
-                    to={`/students?university=${encodeURIComponent(uni.name)}`}
+                    to="/auth?mode=signup"
                     className="flex items-center justify-between p-4 bg-card rounded-lg border hover:border-accent/50 transition-colors group"
                   >
                     <div className="flex items-center gap-3">
@@ -142,7 +187,9 @@ const CityLanding = () => {
                         {uni.name}
                       </span>
                     </div>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-accent transition-colors" />
+                    <span className="text-sm text-accent opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                      Join <ArrowRight className="h-3 w-3" />
+                    </span>
                   </Link>
                 ))}
               </div>
@@ -172,20 +219,42 @@ const CityLanding = () => {
         </div>
       </section>
 
+      {/* Other cities — internal linking */}
+      <section className="bg-muted/50 py-12 md:py-16">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-bold font-display mb-6 text-foreground">
+              Explore other Erasmus destinations
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {otherCities.map((city) => (
+                <Link
+                  key={city.slug}
+                  to={`/erasmus/${city.slug}`}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-card border rounded-full text-sm font-medium text-foreground hover:border-accent/50 hover:text-accent transition-colors"
+                >
+                  {city.flag} {city.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
-      <section className="bg-primary text-primary-foreground py-16">
+      <section className="bg-foreground text-primary-foreground py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-2xl md:text-3xl font-bold font-display mb-4">
             Ready for your Erasmus in {cityInfo.name}?
           </h2>
-          <p className="text-lg opacity-90 mb-8 max-w-xl mx-auto">
+          <p className="text-lg opacity-80 mb-8 max-w-xl mx-auto">
             Join ErasMatch to connect with other students heading to{" "}
             {cityInfo.name}. It's free.
           </p>
           <Button
             asChild
             size="lg"
-            className="bg-accent text-accent-foreground hover:bg-accent/90 text-base px-8"
+            className="bg-accent text-accent-foreground hover:bg-accent/90 text-base px-8 py-6 rounded-full"
           >
             <Link to="/auth?mode=signup">
               Join ErasMatch — it's free
