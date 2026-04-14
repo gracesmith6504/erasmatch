@@ -71,7 +71,7 @@ export const HeroSection = ({ handleFindStudents }: HeroSectionProps) => {
                     />
                   ))}
                 </div>
-                <p className="text-xs text-muted-foreground mt-1.5">600+ students already joined </p>
+                <p className="text-xs text-muted-foreground mt-1.5">700+ students already joined </p>
               </motion.div>
             )}
 
@@ -117,7 +117,7 @@ export const HeroSection = ({ handleFindStudents }: HeroSectionProps) => {
               transition={{ delay: 0.6, duration: 0.5 }}
             >
               <div className="text-center sm:text-left">
-                <p className="text-xl sm:text-2xl font-bold text-foreground">600+</p>
+                <p className="text-xl sm:text-2xl font-bold text-foreground">700+</p>
                 <p className="text-xs text-muted-foreground">Students joined</p>
               </div>
               <div className="w-px h-8 bg-border" />
