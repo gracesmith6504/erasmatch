@@ -1,33 +1,50 @@
 
 
-## Referral Invite Prompt After First Message
+## Plan: SEO City Landing Pages for Top 10 Erasmus Destinations
 
-### New file: `src/components/share/InviteFriendModal.tsx`
+### Approach: Hybrid (hardcoded content + live data where it looks good)
 
-A warm, lightweight Dialog modal with:
-- Headline: "Know anyone else doing Erasmus?"
-- Subtext: "Send them your link — they'll see your profile first when they sign up."
-- WhatsApp share button (green, opens `wa.me` URL with pre-filled text including `?ref={ref_code}`)
-- Copy link button (copies `erasmatch.com/?ref={ref_code}`, shows "Copied!" for 2s)
-- "maybe later" dismiss link below buttons
-- All three actions (WhatsApp, copy, dismiss) set `localStorage.invitePromptSeen` and close the modal
-- Props: `open`, `onOpenChange`, `refCode: string`
+Based on the database check, your numbers are decent for the top cities (Barcelona 24, Budapest 24, Lisbon 23) but thin for others (Amsterdam 7, Rome 7). The plan uses **hardcoded city descriptions and FAQs** for SEO content, with **live university lists** (always solid) and **conditional student counts** (shown only when >= 5).
 
-### Modified file: `src/components/student/ConnectModal.tsx`
+### What gets built
 
-After `sendMessage` succeeds (line 53-54), before closing:
-1. Add state: `showInviteModal`
-2. After successful send, check `localStorage.getItem('invitePromptSeen')` — if already set, close normally
-3. If not set, query message count: `supabase.from('messages').select('id', { count: 'exact', head: true }).eq('sender_id', currentUserId)`
-4. If count === 1, set `showInviteModal = true` instead of immediately closing the ConnectModal
-5. If count > 1, close normally
-6. Get `ref_code` from `useAuth().currentUserProfile.ref_code`
-7. Render `<InviteFriendModal>` at the bottom of the component, controlled by `showInviteModal` state
-8. When InviteFriendModal closes, also close the ConnectModal
+**1. City data file** (`src/data/cityLandingData.ts`)
+- Static content for 10 cities: Barcelona, Lisbon, Milan, Prague, Budapest, Amsterdam, Madrid, Rome, Paris, Berlin
+- Each city has: slug, display name, country, hero tagline, short description, emoji flag, 3-4 FAQ items (SEO-rich), and a hero image URL (from Unsplash or similar free source)
 
-### Technical notes
-- No database changes needed — just a read query on existing `messages` table
-- Uses existing `Dialog` component and `useAuth` hook
-- WhatsApp URL is hardcoded with `{USER_REF_CODE}` replaced dynamically
-- localStorage key `invitePromptSeen` prevents re-showing permanently
+**2. City landing page component** (`src/pages/CityLanding.tsx`)
+- Route: `/erasmus/:citySlug`
+- Sets document title and meta description dynamically for SEO (e.g., "Erasmus in Barcelona 2025 - Meet Students | ErasMatch")
+- Sections:
+  - **Hero**: City name, country, tagline, gradient background, CTA "Join students in {city}"
+  - **Stats strip**: Live university count from DB, conditional student count (shows "X+ students heading here" if >= 5, otherwise "Students joining soon")
+  - **Universities list**: Live query of universities in that city, each linking to the existing UniversityHub page
+  - **FAQ accordion**: 3-4 hardcoded Q&As targeting search queries like "Is Barcelona good for Erasmus?", "How much does it cost to live in Barcelona?"
+  - **CTA section**: "Join ErasMatch" button linking to `/auth?mode=signup`
+
+**3. Data hook** (`src/hooks/useCityLandingData.ts`)
+- Queries `universities` table filtered by city name
+- Queries `profiles` table for count of students with that city (simple count, no personal data exposed)
+- Uses the existing `supabase` client; no RLS changes needed since universities are public-read and profiles count can use a new security-definer RPC
+
+**4. Database: New RPC function** (migration)
+- `get_city_stats(city_name text)` — returns `{ student_count, university_count }` as a security-definer function so unauthenticated visitors can see aggregate counts without accessing profiles directly
+
+**5. Route + sitemap updates**
+- Add `/erasmus/:citySlug` route in `AppRoutes.tsx` (public, no auth required)
+- Add all 10 city URLs to `sitemap.xml`
+
+### What it will NOT do
+- No individual student cards or personal data on these pages (privacy + thin numbers)
+- No forum integration on these pages (keeps them focused for SEO)
+
+### Technical details
+
+Files created/modified:
+- `src/data/cityLandingData.ts` (new)
+- `src/pages/CityLanding.tsx` (new)
+- `src/hooks/useCityLandingData.ts` (new)
+- `src/components/routing/AppRoutes.tsx` (add route)
+- `public/sitemap.xml` (add 10 URLs)
+- Migration: new `get_city_stats` RPC function
 
