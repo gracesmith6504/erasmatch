@@ -43,6 +43,30 @@ export const OnboardingFlow = () => {
   const [showWelcomeBack, setShowWelcomeBack] = useState(() => (currentUserProfile?.onboarding_step ?? 0) > 0);
   const completingRef = useRef(false);
   const totalSteps = 6;
+  const stepNames = ["first_name", "destination_university", "home_university", "exchange_details", "interests", "photo"];
+  const stepEnteredAtRef = useRef<number>(Date.now());
+
+  // Track step view + dwell time on previous step when step changes
+  useEffect(() => {
+    stepEnteredAtRef.current = Date.now();
+    window.posthog?.capture("onboarding_step_viewed", {
+      step: currentStep,
+      step_name: stepNames[currentStep] ?? `step_${currentStep}`,
+    });
+
+    // Track abandonment if user leaves the page mid-step
+    const handleUnload = () => {
+      const dwellMs = Date.now() - stepEnteredAtRef.current;
+      window.posthog?.capture("onboarding_step_abandoned", {
+        step: currentStep,
+        step_name: stepNames[currentStep] ?? `step_${currentStep}`,
+        dwell_ms: dwellMs,
+      });
+    };
+    window.addEventListener("beforeunload", handleUnload);
+    return () => window.removeEventListener("beforeunload", handleUnload);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep]);
 
   useEffect(() => {
     if (showWelcomeBack) {
@@ -135,9 +159,9 @@ export const OnboardingFlow = () => {
   }, [navigate]);
 
   const goToNextStep = () => {
-    const stepNames = ["first_name", "destination_university", "home_university", "exchange_details", "interests", "photo"];
     if (currentStep < stepNames.length) {
-      const extras: Record<string, unknown> = { step: currentStep, step_name: stepNames[currentStep] };
+      const dwellMs = Date.now() - stepEnteredAtRef.current;
+      const extras: Record<string, unknown> = { step: currentStep, step_name: stepNames[currentStep], dwell_ms: dwellMs };
       switch (currentStep) {
         case 0: extras.filled = !!currentUserProfile?.name?.trim(); break;
         case 1: extras.filled = !!(currentUserProfile?.university && currentUserProfile?.city); break;
