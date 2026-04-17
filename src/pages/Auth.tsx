@@ -124,7 +124,6 @@ const Auth = ({ onLogin }: AuthProps) => {
         
         if (data.user) {
           onLogin(email);
-          toast.success("Account created successfully!");
           navigate("/onboarding");
           return;
         } else {
