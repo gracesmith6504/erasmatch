@@ -159,9 +159,9 @@ export const OnboardingFlow = () => {
   }, [navigate]);
 
   const goToNextStep = () => {
-    const stepNames = ["first_name", "destination_university", "home_university", "exchange_details", "interests", "photo"];
     if (currentStep < stepNames.length) {
-      const extras: Record<string, unknown> = { step: currentStep, step_name: stepNames[currentStep] };
+      const dwellMs = Date.now() - stepEnteredAtRef.current;
+      const extras: Record<string, unknown> = { step: currentStep, step_name: stepNames[currentStep], dwell_ms: dwellMs };
       switch (currentStep) {
         case 0: extras.filled = !!currentUserProfile?.name?.trim(); break;
         case 1: extras.filled = !!(currentUserProfile?.university && currentUserProfile?.city); break;
