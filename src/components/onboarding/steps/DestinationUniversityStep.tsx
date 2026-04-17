@@ -133,6 +133,21 @@ export const DestinationUniversityStep = ({
     }
   };
 
+  const handleUndecided = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      window.posthog?.capture("onboarding_destination_undecided", {});
+      const success = await onUpdateProfile({
+        university: null,
+        city: null,
+      });
+      if (success) onNext();
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const canSubmit = city.trim().length > 0;
 
   return (
