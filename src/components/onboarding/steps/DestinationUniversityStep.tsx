@@ -280,6 +280,15 @@ export const DestinationUniversityStep = ({
             Next
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
+
+          <button
+            type="button"
+            onClick={handleUndecided}
+            disabled={isSubmitting}
+            className="w-full text-xs text-muted-foreground/70 hover:text-muted-foreground underline underline-offset-4 transition-colors py-1"
+          >
+            I haven't decided yet — skip for now
+          </button>
         </form>
       </div>
     </OnboardingLayout>
