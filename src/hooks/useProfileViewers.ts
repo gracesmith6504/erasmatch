@@ -38,7 +38,7 @@ export const useProfileViewers = (currentUserId: string | null) => {
         const viewerIds = views.map((v: any) => v.viewer_id);
         const { data: profiles, error: profilesError } = await supabase
           .from('profiles')
-          .select('*')
+          .select('id, name, avatar_url, bio, city, university, home_university, course, semester, personality_tags, created_at, last_active_at')
           .in('id', viewerIds);
 
         if (profilesError || !profiles) {

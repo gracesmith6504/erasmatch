@@ -88,7 +88,6 @@ const Students = ({ currentUserId }: StudentsProps) => {
   const getCompletionPercentage = useCallback((profile: Profile) => {
     const fields = [
       profile.name,
-      profile.email,
       profile.university,
       profile.avatar_url,
       profile.bio,
