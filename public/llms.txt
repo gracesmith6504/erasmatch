@@ -1,0 +1,24 @@
+# ErasMatch
+
+> ErasMatch helps Erasmus students meet other students heading to the same city or university before they arrive — so studying abroad starts with friends, not strangers.
+
+## Pages
+
+- [Home](/): What ErasMatch is and how it helps you meet your future Erasmus crew.
+- [About](/about): Our mission and the story behind ErasMatch.
+- [Find students](/students): Browse Erasmus students by city and university.
+- [Sign in / sign up](/auth): Create an account or log in.
+- [Privacy policy](/privacy-policy): How we handle your data (GDPR, EU-hosted analytics).
+
+## City guides
+
+- [Erasmus in Barcelona](/erasmus/barcelona): Students, universities, and FAQs.
+- [Erasmus in Lisbon](/erasmus/lisbon): Students, universities, and FAQs.
+- [Erasmus in Milan](/erasmus/milan): Students, universities, and FAQs.
+- [Erasmus in Prague](/erasmus/prague): Students, universities, and FAQs.
+- [Erasmus in Budapest](/erasmus/budapest): Students, universities, and FAQs.
+- [Erasmus in Amsterdam](/erasmus/amsterdam): Students, universities, and FAQs.
+- [Erasmus in Madrid](/erasmus/madrid): Students, universities, and FAQs.
+- [Erasmus in Rome](/erasmus/rome): Students, universities, and FAQs.
+- [Erasmus in Paris](/erasmus/paris): Students, universities, and FAQs.
+- [Erasmus in Berlin](/erasmus/berlin): Students, universities, and FAQs.

@@ -1,5 +1,4 @@
 import { useParams, Link, Navigate } from "react-router-dom";
-import { useEffect } from "react";
 import { getCityBySlug, cityLandingData } from "@/data/cityLandingData";
 import { useCityLandingData } from "@/hooks/useCityLandingData";
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { GraduationCap, Users, ArrowRight, MapPin } from "lucide-react";
+import { SEO } from "@/components/SEO";
 
 const CityLanding = () => {
   const { citySlug } = useParams<{ citySlug: string }>();
@@ -17,31 +17,27 @@ const CityLanding = () => {
   const { studentCount, universityCount, universities, avatars, loading } =
     useCityLandingData(cityInfo?.name ?? "");
 
-  useEffect(() => {
-    if (cityInfo) {
-      document.title = `Erasmus in ${cityInfo.name} 2025 – Meet Students | ErasMatch`;
-      const meta = document.querySelector('meta[name="description"]');
-      const content = `${cityInfo.description.slice(0, 155)}…`;
-      if (meta) {
-        meta.setAttribute("content", content);
-      } else {
-        const tag = document.createElement("meta");
-        tag.name = "description";
-        tag.content = content;
-        document.head.appendChild(tag);
-      }
-    }
-    return () => {
-      document.title = "ErasMatch";
-    };
-  }, [cityInfo]);
-
   if (!cityInfo) return <Navigate to="/students" replace />;
 
   const otherCities = cityLandingData.filter((c) => c.slug !== citySlug);
+  const description = cityInfo.description.slice(0, 155);
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title={`Erasmus in ${cityInfo.name} ${new Date().getFullYear()} — Meet Students | ErasMatch`}
+        description={description}
+        path={`/erasmus/${cityInfo.slug}`}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: `Erasmus students in ${cityInfo.name}`,
+          description,
+          url: `https://erasmatch.com/erasmus/${cityInfo.slug}`,
+          about: { "@type": "Place", name: cityInfo.name, address: { "@type": "PostalAddress", addressCountry: cityInfo.country } },
+        }}
+      />
+
       {/* Hero — clean light design */}
       <section className="relative overflow-hidden bg-card border-b">
         <div

@@ -2,12 +2,27 @@ import { Link } from "react-router-dom";
 import { Users, MessageSquare, Globe, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { SEO } from "@/components/SEO";
 
 const About = () => {
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="About ErasMatch — Helping Erasmus students find their tribe"
+        description="ErasMatch connects Erasmus students worldwide so studying abroad starts with friends, not strangers. Learn our mission and story."
+        path="/about"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "ErasMatch",
+          url: "https://erasmatch.com/",
+          logo: "https://ceoflcktscennfmmdrvp.supabase.co/storage/v1/object/public/public-assets/erasmatch_favicon_64x64.png",
+          description: "A community that connects Erasmus students before they arrive in their host city.",
+        }}
+      />
       {/* Hero Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
+
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-display font-extrabold mb-6 text-foreground">
             About <span className="text-erasmatch-blue">Eras</span><span className="text-erasmatch-green">Match</span>

@@ -12,6 +12,7 @@ import { useLocation, Link } from "react-router-dom";
 import { WelcomeBanner } from "@/components/WelcomeBanner";
 import { useOnboardingBanner } from "@/hooks/useOnboardingBanner";
 import PeopleToMeet from "@/components/student/PeopleToMeet";
+import { SEO } from "@/components/SEO";
 
 type StudentsProps = {
   currentUserId: string | null;
@@ -144,6 +145,11 @@ const Students = ({ currentUserId }: StudentsProps) => {
 
   return (
     <div className="max-w-7xl mx-auto py-4 sm:py-6 md:py-8 px-4 sm:px-6 lg:px-8 animate-fade-in overflow-x-hidden w-full">
+      <SEO
+        title="Find Erasmus Students by City & University | ErasMatch"
+        description="Browse Erasmus students heading to your host city or university. Filter by destination, find your crew, and message before you arrive."
+        path="/students"
+      />
       {showBanner && (
         <WelcomeBanner cityName={cityName} hasAvatar={hasAvatar} />
       )}
