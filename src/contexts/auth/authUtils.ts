@@ -10,7 +10,7 @@ export const fetchUserProfile = async (userId: string): Promise<Profile | null> 
   try {
     const { data, error } = await supabase
       .from('profiles')
-      .select('*')
+      .select('id, name, avatar_url, bio, city, university, home_university, course, semester, personality_tags, created_at, deleted_at, last_active_at, ref_code, invited_by, onboarding_complete, featured, privacy_consent_at, email_notifications, arrival_date, looking_for, onboarding_step')
       .eq('id', userId)
       .maybeSingle();
 

@@ -40,7 +40,7 @@ const UniversityCard = ({ university }: UniversityCardProps) => {
       
       const { data, error } = await supabase
         .from("profiles")
-        .select("*")
+        .select("id, name, avatar_url, bio, city, university, home_university, course, semester, personality_tags, created_at, last_active_at, featured")
         .ilike("university", university.name);
       
       if (error) {

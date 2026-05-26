@@ -61,7 +61,7 @@ export function useUniversityDetails(universityId: string | undefined) {
         // Fetch students for this university
         const { data: studentsData, error: studentsError } = await supabase
           .from('profiles')
-          .select('*')
+          .select('id, name, avatar_url, bio, city, university, home_university, course, semester, personality_tags, created_at, last_active_at, ref_code, featured, arrival_date, looking_for')
           .ilike('university', universityData.name);
         
         if (studentsError) {
