@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Profile } from "@/types";
 import { Upload } from "lucide-react";
+import { useAuth } from "@/contexts/auth";
 
 type ProfileHeaderProps = {
   profile: Profile;
@@ -11,6 +12,8 @@ type ProfileHeaderProps = {
 };
 
 export const ProfileHeader = ({ profile, isOwnProfile }: ProfileHeaderProps) => {
+  const { currentUserEmail } = useAuth();
+
   const getInitials = (name: string | null) => {
     if (!name) return "?";
     return name
@@ -24,7 +27,7 @@ export const ProfileHeader = ({ profile, isOwnProfile }: ProfileHeaderProps) => 
   // Get secondary info to display instead of email for non-owners
   const getSecondaryInfo = () => {
     if (isOwnProfile) {
-      return profile.email;
+      return currentUserEmail;
     } else if (profile.city) {
       return profile.city;
     } else if (profile.university) {
@@ -37,6 +40,7 @@ export const ProfileHeader = ({ profile, isOwnProfile }: ProfileHeaderProps) => 
       return "Erasmus Student";
     }
   };
+
 
   return (
     <div className="text-center px-4 pt-6 pb-4 bg-indigo-50 rounded-b-2xl">
