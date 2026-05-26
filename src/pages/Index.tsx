@@ -34,7 +34,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
+      <SEO
+        title="ErasMatch — Connect with Erasmus Students Before You Arrive"
+        description="Meet your future Erasmus crew before you fly. Find study buddies, join city group chats, and make friends for your exchange experience."
+        path="/"
+      />
       <ReferralBanner />
+
       <HeroSection 
         handleFindStudents={handleFindStudents}
         handleJoinChats={handleJoinChats}
