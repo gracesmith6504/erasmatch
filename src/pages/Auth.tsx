@@ -174,6 +174,11 @@ const Auth = ({ onLogin }: AuthProps) => {
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
+      <SEO
+        title="Sign in or sign up | ErasMatch"
+        description="Join ErasMatch to meet other Erasmus students heading to your city. Free, takes a minute."
+        path="/auth"
+      />
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <Link to="/" className="inline-block">
