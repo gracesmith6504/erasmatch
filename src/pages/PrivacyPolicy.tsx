@@ -1,5 +1,6 @@
 
 import { useEffect } from "react";
+import { SEO } from "@/components/SEO";
 
 const PrivacyPolicy = () => {
   useEffect(() => {
@@ -8,7 +9,13 @@ const PrivacyPolicy = () => {
 
   return (
     <div className="bg-gray-50 py-12 px-4 md:px-8">
+      <SEO
+        title="Privacy Policy | ErasMatch"
+        description="How ErasMatch collects, uses, and protects your data. GDPR-compliant, EU-hosted analytics, and full data export & deletion controls."
+        path="/privacy-policy"
+      />
       <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-sm p-6 md:p-10">
+
         <h1 className="text-2xl md:text-3xl font-semibold text-center mb-8 gradient-text">Privacy Policy</h1>
 
         <section className="mb-8">
