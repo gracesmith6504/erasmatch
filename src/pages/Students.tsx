@@ -12,6 +12,7 @@ import { useLocation, Link } from "react-router-dom";
 import { WelcomeBanner } from "@/components/WelcomeBanner";
 import { useOnboardingBanner } from "@/hooks/useOnboardingBanner";
 import PeopleToMeet from "@/components/student/PeopleToMeet";
+import { SEO } from "@/components/SEO";
 
 type StudentsProps = {
   currentUserId: string | null;
