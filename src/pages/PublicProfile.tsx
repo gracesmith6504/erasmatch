@@ -32,7 +32,7 @@ const PublicProfile = () => {
         setLoading(true);
         const { data, error } = await supabase
           .from('profiles')
-          .select('*')
+          .select('id, name, avatar_url, bio, city, university, home_university, course, semester, personality_tags, created_at, ref_code, featured')
           .eq('ref_code', refCode)
           .single();
         if (error) {
