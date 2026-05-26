@@ -1,6 +1,5 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { useEffect } from "react";
 import { HeroSection } from "@/components/home/HeroSection";
 import { ReferralBanner } from "@/components/home/ReferralBanner";
 import { FeaturesSection } from "@/components/home/FeaturesSection";
@@ -10,6 +9,7 @@ import { StudentStoriesSection } from "@/components/home/StudentStoriesSection";
 import { GroupChatSection } from "@/components/home/GroupChatSection";
 import { CommunitySection } from "@/components/home/CommunitySection";
 import { HomeFooter } from "@/components/home/HomeFooter";
+import { SEO } from "@/components/SEO";
 
 const Index = () => {
   const { isAuthenticated } = useAuth();
@@ -17,13 +17,6 @@ const Index = () => {
   const [searchParams] = useSearchParams();
   const refCode = searchParams.get("ref");
 
-  useEffect(() => {
-    document.title = "ErasMatch - Connect with Erasmus Students";
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Connect with fellow Erasmus students before you arrive. Find study buddies, join group chats, and make friends for your exchange experience.');
-    }
-  }, []);
 
   const refParam = refCode ? `&ref=${refCode}` : "";
 
