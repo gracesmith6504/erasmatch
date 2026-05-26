@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PostSignupPrompt } from "@/components/share/PostSignupPrompt";
 
 import { GoogleAuthHandler } from "@/components/auth/GoogleAuthHandler";
+import { SEO } from "@/components/SEO";
 
 type AuthProps = {
   onLogin: (email: string) => void;
