@@ -14,7 +14,6 @@ const ProfileCompletionMeter: React.FC<ProfileCompletionMeterProps> = ({ profile
   const calculateCompletion = () => {
     const fields = [
       profile.name,
-      profile.email,
       profile.university,
       profile.avatar_url,
       profile.bio,
