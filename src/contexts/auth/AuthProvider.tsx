@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           setCurrentUserProfile(profileData);
 
           window.posthog?.identify(profileData.id, {
-            email: profileData.email,
+            email: session.user.email,
             name: profileData.name,
             city: profileData.city,
             university: profileData.university,
