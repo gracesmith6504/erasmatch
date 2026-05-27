@@ -4,6 +4,7 @@ import { Users } from "lucide-react";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { GroupChat, Profile, GroupMessage } from "@/types";
+import { useUniversityResolver } from "@/hooks/useUniversityResolver";
 
 type GroupChatsListProps = {
   profiles: Profile[];
@@ -20,36 +21,42 @@ export const GroupChatsList = ({
 }: GroupChatsListProps) => {
   const [availableGroups, setAvailableGroups] = useState<GroupChat[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { resolver, ready: resolverReady } = useUniversityResolver();
 
   useEffect(() => {
     const fetchGroups = async () => {
-      if (!currentUserProfile?.university) {
-        setIsLoading(false);
+      if (!currentUserProfile?.university || !resolverReady) {
+        if (resolverReady) setIsLoading(false);
         return;
       }
 
+      // Resolve the current user's university string to its canonical name so
+      // membership and message lookups still work if they stored an alias/typo.
+      const canonical = resolver.resolveToCanonical(currentUserProfile.university);
+      const allNames = resolver.getAllNamesFor(canonical);
+
       try {
-        // Get participants count for the university
+        // Members = anyone whose stored university resolves to the same canonical.
         const universityStudents = profiles.filter(
-          (profile) => profile.university === currentUserProfile.university
+          (profile) => resolver.resolveToCanonical(profile.university || "") === canonical
         );
-        
-        // Get latest message for the university
+
+        // Pull the latest message across every known alias of this canonical name.
         const { data: latestMessages, error } = await supabase
           .from("group_messages")
           .select("*")
-          .eq("university_name", currentUserProfile.university)
+          .in("university_name", allNames)
           .order("created_at", { ascending: false })
           .limit(1);
-        
+
         if (error) throw error;
-        
+
         const latestMessage = latestMessages?.[0] as GroupMessage | undefined;
-        
+
         const groupChat: GroupChat = {
-          university_name: currentUserProfile.university,
+          university_name: canonical,
           participants_count: universityStudents.length,
-          last_message: latestMessage 
+          last_message: latestMessage
             ? {
                 content: latestMessage.content,
                 created_at: latestMessage.created_at,
@@ -57,7 +64,7 @@ export const GroupChatsList = ({
               }
             : null
         };
-        
+
         setAvailableGroups([groupChat]);
       } catch (error) {
         console.error("Error fetching group chats:", error);
@@ -65,9 +72,9 @@ export const GroupChatsList = ({
         setIsLoading(false);
       }
     };
-    
+
     fetchGroups();
-  }, [currentUserProfile, profiles]);
+  }, [currentUserProfile, profiles, resolver, resolverReady]);
 
   if (isLoading) {
     return (
