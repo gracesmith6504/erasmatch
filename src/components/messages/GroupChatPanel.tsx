@@ -9,6 +9,7 @@ import { GroupChatInput } from "./GroupChatInput";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { ShareButton } from "../share/ShareButton";
+import { useUniversityResolver } from "@/hooks/useUniversityResolver";
 
 type GroupChatPanelProps = {
   universityName: string;
@@ -29,34 +30,42 @@ export const GroupChatPanel = ({
   const [isSending, setIsSending] = useState(false);
   const [participants, setParticipants] = useState<Profile[]>([]);
   const [hasSentMessage, setHasSentMessage] = useState(false);
-  
+  const { resolver, ready: resolverReady } = useUniversityResolver();
+
+  // Canonicalise the chat identifier so reads include historical aliases and
+  // writes go to the canonical name.
+  const canonicalName = resolverReady ? resolver.resolveToCanonical(universityName) : universityName;
+
   useEffect(() => {
     const getParticipants = () => {
       const universityStudents = profiles.filter(
-        (profile) => profile.university === universityName
+        (profile) => resolver.resolveToCanonical(profile.university || "") === canonicalName
       );
       setParticipants(universityStudents);
     };
-    
+
     getParticipants();
-  }, [universityName, profiles]);
-  
+  }, [canonicalName, profiles, resolver]);
+
   useEffect(() => {
+    if (!resolverReady) return;
+    const allNames = resolver.getAllNamesFor(canonicalName);
+
     const fetchMessages = async () => {
       try {
         const { data, error } = await supabase
           .from("group_messages")
           .select("*")
-          .eq("university_name", universityName)
+          .in("university_name", allNames)
           .order("created_at", { ascending: true });
-          
+
         if (error) {
           throw error;
         }
-        
+
         if (data) {
           setMessages(data as GroupMessage[]);
-          
+
           const userMessages = data.filter(msg => msg.sender_id === currentUserId);
           setHasSentMessage(userMessages.length > 0);
         }
@@ -64,9 +73,13 @@ export const GroupChatPanel = ({
         console.error("Error fetching group messages:", error.message);
       }
     };
-    
+
     fetchMessages();
-    
+
+    // Realtime subscribes to the canonical name only; new messages are always
+    // written under the canonical name (see handleSendMessage below), so this
+    // is sufficient. Historical messages under old names are loaded by the
+    // initial fetch above.
     const channel = supabase
       .channel("group_messages_changes")
       .on(
@@ -75,24 +88,24 @@ export const GroupChatPanel = ({
           event: "INSERT",
           schema: "public",
           table: "group_messages",
-          filter: `university_name=eq.${universityName}`,
+          filter: `university_name=eq.${canonicalName}`,
         },
         (payload) => {
           const newMessage = payload.new as GroupMessage;
           setMessages((prevMessages) => [...prevMessages, newMessage]);
-          
+
           if (newMessage.sender_id === currentUserId) {
             setHasSentMessage(true);
           }
         }
       )
       .subscribe();
-      
+
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [universityName, currentUserId]);
-  
+  }, [canonicalName, currentUserId, resolverReady, resolver]);
+
   const handleSendMessage = async (message: string) => {
     setIsSending(true);
     try {
@@ -100,7 +113,7 @@ export const GroupChatPanel = ({
         .from("group_messages")
         .insert({
           sender_id: currentUserId,
-          university_name: universityName,
+          university_name: canonicalName,
           content: message.trim(),
         });
       
@@ -135,12 +148,12 @@ export const GroupChatPanel = ({
             </Button>
           )}
           <div>
-            <h2 className="font-medium text-lg">🎓 {universityName} Chat</h2>
+            <h2 className="font-medium text-lg">🎓 {canonicalName} Chat</h2>
             <GroupParticipantsInfo count={participants.length} participants={participants} />
           </div>
         </div>
-        
-        <ShareButton city={universityName}
+
+        <ShareButton city={canonicalName}
                      link={`https://erasmatch.com`}/>
       </div>
       
