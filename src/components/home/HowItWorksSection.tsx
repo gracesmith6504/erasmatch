@@ -3,21 +3,21 @@ import { motion } from "framer-motion";
 const steps = [
   {
     number: "01",
-    title: "Create your profile",
-    description: "Tell us where you're going, what you study, and what you're into.",
-    accent: "bg-erasmatch-green",
+    title: "Tell us where you're going",
+    description:
+      "Add your host city, destination university and semester — plus a few personality tags so the right people can find you.",
   },
   {
     number: "02",
-    title: "Discover students",
-    description: "Browse who's heading to your city or university this semester.",
-    accent: "bg-erasmatch-blue",
+    title: "Land in your group chats",
+    description:
+      "The moment you sign up you're added to the persistent group chats for your destination city and university.",
   },
   {
     number: "03",
-    title: "Start connecting",
-    description: "Message, join group chats, and make plans before you even arrive.",
-    accent: "bg-erasmatch-coral",
+    title: "Filter, find, and message",
+    description:
+      "Filter profiles by city, university and semester, then DM the students you actually want to land with.",
   },
 ];
 
@@ -53,9 +53,9 @@ export const HowItWorksSection = () => {
                 <div className="hidden md:block absolute top-8 left-[60%] w-[80%] h-px border-t border-dashed border-border" />
               )}
               
-              <div className="relative p-5 sm:p-6 rounded-2xl hover:bg-card hover:shadow-card hover:scale-[1.03] transition-all duration-300 cursor-default">
-                <div className={`inline-flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-2xl ${step.accent}/10 mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                  <span className={`text-base sm:text-lg font-bold ${step.accent === 'bg-erasmatch-green' ? 'text-erasmatch-green' : step.accent === 'bg-erasmatch-blue' ? 'text-erasmatch-blue' : 'text-erasmatch-coral'}`}>
+              <div className="relative p-5 sm:p-6 cursor-default">
+                <div className="inline-flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-2xl bg-erasmatch-green/10 mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <span className="text-base sm:text-lg font-bold text-erasmatch-green tabular-nums">
                     {step.number}
                   </span>
                 </div>

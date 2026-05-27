@@ -30,7 +30,7 @@ export const CommunitySection = ({ handleFindStudents }: CommunitySectionProps) 
         >
           <h2 className="text-2xl sm:text-5xl mb-4 sm:mb-6 font-display font-bold">
             Free, private, and{" "}
-            <span className="gradient-text">growing fast.</span>
+            <span className="text-erasmatch-green">growing fast.</span>
           </h2>
           <p className="text-base sm:text-lg text-background/70 leading-relaxed">
             A safe space to meet, plan, and connect with real students before and during Erasmus.
