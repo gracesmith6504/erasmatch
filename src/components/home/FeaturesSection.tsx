@@ -1,30 +1,23 @@
-import { Users, MessageCircle, Heart } from "lucide-react";
 import { motion } from "framer-motion";
 
 const reasons = [
   {
-    icon: Users,
+    number: "01",
     title: "Find your exact people",
     description:
-      "Search by destination university and semester to find students going to the same place at the same time.",
-    color: "bg-erasmatch-blue/15 text-erasmatch-blue border-erasmatch-blue/20",
-    bg: "bg-erasmatch-blue/5",
+      "Filter by destination university, host city and semester to find students going to the same place at the same time.",
   },
   {
-    icon: MessageCircle,
+    number: "02",
     title: "Group chats that create themselves",
     description:
-      "Pick your city and university, and you're automatically in the right conversations.",
-    color: "bg-erasmatch-green/15 text-erasmatch-green border-erasmatch-green/20",
-    bg: "bg-erasmatch-green/5",
+      "The moment you sign up, you're added to the group chats for your host city and your destination university.",
   },
   {
-    icon: Heart,
+    number: "03",
     title: "Advice from those who've been there",
     description:
-      "Ask real questions to students who already did Erasmus at your destination.",
-    color: "bg-erasmatch-purple/15 text-erasmatch-purple border-erasmatch-purple/20",
-    bg: "bg-erasmatch-purple/5",
+      "Message students who already did Erasmus at your destination — directly, one-to-one.",
   },
 ];
 
@@ -76,17 +69,15 @@ export const FeaturesSection = () => {
             <motion.div
               key={reason.title}
               variants={item}
-              className={`group relative p-5 sm:p-7 rounded-2xl ${reason.bg} border border-border hover:border-border/80 hover:shadow-card hover:scale-[1.02] transition-all duration-300 cursor-default`}
+              className="group relative p-5 sm:p-7 border-t border-border pt-6 sm:pt-8 cursor-default"
             >
-              <div
-                className={`h-12 w-12 sm:h-14 sm:w-14 rounded-xl ${reason.color} flex items-center justify-center mb-4 sm:mb-5 group-hover:scale-110 transition-transform duration-300`}
-              >
-                <reason.icon className="h-6 w-6 sm:h-7 sm:w-7" />
-              </div>
-              <h3 className="font-semibold text-foreground mb-1.5 sm:mb-2 text-base sm:text-[1.05rem]">
+              <span className="block text-xs sm:text-sm font-semibold tracking-widest text-erasmatch-green mb-4 sm:mb-6 tabular-nums">
+                {reason.number}
+              </span>
+              <h3 className="font-semibold text-foreground mb-2 sm:mb-3 text-base sm:text-lg leading-snug">
                 {reason.title}
               </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed group-hover:text-foreground/70 transition-colors duration-300">
+              <p className="text-sm sm:text-[15px] text-muted-foreground leading-relaxed">
                 {reason.description}
               </p>
             </motion.div>

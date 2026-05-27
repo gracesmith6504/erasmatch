@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Send } from "lucide-react";
 
@@ -10,7 +9,9 @@ interface FeaturedProfile {
   country: string | null;
 }
 
-const fallbackProfiles: FeaturedProfile[] = [
+// Demo profiles only — never read from Supabase. These are shown in the
+// hero's animated activity toasts and must not surface real user data.
+const demoProfiles: FeaturedProfile[] = [
   { first_name: "Mia", avatar_url: "", country: "Germany" },
   { first_name: "Lucas", avatar_url: "", country: "France" },
   { first_name: "Sofia", avatar_url: "", country: "Italy" },
@@ -161,24 +162,10 @@ const AnimatedChat = () => {
 };
 
 export const PhoneMockup = () => {
-  const [profiles, setProfiles] = useState<FeaturedProfile[]>([]);
-
-  useEffect(() => {
-    const fetchProfiles = async () => {
-      const { data, error } = await supabase.rpc("get_featured_activity_profiles");
-      if (error || !data || data.length === 0) {
-        setProfiles(fallbackProfiles);
-      } else {
-        setProfiles(data as FeaturedProfile[]);
-      }
-    };
-    fetchProfiles();
-  }, []);
-
   return (
     <div className="relative flex justify-end">
-      {/* Floating toast notifications */}
-      <FloatingToasts profiles={profiles.length > 0 ? profiles : fallbackProfiles} />
+      {/* Floating toast notifications — fake demo profiles only */}
+      <FloatingToasts profiles={demoProfiles} />
 
       {/* Phone frame */}
       <div className="relative w-[280px]">

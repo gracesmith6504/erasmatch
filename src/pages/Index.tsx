@@ -47,12 +47,10 @@ const Index = () => {
         handlePlanning={handlePlanning}
       />
       <FeaturesSection />
-      <AlumniAdviceSection handleFindStudents={handleFindStudents} />
-      <div className="h-8 sm:h-16 bg-gradient-to-b from-card to-background" />
       <HowItWorksSection />
-      <StudentStoriesSection />
-      <div className="h-8 sm:h-16 bg-gradient-to-b from-secondary/30 to-background" />
       <GroupChatSection handleFindStudents={handleFindStudents} />
+      <AlumniAdviceSection handleFindStudents={handleFindStudents} />
+      <StudentStoriesSection />
       <CommunitySection handleFindStudents={handleFindStudents} />
       <HomeFooter />
     </div>

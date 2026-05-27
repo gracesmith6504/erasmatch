@@ -1,9 +1,8 @@
 import { motion } from "framer-motion";
-import { Star } from "lucide-react";
 
 const stories = [
   {
-    quote: "I matched with 3 people before arriving in Amsterdam. We travelled together every weekend and became inseparable.",
+    quote: "I connected with 3 students before arriving in Amsterdam. We travelled together every weekend and became inseparable.",
     name: "Julia Dubois",
     flag: "🇫🇷",
     university: "University of Amsterdam",
@@ -55,15 +54,8 @@ export const StudentStoriesSection = () => {
               transition={{ delay: index * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
               className="relative bg-background rounded-2xl p-5 sm:p-6 border border-border hover:shadow-card transition-all duration-300"
             >
-              {/* Stars */}
-              <div className="flex gap-0.5 mb-3 sm:mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-3.5 w-3.5 sm:h-4 sm:w-4 fill-erasmatch-yellow text-erasmatch-yellow" />
-                ))}
-              </div>
-              
-              <blockquote className="text-sm sm:text-base text-foreground leading-relaxed mb-5 sm:mb-6">
-                "{story.quote}"
+              <blockquote className="text-base sm:text-lg text-foreground leading-relaxed mb-5 sm:mb-6 font-display">
+                &ldquo;{story.quote}&rdquo;
               </blockquote>
 
               <div className="flex items-center gap-3 pt-4 border-t border-border">

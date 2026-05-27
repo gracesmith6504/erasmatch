@@ -71,7 +71,6 @@ export const HeroSection = ({ handleFindStudents }: HeroSectionProps) => {
                     />
                   ))}
                 </div>
-                <p className="text-xs text-muted-foreground mt-1.5">700+ students already joined </p>
               </motion.div>
             )}
 
