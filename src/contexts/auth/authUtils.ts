@@ -1,0 +1,85 @@
+/**
+ * Authentication utilities for Supabase profile CRUD operations.
+ * Used by AuthProvider to manage user profiles during auth flows.
+ */
+import { supabase } from "@/integrations/supabase/client";
+import { Profile } from "@/types";
+
+/** Fetches a user profile by ID. Returns null if not found. */
+export const fetchUserProfile = async (userId: string): Promise<Profile | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, name, avatar_url, bio, city, university, home_university, course, semester, personality_tags, created_at, deleted_at, last_active_at, ref_code, invited_by, onboarding_complete, featured, privacy_consent_at, email_notifications, arrival_date, looking_for, onboarding_step')
+      .eq('id', userId)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data as unknown as Profile;
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    return null;
+  }
+};
+
+/** Creates a new profile for a freshly registered user. Uses upsert for idempotency. */
+export const createUserProfile = async (
+  userId: string, 
+  email: string, 
+  defaultName: string | null,
+  options?: { invitedBy?: string | null }
+): Promise<Profile | null> => {
+  const { generateUniqueRefCode } = await import("@/utils/refCodeGenerator");
+  const refCode = await generateUniqueRefCode(defaultName || '');
+
+  const newProfile = {
+    id: userId,
+    name: defaultName,
+    email,
+    university: null,
+    city: null,
+    semester: null,
+    bio: null,
+    avatar_url: null,
+    created_at: new Date().toISOString(),
+    home_university: null,
+    personality_tags: [],
+    course: null,
+    ref_code: refCode,
+    invited_by: options?.invitedBy || null,
+    privacy_consent_at: new Date().toISOString(),
+  };
+  
+  try {
+    const { error } = await supabase
+      .from('profiles')
+      .upsert(newProfile);
+      
+    if (error) throw error;
+    
+    // Fetch the full profile from DB to ensure completeness
+    return await fetchUserProfile(userId);
+  } catch (error) {
+    console.error("Error creating profile:", error);
+    return null;
+  }
+};
+
+/** Updates specific fields on a user profile. */
+export const updateUserProfile = async (
+  userId: string, 
+  updatedProfile: Partial<Profile>
+): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('profiles')
+      .update(updatedProfile)
+      .eq('id', userId);
+    
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    return false;
+  }
+};

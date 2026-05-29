@@ -1,0 +1,60 @@
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { HeroSection } from "@/components/home/HeroSection";
+import { ReferralBanner } from "@/components/home/ReferralBanner";
+import { FeaturesSection } from "@/components/home/FeaturesSection";
+import { HowItWorksSection } from "@/components/home/HowItWorksSection";
+import { AlumniAdviceSection } from "@/components/home/AlumniAdviceSection";
+import { StudentStoriesSection } from "@/components/home/StudentStoriesSection";
+import { GroupChatSection } from "@/components/home/GroupChatSection";
+import { CommunitySection } from "@/components/home/CommunitySection";
+import { HomeFooter } from "@/components/home/HomeFooter";
+import { SEO } from "@/components/SEO";
+
+const Index = () => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const refCode = searchParams.get("ref");
+
+
+  const refParam = refCode ? `&ref=${refCode}` : "";
+
+  const handleFindStudents = () => {
+    navigate(isAuthenticated ? "/students" : `/auth?mode=signup${refParam}`);
+  };
+
+  const handleJoinChats = () => {
+    navigate(isAuthenticated ? "/groups" : `/auth?mode=signup${refParam}`);
+  };
+
+  const handlePlanning = () => {
+    navigate(isAuthenticated ? "/students" : `/auth?mode=signup${refParam}`);
+  };
+
+  return (
+    <div className="min-h-screen">
+      <SEO
+        title="ErasMatch — Connect with Erasmus Students Before You Arrive"
+        description="Meet your future Erasmus crew before you fly. Find study buddies, join city group chats, and make friends for your exchange experience."
+        path="/"
+      />
+      <ReferralBanner />
+
+      <HeroSection 
+        handleFindStudents={handleFindStudents}
+        handleJoinChats={handleJoinChats}
+        handlePlanning={handlePlanning}
+      />
+      <FeaturesSection />
+      <HowItWorksSection />
+      <GroupChatSection handleFindStudents={handleFindStudents} />
+      <AlumniAdviceSection handleFindStudents={handleFindStudents} />
+      <StudentStoriesSection />
+      <CommunitySection handleFindStudents={handleFindStudents} />
+      <HomeFooter />
+    </div>
+  );
+};
+
+export default Index;

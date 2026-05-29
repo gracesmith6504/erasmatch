@@ -1,0 +1,46 @@
+import { useState, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+
+const cities = ["Barcelona", "Lisbon", "Budapest", "Amsterdam", "Prague", "Rome", "Madrid"];
+
+export const AnimatedCityHeadline = () => {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % cities.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <>
+    <span className="inline-flex items-center rounded-full bg-accent/15 text-accent px-3 py-1 text-xs font-semibold mb-4 tracking-wide uppercase">
+      Free for all students
+    </span>
+    <h1 className="text-3xl sm:text-5xl lg:text-[3.5rem] tracking-tight mb-4 sm:mb-6 leading-[1.1] text-foreground font-display">
+      <span className="font-extrabold">Meet your Erasmus mates</span>
+      <br />
+      <span className="font-extrabold">before you even arrive.</span>
+      <br />
+      <span className="inline-block relative font-extrabold text-accent overflow-hidden min-w-[140px] sm:min-w-[200px] mt-1">
+        <AnimatePresence mode="wait">
+          <motion.span
+            key={cities[index]}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.35 }}
+            className="inline-block"
+          >
+            {cities[index]}
+          </motion.span>
+        </AnimatePresence>
+      </span>
+    </h1>
+    <p className="text-base sm:text-lg text-muted-foreground mt-3 sm:mt-4 max-w-md leading-relaxed">
+      Connect with students heading to the same place &ndash; or those who've already been.
+    </p>
+    </>
+  );
+};
