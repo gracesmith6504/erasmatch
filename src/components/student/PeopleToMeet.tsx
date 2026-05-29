@@ -10,6 +10,7 @@ import StudentCard from "@/components/student/StudentCard";
 import { useNavigate, Link } from "react-router-dom";
 import { recordProfileView } from "@/hooks/useProfileViewers";
 import { compareRecommendation, scoreRecommendation } from "@/lib/studentOrdering";
+import { transformAvatarUrl } from "@/lib/avatar";
 
 interface PeopleToMeetProps {
   profiles: Profile[];
@@ -20,6 +21,36 @@ interface PeopleToMeetProps {
 }
 
 const STORAGE_KEY = "peopleToMeetDismissed";
+
+const RecommendationAvatar = ({ profile, index }: { profile: Profile; index: number }) => {
+  const fallbackSrc = profile.avatar_url || undefined;
+  const [avatarSrc, setAvatarSrc] = useState(() => transformAvatarUrl(profile.avatar_url, 72));
+
+  const initials = profile.name
+    ? profile.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
+    : "?";
+
+  return (
+    <Avatar className="h-16 w-16 bg-secondary ring-1 ring-transparent group-hover:ring-border transition-all">
+      {avatarSrc ? (
+        <AvatarImage
+          key={avatarSrc}
+          src={avatarSrc}
+          alt={profile.name || "Student profile photo"}
+          loading={index < 4 ? "eager" : "lazy"}
+          fetchPriority={index < 4 ? "high" : "auto"}
+          decoding="async"
+          onError={() => {
+            if (fallbackSrc && avatarSrc !== fallbackSrc) setAvatarSrc(fallbackSrc);
+          }}
+        />
+      ) : null}
+      <AvatarFallback className="bg-secondary text-foreground text-sm">
+        {initials}
+      </AvatarFallback>
+    </Avatar>
+  );
+};
 
 const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
   profiles,
@@ -36,7 +67,7 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
     initialNote: string;
   } | null>(null);
 
-  const { data: messagedIds = [] } = useQuery({
+  const { data: messagedIds = [], isLoading: messagesLoading } = useQuery({
     queryKey: ["messaged-users", currentUserId],
     queryFn: async () => {
       const { data } = await supabase
@@ -54,7 +85,7 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
     staleTime: 60_000,
   });
 
-  const { data: uniCountryMap = {} } = useQuery({
+  const { data: uniCountryMap = {}, isLoading: countriesLoading } = useQuery({
     queryKey: ["university-country-map"],
     queryFn: async () => {
       const { data } = await supabase.from("universities").select("name, country");
@@ -73,9 +104,10 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
     const excludeSet = new Set([currentUserId, ...messagedIds]);
     const eligible = profiles.filter((p) => !excludeSet.has(p.id) && !p.deleted_at);
     const limit = fullPage ? 12 : 10;
+    const now = Date.now();
     const rank = (list: Profile[]) =>
       [...list]
-        .sort((a, b) => compareRecommendation(a, b, currentProfile))
+        .sort((a, b) => compareRecommendation(a, b, currentProfile, now))
         .map((p) => ({ profile: p, score: scoreRecommendation(p, currentProfile) }));
 
     if (myCity) {
@@ -92,7 +124,8 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
           eligible.filter((p) => !cityMatchIds.has(p.id) && p.university && uniCountryMap[p.university] === myCountry)
         );
 
-        const combined = [...cityMatches, ...countryMatches].slice(0, limit);
+        const combinedProfiles = [...cityMatches, ...countryMatches].map((match) => match.profile);
+        const combined = rank(combinedProfiles).slice(0, limit);
         if (combined.length > 0) {
           const isCity = cityMatches.length > 0;
           return {
@@ -124,16 +157,11 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
 
   const effectiveFullPage = fullPage && scored.length >= 4;
 
-  if (dismissed || scored.length === 0) return null;
+  if (dismissed || messagesLoading || countriesLoading || scored.length === 0) return null;
 
   const handleDismiss = () => {
     setDismissed(true);
     localStorage.setItem(STORAGE_KEY, "true");
-  };
-
-  const getInitials = (name: string | null) => {
-    if (!name) return "?";
-    return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
   };
 
   // Build smart View all link based on what the section is actually showing
@@ -199,19 +227,7 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
                 }}
                 className="flex flex-col items-center text-center gap-1.5 flex-shrink-0 w-[88px] snap-start group"
               >
-                <Avatar className="h-16 w-16 ring-1 ring-transparent group-hover:ring-border transition-all">
-                  {p.avatar_url ? (
-                    <AvatarImage
-                      src={`${p.avatar_url}?width=144&height=144&resize=cover&quality=75`}
-                      loading={i < 4 ? "eager" : "lazy"}
-                      fetchPriority={i < 4 ? "high" : "auto"}
-                      decoding="async"
-                    />
-                  ) : null}
-                  <AvatarFallback className="bg-secondary text-foreground text-sm">
-                    {getInitials(p.name)}
-                  </AvatarFallback>
-                </Avatar>
+                <RecommendationAvatar profile={p} index={i} />
                 <span className="font-medium text-foreground text-xs truncate max-w-full leading-tight">
                   {p.name?.split(" ")[0] ?? "Student"}
                 </span>
