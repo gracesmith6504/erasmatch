@@ -31,7 +31,7 @@ const PROXY_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/functions/v1/unive
 type SearchUniversityRow = University & { score?: number };
 
 const DEFAULT_RESULT_LIMIT = 10;
-const SEARCH_RESULT_LIMIT = 25;
+const SEARCH_RESULT_LIMIT = 100;
 
 export function useUniversitySearch(prioritizeIrish = false) {
   const [universities, setUniversities] = useState<University[]>([]);
