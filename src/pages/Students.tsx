@@ -223,7 +223,7 @@ const Students = ({ currentUserId }: StudentsProps) => {
               <StudentCardGrid 
                 filteredProfiles={sortedProfiles} 
                 resetFilters={resetFilters}
-                featuredProfiles={featuredProfiles}
+                featuredProfiles={isFilterActive ? [] : featuredProfiles}
                 universityCityMap={universityCityMap}
               />
             </TabsContent>
