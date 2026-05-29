@@ -8,9 +8,10 @@ interface StudentAvatarProps {
   name: string | null;
   className?: string;
   lastActiveAt?: string | null;
+  priority?: boolean;
 }
 
-const StudentAvatar = ({ avatarUrl, name, className = "", lastActiveAt }: StudentAvatarProps) => {
+const StudentAvatar = ({ avatarUrl, name, className = "", lastActiveAt, priority = false }: StudentAvatarProps) => {
   const getInitials = (name: string | null) => {
     if (!name) return "?";
     return name.split(" ").map((n) => n[0]).join("").toUpperCase().substring(0, 2);
@@ -24,7 +25,12 @@ const StudentAvatar = ({ avatarUrl, name, className = "", lastActiveAt }: Studen
     <div className="relative">
       <Avatar className={`${className} border-4 border-card shadow-soft ring-2 ring-card/50 group-hover:scale-105 transition-all duration-300`}>
         {avatarUrl ? (
-          <AvatarImage src={transformAvatarUrl(avatarUrl, 72)} loading="lazy" decoding="async" />
+          <AvatarImage
+            src={transformAvatarUrl(avatarUrl, 72)}
+            loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : "auto"}
+            decoding="async"
+          />
         ) : null}
         <AvatarFallback className="text-lg bg-secondary text-foreground">
           {getInitials(name)}
