@@ -206,7 +206,7 @@ export const DestinationUniversityStep = ({
                     className="w-[--radix-popover-trigger-width] p-0"
                     align="start"
                   >
-                    <Command>
+                    <Command shouldFilter={false}>
                       <CommandInput
                         placeholder="Search universities..."
                         value={uniSearch}
