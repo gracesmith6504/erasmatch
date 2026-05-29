@@ -25,9 +25,6 @@ const IRISH_UNIVERSITIES = [
   "Queen's University Belfast"
 ];
 
-const normalizeString = (str: string) =>
-  str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-
 const SUPABASE_PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID || "ceoflcktscennfmmdrvp";
 const PROXY_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/functions/v1/university-search`;
 
@@ -54,7 +51,7 @@ export function useUniversitySearch(prioritizeIrish = false) {
     };
   }, []);
 
-  const searchHipoApi = useCallback(async (query: string) => {
+  const searchHipoApi = useCallback(async (query: string, localResults: University[]) => {
     if (query.length < 3) {
       setApiFallbackResults([]);
       return;
@@ -81,7 +78,7 @@ export function useUniversitySearch(prioritizeIrish = false) {
         country: item.country || null,
       }));
 
-      const localNames = new Set(universities.map(u => u.name.toLowerCase()));
+      const localNames = new Set(localResults.map(u => u.name.toLowerCase()));
       const filtered = mapped.filter(u => !localNames.has(u.name.toLowerCase()));
 
       setApiFallbackResults(filtered);
@@ -92,7 +89,7 @@ export function useUniversitySearch(prioritizeIrish = false) {
     } finally {
       setIsSearchingApi(false);
     }
-  }, [universities]);
+  }, []);
 
   const searchUniversities = useCallback(async (query: string, immediate = false) => {
     const trimmedQuery = query.trim();
@@ -122,7 +119,7 @@ export function useUniversitySearch(prioritizeIrish = false) {
       setUniversities(sorted);
 
       if (trimmedQuery.length >= 3 && sorted.length < 3) {
-        searchHipoApi(trimmedQuery);
+        searchHipoApi(trimmedQuery, sorted);
       } else {
         setApiFallbackResults([]);
       }
