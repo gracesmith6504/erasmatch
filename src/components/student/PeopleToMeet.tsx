@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Profile } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
 import { X, ArrowRight } from "lucide-react";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import ConnectModal from "@/components/student/ConnectModal";
 import StudentCard from "@/components/student/StudentCard";
@@ -37,15 +37,20 @@ const RecommendationAvatar = ({ profile, index }: { profile: Profile; index: num
   return (
     <Avatar className="h-16 w-16 bg-secondary ring-1 ring-transparent group-hover:ring-border transition-all">
       {avatarSrc ? (
-        <AvatarImage
+        <img
           key={avatarSrc}
           src={avatarSrc}
           alt={profile.name || "Student profile photo"}
+          className="aspect-square h-full w-full object-cover"
           loading={index < 4 ? "eager" : "lazy"}
           fetchPriority={index < 4 ? "high" : "auto"}
           decoding="async"
           onError={() => {
-            if (fallbackSrc && avatarSrc !== fallbackSrc) setAvatarSrc(fallbackSrc);
+            if (fallbackSrc && avatarSrc !== fallbackSrc) {
+              setAvatarSrc(fallbackSrc);
+            } else {
+              setAvatarSrc(undefined);
+            }
           }}
         />
       ) : null}
