@@ -1,0 +1,42 @@
+import { useState, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+
+const notifications = [
+  { name: "Mia", city: "Barcelona", flag: "🇩🇪", time: "2m ago" },
+  { name: "Lucas", city: "Lisbon", flag: "🇫🇷", time: "5m ago" },
+  { name: "Sofia", city: "Berlin", flag: "🇮🇹", time: "12m ago" },
+  { name: "Erik", city: "Amsterdam", flag: "🇸🇪", time: "1h ago" },
+  { name: "Clara", city: "Prague", flag: "🇪🇸", time: "3h ago" },
+];
+
+export const RotatingNotification = () => {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % notifications.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const current = notifications[index];
+
+  return (
+    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-card mb-6 sm:mb-8 overflow-hidden h-8">
+      <span className="h-2 w-2 rounded-full bg-erasmatch-green animate-pulse flex-shrink-0" />
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={index}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.3 }}
+          className="text-xs sm:text-sm font-medium text-muted-foreground whitespace-nowrap"
+        >
+          {current.flag} {current.name} just joined {current.city}
+        </motion.span>
+      </AnimatePresence>
+      <span className="text-[10px] text-muted-foreground/60 flex-shrink-0">{current.time}</span>
+    </div>
+  );
+};
