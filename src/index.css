@@ -1,5 +1,7 @@
+/* Fonts are loaded from index.html via <link> with preconnect — avoids
+   the render-blocking CSS @import waterfall and improves LCP. */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
 
 @tailwind base;
 @tailwind components;
