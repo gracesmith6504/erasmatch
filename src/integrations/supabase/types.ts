@@ -956,27 +956,16 @@ export type Database = {
       }
       is_blocked: { Args: { user_a: string; user_b: string }; Returns: boolean }
       join_group_by_slug: { Args: never; Returns: undefined }
-      search_universities:
-        | {
-            Args: { _limit?: number; _q: string }
-            Returns: {
-              city: string
-              country: string
-              id: number
-              name: string
-              score: number
-            }[]
-          }
-        | {
-            Args: { _city?: string; _limit?: number; _q: string }
-            Returns: {
-              city: string
-              country: string
-              id: number
-              name: string
-              score: number
-            }[]
-          }
+      search_universities: {
+        Args: { _city?: string; _limit?: number; _q: string }
+        Returns: {
+          city: string
+          country: string
+          id: number
+          name: string
+          score: number
+        }[]
+      }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
       slugify: { Args: { input: string }; Returns: string }

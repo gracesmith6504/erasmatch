@@ -100,6 +100,7 @@ export function useUniversitySearch(prioritizeIrish = false) {
     const { data, error } = await (supabase as any).rpc("search_universities", {
       _q: trimmedQuery,
       _limit: trimmedQuery ? SEARCH_RESULT_LIMIT : DEFAULT_RESULT_LIMIT,
+      _city: null,
     });
 
     if (latestQueryRef.current !== trimmedQuery) return;
