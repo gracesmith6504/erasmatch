@@ -52,7 +52,7 @@ export const ParticipantsDialog = ({
                 <div className="flex items-center gap-3 min-w-0">
                   <Avatar className="h-10 w-10 shrink-0">
                     {participant.avatar_url && (
-                      <AvatarImage src={participant.avatar_url} />
+                      <AvatarImage src={`${participant.avatar_url}?width=80&height=80&resize=cover&quality=75`} loading="lazy" decoding="async" />
                     )}
                     <AvatarFallback className="bg-secondary text-foreground text-sm">
                       {getInitials(participant.name)}
