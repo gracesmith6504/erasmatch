@@ -10,6 +10,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Mail } from "lucide-react";
+import { useMemo } from "react";
+import { compareFiltered } from "@/lib/studentOrdering";
 
 interface ParticipantsDialogProps {
   open: boolean;
@@ -25,6 +27,11 @@ export const ParticipantsDialog = ({
   title,
 }: ParticipantsDialogProps) => {
   const navigate = useNavigate();
+
+  const sortedParticipants = useMemo(
+    () => [...participants].sort(compareFiltered),
+    [participants]
+  );
 
   const getInitials = (name: string | null) => {
     if (!name) return "?";
@@ -44,7 +51,7 @@ export const ParticipantsDialog = ({
         </DialogHeader>
         <ScrollArea className="max-h-96">
           <div className="space-y-2 pr-4">
-            {participants.map((participant) => (
+            {sortedParticipants.map((participant) => (
               <div
                 key={participant.id}
                 className="flex items-center justify-between gap-3 rounded-lg border p-3"
