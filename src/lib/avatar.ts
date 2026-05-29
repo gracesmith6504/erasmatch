@@ -9,10 +9,11 @@ export function transformAvatarUrl(
   if (!url) return undefined;
   // Only transform Supabase storage URLs; leave external URLs untouched.
   const storagePath = "/storage/v1/object/public/";
+  const renderPath = "/storage/v1/render/image/public/";
+  if (url.includes(renderPath)) return url;
   if (!url.includes(storagePath)) return url;
-  // Don't double-append if the caller already added a transform.
-  if (url.includes("?")) return url;
   const size = Math.round(cssPixelSize * 2);
-  const renderUrl = url.replace(storagePath, "/storage/v1/render/image/public/");
+  const [baseUrl] = url.split("?");
+  const renderUrl = baseUrl.replace(storagePath, renderPath);
   return `${renderUrl}?width=${size}&height=${size}&resize=cover&quality=75`;
 }
