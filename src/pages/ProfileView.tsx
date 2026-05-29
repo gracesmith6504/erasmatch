@@ -151,11 +151,11 @@ const ProfileView = ({ currentUserId }: ProfileViewProps) => {
         
         <div className="px-4 sm:px-6 pb-5">
           {!isOwnProfile && currentUserId && (
-            <div className="mt-5 sm:mt-0 flex justify-end gap-2">
+            <div className="mt-4 flex items-center gap-2">
               <Button
                 onClick={handleMessageOrConnect}
                 size="sm"
-                className="rounded-full h-10 px-5 font-medium"
+                className="flex-1 sm:flex-none sm:px-5 rounded-full h-10 font-medium"
               >
                 {hasExistingConversation ? (
                   <>
@@ -171,7 +171,7 @@ const ProfileView = ({ currentUserId }: ProfileViewProps) => {
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-full h-10 w-10 text-muted-foreground hover:text-foreground">
+                  <Button variant="ghost" size="icon" className="rounded-full h-10 w-10 text-muted-foreground hover:text-foreground shrink-0">
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
