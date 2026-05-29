@@ -42,5 +42,12 @@ export const GoogleAuthHandler = () => {
     }
   }, [isAuthenticated, currentUserProfile]);
 
-  return null;
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-background">
+      <div className="flex flex-col items-center">
+        <div className="w-10 h-10 rounded-full border-4 border-erasmatch-green border-t-transparent animate-spin" />
+        <p className="mt-4 text-sm text-muted-foreground">Signing you in...</p>
+      </div>
+    </div>
+  );
 };
