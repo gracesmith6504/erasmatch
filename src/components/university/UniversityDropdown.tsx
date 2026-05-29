@@ -130,7 +130,7 @@ export function UniversityDropdown({
         side="bottom"
         sideOffset={4}
       >
-        <Command>
+        <Command shouldFilter={false}>
           <CommandInput 
             placeholder="Search by name, city, country..." 
             value={searchQuery}
