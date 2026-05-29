@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { transformAvatarUrl } from "@/lib/avatar";
 import { Home, School, Calendar, User, LogIn } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile } from "@/types";
