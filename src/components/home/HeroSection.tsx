@@ -7,6 +7,7 @@ import { AnimatedCityHeadline } from "./hero/AnimatedCityHeadline";
 import { PhoneMockup } from "./hero/PhoneMockup";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { transformAvatarUrl } from "@/lib/avatar";
 
 interface HeroSectionProps {
   handleFindStudents: () => void;
