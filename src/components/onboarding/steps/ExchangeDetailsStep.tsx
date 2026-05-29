@@ -102,27 +102,15 @@ export const ExchangeDetailsStep = ({
             />
           </div>
 
-          <div className="flex flex-col gap-3">
-            <Button
-              type="submit"
-              disabled={isSubmitting || !canSubmit}
-              className="w-full py-6 bg-primary hover:bg-primary/90 text-primary-foreground"
-            >
-              Next
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={async () => {
-                await onUpdateProfile({ semester: null, arrival_date: null });
-                onNext();
-              }}
-              className="text-muted-foreground"
-            >
-              I'll add this later
-            </Button>
-          </div>
+          <Button
+            type="submit"
+            disabled={isSubmitting || !canSubmit}
+            className="w-full py-6 bg-primary hover:bg-primary/90 text-primary-foreground"
+          >
+            Next
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+
         </form>
       </div>
     </OnboardingLayout>
