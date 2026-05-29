@@ -210,6 +210,7 @@ const StudentFilters = ({
                     setUniversityFilter(uni);
                     setUniSearch("");
                     setUniDropdownOpen(false);
+                    if (isMobile) setSheetOpen(false);
                   }}
                 >
                   {uni}
