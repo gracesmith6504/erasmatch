@@ -31,7 +31,7 @@ const PROXY_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/functions/v1/unive
 type SearchUniversityRow = University & { score?: number };
 
 const DEFAULT_RESULT_LIMIT = 10;
-const SEARCH_RESULT_LIMIT = 25;
+const SEARCH_RESULT_LIMIT = 100;
 
 export function useUniversitySearch(prioritizeIrish = false) {
   const [universities, setUniversities] = useState<University[]>([]);
@@ -100,6 +100,7 @@ export function useUniversitySearch(prioritizeIrish = false) {
     const { data, error } = await (supabase as any).rpc("search_universities", {
       _q: trimmedQuery,
       _limit: trimmedQuery ? SEARCH_RESULT_LIMIT : DEFAULT_RESULT_LIMIT,
+      _city: null,
     });
 
     if (latestQueryRef.current !== trimmedQuery) return;
