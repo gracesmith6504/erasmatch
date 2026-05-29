@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { CommentCard } from '@/components/forum/CommentCard';
 import { Button } from '@/components/ui/button';
 import { Avatar } from '@/components/ui/avatar';
+import { transformAvatarUrl } from '@/lib/avatar';
 import { Textarea } from '@/components/ui/textarea';
 import { format } from 'date-fns';
 import { ChevronLeft, MessageSquare } from 'lucide-react';
