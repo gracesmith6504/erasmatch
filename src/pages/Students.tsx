@@ -105,21 +105,17 @@ const Students = ({ currentUserId }: StudentsProps) => {
 
   const isFilterActive = Boolean(universityFilter) || Boolean(cityFilter);
 
-  // 3-tier sorting when arriving via "View all" URL params
+  // 3-tier URL sort + shared photo-first comparator
   const sortedProfiles = useMemo(() => {
     const getTier = (p: Profile): number => {
-      if (hasUrlTierSort && urlUniversity && p.university === urlUniversity) return 0; // same university
-      if (hasUrlTierSort && urlCity && p.city === urlCity) return 1; // same city, different uni
+      if (hasUrlTierSort && urlUniversity && p.university === urlUniversity) return 0;
+      if (hasUrlTierSort && urlCity && p.city === urlCity) return 1;
       if (hasUrlTierSort && urlUniversity) {
         const userCountry = universityCountryMap[urlUniversity];
-        if (userCountry && p.university && universityCountryMap[p.university] === userCountry) return 2; // same country
+        if (userCountry && p.university && universityCountryMap[p.university] === userCountry) return 2;
       }
       return 3;
     };
-
-    const RECENT_MS = 21 * 24 * 60 * 60 * 1000;
-    const now = Date.now();
-    const ts = (v: string | null | undefined) => (v ? new Date(v).getTime() : 0);
 
     return [...filteredProfiles].sort((a, b) => {
       if (hasUrlTierSort) {
@@ -127,41 +123,10 @@ const Students = ({ currentUserId }: StudentsProps) => {
         const tierB = getTier(b);
         if (tierA !== tierB) return tierA - tierB;
       }
-
-      if (isFilterActive || hasUrlTierSort) {
-        // Tier 1: has profile picture
-        const hasPhotoA = Boolean(a.avatar_url);
-        const hasPhotoB = Boolean(b.avatar_url);
-        if (hasPhotoA !== hasPhotoB) return hasPhotoA ? -1 : 1;
-
-        // Tier 2: joined recently (within 21d)
-        const createdA = ts(a.created_at);
-        const createdB = ts(b.created_at);
-        const recentJoinA = now - createdA <= RECENT_MS;
-        const recentJoinB = now - createdB <= RECENT_MS;
-        if (recentJoinA !== recentJoinB) return recentJoinA ? -1 : 1;
-        if (recentJoinA && recentJoinB && createdA !== createdB) return createdB - createdA;
-
-        // Tier 3: active recently (within 21d)
-        const activeA = ts(a.last_active_at);
-        const activeB = ts(b.last_active_at);
-        const recentActiveA = activeA > 0 && now - activeA <= RECENT_MS;
-        const recentActiveB = activeB > 0 && now - activeB <= RECENT_MS;
-        if (recentActiveA !== recentActiveB) return recentActiveA ? -1 : 1;
-        if (recentActiveA && recentActiveB && activeA !== activeB) return activeB - activeA;
-
-        // Tier 4: profile completeness
-        return getCompletionPercentage(b) - getCompletionPercentage(a);
-      }
-
-      // Default (no filter): keep existing photo-first then completeness
-      const hasPhotoA = Boolean(a.avatar_url);
-      const hasPhotoB = Boolean(b.avatar_url);
-      if (hasPhotoA && !hasPhotoB) return -1;
-      if (!hasPhotoA && hasPhotoB) return 1;
-      return getCompletionPercentage(b) - getCompletionPercentage(a);
+      if (isFilterActive || hasUrlTierSort) return compareFiltered(a, b);
+      return compareDefault(a, b);
     });
-  }, [filteredProfiles, isFilterActive, getCompletionPercentage, hasUrlTierSort, urlCity, urlUniversity, universityCountryMap]);
+  }, [filteredProfiles, isFilterActive, hasUrlTierSort, urlCity, urlUniversity, universityCountryMap]);
 
   // Rendering skeleton loaders during loading state
   if (loading || profilesLoading) {
