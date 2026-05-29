@@ -12,6 +12,7 @@ import {
 import { Mail } from "lucide-react";
 import { useMemo } from "react";
 import { compareFiltered } from "@/lib/studentOrdering";
+import { differenceInDays } from "date-fns";
 
 interface ParticipantsDialogProps {
   open: boolean;
@@ -56,18 +57,27 @@ export const ParticipantsDialog = ({
                 key={participant.id}
                 className="flex items-center gap-3 rounded-lg border p-2.5 sm:p-3"
               >
-                <Avatar className="h-12 w-12 sm:h-11 sm:w-11 shrink-0">
-                  {participant.avatar_url && (
-                    <AvatarImage
-                      src={`${participant.avatar_url}?width=96&height=96&resize=cover&quality=75`}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  )}
-                  <AvatarFallback className="bg-secondary text-foreground text-sm">
-                    {getInitials(participant.name)}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="relative shrink-0">
+                  <Avatar className="h-12 w-12 sm:h-11 sm:w-11">
+                    {participant.avatar_url && (
+                      <AvatarImage
+                        src={`${participant.avatar_url}?width=96&height=96&resize=cover&quality=75`}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    )}
+                    <AvatarFallback className="bg-secondary text-foreground text-sm">
+                      {getInitials(participant.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  {participant.last_active_at &&
+                    differenceInDays(new Date(), new Date(participant.last_active_at)) <= 21 && (
+                      <span
+                        className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-background"
+                        aria-label="Active recently"
+                      />
+                    )}
+                </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-medium text-sm truncate">
                     {participant.name || "Unknown"}
