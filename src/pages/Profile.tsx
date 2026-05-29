@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { UserCog, ShieldCheck, Eye, MessageSquare, Loader2, Share2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { transformAvatarUrl } from "@/lib/avatar";
 import { Button } from "@/components/ui/button";
 import { useProfileViewers } from "@/hooks/useProfileViewers";
 import { useNavigate } from "react-router-dom";
