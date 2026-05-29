@@ -45,50 +45,48 @@ export const ParticipantsDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md p-4 sm:p-6">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle className="text-base sm:text-lg">{title}</DialogTitle>
         </DialogHeader>
-        <ScrollArea className="max-h-96">
-          <div className="space-y-2 pr-4">
+        <ScrollArea className="max-h-[70vh] sm:max-h-96 -mx-1">
+          <div className="space-y-2 px-1 pr-2 sm:pr-4">
             {sortedParticipants.map((participant) => (
               <div
                 key={participant.id}
-                className="flex items-center justify-between gap-3 rounded-lg border p-3"
+                className="flex items-center gap-3 rounded-lg border p-2.5 sm:p-3"
               >
-                <div className="flex items-center gap-3 min-w-0">
-                  <Avatar className="h-10 w-10 shrink-0">
-                    {participant.avatar_url && (
-                      <AvatarImage src={`${participant.avatar_url}?width=80&height=80&resize=cover&quality=75`} loading="lazy" decoding="async" />
-                    )}
-                    <AvatarFallback className="bg-secondary text-foreground text-sm">
-                      {getInitials(participant.name)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0">
-                    <p className="font-medium text-sm truncate">
-                      {participant.name || "Unknown"}
+                <Avatar className="h-12 w-12 sm:h-11 sm:w-11 shrink-0">
+                  {participant.avatar_url && (
+                    <AvatarImage
+                      src={`${participant.avatar_url}?width=96&height=96&resize=cover&quality=75`}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  )}
+                  <AvatarFallback className="bg-secondary text-foreground text-sm">
+                    {getInitials(participant.name)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-sm truncate">
+                    {participant.name || "Unknown"}
+                  </p>
+                  {participant.home_university && (
+                    <p className="text-xs text-muted-foreground truncate">
+                      🏠 {participant.home_university}
                     </p>
-                    {participant.home_university && (
-                      <p className="text-xs text-muted-foreground truncate">
-                        🏠 {participant.home_university}
-                      </p>
-                    )}
-                    {participant.city && (
-                      <p className="text-xs text-muted-foreground truncate">
-                        📍 {participant.city}
-                      </p>
-                    )}
-                  </div>
+                  )}
                 </div>
                 <Button
                   variant="outline"
-                  size="sm"
-                  className="shrink-0"
+                  size="icon"
+                  className="shrink-0 h-9 w-9 sm:h-9 sm:w-auto sm:px-3"
                   onClick={() => handleMessage(participant.id)}
+                  aria-label={`Message ${participant.name || "member"}`}
                 >
-                  <Mail className="h-3.5 w-3.5 mr-1" />
-                  Message
+                  <Mail className="h-4 w-4 sm:mr-1" />
+                  <span className="hidden sm:inline">Message</span>
                 </Button>
               </div>
             ))}
