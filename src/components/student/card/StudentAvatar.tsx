@@ -24,7 +24,7 @@ const StudentAvatar = ({ avatarUrl, name, className = "", lastActiveAt }: Studen
     <div className="relative">
       <Avatar className={`${className} border-4 border-card shadow-soft ring-2 ring-card/50 group-hover:scale-105 transition-all duration-300`}>
         {avatarUrl ? (
-          <AvatarImage src={avatarUrl || undefined} loading="lazy" />
+          <AvatarImage src={transformAvatarUrl(avatarUrl, 72)} loading="lazy" decoding="async" />
         ) : null}
         <AvatarFallback className="text-lg bg-secondary text-foreground">
           {getInitials(name)}
