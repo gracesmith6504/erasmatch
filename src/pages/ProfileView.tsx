@@ -118,9 +118,9 @@ const ProfileView = ({ currentUserId }: ProfileViewProps) => {
     return (
       <div className="max-w-3xl mx-auto py-8 px-4 sm:px-6">
         <div className="mb-4">
-          <Button variant="outline" size="sm" onClick={handleBackToStudents} className="flex items-center text-muted-foreground">
+          <Button variant="ghost" size="sm" onClick={handleBackToStudents} className="rounded-full -ml-2 text-muted-foreground hover:text-foreground">
             <ArrowLeft className="mr-1 h-4 w-4" />
-            Back to Students
+            Back
           </Button>
         </div>
         <div className="bg-card shadow rounded-lg p-12 text-center">
@@ -135,14 +135,14 @@ const ProfileView = ({ currentUserId }: ProfileViewProps) => {
   return (
     <div className="max-w-3xl mx-auto py-8 px-4 sm:px-6">
       <div className="mb-4">
-        <Button 
-          variant="outline" 
-          size="sm" 
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={handleBackToStudents}
-          className="flex items-center text-muted-foreground"
+          className="rounded-full -ml-2 text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="mr-1 h-4 w-4" />
-          Back to Students
+          Back
         </Button>
       </div>
       
@@ -152,9 +152,10 @@ const ProfileView = ({ currentUserId }: ProfileViewProps) => {
         <div className="px-4 sm:px-6 pb-5">
           {!isOwnProfile && currentUserId && (
             <div className="mt-5 sm:mt-0 flex justify-end gap-2">
-              <Button 
+              <Button
                 onClick={handleMessageOrConnect}
-                className="flex items-center"
+                size="sm"
+                className="rounded-full h-10 px-5 font-medium"
               >
                 {hasExistingConversation ? (
                   <>
@@ -170,7 +171,7 @@ const ProfileView = ({ currentUserId }: ProfileViewProps) => {
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon">
+                  <Button variant="ghost" size="icon" className="rounded-full h-10 w-10 text-muted-foreground hover:text-foreground">
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>

@@ -402,16 +402,17 @@ const StudentFilters = ({
       )}
 
       <div className="mt-4 flex justify-end">
-        <Button 
-          variant="outline" 
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={() => {
             resetFilters();
             if (isMobile) setSheetOpen(false);
           }}
-          className="border-border hover:bg-secondary"
+          className="rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary"
           disabled={!isAnyFilterActive}
         >
-          Reset All Filters
+          Reset all
         </Button>
       </div>
     </>
@@ -438,7 +439,7 @@ const StudentFilters = ({
           <SheetTrigger asChild>
             <Button
               variant="outline"
-              className="w-full justify-between border-border"
+              className="w-full justify-between rounded-full border-border/70 h-11 font-medium"
             >
               <span className="flex items-center gap-2">
                 <SlidersHorizontal className="h-4 w-4" />
