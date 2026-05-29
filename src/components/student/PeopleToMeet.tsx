@@ -174,17 +174,16 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
     localStorage.setItem(STORAGE_KEY, "true");
   };
 
-  // Build smart View all link based on what the section is actually showing
+  // Build smart View all link based on what the section is actually showing.
+  // Filter only by destination city — never pre-apply the user's own university,
+  // since "View all" should show everyone going there, not narrow further.
   const viewAllHref = (() => {
     const params = new URLSearchParams();
     if (destinationKind === "city") {
       params.set("city", destinationName);
-      if (currentProfile.university) params.set("university", currentProfile.university);
-    } else {
-      // Country fallback: pass university only — Students.tsx tier sort surfaces same-country
-      if (currentProfile.university) params.set("university", currentProfile.university);
     }
-    return `/students?${params.toString()}`;
+    const qs = params.toString();
+    return qs ? `/students?${qs}` : "/students";
   })();
 
   const viewAllLabel = `See everyone going to ${destinationName}`;
