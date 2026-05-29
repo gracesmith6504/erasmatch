@@ -87,9 +87,11 @@ const CitiesView = ({ profiles, currentUserId }: CitiesViewProps) => {
 
   return (
     <div className="animate-fade-in">
-      <h1 className="text-2xl font-bold gradient-text mb-6">
-        {selectedCity ? `Students in ${selectedCity}` : "Explore Students by City"}
-      </h1>
+      {selectedCity && (
+        <h1 className="text-2xl font-bold gradient-text mb-6">
+          Students in {selectedCity}
+        </h1>
+      )}
       
       {!selectedCity && (
         <>
