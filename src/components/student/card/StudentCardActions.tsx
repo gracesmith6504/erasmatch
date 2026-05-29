@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { UserPlus, Globe } from "lucide-react";
-import { recordProfileView } from "@/hooks/useProfileViewers";
+import { UserPlus } from "lucide-react";
 import ConnectModal from "@/components/student/ConnectModal";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -21,7 +19,6 @@ const StudentCardActions: React.FC<StudentCardActionsProps> = ({
   studentUniversity,
   initialNote,
 }) => {
-  const navigate = useNavigate();
   const { currentUserProfile } = useAuth();
   const [connectOpen, setConnectOpen] = useState(false);
 
@@ -37,32 +34,21 @@ const StudentCardActions: React.FC<StudentCardActionsProps> = ({
 
   const handleConnectClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (typeof window !== 'undefined' && window.posthog) {
-      window.posthog.capture('message_button_clicked');
+    e.stopPropagation();
+    if (typeof window !== "undefined" && window.posthog) {
+      window.posthog.capture("message_button_clicked");
     }
     setConnectOpen(true);
-  };
-
-  const handleProfileClick = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    await recordProfileView(studentId);
-    navigate(`/profile/${studentId}`, { state: { fromProfile: true } });
   };
 
   return (
     <>
       <Button
         variant="outline"
-        className="w-1/2 border-border hover:bg-secondary transition-colors"
+        className="w-full border-border hover:bg-secondary transition-colors"
         onClick={handleConnectClick}
       >
         <UserPlus className="mr-1 h-4 w-4" /> Connect
-      </Button>
-      <Button
-        onClick={handleProfileClick}
-        className="w-1/2 bg-foreground text-background hover:bg-foreground/90"
-      >
-        <Globe className="mr-1 h-4 w-4" /> Profile
       </Button>
 
       <ConnectModal
@@ -79,3 +65,4 @@ const StudentCardActions: React.FC<StudentCardActionsProps> = ({
 };
 
 export default StudentCardActions;
+

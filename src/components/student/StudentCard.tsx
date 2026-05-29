@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Profile } from "@/types";
 import StudentAvatar from "./card/StudentAvatar";
@@ -9,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { getTagInfo } from "@/components/profile/constants";
 import { LOOKING_FOR_OPTIONS } from "@/components/profile/components/LookingForSection";
 import { format } from "date-fns";
+import { recordProfileView } from "@/hooks/useProfileViewers";
 
 interface StudentCardProps {
   profile: Profile;
@@ -18,6 +20,7 @@ interface StudentCardProps {
 }
 
 const StudentCard = ({ profile, isFeatured = false, universityCity = null, priority = false }: StudentCardProps) => {
+  const navigate = useNavigate();
   const tags = profile.personality_tags || [];
   const visibleTags = tags.slice(0, 3);
   const extraCount = tags.length - 3;
@@ -27,8 +30,26 @@ const StudentCard = ({ profile, isFeatured = false, universityCity = null, prior
 
   const isNew = new Date().getTime() - new Date(profile.created_at).getTime() < 21 * 24 * 60 * 60 * 1000;
 
+  const handleCardOpen = async () => {
+    await recordProfileView(profile.id);
+    navigate(`/profile/${profile.id}`, { state: { fromProfile: true } });
+  };
+
+  const handleCardKey = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleCardOpen();
+    }
+  };
+
   return (
-    <Card className="overflow-hidden border-border hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group min-h-[280px] flex flex-col relative">
+    <Card
+      role="button"
+      tabIndex={0}
+      onClick={handleCardOpen}
+      onKeyDown={handleCardKey}
+      className="overflow-hidden border-border hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group min-h-[280px] flex flex-col relative cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+    >
       {isNew && (
         <span className="absolute top-2 right-2 z-10 bg-green-500 text-white text-[12px] font-medium px-2 py-0.5 rounded-full">
           Just joined ✨
