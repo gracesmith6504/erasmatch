@@ -5,6 +5,7 @@ import CityCard from "./CityCard";
 import CityProfileList from "./CityProfileList";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { compareFiltered } from "@/lib/studentOrdering";
 
 interface CitiesViewProps {
   profiles: Profile[];
