@@ -2,6 +2,7 @@ import { Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { transformAvatarUrl } from "@/lib/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useNotifications, Notification } from "@/hooks/useNotifications";
 import { useAuth } from "@/contexts/AuthContext";
