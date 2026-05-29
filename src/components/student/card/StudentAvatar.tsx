@@ -1,6 +1,7 @@
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { differenceInDays } from "date-fns";
+import { transformAvatarUrl } from "@/lib/avatar";
 
 interface StudentAvatarProps {
   avatarUrl: string | null;
