@@ -275,6 +275,7 @@ const StudentFilters = ({
                       setCityFilter(city);
                       setCitySearch("");
                       setCityDropdownOpen(false);
+                      if (isMobile) setSheetOpen(false);
                     }}
                   >
                     {city}
