@@ -27,5 +27,6 @@ export function useProfiles(enabled = true) {
       })) as Profile[];
     },
     enabled,
+    staleTime: 5 * 60 * 1000,
   });
 }
