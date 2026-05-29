@@ -85,7 +85,7 @@ export const NotificationBell = () => {
                   }`}
                 >
                   <Avatar className="h-8 w-8 shrink-0 mt-0.5">
-                    <AvatarImage src={n.actor_profile?.avatar_url || ""} />
+                    <AvatarImage src={transformAvatarUrl(n.actor_profile?.avatar_url, 32)} loading="lazy" decoding="async" />
                     <AvatarFallback className="text-xs">
                       {n.actor_profile?.name?.charAt(0)?.toUpperCase() || "?"}
                     </AvatarFallback>
