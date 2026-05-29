@@ -65,8 +65,12 @@ export const HeroSection = ({ handleFindStudents }: HeroSectionProps) => {
                   {featuredAvatars.map((url, i) => (
                     <img
                       key={i}
-                      src={url}
+                      src={transformAvatarUrl(url, 36)}
                       alt=""
+                      width={36}
+                      height={36}
+                      loading="lazy"
+                      decoding="async"
                       className="w-9 h-9 rounded-full border-2 border-background object-cover"
                       style={{ marginLeft: i === 0 ? 0 : -8 }}
                     />
