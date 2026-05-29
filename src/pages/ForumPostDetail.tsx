@@ -97,8 +97,12 @@ export default function ForumPostDetail() {
         <div className="flex items-center mb-6">
           <Avatar className="h-8 w-8 mr-2">
             <img 
-              src={post.author?.avatar_url || '/placeholder.svg'} 
+              src={transformAvatarUrl(post.author?.avatar_url, 32) || '/placeholder.svg'} 
               alt={post.author?.name || 'Anonymous'} 
+              width={32}
+              height={32}
+              loading="lazy"
+              decoding="async"
               onError={(e) => {
                 (e.target as HTMLImageElement).src = '/placeholder.svg';
               }} 
