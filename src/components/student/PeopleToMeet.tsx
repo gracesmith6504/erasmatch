@@ -2,11 +2,9 @@ import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Profile } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
-import { X, Sparkles } from "lucide-react";
+import { X, ArrowRight } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getTagInfo, getTagBgColor } from "@/components/profile/constants";
 import ConnectModal from "@/components/student/ConnectModal";
 import StudentCard from "@/components/student/StudentCard";
 import { useNavigate, Link } from "react-router-dom";
@@ -52,7 +50,6 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
     initialNote: string;
   } | null>(null);
 
-  // Fetch IDs of users already messaged
   const { data: messagedIds = [] } = useQuery({
     queryKey: ["messaged-users", currentUserId],
     queryFn: async () => {
@@ -71,7 +68,6 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
     staleTime: 60_000,
   });
 
-  // Fetch university → country map
   const { data: uniCountryMap = {} } = useQuery({
     queryKey: ["university-country-map"],
     queryFn: async () => {
@@ -86,13 +82,12 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
     staleTime: 300_000,
   });
 
-  const { scored, sectionTitle } = useMemo(() => {
+  const { scored, destinationName, destinationKind } = useMemo(() => {
     const myCity = currentProfile.city;
     const excludeSet = new Set([currentUserId, ...messagedIds]);
     const eligible = profiles.filter((p) => !excludeSet.has(p.id) && !p.deleted_at);
     const limit = fullPage ? 12 : 10;
 
-    // Step 1: same city
     if (myCity) {
       const cityMatches = eligible
         .filter((p) => p.city === myCity)
@@ -100,15 +95,10 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
         .sort((a, b) => b.score - a.score);
 
       if (cityMatches.length >= 3) {
-        return {
-          scored: cityMatches.slice(0, limit),
-          sectionTitle: `People going to ${myCity} 👋`,
-        };
+        return { scored: cityMatches.slice(0, limit), destinationName: myCity, destinationKind: "city" as const };
       }
 
-      // Step 2: country fallback — fill remaining slots
       const myCountry = currentProfile.university ? uniCountryMap[currentProfile.university] : undefined;
-
       if (myCountry) {
         const cityMatchIds = new Set(cityMatches.map((m) => m.profile.id));
         const countryMatches = eligible
@@ -118,23 +108,21 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
 
         const combined = [...cityMatches, ...countryMatches].slice(0, limit);
         if (combined.length > 0) {
-          const title = cityMatches.length > 0 ? `People going to ${myCity} 👋` : `People going to ${myCountry} 👋`;
-          return { scored: combined, sectionTitle: title };
+          const isCity = cityMatches.length > 0;
+          return {
+            scored: combined,
+            destinationName: isCity ? myCity : myCountry,
+            destinationKind: (isCity ? "city" : "country") as "city" | "country",
+          };
         }
       }
 
-      // City matches exist but < 3 and no country fallback
       if (cityMatches.length > 0) {
-        return {
-          scored: cityMatches.slice(0, limit),
-          sectionTitle: `People going to ${myCity} 👋`,
-        };
+        return { scored: cityMatches.slice(0, limit), destinationName: myCity, destinationKind: "city" as const };
       }
     }
 
-    // No city set — try country only
     const myCountry = currentProfile.university ? uniCountryMap[currentProfile.university] : undefined;
-
     if (myCountry) {
       const countryMatches = eligible
         .filter((p) => p.university && uniCountryMap[p.university] === myCountry)
@@ -143,18 +131,13 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
         .slice(0, limit);
 
       if (countryMatches.length > 0) {
-        return {
-          scored: countryMatches,
-          sectionTitle: `People going to ${myCountry} 👋`,
-        };
+        return { scored: countryMatches, destinationName: myCountry, destinationKind: "country" as const };
       }
     }
 
-    // Step 3: nothing
-    return { scored: [], sectionTitle: "" };
+    return { scored: [], destinationName: "", destinationKind: "city" as const };
   }, [profiles, currentUserId, currentProfile, messagedIds, uniCountryMap, fullPage]);
 
-  // If fullPage requested but fewer than 4 results, fall back to compact mode
   const effectiveFullPage = fullPage && scored.length >= 4;
 
   if (dismissed || scored.length === 0) return null;
@@ -164,50 +147,52 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
     localStorage.setItem(STORAGE_KEY, "true");
   };
 
-  const handleSayHi = (p: Profile) => {
-    const firstName = p.name?.split(" ")[0] ?? "there";
-    const city = currentProfile.city;
-    let note = city
-      ? `Hey ${firstName}! I saw we're both going to ${city} — are you excited yet? 😄`
-      : `Hey ${firstName}! Let's connect 👋`;
-    if (note.length > 100) note = note.slice(0, 97) + "…";
-    setConnectTarget({ id: p.id, name: p.name ?? "Student", initialNote: note });
-  };
-
   const getInitials = (name: string | null) => {
     if (!name) return "?";
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
+    return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
   };
+
+  // Build smart View all link based on what the section is actually showing
+  const viewAllHref = (() => {
+    const params = new URLSearchParams();
+    if (destinationKind === "city") {
+      params.set("city", destinationName);
+      if (currentProfile.university) params.set("university", currentProfile.university);
+    } else {
+      // Country fallback: pass university only — Students.tsx tier sort surfaces same-country
+      if (currentProfile.university) params.set("university", currentProfile.university);
+    }
+    return `/students?${params.toString()}`;
+  })();
+
+  const viewAllLabel = `See everyone going to ${destinationName}`;
 
   return (
     <>
-      <div
-        className={`mb-6 rounded-xl bg-primary/5 border border-primary/10 relative ${effectiveFullPage ? "p-4 sm:p-6 md:p-8" : "p-4 sm:p-5"}`}
-      >
+      <section className={`mb-8 relative ${effectiveFullPage ? "" : "pt-1"}`}>
         {!effectiveFullPage && (
           <button
             onClick={handleDismiss}
-            className="absolute top-3 right-3 text-muted-foreground hover:text-foreground transition-colors z-10"
+            aria-label="Dismiss"
+            className="absolute top-0 right-0 text-muted-foreground/60 hover:text-foreground transition-colors p-1 -mr-1"
           >
             <X className="h-4 w-4" />
-            <span className="sr-only">Dismiss</span>
           </button>
         )}
 
         <div className={effectiveFullPage ? "text-center mb-6" : "mb-4 pr-8"}>
+          <div className="text-[11px] uppercase tracking-wider font-medium text-muted-foreground mb-1">
+            For you
+          </div>
           <h2
-            className={`font-display font-semibold text-foreground flex items-center gap-2 ${effectiveFullPage ? "text-xl sm:text-2xl justify-center" : "text-lg"}`}
+            className={`font-display font-semibold text-foreground ${
+              effectiveFullPage ? "text-xl sm:text-2xl" : "text-base sm:text-lg"
+            }`}
           >
-            <Sparkles className={`text-primary ${effectiveFullPage ? "h-5 w-5 sm:h-6 sm:w-6" : "h-5 w-5"}`} />
-            {sectionTitle}
+            People going to {destinationName}
           </h2>
           {effectiveFullPage && (
-            <p className="text-muted-foreground mt-2 text-sm sm:text-base">
+            <p className="text-muted-foreground mt-1.5 text-sm">
               Based on your city, university, and interests
             </p>
           )}
@@ -220,56 +205,38 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
             ))}
           </div>
         ) : (
-          <div className="flex gap-3 overflow-x-auto pb-2 sm:pb-0 sm:grid sm:grid-cols-5 scrollbar-hide">
-            {scored.map(({ profile: p, sharedTags }, i) => (
-              <div
+          <div className="flex gap-5 sm:gap-6 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide -mx-1 px-1">
+            {scored.map(({ profile: p }, i) => (
+              <button
                 key={p.id}
-                className="rounded-lg border border-border bg-card flex flex-col items-center text-center gap-2 flex-shrink-0 w-[200px] sm:w-auto p-4"
+                onClick={async () => {
+                  await recordProfileView(p.id);
+                  navigate(`/profile/${p.id}`, { state: { fromProfile: true } });
+                }}
+                className="flex flex-col items-center text-center gap-1.5 flex-shrink-0 w-[88px] snap-start group"
               >
-                <button
-                  onClick={async () => {
-                    await recordProfileView(p.id);
-                    navigate(`/profile/${p.id}`, { state: { fromProfile: true } });
-                  }}
-                  className="flex flex-col items-center gap-2"
-                >
-                  <Avatar className="h-14 w-14 border-2 border-card shadow-sm">
-                    {p.avatar_url ? (
-                      <AvatarImage
-                        src={`${p.avatar_url}?width=144&height=144&resize=cover&quality=75`}
-                        loading={i < 3 ? "eager" : "lazy"}
-                        fetchPriority={i < 3 ? "high" : "auto"}
-                        decoding="async"
-                      />
-                    ) : null}
-                    <AvatarFallback className="bg-secondary text-foreground text-sm">
-                      {getInitials(p.name)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="font-medium text-foreground truncate max-w-[160px] text-sm">
-                    {p.name?.split(" ")[0] ?? "Student"}
+                <Avatar className="h-16 w-16 ring-1 ring-transparent group-hover:ring-border transition-all">
+                  {p.avatar_url ? (
+                    <AvatarImage
+                      src={`${p.avatar_url}?width=144&height=144&resize=cover&quality=75`}
+                      loading={i < 4 ? "eager" : "lazy"}
+                      fetchPriority={i < 4 ? "high" : "auto"}
+                      decoding="async"
+                    />
+                  ) : null}
+                  <AvatarFallback className="bg-secondary text-foreground text-sm">
+                    {getInitials(p.name)}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="font-medium text-foreground text-xs truncate max-w-full leading-tight">
+                  {p.name?.split(" ")[0] ?? "Student"}
+                </span>
+                {p.city && (
+                  <span className="text-[11px] text-muted-foreground truncate max-w-full leading-tight">
+                    {p.city}
                   </span>
-                </button>
-
-                {p.city && <span className="text-xs text-muted-foreground truncate max-w-[160px]">📍 {p.city}</span>}
-
-                {sharedTags.length > 0 && (
-                  <div className="flex flex-wrap justify-center gap-1 mt-1">
-                    {sharedTags.slice(0, 2).map((tag) => {
-                      const info = getTagInfo(tag);
-                      return (
-                        <Badge key={tag} className={`${getTagBgColor(tag)} text-xs px-2 py-0.5`}>
-                          {info?.icon} {info?.label}
-                        </Badge>
-                      );
-                    })}
-                  </div>
                 )}
-
-                <Button size="sm" className="w-full mt-auto text-xs" onClick={() => handleSayHi(p)}>
-                  Say hi 👋
-                </Button>
-              </div>
+              </button>
             ))}
           </div>
         )}
@@ -277,27 +244,28 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
         {effectiveFullPage && onShowAll && (
           <div className="text-center mt-6">
             <Button variant="outline" onClick={onShowAll} className="px-6">
-              Browse everyone going →
+              {viewAllLabel}
+              <ArrowRight className="ml-1.5 h-4 w-4" />
             </Button>
           </div>
         )}
 
-        {!effectiveFullPage && scored.length > 0 && (
-          <div className="text-right mt-3">
-            <Link
-              to={`/students?${(() => {
-                const params = new URLSearchParams();
-                if (currentProfile.city) params.set("city", currentProfile.city);
-                if (currentProfile.university) params.set("university", currentProfile.university);
-                return params.toString();
-              })()}`}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+        {!effectiveFullPage && (
+          <div className="mt-4 flex justify-end">
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="h-9 px-3 text-sm font-medium text-foreground hover:bg-secondary"
             >
-              View all →
-            </Link>
+              <Link to={viewAllHref}>
+                {viewAllLabel}
+                <ArrowRight className="ml-1 h-4 w-4" />
+              </Link>
+            </Button>
           </div>
         )}
-      </div>
+      </section>
 
       {connectTarget && (
         <ConnectModal
