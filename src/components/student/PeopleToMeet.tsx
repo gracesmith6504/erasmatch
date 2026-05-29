@@ -215,8 +215,8 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
 
         {effectiveFullPage ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {scored.map(({ profile: p }) => (
-              <StudentCard key={p.id} profile={p} universityCity={p.city} />
+            {scored.map(({ profile: p }, i) => (
+              <StudentCard key={p.id} profile={p} universityCity={p.city} priority={i < 3} />
             ))}
           </div>
         ) : (
