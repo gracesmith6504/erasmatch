@@ -223,7 +223,7 @@ const Auth = ({ onLogin }: AuthProps) => {
           <div className="flex items-center gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
             <Avatar className="h-10 w-10 border-2 border-primary/30">
               {referrerProfile.avatar_url ? (
-                <AvatarImage src={referrerProfile.avatar_url} alt={referrerFirstName || "Referrer"} />
+                <AvatarImage src={transformAvatarUrl(referrerProfile.avatar_url, 40)} alt={referrerFirstName || "Referrer"} loading="lazy" decoding="async" />
               ) : null}
               <AvatarFallback className="bg-primary/10 text-primary text-sm font-bold">
                 {referrerFirstName?.[0]?.toUpperCase() || "?"}
