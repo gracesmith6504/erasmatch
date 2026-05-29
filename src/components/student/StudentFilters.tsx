@@ -68,9 +68,53 @@ const StudentFilters = ({
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const filteredUniversities = uniqueUniversities.filter((uni) =>
-    uni.toLowerCase().includes(uniSearch.toLowerCase())
-  );
+  // Server-side alias-aware search, intersected with universities that have students
+  const [rpcMatches, setRpcMatches] = useState<string[] | null>(null);
+  const reqIdRef = useRef(0);
+  useEffect(() => {
+    const q = uniSearch.trim();
+    if (!q) {
+      setRpcMatches(null);
+      return;
+    }
+    const myReq = ++reqIdRef.current;
+    const t = setTimeout(async () => {
+      const { data, error } = await supabase.rpc("search_universities", {
+        _q: q,
+        _limit: 100,
+        _city: null,
+      });
+      if (myReq !== reqIdRef.current) return;
+      if (error || !data) {
+        setRpcMatches([]);
+        return;
+      }
+      setRpcMatches((data as Array<{ name: string }>).map((r) => r.name));
+    }, 150);
+    return () => clearTimeout(t);
+  }, [uniSearch]);
+
+  const filteredUniversities = (() => {
+    const q = uniSearch.trim().toLowerCase();
+    if (!q) return uniqueUniversities;
+    const localHits = uniqueUniversities.filter((u) => u.toLowerCase().includes(q));
+    if (!rpcMatches) return localHits;
+    const uniSet = new Set(uniqueUniversities.map((u) => u.toLowerCase()));
+    const rpcHits = rpcMatches.filter((n) => uniSet.has(n.toLowerCase()));
+    // Merge unique, preserving rpc order then local extras
+    const seen = new Set<string>();
+    const merged: string[] = [];
+    for (const n of [...rpcHits, ...localHits]) {
+      const key = n.toLowerCase();
+      if (!seen.has(key)) {
+        seen.add(key);
+        // Use the canonical casing from uniqueUniversities when available
+        const canonical = uniqueUniversities.find((u) => u.toLowerCase() === key) || n;
+        merged.push(canonical);
+      }
+    }
+    return merged;
+  })();
 
   const handleSemesterToggle = (semester: string) => {
     if (semesterFilter.includes(semester)) {
