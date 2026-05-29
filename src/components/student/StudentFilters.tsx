@@ -165,6 +165,7 @@ const StudentFilters = ({
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
             <Input
+              autoFocus={false}
               className="h-12 pl-9 pr-9 border-border focus:border-erasmatch-green"
               placeholder="Search university..."
               value={universityFilter && !uniDropdownOpen ? universityFilter : uniSearch}
@@ -228,6 +229,7 @@ const StudentFilters = ({
           <div className="relative">
             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
             <Input
+              autoFocus={false}
               className="h-12 pl-9 pr-9 border-border focus:border-erasmatch-green"
               placeholder="Search city..."
               value={cityFilter && !cityDropdownOpen ? cityFilter : citySearch}
@@ -445,7 +447,11 @@ const StudentFilters = ({
               <ChevronDown className="h-4 w-4 text-muted-foreground" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-2xl">
+          <SheetContent
+            side="bottom"
+            className="max-h-[85vh] overflow-y-auto rounded-t-2xl"
+            onOpenAutoFocus={(e) => e.preventDefault()}
+          >
             <SheetHeader>
               <SheetTitle className="text-left">Filters</SheetTitle>
             </SheetHeader>
