@@ -53,10 +53,11 @@ const RecommendationAvatar = ({ profile, index }: { profile: Profile; index: num
             }
           }}
         />
-      ) : null}
-      <AvatarFallback className="bg-secondary text-foreground text-sm">
-        {initials}
-      </AvatarFallback>
+      ) : (
+        <AvatarFallback className="bg-secondary text-foreground text-sm">
+          {initials}
+        </AvatarFallback>
+      )}
     </Avatar>
   );
 };
