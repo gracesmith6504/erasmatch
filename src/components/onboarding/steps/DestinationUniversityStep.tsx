@@ -57,7 +57,7 @@ export const DestinationUniversityStep = ({
     debounceRef.current = setTimeout(async () => {
       const { data, error } = await (supabase as any).rpc("search_universities", {
         _q: uniSearch.trim(),
-        _limit: 25,
+        _limit: uniSearch.trim() ? 100 : 25,
         _city: city,
       });
       if (myReq !== reqIdRef.current) return;
