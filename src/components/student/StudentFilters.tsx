@@ -439,7 +439,7 @@ const StudentFilters = ({
           <SheetTrigger asChild>
             <Button
               variant="outline"
-              className="w-full justify-between border-border"
+              className="w-full justify-between rounded-full border-border/70 h-11 font-medium"
             >
               <span className="flex items-center gap-2">
                 <SlidersHorizontal className="h-4 w-4" />
