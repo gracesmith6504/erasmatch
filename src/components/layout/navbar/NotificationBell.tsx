@@ -38,6 +38,12 @@ export const NotificationBell = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
+  // Collapse consecutive notifications from the same actor+type into one (keep most recent)
+  const dedupedNotifications = notifications.filter((n, i, arr) => {
+    const key = `${n.actor_id}|${n.type}`;
+    return arr.findIndex((m) => `${m.actor_id}|${m.type}` === key) === i;
+  });
+
   const handleOpen = (isOpen: boolean) => {
     setOpen(isOpen);
     if (isOpen && unreadCount > 0) {
@@ -69,14 +75,14 @@ export const NotificationBell = () => {
         <div className="px-4 py-3 border-b border-border">
           <h3 className="text-sm font-semibold text-foreground">Notifications</h3>
         </div>
-        {notifications.length === 0 ? (
+        {dedupedNotifications.length === 0 ? (
           <div className="px-4 py-8 text-center text-sm text-muted-foreground">
             No notifications yet
           </div>
         ) : (
           <ScrollArea className="max-h-[400px]">
             <div className="divide-y divide-border">
-              {notifications.map((n) => (
+              {dedupedNotifications.map((n) => (
                 <button
                   key={n.id}
                   onClick={() => handleClick(n)}
