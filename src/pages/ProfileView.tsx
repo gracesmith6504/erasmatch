@@ -118,9 +118,9 @@ const ProfileView = ({ currentUserId }: ProfileViewProps) => {
     return (
       <div className="max-w-3xl mx-auto py-8 px-4 sm:px-6">
         <div className="mb-4">
-          <Button variant="outline" size="sm" onClick={handleBackToStudents} className="flex items-center text-muted-foreground">
+          <Button variant="ghost" size="sm" onClick={handleBackToStudents} className="rounded-full -ml-2 text-muted-foreground hover:text-foreground">
             <ArrowLeft className="mr-1 h-4 w-4" />
-            Back to Students
+            Back
           </Button>
         </div>
         <div className="bg-card shadow rounded-lg p-12 text-center">
