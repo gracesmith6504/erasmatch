@@ -43,22 +43,22 @@ export const ProfileHeader = ({ profile, isOwnProfile }: ProfileHeaderProps) => 
 
 
   return (
-    <div className="text-center px-4 pt-6 pb-4 bg-indigo-50 rounded-b-2xl">
-      <Avatar className="w-24 h-24 rounded-full mx-auto text-xl font-bold bg-indigo-200 text-white flex items-center justify-center">
+    <div className="text-center px-4 pt-5 pb-4 sm:pt-6 sm:pb-5 bg-secondary/50 rounded-b-2xl">
+      <Avatar className="w-20 h-20 sm:w-24 sm:h-24 rounded-full mx-auto text-xl font-bold bg-primary/10 text-primary flex items-center justify-center ring-4 ring-background">
         <AvatarImage src={profile.avatar_url ? `${profile.avatar_url}?width=240&height=240&resize=cover&quality=80` : undefined} alt={profile.name || "Profile"} decoding="async" />
         <AvatarFallback>
           {getInitials(profile.name)}
         </AvatarFallback>
       </Avatar>
-      
-      <h1 className="text-lg font-semibold mt-2">{profile.name}</h1>
-      <p className="text-sm text-gray-500">{getSecondaryInfo()}</p>
-      
+
+      <h1 className="text-lg sm:text-xl font-display font-semibold mt-3 text-foreground">{profile.name}</h1>
+      <p className="text-sm text-muted-foreground mt-0.5">{getSecondaryInfo()}</p>
+
       {isOwnProfile && (
-        <div className="mt-4">
+        <div className="mt-3">
           <Link to="/profile">
-            <Button variant="outline" className="text-sm bg-white border border-indigo-200 text-indigo-600 px-3 py-1 rounded-full hover:bg-indigo-100 transition">
-              <Upload className="h-4 w-4 mr-1" />
+            <Button variant="outline" size="sm" className="rounded-full border-border/70 text-sm gap-1.5">
+              <Upload className="h-3.5 w-3.5" />
               Edit Profile
             </Button>
           </Link>
