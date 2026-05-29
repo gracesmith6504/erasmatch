@@ -1,7 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { User } from "lucide-react";
 import { useNavigation } from "./useNavigation";
-import { NotificationBell } from "./NotificationBell";
 
 interface MobileBottomNavProps {
   isActive: (path: string) => boolean;
@@ -35,7 +34,7 @@ export const MobileBottomNav = ({ isActive }: MobileBottomNavProps) => {
             )}
           </Link>
         ))}
-        <NotificationBell />
+        
         <Link
           to="/profile"
           aria-label="Profile"
