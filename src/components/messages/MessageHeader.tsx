@@ -69,7 +69,7 @@ export const MessageHeader = ({ isMobile, onBack, profile, onUserBlocked }: Mess
             {profile.id && (
               <Link to={`/profile/${profile.id}`} className="hover:opacity-80 transition-opacity">
                 <Avatar className="h-10 w-10 cursor-pointer hover:ring-2 hover:ring-primary/30 transition-all">
-                  <AvatarImage src={profile.avatar_url || undefined} alt={profile.name || "User"} />
+                  <AvatarImage src={profile.avatar_url ? `${profile.avatar_url}?width=80&height=80&resize=cover&quality=75` : undefined} alt={profile.name || "User"} decoding="async" />
                   <AvatarFallback className="bg-muted text-muted-foreground">
                     {getInitials(profile.name)}
                   </AvatarFallback>
