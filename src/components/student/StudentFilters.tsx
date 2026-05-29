@@ -210,6 +210,7 @@ const StudentFilters = ({
                     setUniversityFilter(uni);
                     setUniSearch("");
                     setUniDropdownOpen(false);
+                    if (isMobile) setSheetOpen(false);
                   }}
                 >
                   {uni}
@@ -274,6 +275,7 @@ const StudentFilters = ({
                       setCityFilter(city);
                       setCitySearch("");
                       setCityDropdownOpen(false);
+                      if (isMobile) setSheetOpen(false);
                     }}
                   >
                     {city}
@@ -415,9 +417,22 @@ const StudentFilters = ({
 
   // Mobile: show a button that opens a bottom sheet
   if (isMobile) {
+    const handleSheetChange = (open: boolean) => {
+      setSheetOpen(open);
+      // When sheet closes (e.g. after applying a filter), scroll grid into view
+      if (!open) {
+        requestAnimationFrame(() => {
+          const grid = document.getElementById("student-grid");
+          if (grid) {
+            const y = grid.getBoundingClientRect().top + window.pageYOffset - 80;
+            window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+          }
+        });
+      }
+    };
     return (
       <div className="mb-4">
-        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+        <Sheet open={sheetOpen} onOpenChange={handleSheetChange}>
           <SheetTrigger asChild>
             <Button
               variant="outline"

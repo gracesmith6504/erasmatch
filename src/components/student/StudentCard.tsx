@@ -127,4 +127,4 @@ const StudentCard = ({ profile, isFeatured = false, universityCity = null, prior
   );
 };
 
-export default StudentCard;
+export default React.memo(StudentCard);
