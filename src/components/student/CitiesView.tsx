@@ -5,6 +5,7 @@ import CityCard from "./CityCard";
 import CityProfileList from "./CityProfileList";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { compareFiltered } from "@/lib/studentOrdering";
 
 interface CitiesViewProps {
   profiles: Profile[];
@@ -48,41 +49,11 @@ const CitiesView = ({ profiles, currentUserId }: CitiesViewProps) => {
     );
   }, [cityData, searchTerm]);
   
-  // Get profiles for selected city, sorted: photo > recently joined > recently active > completeness
+  // Get profiles for selected city using shared photo-first comparator
   const cityProfiles = useMemo(() => {
     if (!selectedCity) return [];
-
     const inCity = filteredProfiles.filter(profile => profile.city === selectedCity);
-
-    const RECENT_MS = 21 * 24 * 60 * 60 * 1000;
-    const now = Date.now();
-    const ts = (v: string | null | undefined) => (v ? new Date(v).getTime() : 0);
-    const completion = (p: Profile) => {
-      const fields = [p.name, p.university, p.avatar_url, p.bio, p.semester, p.home_university, p.city, p.country, p.interests];
-      return fields.filter(Boolean).length;
-    };
-
-    return [...inCity].sort((a, b) => {
-      const hasPhotoA = Boolean(a.avatar_url);
-      const hasPhotoB = Boolean(b.avatar_url);
-      if (hasPhotoA !== hasPhotoB) return hasPhotoA ? -1 : 1;
-
-      const createdA = ts(a.created_at);
-      const createdB = ts(b.created_at);
-      const recentJoinA = now - createdA <= RECENT_MS;
-      const recentJoinB = now - createdB <= RECENT_MS;
-      if (recentJoinA !== recentJoinB) return recentJoinA ? -1 : 1;
-      if (recentJoinA && recentJoinB && createdA !== createdB) return createdB - createdA;
-
-      const activeA = ts(a.last_active_at);
-      const activeB = ts(b.last_active_at);
-      const recentActiveA = activeA > 0 && now - activeA <= RECENT_MS;
-      const recentActiveB = activeB > 0 && now - activeB <= RECENT_MS;
-      if (recentActiveA !== recentActiveB) return recentActiveA ? -1 : 1;
-      if (recentActiveA && recentActiveB && activeA !== activeB) return activeB - activeA;
-
-      return completion(b) - completion(a);
-    });
+    return [...inCity].sort(compareFiltered);
   }, [filteredProfiles, selectedCity]);
 
   return (
