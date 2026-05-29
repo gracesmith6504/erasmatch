@@ -402,16 +402,17 @@ const StudentFilters = ({
       )}
 
       <div className="mt-4 flex justify-end">
-        <Button 
-          variant="outline" 
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={() => {
             resetFilters();
             if (isMobile) setSheetOpen(false);
           }}
-          className="border-border hover:bg-secondary"
+          className="rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary"
           disabled={!isAnyFilterActive}
         >
-          Reset All Filters
+          Reset all
         </Button>
       </div>
     </>
