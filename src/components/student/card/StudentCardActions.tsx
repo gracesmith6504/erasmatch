@@ -45,10 +45,11 @@ const StudentCardActions: React.FC<StudentCardActionsProps> = ({
     <>
       <Button
         variant="outline"
-        className="w-full border-border hover:bg-secondary transition-colors"
+        size="sm"
+        className="w-full rounded-full border-border/70 font-medium hover:bg-secondary transition-colors"
         onClick={handleConnectClick}
       >
-        <UserPlus className="mr-1 h-4 w-4" /> Connect
+        <UserPlus className="mr-1.5 h-4 w-4" /> Connect
       </Button>
 
       <ConnectModal
