@@ -9,6 +9,7 @@ import ConnectModal from "@/components/student/ConnectModal";
 import StudentCard from "@/components/student/StudentCard";
 import { useNavigate, Link } from "react-router-dom";
 import { recordProfileView } from "@/hooks/useProfileViewers";
+import { compareRecommendation, scoreRecommendation } from "@/lib/studentOrdering";
 
 interface PeopleToMeetProps {
   profiles: Profile[];
@@ -19,21 +20,6 @@ interface PeopleToMeetProps {
 }
 
 const STORAGE_KEY = "peopleToMeetDismissed";
-
-const scoreProfile = (p: Profile, currentProfile: Profile) => {
-  const myUni = currentProfile.university;
-  const mySemester = currentProfile.semester;
-  const myTags = currentProfile.personality_tags ?? [];
-
-  let score = 0;
-  if (myUni && p.university === myUni) score += 8;
-  if (mySemester && p.semester === mySemester) score += 6;
-  const pTags = p.personality_tags ?? [];
-  const shared = myTags.filter((t) => pTags.includes(t));
-  score += shared.length * 3;
-  if (p.avatar_url) score += 2;
-  return { score, sharedTags: shared };
-};
 
 const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
   profiles,
