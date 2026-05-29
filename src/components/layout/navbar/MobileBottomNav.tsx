@@ -34,7 +34,7 @@ export const MobileBottomNav = ({ isActive }: MobileBottomNavProps) => {
             )}
           </Link>
         ))}
-        <NotificationBell />
+        
         <Link
           to="/profile"
           aria-label="Profile"
