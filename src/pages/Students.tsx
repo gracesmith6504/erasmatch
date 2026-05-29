@@ -116,6 +116,10 @@ const Students = ({ currentUserId }: StudentsProps) => {
       return 3;
     };
 
+    const RECENT_MS = 21 * 24 * 60 * 60 * 1000;
+    const now = Date.now();
+    const ts = (v: string | null | undefined) => (v ? new Date(v).getTime() : 0);
+
     return [...filteredProfiles].sort((a, b) => {
       if (hasUrlTierSort) {
         const tierA = getTier(a);
@@ -123,17 +127,37 @@ const Students = ({ currentUserId }: StudentsProps) => {
         if (tierA !== tierB) return tierA - tierB;
       }
 
+      if (isFilterActive || hasUrlTierSort) {
+        // Tier 1: has profile picture
+        const hasPhotoA = Boolean(a.avatar_url);
+        const hasPhotoB = Boolean(b.avatar_url);
+        if (hasPhotoA !== hasPhotoB) return hasPhotoA ? -1 : 1;
+
+        // Tier 2: joined recently (within 21d)
+        const createdA = ts(a.created_at);
+        const createdB = ts(b.created_at);
+        const recentJoinA = now - createdA <= RECENT_MS;
+        const recentJoinB = now - createdB <= RECENT_MS;
+        if (recentJoinA !== recentJoinB) return recentJoinA ? -1 : 1;
+        if (recentJoinA && recentJoinB && createdA !== createdB) return createdB - createdA;
+
+        // Tier 3: active recently (within 21d)
+        const activeA = ts(a.last_active_at);
+        const activeB = ts(b.last_active_at);
+        const recentActiveA = activeA > 0 && now - activeA <= RECENT_MS;
+        const recentActiveB = activeB > 0 && now - activeB <= RECENT_MS;
+        if (recentActiveA !== recentActiveB) return recentActiveA ? -1 : 1;
+        if (recentActiveA && recentActiveB && activeA !== activeB) return activeB - activeA;
+
+        // Tier 4: profile completeness
+        return getCompletionPercentage(b) - getCompletionPercentage(a);
+      }
+
+      // Default (no filter): keep existing photo-first then completeness
       const hasPhotoA = Boolean(a.avatar_url);
       const hasPhotoB = Boolean(b.avatar_url);
       if (hasPhotoA && !hasPhotoB) return -1;
       if (!hasPhotoA && hasPhotoB) return 1;
-
-      if (isFilterActive) {
-        const activeA = a.last_active_at ? new Date(a.last_active_at).getTime() : 0;
-        const activeB = b.last_active_at ? new Date(b.last_active_at).getTime() : 0;
-        return activeB - activeA;
-      }
-
       return getCompletionPercentage(b) - getCompletionPercentage(a);
     });
   }, [filteredProfiles, isFilterActive, getCompletionPercentage, hasUrlTierSort, urlCity, urlUniversity, universityCountryMap]);
