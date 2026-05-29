@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Profile } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,6 +25,10 @@ const STORAGE_KEY = "peopleToMeetDismissed";
 const RecommendationAvatar = ({ profile, index }: { profile: Profile; index: number }) => {
   const fallbackSrc = profile.avatar_url || undefined;
   const [avatarSrc, setAvatarSrc] = useState(() => transformAvatarUrl(profile.avatar_url, 72));
+
+  useEffect(() => {
+    setAvatarSrc(transformAvatarUrl(profile.avatar_url, 72));
+  }, [profile.avatar_url]);
 
   const initials = profile.name
     ? profile.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
