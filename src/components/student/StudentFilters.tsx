@@ -98,17 +98,15 @@ const StudentFilters = ({
     const q = uniSearch.trim().toLowerCase();
     if (!q) return uniqueUniversities;
     const localHits = uniqueUniversities.filter((u) => u.toLowerCase().includes(q));
-    if (!rpcMatches) return localHits;
-    const uniSet = new Set(uniqueUniversities.map((u) => u.toLowerCase()));
-    const rpcHits = rpcMatches.filter((n) => uniSet.has(n.toLowerCase()));
-    // Merge unique, preserving rpc order then local extras
+    // Merge RPC results (full DB, alias-aware) with local hits — do NOT intersect.
+    // Selecting a university with zero students is fine; the grid will show its empty state.
     const seen = new Set<string>();
     const merged: string[] = [];
-    for (const n of [...rpcHits, ...localHits]) {
+    const source = [...(rpcMatches ?? []), ...localHits];
+    for (const n of source) {
       const key = n.toLowerCase();
       if (!seen.has(key)) {
         seen.add(key);
-        // Use the canonical casing from uniqueUniversities when available
         const canonical = uniqueUniversities.find((u) => u.toLowerCase() === key) || n;
         merged.push(canonical);
       }
