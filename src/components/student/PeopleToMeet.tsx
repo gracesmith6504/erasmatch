@@ -22,6 +22,36 @@ interface PeopleToMeetProps {
 
 const STORAGE_KEY = "peopleToMeetDismissed";
 
+const RecommendationAvatar = ({ profile, index }: { profile: Profile; index: number }) => {
+  const fallbackSrc = profile.avatar_url || undefined;
+  const [avatarSrc, setAvatarSrc] = useState(() => transformAvatarUrl(profile.avatar_url, 72));
+
+  const initials = profile.name
+    ? profile.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
+    : "?";
+
+  return (
+    <Avatar className="h-16 w-16 bg-secondary ring-1 ring-transparent group-hover:ring-border transition-all">
+      {avatarSrc ? (
+        <AvatarImage
+          key={avatarSrc}
+          src={avatarSrc}
+          alt={profile.name || "Student profile photo"}
+          loading={index < 4 ? "eager" : "lazy"}
+          fetchPriority={index < 4 ? "high" : "auto"}
+          decoding="async"
+          onError={() => {
+            if (fallbackSrc && avatarSrc !== fallbackSrc) setAvatarSrc(fallbackSrc);
+          }}
+        />
+      ) : null}
+      <AvatarFallback className="bg-secondary text-foreground text-sm">
+        {initials}
+      </AvatarFallback>
+    </Avatar>
+  );
+};
+
 const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
   profiles,
   currentUserId,
@@ -134,11 +164,6 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
     localStorage.setItem(STORAGE_KEY, "true");
   };
 
-  const getInitials = (name: string | null) => {
-    if (!name) return "?";
-    return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
-  };
-
   // Build smart View all link based on what the section is actually showing
   const viewAllHref = (() => {
     const params = new URLSearchParams();
@@ -202,20 +227,7 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
                 }}
                 className="flex flex-col items-center text-center gap-1.5 flex-shrink-0 w-[88px] snap-start group"
               >
-                <Avatar className="h-16 w-16 ring-1 ring-transparent group-hover:ring-border transition-all">
-                  {p.avatar_url ? (
-                    <AvatarImage
-                      src={transformAvatarUrl(p.avatar_url, 72)}
-                      alt={p.name || "Student profile photo"}
-                      loading={i < 4 ? "eager" : "lazy"}
-                      fetchPriority={i < 4 ? "high" : "auto"}
-                      decoding="async"
-                    />
-                  ) : null}
-                  <AvatarFallback className="bg-secondary text-foreground text-sm">
-                    {getInitials(p.name)}
-                  </AvatarFallback>
-                </Avatar>
+                <RecommendationAvatar profile={p} index={i} />
                 <span className="font-medium text-foreground text-xs truncate max-w-full leading-tight">
                   {p.name?.split(" ")[0] ?? "Student"}
                 </span>
