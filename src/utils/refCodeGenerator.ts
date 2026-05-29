@@ -29,9 +29,9 @@ export const isRefCodeUnique = async (refCode: string): Promise<boolean> => {
     .from('profiles')
     .select('ref_code')
     .eq('ref_code', refCode)
-    .single();
+    .maybeSingle();
 
-  if (error && error.code !== 'PGRST116') {
+  if (error) {
     console.error('Error checking ref_code uniqueness:', error);
     return false;
   }
