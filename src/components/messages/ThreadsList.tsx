@@ -63,7 +63,7 @@ export const ThreadsList = ({
             {/* Avatar with online indicator */}
             <div className="relative shrink-0">
               <Avatar className="h-12 w-12">
-                <AvatarImage src={thread.partner.avatar_url || undefined} />
+                <AvatarImage src={thread.partner.avatar_url ? `${thread.partner.avatar_url}?width=96&height=96&resize=cover&quality=75` : undefined} loading="lazy" decoding="async" />
                 <AvatarFallback className="bg-muted text-muted-foreground text-sm font-medium">
                   {getInitials(thread.partner.name)}
                 </AvatarFallback>

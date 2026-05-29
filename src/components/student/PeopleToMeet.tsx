@@ -234,7 +234,7 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
                   className="flex flex-col items-center gap-2"
                 >
                   <Avatar className="h-14 w-14 border-2 border-card shadow-sm">
-                    {p.avatar_url ? <AvatarImage src={p.avatar_url} loading="lazy" /> : null}
+                    {p.avatar_url ? <AvatarImage src={`${p.avatar_url}?width=144&height=144&resize=cover&quality=75`} loading="lazy" decoding="async" /> : null}
                     <AvatarFallback className="bg-secondary text-foreground text-sm">
                       {getInitials(p.name)}
                     </AvatarFallback>

@@ -47,7 +47,7 @@ export const GroupChatMessage = ({
         {!isCurrentUser && (
           <Link to={`/profile/${senderId}`}>
             <Avatar className="h-8 w-8 mr-2 hover:ring-2 hover:ring-primary/30 transition">
-              <AvatarImage src={senderProfile?.avatar_url || undefined} />
+              <AvatarImage src={senderProfile?.avatar_url ? `${senderProfile.avatar_url}?width=64&height=64&resize=cover&quality=75` : undefined} loading="lazy" decoding="async" />
               <AvatarFallback className="bg-muted">
                 {getInitials(senderProfile?.name)}
               </AvatarFallback>
