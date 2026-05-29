@@ -38,6 +38,12 @@ export const NotificationBell = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
+  // Collapse consecutive notifications from the same actor+type into one (keep most recent)
+  const dedupedNotifications = notifications.filter((n, i, arr) => {
+    const key = `${n.actor_id}|${n.type}`;
+    return arr.findIndex((m) => `${m.actor_id}|${m.type}` === key) === i;
+  });
+
   const handleOpen = (isOpen: boolean) => {
     setOpen(isOpen);
     if (isOpen && unreadCount > 0) {
