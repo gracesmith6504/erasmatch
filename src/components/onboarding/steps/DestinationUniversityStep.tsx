@@ -1,11 +1,10 @@
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, MapPin, School, Check, ChevronsUpDown, Plus } from "lucide-react";
 import { CityAutocomplete } from "@/components/CityAutocomplete";
 import { supabase } from "@/integrations/supabase/client";
-import { useUniversitiesCache } from "@/hooks/useUniversitiesCache";
 import { autoAddUniversity } from "@/components/university/useAutoAddUniversity";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -17,7 +16,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 
-type AliasEntry = { alias: string; university_id: number };
+type UniRow = { id: number; name: string; city: string | null; country: string | null };
 
 const normalizeString = (str: string) =>
   str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
@@ -43,51 +42,42 @@ export const DestinationUniversityStep = ({
   const [uniOpen, setUniOpen] = useState(false);
   const [uniSearch, setUniSearch] = useState("");
   const [isAdding, setIsAdding] = useState(false);
+  const [searchedUniversities, setSearchedUniversities] = useState<UniRow[]>([]);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const reqIdRef = useRef(0);
 
-  const { universities: allUniversities, loading: unisLoading } = useUniversitiesCache();
-  const [aliases, setAliases] = useState<AliasEntry[]>([]);
-
-  // Load aliases once
+  // Server-side search whenever city or query changes
   useEffect(() => {
-    supabase.from("university_aliases").select("alias, university_id").then(({ data }) => {
-      setAliases((data as AliasEntry[]) || []);
-    });
-  }, []);
-
-  // Filter universities by selected city
-  const filteredUniversities = useMemo(() => {
-    if (!city) return [];
-    const cityLower = city.toLowerCase();
-    return allUniversities.filter(
-      (u) => u.city?.toLowerCase() === cityLower
-    );
-  }, [city, allUniversities]);
-
-  // Further filter by search query inside dropdown (with alias support)
-  const searchedUniversities = useMemo(() => {
-    if (!uniSearch.trim()) return filteredUniversities;
-    const q = normalizeString(uniSearch);
-    
-    // Find university IDs that match via aliases
-    const aliasMatchIds = new Set<number>();
-    for (const entry of aliases) {
-      const normalizedAlias = normalizeString(entry.alias);
-      if (normalizedAlias.includes(q) || q.includes(normalizedAlias)) {
-        aliasMatchIds.add(entry.university_id);
-      }
+    if (!city) {
+      setSearchedUniversities([]);
+      return;
     }
-    
-    return filteredUniversities.filter((u) =>
-      normalizeString(u.name).includes(q) || aliasMatchIds.has(u.id)
-    );
-  }, [filteredUniversities, uniSearch, aliases]);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    const myReq = ++reqIdRef.current;
+    debounceRef.current = setTimeout(async () => {
+      const { data, error } = await (supabase as any).rpc("search_universities", {
+        _q: uniSearch.trim(),
+        _limit: 25,
+        _city: city,
+      });
+      if (myReq !== reqIdRef.current) return;
+      if (error) {
+        console.error("search_universities error", error);
+        setSearchedUniversities([]);
+      } else {
+        setSearchedUniversities((data ?? []) as UniRow[]);
+      }
+    }, uniSearch.trim() ? 180 : 0);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [city, uniSearch]);
 
-  // Check if the search query exactly matches an existing result
-  const hasExactMatch = useMemo(() => {
+  const hasExactMatch = (() => {
     if (!uniSearch.trim()) return true;
     const q = normalizeString(uniSearch);
-    return filteredUniversities.some((u) => normalizeString(u.name) === q);
-  }, [filteredUniversities, uniSearch]);
+    return searchedUniversities.some((u) => normalizeString(u.name) === q);
+  })();
 
   const showAddOption = uniSearch.trim().length > 1 && !hasExactMatch && !isAdding;
 
@@ -216,7 +206,7 @@ export const DestinationUniversityStep = ({
                     className="w-[--radix-popover-trigger-width] p-0"
                     align="start"
                   >
-                    <Command>
+                    <Command shouldFilter={false}>
                       <CommandInput
                         placeholder="Search universities..."
                         value={uniSearch}
