@@ -14,9 +14,10 @@ interface StudentCardProps {
   profile: Profile;
   isFeatured?: boolean;
   universityCity?: string | null;
+  priority?: boolean;
 }
 
-const StudentCard = ({ profile, isFeatured = false, universityCity = null }: StudentCardProps) => {
+const StudentCard = ({ profile, isFeatured = false, universityCity = null, priority = false }: StudentCardProps) => {
   const tags = profile.personality_tags || [];
   const visibleTags = tags.slice(0, 3);
   const extraCount = tags.length - 3;
@@ -41,6 +42,7 @@ const StudentCard = ({ profile, isFeatured = false, universityCity = null }: Stu
             name={profile.name}
             className="h-14 w-14"
             lastActiveAt={profile.last_active_at}
+            priority={priority}
           />
           <div className="min-w-0">
             <h3 className="text-xl font-bold text-foreground flex items-center gap-1.5 truncate">
