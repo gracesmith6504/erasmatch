@@ -139,12 +139,13 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters, featuredProfiles = []
       ) : (
         <>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-8">
-            {currentProfiles.map((profile) => (
+            {currentProfiles.map((profile, i) => (
               <StudentCard 
                 key={profile.id} 
                 profile={profile} 
                 isFeatured={currentPage === 1 && featuredProfiles.some(fp => fp.id === profile.id)}
                 universityCity={profile.university ? universityCityMap[profile.university] || null : null}
+                priority={i < 3}
               />
             ))}
           </div>

@@ -3,6 +3,7 @@ import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { transformAvatarUrl } from "@/lib/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
@@ -192,7 +193,7 @@ const UniversityHub = () => {
                     <CardContent className="p-6">
                       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
                         <Avatar className="h-16 w-16 border-2 border-white shadow-sm">
-                          <AvatarImage src={student.avatar_url || undefined} />
+                          <AvatarImage src={transformAvatarUrl(student.avatar_url, 64)} loading="lazy" decoding="async" />
                           <AvatarFallback className="text-lg bg-gradient-to-br from-blue-100 to-purple-100 text-erasmatch-blue">
                             {getInitials(student.name)}
                           </AvatarFallback>

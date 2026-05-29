@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { UserCog, ShieldCheck, Eye, MessageSquare, Loader2, Share2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { transformAvatarUrl } from "@/lib/avatar";
 import { Button } from "@/components/ui/button";
 import { useProfileViewers } from "@/hooks/useProfileViewers";
 import { useNavigate } from "react-router-dom";
@@ -106,7 +107,7 @@ const Profile = () => {
                           onClick={() => navigate(`/profile/${viewer.id}`)}
                         >
                           <Avatar className="h-10 w-10 shrink-0">
-                            <AvatarImage src={viewer.avatar_url || undefined} alt={viewer.name || "User"} />
+                            <AvatarImage src={transformAvatarUrl(viewer.avatar_url, 40)} alt={viewer.name || "User"} loading="lazy" decoding="async" />
                             <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">
                               {viewer.name ? viewer.name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2) : "?"}
                             </AvatarFallback>

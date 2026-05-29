@@ -215,13 +215,13 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
 
         {effectiveFullPage ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {scored.map(({ profile: p }) => (
-              <StudentCard key={p.id} profile={p} universityCity={p.city} />
+            {scored.map(({ profile: p }, i) => (
+              <StudentCard key={p.id} profile={p} universityCity={p.city} priority={i < 3} />
             ))}
           </div>
         ) : (
           <div className="flex gap-3 overflow-x-auto pb-2 sm:pb-0 sm:grid sm:grid-cols-5 scrollbar-hide">
-            {scored.map(({ profile: p, sharedTags }) => (
+            {scored.map(({ profile: p, sharedTags }, i) => (
               <div
                 key={p.id}
                 className="rounded-lg border border-border bg-card flex flex-col items-center text-center gap-2 flex-shrink-0 w-[200px] sm:w-auto p-4"
@@ -234,7 +234,14 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
                   className="flex flex-col items-center gap-2"
                 >
                   <Avatar className="h-14 w-14 border-2 border-card shadow-sm">
-                    {p.avatar_url ? <AvatarImage src={`${p.avatar_url}?width=144&height=144&resize=cover&quality=75`} loading="lazy" decoding="async" /> : null}
+                    {p.avatar_url ? (
+                      <AvatarImage
+                        src={`${p.avatar_url}?width=144&height=144&resize=cover&quality=75`}
+                        loading={i < 3 ? "eager" : "lazy"}
+                        fetchPriority={i < 3 ? "high" : "auto"}
+                        decoding="async"
+                      />
+                    ) : null}
                     <AvatarFallback className="bg-secondary text-foreground text-sm">
                       {getInitials(p.name)}
                     </AvatarFallback>

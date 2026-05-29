@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { transformAvatarUrl } from "@/lib/avatar";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
@@ -37,7 +38,7 @@ export const ReferralBanner = () => {
         <div className="flex items-center gap-3">
           <Avatar className="h-9 w-9 border-2 border-primary/30">
             {referrer.avatar_url ? (
-              <AvatarImage src={referrer.avatar_url} alt={firstName || "Referrer"} />
+              <AvatarImage src={transformAvatarUrl(referrer.avatar_url, 36)} alt={firstName || "Referrer"} loading="lazy" decoding="async" />
             ) : null}
             <AvatarFallback className="bg-primary/10 text-primary text-sm font-bold">
               {firstName?.[0]?.toUpperCase() || "?"}

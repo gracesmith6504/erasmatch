@@ -2,6 +2,7 @@ import { Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { transformAvatarUrl } from "@/lib/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useNotifications, Notification } from "@/hooks/useNotifications";
 import { useAuth } from "@/contexts/AuthContext";
@@ -84,7 +85,7 @@ export const NotificationBell = () => {
                   }`}
                 >
                   <Avatar className="h-8 w-8 shrink-0 mt-0.5">
-                    <AvatarImage src={n.actor_profile?.avatar_url || ""} />
+                    <AvatarImage src={transformAvatarUrl(n.actor_profile?.avatar_url, 32)} loading="lazy" decoding="async" />
                     <AvatarFallback className="text-xs">
                       {n.actor_profile?.name?.charAt(0)?.toUpperCase() || "?"}
                     </AvatarFallback>

@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { transformAvatarUrl } from "@/lib/avatar";
 import { Home, School, Calendar, User, LogIn } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile } from "@/types";
@@ -110,7 +111,7 @@ const PublicProfile = () => {
         <div className="h-32 bg-gradient-to-r from-erasmatch-green/30 to-erasmatch-blue/30"></div>
         <div className="-mt-16 flex justify-center">
           <Avatar className="w-32 h-32 rounded-full border-4 border-card bg-card">
-            <AvatarImage src={profile.avatar_url || undefined} alt={profile.name || "Profile"} />
+            <AvatarImage src={transformAvatarUrl(profile.avatar_url, 128)} alt={profile.name || "Profile"} fetchPriority="high" decoding="async" />
             <AvatarFallback className="bg-secondary text-foreground text-2xl">
               {getInitials(profile.name)}
             </AvatarFallback>
