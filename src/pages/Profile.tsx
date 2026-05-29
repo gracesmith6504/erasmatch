@@ -107,7 +107,7 @@ const Profile = () => {
                           onClick={() => navigate(`/profile/${viewer.id}`)}
                         >
                           <Avatar className="h-10 w-10 shrink-0">
-                            <AvatarImage src={viewer.avatar_url || undefined} alt={viewer.name || "User"} />
+                            <AvatarImage src={transformAvatarUrl(viewer.avatar_url, 40)} alt={viewer.name || "User"} loading="lazy" decoding="async" />
                             <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">
                               {viewer.name ? viewer.name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2) : "?"}
                             </AvatarFallback>
