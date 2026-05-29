@@ -95,6 +95,20 @@ export const OnboardingFlow = () => {
 
   const handleCompleteOnboarding = async () => {
     try {
+      // Guard: don't mark complete if essential fields are missing.
+      const missing: { field: string; step: number; label: string }[] = [];
+      if (!currentUserProfile?.name?.trim()) missing.push({ field: "name", step: 0, label: "your name" });
+      if (!currentUserProfile?.city?.trim()) missing.push({ field: "city", step: 1, label: "your destination city" });
+      if (!currentUserProfile?.home_university?.trim()) missing.push({ field: "home_university", step: 2, label: "your home university" });
+      if (!currentUserProfile?.semester?.trim()) missing.push({ field: "semester", step: 3, label: "your semester" });
+      if (missing.length > 0) {
+        const first = missing[0];
+        toast.error(`Please add ${first.label} before continuing.`);
+        setDirection(-1);
+        setCurrentStep(first.step);
+        return;
+      }
+
       window.posthog?.capture("onboarding_step_submitted", {
         step: 5,
         step_name: "photo",
@@ -107,6 +121,7 @@ export const OnboardingFlow = () => {
         has_avatar: !!currentUserProfile?.avatar_url,
         tags_count: currentUserProfile?.personality_tags?.length || 0,
       });
+
       completingRef.current = true;
       const refCode = await generateUniqueRefCode(currentUserProfile?.name || "");
 
