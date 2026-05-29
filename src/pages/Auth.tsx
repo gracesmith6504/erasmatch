@@ -120,15 +120,21 @@ const Auth = ({ onLogin }: AuthProps) => {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/onboarding`,
+          },
         });
 
         if (error) throw error;
-        
-        if (data.user) {
+
+        if (data.session) {
+          // Session is live; AuthProvider will create the profile and
+          // navigate to /onboarding. Navigate as a fallback in case
+          // onAuthStateChange hasn't propagated yet.
           onLogin(email);
-          navigate("/onboarding");
+          navigate("/onboarding", { replace: true });
           return;
-        } else {
+        } else if (data.user) {
           toast.info("Please check your email to confirm your registration");
         }
       } else {
