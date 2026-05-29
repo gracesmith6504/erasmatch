@@ -73,12 +73,13 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
     const excludeSet = new Set([currentUserId, ...messagedIds]);
     const eligible = profiles.filter((p) => !excludeSet.has(p.id) && !p.deleted_at);
     const limit = fullPage ? 12 : 10;
+    const rank = (list: Profile[]) =>
+      [...list]
+        .sort((a, b) => compareRecommendation(a, b, currentProfile))
+        .map((p) => ({ profile: p, score: scoreRecommendation(p, currentProfile) }));
 
     if (myCity) {
-      const cityMatches = eligible
-        .filter((p) => p.city === myCity)
-        .map((p) => ({ profile: p, ...scoreProfile(p, currentProfile) }))
-        .sort((a, b) => b.score - a.score);
+      const cityMatches = rank(eligible.filter((p) => p.city === myCity));
 
       if (cityMatches.length >= 3) {
         return { scored: cityMatches.slice(0, limit), destinationName: myCity, destinationKind: "city" as const };
@@ -87,10 +88,9 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
       const myCountry = currentProfile.university ? uniCountryMap[currentProfile.university] : undefined;
       if (myCountry) {
         const cityMatchIds = new Set(cityMatches.map((m) => m.profile.id));
-        const countryMatches = eligible
-          .filter((p) => !cityMatchIds.has(p.id) && p.university && uniCountryMap[p.university] === myCountry)
-          .map((p) => ({ profile: p, ...scoreProfile(p, currentProfile) }))
-          .sort((a, b) => b.score - a.score);
+        const countryMatches = rank(
+          eligible.filter((p) => !cityMatchIds.has(p.id) && p.university && uniCountryMap[p.university] === myCountry)
+        );
 
         const combined = [...cityMatches, ...countryMatches].slice(0, limit);
         if (combined.length > 0) {
@@ -110,11 +110,9 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
 
     const myCountry = currentProfile.university ? uniCountryMap[currentProfile.university] : undefined;
     if (myCountry) {
-      const countryMatches = eligible
-        .filter((p) => p.university && uniCountryMap[p.university] === myCountry)
-        .map((p) => ({ profile: p, ...scoreProfile(p, currentProfile) }))
-        .sort((a, b) => b.score - a.score)
-        .slice(0, limit);
+      const countryMatches = rank(
+        eligible.filter((p) => p.university && uniCountryMap[p.university] === myCountry)
+      ).slice(0, limit);
 
       if (countryMatches.length > 0) {
         return { scored: countryMatches, destinationName: myCountry, destinationKind: "country" as const };
