@@ -14,6 +14,420 @@ export type Database = {
   }
   public: {
     Tables: {
+      _dedup_audit_addedalias_20260529: {
+        Row: {
+          alias: string | null
+          university_id: number | null
+        }
+        Insert: {
+          alias?: string | null
+          university_id?: number | null
+        }
+        Update: {
+          alias?: string | null
+          university_id?: number | null
+        }
+        Relationships: []
+      }
+      _dedup_audit_addedalias_b_20260529: {
+        Row: {
+          alias: string | null
+          university_id: number | null
+        }
+        Insert: {
+          alias?: string | null
+          university_id?: number | null
+        }
+        Update: {
+          alias?: string | null
+          university_id?: number | null
+        }
+        Relationships: []
+      }
+      _dedup_audit_addedalias_c_20260529: {
+        Row: {
+          alias: string | null
+          university_id: number | null
+        }
+        Insert: {
+          alias?: string | null
+          university_id?: number | null
+        }
+        Update: {
+          alias?: string | null
+          university_id?: number | null
+        }
+        Relationships: []
+      }
+      _dedup_audit_alias_20260529: {
+        Row: {
+          alias: string | null
+          created_at: string | null
+          id: string | null
+          university_id: number | null
+        }
+        Insert: {
+          alias?: string | null
+          created_at?: string | null
+          id?: string | null
+          university_id?: number | null
+        }
+        Update: {
+          alias?: string | null
+          created_at?: string | null
+          id?: string | null
+          university_id?: number | null
+        }
+        Relationships: []
+      }
+      _dedup_audit_alias_b_20260529: {
+        Row: {
+          alias: string | null
+          created_at: string | null
+          id: string | null
+          university_id: number | null
+        }
+        Insert: {
+          alias?: string | null
+          created_at?: string | null
+          id?: string | null
+          university_id?: number | null
+        }
+        Update: {
+          alias?: string | null
+          created_at?: string | null
+          id?: string | null
+          university_id?: number | null
+        }
+        Relationships: []
+      }
+      _dedup_audit_alias_c_20260529: {
+        Row: {
+          alias: string | null
+          created_at: string | null
+          id: string | null
+          university_id: number | null
+        }
+        Insert: {
+          alias?: string | null
+          created_at?: string | null
+          id?: string | null
+          university_id?: number | null
+        }
+        Update: {
+          alias?: string | null
+          created_at?: string | null
+          id?: string | null
+          university_id?: number | null
+        }
+        Relationships: []
+      }
+      _dedup_audit_eche_20260529: {
+        Row: {
+          country_code: string | null
+          eche_code: string | null
+          id: number | null
+        }
+        Insert: {
+          country_code?: string | null
+          eche_code?: string | null
+          id?: number | null
+        }
+        Update: {
+          country_code?: string | null
+          eche_code?: string | null
+          id?: number | null
+        }
+        Relationships: []
+      }
+      _dedup_audit_eche_b_20260529: {
+        Row: {
+          country_code: string | null
+          eche_code: string | null
+          id: number | null
+        }
+        Insert: {
+          country_code?: string | null
+          eche_code?: string | null
+          id?: number | null
+        }
+        Update: {
+          country_code?: string | null
+          eche_code?: string | null
+          id?: number | null
+        }
+        Relationships: []
+      }
+      _dedup_audit_eche_c_20260529: {
+        Row: {
+          country_code: string | null
+          eche_code: string | null
+          id: number | null
+        }
+        Insert: {
+          country_code?: string | null
+          eche_code?: string | null
+          id?: number | null
+        }
+        Update: {
+          country_code?: string | null
+          eche_code?: string | null
+          id?: number | null
+        }
+        Relationships: []
+      }
+      _dedup_audit_gm_20260529: {
+        Row: {
+          id: string | null
+          university_name: string | null
+        }
+        Insert: {
+          id?: string | null
+          university_name?: string | null
+        }
+        Update: {
+          id?: string | null
+          university_name?: string | null
+        }
+        Relationships: []
+      }
+      _dedup_audit_gm_b_20260529: {
+        Row: {
+          id: string | null
+          university_name: string | null
+        }
+        Insert: {
+          id?: string | null
+          university_name?: string | null
+        }
+        Update: {
+          id?: string | null
+          university_name?: string | null
+        }
+        Relationships: []
+      }
+      _dedup_audit_gm_c_20260529: {
+        Row: {
+          id: string | null
+          university_name: string | null
+        }
+        Insert: {
+          id?: string | null
+          university_name?: string | null
+        }
+        Update: {
+          id?: string | null
+          university_name?: string | null
+        }
+        Relationships: []
+      }
+      _dedup_audit_profiles_20260529: {
+        Row: {
+          id: string | null
+          university: string | null
+        }
+        Insert: {
+          id?: string | null
+          university?: string | null
+        }
+        Update: {
+          id?: string | null
+          university?: string | null
+        }
+        Relationships: []
+      }
+      _dedup_audit_profiles_b_20260529: {
+        Row: {
+          id: string | null
+          university: string | null
+        }
+        Insert: {
+          id?: string | null
+          university?: string | null
+        }
+        Update: {
+          id?: string | null
+          university?: string | null
+        }
+        Relationships: []
+      }
+      _dedup_audit_profiles_c_20260529: {
+        Row: {
+          id: string | null
+          university: string | null
+        }
+        Insert: {
+          id?: string | null
+          university?: string | null
+        }
+        Update: {
+          id?: string | null
+          university?: string | null
+        }
+        Relationships: []
+      }
+      _dedup_audit_uni_20260529: {
+        Row: {
+          accommodation_info: string | null
+          city: string | null
+          country: string | null
+          country_code: string | null
+          eche_code: string | null
+          erasmus_tips: string | null
+          id: number | null
+          image_url: string | null
+          links: Json | null
+          name: string | null
+          overview: string | null
+          popular_courses: string | null
+          slug: string | null
+          source: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          accommodation_info?: string | null
+          city?: string | null
+          country?: string | null
+          country_code?: string | null
+          eche_code?: string | null
+          erasmus_tips?: string | null
+          id?: number | null
+          image_url?: string | null
+          links?: Json | null
+          name?: string | null
+          overview?: string | null
+          popular_courses?: string | null
+          slug?: string | null
+          source?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          accommodation_info?: string | null
+          city?: string | null
+          country?: string | null
+          country_code?: string | null
+          eche_code?: string | null
+          erasmus_tips?: string | null
+          id?: number | null
+          image_url?: string | null
+          links?: Json | null
+          name?: string | null
+          overview?: string | null
+          popular_courses?: string | null
+          slug?: string | null
+          source?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      _dedup_audit_uni_b_20260529: {
+        Row: {
+          accommodation_info: string | null
+          city: string | null
+          country: string | null
+          country_code: string | null
+          eche_code: string | null
+          erasmus_tips: string | null
+          id: number | null
+          image_url: string | null
+          links: Json | null
+          name: string | null
+          overview: string | null
+          popular_courses: string | null
+          slug: string | null
+          source: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          accommodation_info?: string | null
+          city?: string | null
+          country?: string | null
+          country_code?: string | null
+          eche_code?: string | null
+          erasmus_tips?: string | null
+          id?: number | null
+          image_url?: string | null
+          links?: Json | null
+          name?: string | null
+          overview?: string | null
+          popular_courses?: string | null
+          slug?: string | null
+          source?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          accommodation_info?: string | null
+          city?: string | null
+          country?: string | null
+          country_code?: string | null
+          eche_code?: string | null
+          erasmus_tips?: string | null
+          id?: number | null
+          image_url?: string | null
+          links?: Json | null
+          name?: string | null
+          overview?: string | null
+          popular_courses?: string | null
+          slug?: string | null
+          source?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      _dedup_audit_uni_c_20260529: {
+        Row: {
+          accommodation_info: string | null
+          city: string | null
+          country: string | null
+          country_code: string | null
+          eche_code: string | null
+          erasmus_tips: string | null
+          id: number | null
+          image_url: string | null
+          links: Json | null
+          name: string | null
+          overview: string | null
+          popular_courses: string | null
+          slug: string | null
+          source: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          accommodation_info?: string | null
+          city?: string | null
+          country?: string | null
+          country_code?: string | null
+          eche_code?: string | null
+          erasmus_tips?: string | null
+          id?: number | null
+          image_url?: string | null
+          links?: Json | null
+          name?: string | null
+          overview?: string | null
+          popular_courses?: string | null
+          slug?: string | null
+          source?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          accommodation_info?: string | null
+          city?: string | null
+          country?: string | null
+          country_code?: string | null
+          eche_code?: string | null
+          erasmus_tips?: string | null
+          id?: number | null
+          image_url?: string | null
+          links?: Json | null
+          name?: string | null
+          overview?: string | null
+          popular_courses?: string | null
+          slug?: string | null
+          source?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       blocked_users: {
         Row: {
           blocked_id: string
@@ -72,6 +486,66 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      dedup_enrich_20260529: {
+        Row: {
+          canonical_id: number | null
+          eche_code: string | null
+        }
+        Insert: {
+          canonical_id?: number | null
+          eche_code?: string | null
+        }
+        Update: {
+          canonical_id?: number | null
+          eche_code?: string | null
+        }
+        Relationships: []
+      }
+      dedup_map_20260529: {
+        Row: {
+          canonical_id: number | null
+          dup_id: number | null
+        }
+        Insert: {
+          canonical_id?: number | null
+          dup_id?: number | null
+        }
+        Update: {
+          canonical_id?: number | null
+          dup_id?: number | null
+        }
+        Relationships: []
+      }
+      dedup_map_b_20260529: {
+        Row: {
+          canonical_id: number | null
+          dup_id: number | null
+        }
+        Insert: {
+          canonical_id?: number | null
+          dup_id?: number | null
+        }
+        Update: {
+          canonical_id?: number | null
+          dup_id?: number | null
+        }
+        Relationships: []
+      }
+      dedup_map_c_20260529: {
+        Row: {
+          canonical_id: number | null
+          dup_id: number | null
+        }
+        Insert: {
+          canonical_id?: number | null
+          dup_id?: number | null
+        }
+        Update: {
+          canonical_id?: number | null
+          dup_id?: number | null
+        }
+        Relationships: []
       }
       email_notification_log: {
         Row: {
@@ -335,6 +809,8 @@ export type Database = {
           accommodation_info: string | null
           city: string | null
           country: string | null
+          country_code: string | null
+          eche_code: string | null
           erasmus_tips: string | null
           id: number
           image_url: string | null
@@ -342,11 +818,16 @@ export type Database = {
           name: string
           overview: string | null
           popular_courses: string | null
+          slug: string | null
+          source: string
+          updated_at: string
         }
         Insert: {
           accommodation_info?: string | null
           city?: string | null
           country?: string | null
+          country_code?: string | null
+          eche_code?: string | null
           erasmus_tips?: string | null
           id?: number
           image_url?: string | null
@@ -354,11 +835,16 @@ export type Database = {
           name: string
           overview?: string | null
           popular_courses?: string | null
+          slug?: string | null
+          source?: string
+          updated_at?: string
         }
         Update: {
           accommodation_info?: string | null
           city?: string | null
           country?: string | null
+          country_code?: string | null
+          eche_code?: string | null
           erasmus_tips?: string | null
           id?: number
           image_url?: string | null
@@ -366,6 +852,9 @@ export type Database = {
           name?: string
           overview?: string | null
           popular_courses?: string | null
+          slug?: string | null
+          source?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -421,6 +910,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      app_uni_norm: { Args: { t: string }; Returns: string }
       get_city_preview_avatars: {
         Args: { _city_name: string }
         Returns: {

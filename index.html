@@ -45,6 +45,16 @@
       var isPreviewEnvironment = typeof window !== 'undefined' && (window.location.hostname.includes('lovableproject.com') || window.location.hostname.includes('lovable.app'));
       if (!isPreviewEnvironment) {
         posthog.init('phc_mB4tLHsYfXfiNbQKSjMfLxZHvorupqX9P5FsBMD7nNvq',{api_host:'https://eu.i.posthog.com',person_profiles:'identified_only'});
+      } else {
+        // Replace stub with a no-op proxy so callers like window.posthog.capture(...) don't crash
+        // when init() is skipped (the stub only attaches methods inside init()).
+        var noop = function () {};
+        window.posthog = new Proxy({}, {
+          get: function (_t, prop) {
+            if (prop === 'people') return new Proxy({}, { get: function () { return noop; } });
+            return noop;
+          }
+        });
       }
     </script>
 
