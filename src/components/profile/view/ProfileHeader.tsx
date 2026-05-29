@@ -45,7 +45,7 @@ export const ProfileHeader = ({ profile, isOwnProfile }: ProfileHeaderProps) => 
   return (
     <div className="text-center px-4 pt-6 pb-4 bg-indigo-50 rounded-b-2xl">
       <Avatar className="w-24 h-24 rounded-full mx-auto text-xl font-bold bg-indigo-200 text-white flex items-center justify-center">
-        <AvatarImage src={profile.avatar_url || undefined} alt={profile.name || "Profile"} />
+        <AvatarImage src={profile.avatar_url ? `${profile.avatar_url}?width=240&height=240&resize=cover&quality=80` : undefined} alt={profile.name || "Profile"} decoding="async" />
         <AvatarFallback>
           {getInitials(profile.name)}
         </AvatarFallback>
