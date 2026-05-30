@@ -1,6 +1,6 @@
 
 import { useLocation } from "react-router-dom";
-import { Home, MessageSquare, Users } from "lucide-react";
+import { Home, MessageSquare, Users, UsersRound } from "lucide-react";
 import { useUnreadMessageCount } from "@/hooks/useUnreadMessageCount";
 import { useAuth } from "@/contexts/AuthContext";
 
