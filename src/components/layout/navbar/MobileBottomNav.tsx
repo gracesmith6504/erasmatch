@@ -13,7 +13,10 @@ export const MobileBottomNav = ({ isActive }: MobileBottomNavProps) => {
   if (location.pathname === "/messages") return null;
 
   return (
-    <div className="md:hidden fixed bottom-4 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
+    <div
+      className="md:hidden fixed left-0 right-0 z-50 flex justify-center px-4 pointer-events-none"
+      style={{ bottom: `calc(1rem + env(safe-area-inset-bottom, 0px))` }}
+    >
       <div className="bg-card/90 backdrop-blur-xl shadow-elevated rounded-full flex items-center px-1.5 py-1.5 gap-0.5 border border-border/60 pointer-events-auto">
         {navigationItems.map((item) => (
           <Link

@@ -89,14 +89,14 @@ export const ParticipantsDialog = ({
                   )}
                 </div>
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="icon"
-                  className="shrink-0 h-9 w-9 sm:h-9 sm:w-auto sm:px-3"
+                  className="shrink-0 h-9 w-9 sm:h-9 sm:w-auto sm:px-3 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary"
                   onClick={() => handleMessage(participant.id)}
                   aria-label={`Message ${participant.name || "member"}`}
                 >
-                  <Mail className="h-4 w-4 sm:mr-1" />
-                  <span className="hidden sm:inline">Message</span>
+                  <Mail className="h-4 w-4 sm:mr-1.5" />
+                  <span className="hidden sm:inline text-sm font-medium">Message</span>
                 </Button>
               </div>
             ))}
