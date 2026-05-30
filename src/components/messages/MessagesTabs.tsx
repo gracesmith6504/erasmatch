@@ -1,6 +1,6 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, MapPin } from "lucide-react";
+import { MessageSquare, Users, MapPin } from "lucide-react";
 import { ReactNode, useEffect } from "react";
 
 interface MessagesTabsProps {
@@ -38,13 +38,18 @@ export const MessagesTabs = ({
     >
       <TabsList className="w-full">
         <TabsTrigger value="direct" className="flex-1">
-          Direct Messages
+          <MessageSquare className="h-4 w-4 sm:mr-2" />
+          <span className="hidden sm:inline">Direct Messages</span>
+          <span className="sm:hidden ml-1.5">Direct</span>
         </TabsTrigger>
         <TabsTrigger value="groups" className="flex-1">
-          <Users className="h-4 w-4 mr-2" /> University
+          <Users className="h-4 w-4 sm:mr-2" />
+          <span className="hidden sm:inline ml-0">University</span>
+          <span className="sm:hidden ml-1.5">Uni</span>
         </TabsTrigger>
         <TabsTrigger value="cities" className="flex-1">
-          <MapPin className="h-4 w-4 mr-2" /> City
+          <MapPin className="h-4 w-4 sm:mr-2" />
+          <span className="ml-1.5 sm:ml-0">City</span>
         </TabsTrigger>
       </TabsList>
       
