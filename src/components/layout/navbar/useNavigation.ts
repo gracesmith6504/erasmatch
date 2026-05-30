@@ -35,7 +35,7 @@ export const useNavigation = () => {
     {
       name: "Groups",
       path: "/groups",
-      icon: Users,
+      icon: UsersRound,
       badge: 0,
     }
   ];
