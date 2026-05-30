@@ -1,0 +1,126 @@
+/* Fonts are loaded from index.html via <link> with preconnect — avoids
+   the render-blocking CSS @import waterfall and improves LCP. */
+
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+ 
+@layer base {
+  :root {
+    --background: 40 33% 98%;
+    --foreground: 220 20% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 12%;
+ 
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 12%;
+ 
+    --primary: 220 20% 12%;
+    --primary-foreground: 40 33% 98%;
+ 
+    --secondary: 35 30% 93%;
+    --secondary-foreground: 220 20% 12%;
+ 
+    --muted: 35 20% 94%;
+    --muted-foreground: 220 10% 46%;
+ 
+    --accent: 160 84% 39%;
+    --accent-foreground: 0 0% 100%;
+ 
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 30 15% 90%;
+    --input: 30 15% 90%;
+    --ring: 220 20% 12%;
+ 
+    --radius: 0.75rem;
+    
+    /* Sidebar */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 20% 12%;
+    --sidebar-primary: 220 20% 12%;
+    --sidebar-primary-foreground: 40 33% 98%;
+    --sidebar-accent: 35 30% 93%;
+    --sidebar-accent-foreground: 220 20% 12%;
+    --sidebar-border: 30 15% 90%;
+    --sidebar-ring: 220 20% 12%;
+
+    /* ErasMatch brand colors */
+    --erasmatch-blue: 225 76% 52%;
+    --erasmatch-purple: 265 60% 55%;
+    --erasmatch-green: 160 84% 39%;
+    --erasmatch-orange: 24 95% 53%;
+    --erasmatch-yellow: 45 93% 58%;
+    --erasmatch-coral: 4 90% 62%;
+    --erasmatch-navy: 222 47% 11%;
+    --erasmatch-cream: 40 33% 96%;
+    --erasmatch-sand: 35 30% 88%;
+  }
+ 
+  .dark {
+    --background: 222 47% 6%;
+    --foreground: 40 33% 96%;
+
+    --card: 222 47% 8%;
+    --card-foreground: 40 33% 96%;
+
+    --popover: 222 47% 8%;
+    --popover-foreground: 40 33% 96%;
+
+    --primary: 40 33% 96%;
+    --primary-foreground: 222 47% 6%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 40 33% 96%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 160 84% 39%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 40 33% 96%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 212 27% 84%;
+  }
+}
+ 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground overflow-x-hidden;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  @media (max-width: 768px) {
+    html {
+      font-size: 16px;
+    }
+
+    input, select, textarea {
+      @apply py-2.5 px-4 text-base;
+    }
+  }
+}
+
+@layer utilities {
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--erasmatch-blue)), hsl(var(--erasmatch-green)));
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
