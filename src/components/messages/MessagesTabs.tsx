@@ -1,6 +1,6 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, MapPin } from "lucide-react";
+import { MessageSquare, Users, MapPin } from "lucide-react";
 import { ReactNode, useEffect } from "react";
 
 interface MessagesTabsProps {
