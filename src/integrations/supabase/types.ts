@@ -41,6 +41,21 @@ export type Database = {
         }
         Relationships: []
       }
+      city_aliases: {
+        Row: {
+          alias: string
+          canonical: string
+        }
+        Insert: {
+          alias: string
+          canonical: string
+        }
+        Update: {
+          alias?: string
+          canonical?: string
+        }
+        Relationships: []
+      }
       city_messages: {
         Row: {
           city_name: string
@@ -437,6 +452,7 @@ export type Database = {
     }
     Functions: {
       app_uni_norm: { Args: { t: string }; Returns: string }
+      clean_city: { Args: { raw: string }; Returns: string }
       get_city_preview_avatars: {
         Args: { _city_name: string }
         Returns: {
