@@ -27,6 +27,8 @@ const Students = ({ currentUserId }: StudentsProps) => {
   const urlParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
   const urlCity = urlParams.get("city") || undefined;
   const urlUniversity = urlParams.get("university") || undefined;
+  const urlSeason = urlParams.get("season") || undefined;
+  const urlOverlap = urlParams.get("overlap") === "1";
 
   const {
     universityFilter,
@@ -52,6 +54,8 @@ const Students = ({ currentUserId }: StudentsProps) => {
   } = useStudentsData(profiles, currentUserId, {
     city: urlCity,
     university: urlUniversity,
+    season: urlSeason,
+    overlap: urlOverlap,
   });
 
 
@@ -90,6 +94,41 @@ const Students = ({ currentUserId }: StudentsProps) => {
       behavior: 'smooth'
     });
   }, [location, profiles, currentUserId]);
+
+  // Sync season filter to URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const desired = seasonFilter.map(encodeURIComponent).join(",");
+    if (seasonFilter.length > 0) {
+      if (params.get("season") !== desired) {
+        params.set("season", desired);
+        window.history.replaceState(null, "", `${window.location.pathname}?${params.toString()}`);
+      }
+    } else {
+      if (params.has("season")) {
+        params.delete("season");
+        const query = params.toString();
+        window.history.replaceState(null, "", query ? `${window.location.pathname}?${query}` : window.location.pathname);
+      }
+    }
+  }, [seasonFilter]);
+
+  // Sync overlap toggle to URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (overlapOnly) {
+      if (params.get("overlap") !== "1") {
+        params.set("overlap", "1");
+        window.history.replaceState(null, "", `${window.location.pathname}?${params.toString()}`);
+      }
+    } else {
+      if (params.has("overlap")) {
+        params.delete("overlap");
+        const query = params.toString();
+        window.history.replaceState(null, "", query ? `${window.location.pathname}?${query}` : window.location.pathname);
+      }
+    }
+  }, [overlapOnly]);
 
   const getCompletionPercentage = useCallback((profile: Profile) => {
     const fields = [
