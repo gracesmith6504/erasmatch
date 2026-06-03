@@ -408,14 +408,23 @@ const StudentFilters = ({
               </button>
             </div>
           )}
-          {semesterFilter.length > 0 && (
+          {overlapOnly && (
             <div className="inline-flex items-center text-xs bg-erasmatch-coral/10 text-erasmatch-coral py-1 px-2 rounded-full">
-              {semesterFilter.length} semester{semesterFilter.length > 1 ? 's' : ''}
-              <button className="ml-1" onClick={() => setSemesterFilter([])}>
+              Overlapping my stay
+              <button className="ml-1" onClick={() => setOverlapOnly(false)}>
                 <X className="h-3 w-3" />
               </button>
             </div>
           )}
+          {seasonFilter.length > 0 && (
+            <div className="inline-flex items-center text-xs bg-erasmatch-coral/10 text-erasmatch-coral py-1 px-2 rounded-full">
+              {seasonFilter.length} season{seasonFilter.length > 1 ? 's' : ''}
+              <button className="ml-1" onClick={() => setSeasonFilter([])}>
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          )}
+
           {personalityTagsFilter.length > 0 && (
             <div className="inline-flex items-center text-xs bg-erasmatch-blue/10 text-erasmatch-blue py-1 px-2 rounded-full">
               {personalityTagsFilter.length} personality tag{personalityTagsFilter.length > 1 ? 's' : ''}
