@@ -1,0 +1,161 @@
+
+import { useState, useEffect, useMemo } from "react";
+import { Profile } from "@/types";
+import { supabase } from "@/integrations/supabase/client";
+import { useBlockedUsers } from "@/hooks/useBlockedUsers";
+import {
+  parseSemester,
+  getArrivalSeason,
+  seasonLabel,
+  rangesOverlap,
+  buildSeasonOptions,
+  formatWindow,
+} from "@/lib/semesterParsing";
+
+interface InitialFilters {
+  city?: string;
+  university?: string;
+}
+
+export const useStudentsData = (initialProfiles: Profile[], currentUserId: string | null, initialFilters?: InitialFilters) => {
+  const { blockedIds } = useBlockedUsers();
+  const [universityFilter, setUniversityFilter] = useState(initialFilters?.university || "");
+  const [cityFilter, setCityFilter] = useState(initialFilters?.city || "");
+  const [personalityTagsFilter, setPersonalityTagsFilter] = useState<string[]>([]);
+  const [seasonFilter, setSeasonFilter] = useState<string[]>([]);
+  const [overlapOnly, setOverlapOnly] = useState(false);
+
+  const [universityCityMap, setUniversityCityMap] = useState<Record<string, string>>({});
+  const [universityCountryMap, setUniversityCountryMap] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUniversityData = async () => {
+      try {
+        const { data } = await supabase
+          .from('universities')
+          .select('name, city, country');
+
+        const cityMap: Record<string, string> = {};
+        const countryMap: Record<string, string> = {};
+        if (data) {
+          for (const uni of data) {
+            if (uni.name && uni.city) cityMap[uni.name] = uni.city;
+            if (uni.name && uni.country) countryMap[uni.name] = uni.country;
+          }
+        }
+        setUniversityCityMap(cityMap);
+        setUniversityCountryMap(countryMap);
+      } catch (error) {
+        console.error('Error fetching university data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUniversityData();
+  }, []);
+
+  useEffect(() => {
+    if (initialProfiles.length > 0) {
+      setLoading(false);
+    }
+  }, [initialProfiles]);
+
+  useEffect(() => {
+    setUniversityFilter(initialFilters?.university || "");
+    setCityFilter(initialFilters?.city || "");
+  }, [initialFilters?.university, initialFilters?.city]);
+
+  const uniqueUniversities = useMemo(() =>
+    [...new Set(initialProfiles.map(p => p.university).filter(Boolean))]
+      .sort((a, b) => a!.localeCompare(b!)) as string[],
+    [initialProfiles]
+  );
+
+  const uniqueCities = useMemo(() =>
+    [...new Set(initialProfiles.map(p => p.city).filter(Boolean))]
+      .sort((a, b) => a!.localeCompare(b!)) as string[],
+    [initialProfiles]
+  );
+
+  const seasonOptions = useMemo(
+    () => buildSeasonOptions(initialProfiles.map(p => p.semester)),
+    [initialProfiles]
+  );
+
+  const currentUserWindow = useMemo(() => {
+    if (!currentUserId) return null;
+    const me = initialProfiles.find(p => p.id === currentUserId);
+    return parseSemester(me?.semester);
+  }, [initialProfiles, currentUserId]);
+
+  const myWindowLabel = currentUserWindow ? formatWindow(currentUserWindow) : null;
+
+  const featuredProfiles = useMemo(() =>
+    initialProfiles.filter(p => p.featured),
+    [initialProfiles]
+  );
+
+  const filteredProfiles = useMemo(() =>
+    initialProfiles.filter(profile => {
+      if (
+        profile.id === currentUserId ||
+        profile.deleted_at ||
+        (!profile.university && !profile.home_university) ||
+        blockedIds.includes(profile.id)
+      ) return false;
+
+      const uniMatch = !universityFilter || universityFilter === "all-universities" || profile.university === universityFilter;
+      const cityMatch = !cityFilter || cityFilter === "all-cities" || profile.city === cityFilter;
+      const tagMatch = personalityTagsFilter.length === 0 ||
+        (profile.personality_tags && profile.personality_tags.some(tag => personalityTagsFilter.includes(tag)));
+
+      let seasonMatch = true;
+      if (seasonFilter.length > 0) {
+        const info = getArrivalSeason(profile.semester);
+        seasonMatch = !!info && seasonFilter.includes(seasonLabel(info));
+      }
+
+      let overlapMatch = true;
+      if (overlapOnly && currentUserWindow) {
+        const w = parseSemester(profile.semester);
+        overlapMatch = !!w && rangesOverlap(currentUserWindow, w);
+      }
+
+      return uniMatch && cityMatch && tagMatch && seasonMatch && overlapMatch;
+    }),
+    [initialProfiles, currentUserId, blockedIds, universityFilter, cityFilter, personalityTagsFilter, seasonFilter, overlapOnly, currentUserWindow]
+  );
+
+  const resetFilters = () => {
+    setUniversityFilter("");
+    setCityFilter("");
+    setPersonalityTagsFilter([]);
+    setSeasonFilter([]);
+    setOverlapOnly(false);
+  };
+
+  return {
+    universityFilter,
+    setUniversityFilter,
+    cityFilter,
+    setCityFilter,
+    personalityTagsFilter,
+    setPersonalityTagsFilter,
+    seasonFilter,
+    setSeasonFilter,
+    overlapOnly,
+    setOverlapOnly,
+    myWindowLabel,
+    uniqueUniversities,
+    uniqueCities,
+    seasonOptions,
+    filteredProfiles,
+    featuredProfiles,
+    universityCityMap,
+    universityCountryMap,
+    loading,
+    resetFilters
+  };
+};
