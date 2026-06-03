@@ -11,6 +11,7 @@ interface StudentCardActionsProps {
   studentUniversity?: string | null;
   studentAvatarUrl?: string | null;
   studentSemester?: string | null;
+  studentLastActiveAt?: string | null;
   initialNote?: string;
 }
 
