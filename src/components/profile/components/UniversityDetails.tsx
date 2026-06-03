@@ -144,46 +144,27 @@ export const UniversityDetails = ({
       </div>
 
       <div className="space-y-3">
-        <div>
-          <Label
-            htmlFor="arrival_date"
-            className="text-xs font-medium text-muted-foreground mb-1.5 ml-0.5 flex items-center gap-1"
-          >
-            <Plane className="h-3 w-3" />
-            When do you arrive?
-          </Label>
-          <Input
-            id="arrival_date"
-            type="date"
-            value={arrivalDate}
-            onChange={(e) => handleArrivalChange(e.target.value)}
-            className="bg-background"
-          />
-        </div>
+        <DateField
+          value={arrivalDate || null}
+          onChange={(iso) => handleArrivalChange(iso || "")}
+          label="When do you arrive?"
+          icon={Plane}
+          placeholder="Pick your arrival date"
+        />
 
-        <div>
-          <Label
-            htmlFor="departure_date"
-            className="text-xs font-medium text-muted-foreground mb-1.5 ml-0.5 flex items-center gap-1"
-          >
-            <Calendar className="h-3 w-3" />
-            When do you leave?
-          </Label>
-          <Input
-            id="departure_date"
-            type="date"
-            value={departureDate}
-            min={arrivalDate || undefined}
-            onChange={(e) => handleDepartureChange(e.target.value)}
-            className="bg-background"
-          />
-        </div>
-
-        {previewText && (
-          <div className="bg-secondary/50 rounded-lg px-3 py-2 text-sm text-foreground text-center animate-fade-in">
-            Got it, you'll be there <span className="font-semibold">{previewText}</span>
-          </div>
-        )}
+        <DateField
+          value={departureDate || null}
+          onChange={(iso) => {
+            const val = iso || "";
+            setDepartureDate(val);
+            emitDates(arrivalDate, val);
+          }}
+          label="When do you leave?"
+          icon={Calendar}
+          placeholder="Pick your departure date"
+          minDate={arrivalDate ? new Date(arrivalDate) : undefined}
+          disabled={!arrivalDate}
+        />
       </div>
     </div>
   );
