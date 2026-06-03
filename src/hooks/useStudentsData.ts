@@ -3,6 +3,14 @@ import { useState, useEffect, useMemo } from "react";
 import { Profile } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
 import { useBlockedUsers } from "@/hooks/useBlockedUsers";
+import {
+  parseSemester,
+  getArrivalSeason,
+  seasonLabel,
+  rangesOverlap,
+  buildSeasonOptions,
+  formatWindow,
+} from "@/lib/semesterParsing";
 
 interface InitialFilters {
   city?: string;
@@ -14,13 +22,13 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
   const [universityFilter, setUniversityFilter] = useState(initialFilters?.university || "");
   const [cityFilter, setCityFilter] = useState(initialFilters?.city || "");
   const [personalityTagsFilter, setPersonalityTagsFilter] = useState<string[]>([]);
-  const [semesterFilter, setSemesterFilter] = useState<string[]>([]);
+  const [seasonFilter, setSeasonFilter] = useState<string[]>([]);
+  const [overlapOnly, setOverlapOnly] = useState(false);
 
   const [universityCityMap, setUniversityCityMap] = useState<Record<string, string>>({});
   const [universityCountryMap, setUniversityCountryMap] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
 
-  // Fetch university→city and university→country mappings
   useEffect(() => {
     const fetchUniversityData = async () => {
       try {
@@ -48,7 +56,6 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     fetchUniversityData();
   }, []);
 
-  // Mark loading as false once initialProfiles arrive
   useEffect(() => {
     if (initialProfiles.length > 0) {
       setLoading(false);
@@ -72,10 +79,18 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     [initialProfiles]
   );
 
-  const uniqueSemesters = useMemo(() =>
-    [...new Set(initialProfiles.map(p => p.semester).filter(Boolean))].sort() as string[],
+  const seasonOptions = useMemo(
+    () => buildSeasonOptions(initialProfiles.map(p => p.semester)),
     [initialProfiles]
   );
+
+  const currentUserWindow = useMemo(() => {
+    if (!currentUserId) return null;
+    const me = initialProfiles.find(p => p.id === currentUserId);
+    return parseSemester(me?.semester);
+  }, [initialProfiles, currentUserId]);
+
+  const myWindowLabel = currentUserWindow ? formatWindow(currentUserWindow) : null;
 
   const featuredProfiles = useMemo(() =>
     initialProfiles.filter(p => p.featured),
@@ -95,19 +110,30 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
       const cityMatch = !cityFilter || cityFilter === "all-cities" || profile.city === cityFilter;
       const tagMatch = personalityTagsFilter.length === 0 ||
         (profile.personality_tags && profile.personality_tags.some(tag => personalityTagsFilter.includes(tag)));
-      const semesterMatch = semesterFilter.length === 0 ||
-        (profile.semester && semesterFilter.includes(profile.semester));
 
-      return uniMatch && cityMatch && tagMatch && semesterMatch;
+      let seasonMatch = true;
+      if (seasonFilter.length > 0) {
+        const info = getArrivalSeason(profile.semester);
+        seasonMatch = !!info && seasonFilter.includes(seasonLabel(info));
+      }
+
+      let overlapMatch = true;
+      if (overlapOnly && currentUserWindow) {
+        const w = parseSemester(profile.semester);
+        overlapMatch = !!w && rangesOverlap(currentUserWindow, w);
+      }
+
+      return uniMatch && cityMatch && tagMatch && seasonMatch && overlapMatch;
     }),
-    [initialProfiles, currentUserId, blockedIds, universityFilter, cityFilter, personalityTagsFilter, semesterFilter]
+    [initialProfiles, currentUserId, blockedIds, universityFilter, cityFilter, personalityTagsFilter, seasonFilter, overlapOnly, currentUserWindow]
   );
 
   const resetFilters = () => {
     setUniversityFilter("");
     setCityFilter("");
     setPersonalityTagsFilter([]);
-    setSemesterFilter([]);
+    setSeasonFilter([]);
+    setOverlapOnly(false);
   };
 
   return {
@@ -117,11 +143,14 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     setCityFilter,
     personalityTagsFilter,
     setPersonalityTagsFilter,
-    semesterFilter,
-    setSemesterFilter,
+    seasonFilter,
+    setSeasonFilter,
+    overlapOnly,
+    setOverlapOnly,
+    myWindowLabel,
     uniqueUniversities,
     uniqueCities,
-    uniqueSemesters,
+    seasonOptions,
     filteredProfiles,
     featuredProfiles,
     universityCityMap,
@@ -130,4 +159,3 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     resetFilters
   };
 };
-

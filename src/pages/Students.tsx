@@ -35,11 +35,14 @@ const Students = ({ currentUserId }: StudentsProps) => {
     setCityFilter,
     personalityTagsFilter,
     setPersonalityTagsFilter,
-    semesterFilter,
-    setSemesterFilter,
+    seasonFilter,
+    setSeasonFilter,
+    overlapOnly,
+    setOverlapOnly,
+    myWindowLabel,
     uniqueUniversities,
     uniqueCities,
-    uniqueSemesters,
+    seasonOptions,
     filteredProfiles,
     featuredProfiles,
     universityCityMap,
@@ -50,6 +53,7 @@ const Students = ({ currentUserId }: StudentsProps) => {
     city: urlCity,
     university: urlUniversity,
   });
+
 
   const [activeTab, setActiveTab] = useState<"list" | "cities">("list");
   const [peopleDismissed] = useState(false);
@@ -178,11 +182,15 @@ const Students = ({ currentUserId }: StudentsProps) => {
                 setCityFilter={setCityFilter}
                 personalityTagsFilter={personalityTagsFilter}
                 setPersonalityTagsFilter={setPersonalityTagsFilter}
-                semesterFilter={semesterFilter}
-                setSemesterFilter={setSemesterFilter}
+                seasonFilter={seasonFilter}
+                setSeasonFilter={setSeasonFilter}
+                overlapOnly={overlapOnly}
+                setOverlapOnly={setOverlapOnly}
+                myWindowLabel={myWindowLabel}
                 uniqueUniversities={uniqueUniversities}
                 uniqueCities={uniqueCities}
-                uniqueSemesters={uniqueSemesters}
+                seasonOptions={seasonOptions}
+
                 resetFilters={resetFilters}
               />
 
