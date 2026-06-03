@@ -31,6 +31,8 @@ const toISO = (d: Date) => {
   return `${y}-${m}-${day}`;
 };
 
+const labelClass = "block text-sm font-medium text-foreground mb-1.5";
+
 export const UniversityDetails = ({
   form,
   handleChange,
@@ -41,13 +43,11 @@ export const UniversityDetails = ({
   const navigate = useNavigate();
   const [lastUniversity, setLastUniversity] = useState("");
 
-  // Seed departure date from the stored semester range string (DB doesn't persist it separately).
   const parsedSeed = useMemo(() => parseSemester(form.semester), [form.semester]);
   const [departureDate, setDepartureDate] = useState<string>(
     parsedSeed ? toISO(parsedSeed.end) : ""
   );
 
-  // If the underlying semester string changes externally, resync departure.
   useEffect(() => {
     if (parsedSeed) setDepartureDate(toISO(parsedSeed.end));
   }, [parsedSeed]);
@@ -84,7 +84,6 @@ export const UniversityDetails = ({
   };
 
   const handleArrivalChange = (val: string) => {
-    // Clear departure if it becomes invalid
     if (departureDate && val && new Date(departureDate) <= new Date(val)) {
       setDepartureDate("");
       emitDates(val, "");
@@ -93,47 +92,52 @@ export const UniversityDetails = ({
     }
   };
 
-  const previewText =
-    arrivalDate && departureDate && new Date(departureDate) > new Date(arrivalDate)
-      ? formatSemester(arrivalDate, departureDate)
-      : "";
-
   return (
-    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-      <div>
-        <UniversityAutocomplete
-          value={form.home_university}
-          onChange={handleHomeUniversityChange}
-          label="Home University"
-          required={false}
-          prioritizeIrish={true}
-        />
+    <div className="space-y-6">
+      {/* Block A — Home */}
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div>
+          <UniversityAutocomplete
+            value={form.home_university}
+            onChange={handleHomeUniversityChange}
+            label="Home University"
+            required={false}
+            prioritizeIrish={true}
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="course" className={labelClass}>
+            Course Name
+          </Label>
+          <Input
+            id="course"
+            name="course"
+            value={form.course || ""}
+            onChange={handleChange}
+            placeholder="Enter your course name"
+          />
+        </div>
       </div>
 
-      <div>
-        <Label htmlFor="course" className="block text-sm font-medium text-gray-700">
-          Course Name
-        </Label>
-        <Input
-          id="course"
-          name="course"
-          value={form.course || ""}
-          onChange={handleChange}
-          placeholder="Enter your course name"
-          className="mt-1 rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200"
-        />
-      </div>
+      {/* Block B — Target Destination */}
+      <div className="rounded-xl border border-border bg-secondary/20 p-4 space-y-4">
+        <h4 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          Target Destination
+        </h4>
 
-      <div className="space-y-2">
-        <UniversityAutocomplete
-          value={form.university}
-          onChange={enhancedUniversityChange}
-          label="Destination University"
-          required={false}
-        />
+        <div>
+          <UniversityAutocomplete
+            value={form.university}
+            onChange={enhancedUniversityChange}
+            label="Destination University"
+            required={false}
+          />
+        </div>
 
         {form.university && (
-          <div className="mt-2">
+          <div>
+            <Label className={labelClass}>Destination City</Label>
             <CityAutocomplete
               value={form.city || ""}
               onChange={(val) => handleSelectChange("city", val || null)}
@@ -143,28 +147,37 @@ export const UniversityDetails = ({
         )}
       </div>
 
-      <div className="space-y-3">
-        <DateField
-          value={arrivalDate || null}
-          onChange={(iso) => handleArrivalChange(iso || "")}
-          label="When do you arrive?"
-          icon={Plane}
-          placeholder="Pick your arrival date"
-        />
+      {/* Block C — Dates */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <Label className={labelClass}>When do you arrive?</Label>
+          <DateField
+            value={arrivalDate || null}
+            onChange={(iso) => handleArrivalChange(iso || "")}
+            label="Arrival date"
+            icon={Plane}
+            placeholder="Select arrival date"
+            inputStyle="input"
+          />
+        </div>
 
-        <DateField
-          value={departureDate || null}
-          onChange={(iso) => {
-            const val = iso || "";
-            setDepartureDate(val);
-            emitDates(arrivalDate, val);
-          }}
-          label="When do you leave?"
-          icon={Calendar}
-          placeholder="Pick your departure date"
-          minDate={arrivalDate ? new Date(arrivalDate) : undefined}
-          disabled={!arrivalDate}
-        />
+        <div>
+          <Label className={labelClass}>When do you leave?</Label>
+          <DateField
+            value={departureDate || null}
+            onChange={(iso) => {
+              const val = iso || "";
+              setDepartureDate(val);
+              emitDates(arrivalDate, val);
+            }}
+            label="Departure date"
+            icon={Calendar}
+            placeholder="Select departure date"
+            minDate={arrivalDate ? new Date(arrivalDate) : undefined}
+            disabled={!arrivalDate}
+            inputStyle="input"
+          />
+        </div>
       </div>
     </div>
   );
