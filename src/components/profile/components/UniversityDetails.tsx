@@ -1,19 +1,12 @@
-import { SEMESTER_OPTIONS } from "@/components/profile/constants";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import UniversityAutocomplete from "@/components/UniversityAutocomplete";
 import { CityAutocomplete } from "@/components/CityAutocomplete";
-import { CalendarIcon } from "lucide-react";
+import { Calendar, Plane } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
+import { useEffect, useMemo, useState } from "react";
+import { formatSemester, parseSemester } from "@/lib/semesterParsing";
 
 type UniversityDetailsProps = {
   form: {
@@ -30,7 +23,12 @@ type UniversityDetailsProps = {
   handleHomeUniversityChange: (university: string) => void;
 };
 
-
+const toISO = (d: Date) => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
 
 export const UniversityDetails = ({
   form,
@@ -42,22 +40,28 @@ export const UniversityDetails = ({
   const navigate = useNavigate();
   const [lastUniversity, setLastUniversity] = useState("");
 
-  // Track university changes to prevent duplicate notifications
+  // Seed departure date from the stored semester range string (DB doesn't persist it separately).
+  const parsedSeed = useMemo(() => parseSemester(form.semester), [form.semester]);
+  const [departureDate, setDepartureDate] = useState<string>(
+    parsedSeed ? toISO(parsedSeed.end) : ""
+  );
+
+  // If the underlying semester string changes externally, resync departure.
+  useEffect(() => {
+    if (parsedSeed) setDepartureDate(toISO(parsedSeed.end));
+  }, [parsedSeed]);
+
+  const arrivalDate = form.arrival_date || (parsedSeed ? toISO(parsedSeed.start) : "");
+
   useEffect(() => {
     if (form.university !== lastUniversity && form.university) {
       setLastUniversity(form.university);
     }
   }, [form.university]);
 
-  // Enhanced handleUniversityChange function
   const enhancedUniversityChange = (university: string) => {
-    // Track that we're changing universities to update the group chats
     const isChanging = university !== form.university && university.trim().length > 0;
-
-    // Call the original handler
     handleUniversityChange(university);
-
-    // Show a notification only if we're actually changing to a new university
     if (isChanging) {
       toast.success(`You've been added to the ${university} chat group`, {
         description: "Navigate to Messages or Groups to join the conversation",
@@ -68,6 +72,29 @@ export const UniversityDetails = ({
       });
     }
   };
+
+  const emitDates = (arrival: string, departure: string) => {
+    handleSelectChange("arrival_date", arrival || null);
+    if (arrival && departure && new Date(departure) > new Date(arrival)) {
+      handleSelectChange("semester", formatSemester(arrival, departure));
+    } else {
+      handleSelectChange("semester", null);
+    }
+  };
+
+  const handleArrivalChange = (val: string) => {
+    emitDates(val, departureDate);
+  };
+
+  const handleDepartureChange = (val: string) => {
+    setDepartureDate(val);
+    emitDates(arrivalDate, val);
+  };
+
+  const previewText =
+    arrivalDate && departureDate && new Date(departureDate) > new Date(arrivalDate)
+      ? formatSemester(arrivalDate, departureDate)
+      : "";
 
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -103,7 +130,6 @@ export const UniversityDetails = ({
           required={false}
         />
 
-        {/* Editable city autocomplete */}
         {form.university && (
           <div className="mt-2">
             <CityAutocomplete
@@ -115,54 +141,47 @@ export const UniversityDetails = ({
         )}
       </div>
 
-      <div>
-        <Label htmlFor="semester" className="block text-sm font-medium text-muted-foreground">
-          Exchange Semester
-        </Label>
-        <Select value={form.semester || ""} onValueChange={(value) => handleSelectChange("semester", value)}>
-          <SelectTrigger className="mt-1">
-            <SelectValue placeholder="Select a semester" />
-          </SelectTrigger>
-          <SelectContent>
-            {SEMESTER_OPTIONS.map((semester) => (
-              <SelectItem key={semester} value={semester}>
-                {semester}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <div className="space-y-3">
+        <div>
+          <Label
+            htmlFor="arrival_date"
+            className="text-xs font-medium text-muted-foreground mb-1.5 ml-0.5 flex items-center gap-1"
+          >
+            <Plane className="h-3 w-3" />
+            When do you arrive?
+          </Label>
+          <Input
+            id="arrival_date"
+            type="date"
+            value={arrivalDate}
+            onChange={(e) => handleArrivalChange(e.target.value)}
+            className="bg-background"
+          />
+        </div>
 
-      <div>
-        <Label className="block text-sm font-medium text-muted-foreground">
-          Arrival Date
-        </Label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                "mt-1 w-full justify-start text-left font-normal",
-                !form.arrival_date && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {form.arrival_date
-                ? format(new Date(form.arrival_date), "PPP")
-                : "When are you arriving?"}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={form.arrival_date ? new Date(form.arrival_date) : undefined}
-              onSelect={(date) =>
-                handleSelectChange("arrival_date", date ? date.toISOString().split("T")[0] : null)
-              }
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
+        <div>
+          <Label
+            htmlFor="departure_date"
+            className="text-xs font-medium text-muted-foreground mb-1.5 ml-0.5 flex items-center gap-1"
+          >
+            <Calendar className="h-3 w-3" />
+            When do you leave?
+          </Label>
+          <Input
+            id="departure_date"
+            type="date"
+            value={departureDate}
+            min={arrivalDate || undefined}
+            onChange={(e) => handleDepartureChange(e.target.value)}
+            className="bg-background"
+          />
+        </div>
+
+        {previewText && (
+          <div className="bg-secondary/50 rounded-lg px-3 py-2 text-sm text-foreground text-center animate-fade-in">
+            Got it, you'll be there <span className="font-semibold">{previewText}</span>
+          </div>
+        )}
       </div>
     </div>
   );
