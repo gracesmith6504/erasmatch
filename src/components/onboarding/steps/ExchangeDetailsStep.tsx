@@ -3,6 +3,7 @@ import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar, Plane } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { formatSemester } from "@/lib/semesterParsing";
 
 type ExchangeDetailsStepProps = {
   initialSemester: string | null;
@@ -10,15 +11,6 @@ type ExchangeDetailsStepProps = {
   onNext: () => void;
   onBack: () => void;
   onUpdateProfile: (data: any) => Promise<boolean>;
-};
-
-const MONTH_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-const formatSemester = (arrival: string, departure: string) => {
-  const a = new Date(arrival);
-  const d = new Date(departure);
-  if (isNaN(a.getTime()) || isNaN(d.getTime())) return "";
-  return `${MONTH_SHORT[a.getMonth()]} ${a.getFullYear()} - ${MONTH_SHORT[d.getMonth()]} ${d.getFullYear()}`;
 };
 
 export const ExchangeDetailsStep = ({
