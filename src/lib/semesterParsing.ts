@@ -108,3 +108,11 @@ export const buildSeasonOptions = (semesters: (string | null | undefined)[]): st
 const SHORT_MONTH = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 export const formatWindow = (w: SemesterWindow): string =>
   `${SHORT_MONTH[w.start.getMonth()]} ${w.start.getFullYear()} – ${SHORT_MONTH[w.end.getMonth()]} ${w.end.getFullYear()}`;
+
+/** Formats two ISO date strings (YYYY-MM-DD) into the canonical semester range string. */
+export const formatSemester = (arrival: string, departure: string): string => {
+  const a = new Date(arrival);
+  const d = new Date(departure);
+  if (isNaN(a.getTime()) || isNaN(d.getTime())) return "";
+  return `${SHORT_MONTH[a.getMonth()]} ${a.getFullYear()} - ${SHORT_MONTH[d.getMonth()]} ${d.getFullYear()}`;
+};
