@@ -205,6 +205,7 @@ const ProfileView = ({ currentUserId }: ProfileViewProps) => {
           studentAvatarUrl={profile.avatar_url}
           studentCity={universityCity || profile.city}
           studentSemester={profile.semester}
+          studentLastActiveAt={profile.last_active_at}
           sharedCity={sharedCity}
           sharedUniversity={sharedUniversity}
         />

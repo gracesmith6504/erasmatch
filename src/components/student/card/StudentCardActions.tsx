@@ -11,6 +11,7 @@ interface StudentCardActionsProps {
   studentUniversity?: string | null;
   studentAvatarUrl?: string | null;
   studentSemester?: string | null;
+  studentLastActiveAt?: string | null;
   initialNote?: string;
 }
 
@@ -21,6 +22,7 @@ const StudentCardActions: React.FC<StudentCardActionsProps> = ({
   studentUniversity,
   studentAvatarUrl,
   studentSemester,
+  studentLastActiveAt,
   initialNote,
 }) => {
   const { currentUserProfile } = useAuth();
@@ -64,6 +66,7 @@ const StudentCardActions: React.FC<StudentCardActionsProps> = ({
         studentAvatarUrl={studentAvatarUrl}
         studentCity={studentCity}
         studentSemester={studentSemester}
+        studentLastActiveAt={studentLastActiveAt}
         sharedCity={sharedCity}
         sharedUniversity={sharedUniversity}
         initialNote={initialNote}
