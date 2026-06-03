@@ -121,11 +121,11 @@ const StudentFilters = ({
     return merged;
   })();
 
-  const handleSemesterToggle = (semester: string) => {
-    if (semesterFilter.includes(semester)) {
-      setSemesterFilter(semesterFilter.filter(s => s !== semester));
+  const handleSeasonToggle = (season: string) => {
+    if (seasonFilter.includes(season)) {
+      setSeasonFilter(seasonFilter.filter(s => s !== season));
     } else {
-      setSemesterFilter([...semesterFilter, semester]);
+      setSeasonFilter([...seasonFilter, season]);
     }
   };
 
@@ -133,7 +133,9 @@ const StudentFilters = ({
     (universityFilter ? 1 : 0) +
     (cityFilter ? 1 : 0) +
     (personalityTagsFilter.length > 0 ? 1 : 0) +
-    (semesterFilter.length > 0 ? 1 : 0);
+    (seasonFilter.length > 0 ? 1 : 0) +
+    (overlapOnly ? 1 : 0);
+
 
   const isAnyFilterActive = activeFilterCount > 0;
 
