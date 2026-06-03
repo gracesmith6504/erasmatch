@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { School, MapPin, X, User, ChevronDown, ChevronUp, Search, Plane, SlidersHorizontal } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { School, MapPin, X, User, ChevronDown, ChevronUp, Search, Plane, SlidersHorizontal, CalendarRange } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PERSONALITY_TAGS } from "@/components/profile/constants";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -14,7 +15,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-const SEMESTER_OPTIONS = ["Spring 2025", "Fall 2025", "Spring 2026", "Full Academic Year 2025–26", "Fall 2026", "Spring 2027", "Full Academic Year 2026–27"];
 
 interface StudentFiltersProps {
   universityFilter: string;
@@ -23,11 +23,14 @@ interface StudentFiltersProps {
   setCityFilter: (value: string) => void;
   personalityTagsFilter: string[];
   setPersonalityTagsFilter: (tags: string[]) => void;
-  semesterFilter: string[];
-  setSemesterFilter: (tags: string[]) => void;
+  seasonFilter: string[];
+  setSeasonFilter: (tags: string[]) => void;
+  overlapOnly: boolean;
+  setOverlapOnly: (v: boolean) => void;
+  myWindowLabel: string | null;
   uniqueUniversities: string[];
   uniqueCities: string[];
-  uniqueSemesters: string[];
+  seasonOptions: string[];
   resetFilters: () => void;
 }
 
@@ -38,13 +41,17 @@ const StudentFilters = ({
   setCityFilter,
   personalityTagsFilter,
   setPersonalityTagsFilter,
-  semesterFilter,
-  setSemesterFilter,
+  seasonFilter,
+  setSeasonFilter,
+  overlapOnly,
+  setOverlapOnly,
+  myWindowLabel,
   uniqueUniversities,
   uniqueCities,
-  uniqueSemesters,
+  seasonOptions,
   resetFilters,
 }: StudentFiltersProps) => {
+
   const isMobile = useIsMobile();
   const [showAllTags, setShowAllTags] = useState(false);
   const [uniSearch, setUniSearch] = useState("");
@@ -114,11 +121,11 @@ const StudentFilters = ({
     return merged;
   })();
 
-  const handleSemesterToggle = (semester: string) => {
-    if (semesterFilter.includes(semester)) {
-      setSemesterFilter(semesterFilter.filter(s => s !== semester));
+  const handleSeasonToggle = (season: string) => {
+    if (seasonFilter.includes(season)) {
+      setSeasonFilter(seasonFilter.filter(s => s !== season));
     } else {
-      setSemesterFilter([...semesterFilter, semester]);
+      setSeasonFilter([...seasonFilter, season]);
     }
   };
 
@@ -126,7 +133,9 @@ const StudentFilters = ({
     (universityFilter ? 1 : 0) +
     (cityFilter ? 1 : 0) +
     (personalityTagsFilter.length > 0 ? 1 : 0) +
-    (semesterFilter.length > 0 ? 1 : 0);
+    (seasonFilter.length > 0 ? 1 : 0) +
+    (overlapOnly ? 1 : 0);
+
 
   const isAnyFilterActive = activeFilterCount > 0;
 
@@ -291,31 +300,48 @@ const StudentFilters = ({
         </div>
       </div>
 
-      {/* Semester Filter */}
-      <div className="mt-6">
-        <div className="flex items-center text-sm font-medium mb-3 text-foreground">
-          <Plane className="mr-2 h-4 w-4 text-muted-foreground" />
-          <span>Filter by Semester</span>
+      {/* Overlap with my stay */}
+      {myWindowLabel && (
+        <div className="mt-6 flex items-center justify-between gap-3 rounded-xl border border-border bg-secondary/30 px-4 py-3">
+          <div className="flex items-start gap-2 min-w-0">
+            <CalendarRange className="h-4 w-4 mt-0.5 text-muted-foreground shrink-0" />
+            <div className="min-w-0">
+              <div className="text-sm font-medium text-foreground">Overlapping with my stay</div>
+              <div className="text-xs text-muted-foreground truncate">Your dates: {myWindowLabel}</div>
+            </div>
+          </div>
+          <Switch checked={overlapOnly} onCheckedChange={setOverlapOnly} />
         </div>
-        <div className="flex flex-wrap gap-2">
-          {SEMESTER_OPTIONS.map((semester) => {
-            const isSelected = semesterFilter.includes(semester);
-            return (
-              <Badge
-                key={semester}
-                variant={isSelected ? "default" : "outline"}
-                className={`cursor-pointer transition-all ${
-                  isSelected ? "bg-erasmatch-coral/10 text-erasmatch-coral" : "hover:bg-secondary"
-                }`}
-                onClick={() => handleSemesterToggle(semester)}
-              >
-                {semester}
-                {isSelected && <X className="h-3 w-3 ml-1" />}
-              </Badge>
-            );
-          })}
+      )}
+
+      {/* Arriving Season Filter */}
+      {seasonOptions.length > 0 && (
+        <div className="mt-6">
+          <div className="flex items-center text-sm font-medium mb-3 text-foreground">
+            <Plane className="mr-2 h-4 w-4 text-muted-foreground" />
+            <span>Arriving Season</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {seasonOptions.map((season) => {
+              const isSelected = seasonFilter.includes(season);
+              return (
+                <Badge
+                  key={season}
+                  variant={isSelected ? "default" : "outline"}
+                  className={`cursor-pointer transition-all ${
+                    isSelected ? "bg-erasmatch-coral/10 text-erasmatch-coral" : "hover:bg-secondary"
+                  }`}
+                  onClick={() => handleSeasonToggle(season)}
+                >
+                  {season}
+                  {isSelected && <X className="h-3 w-3 ml-1" />}
+                </Badge>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
+
 
       {/* Personality Tags Filter */}
       <div className="mt-6">
@@ -382,14 +408,23 @@ const StudentFilters = ({
               </button>
             </div>
           )}
-          {semesterFilter.length > 0 && (
+          {overlapOnly && (
             <div className="inline-flex items-center text-xs bg-erasmatch-coral/10 text-erasmatch-coral py-1 px-2 rounded-full">
-              {semesterFilter.length} semester{semesterFilter.length > 1 ? 's' : ''}
-              <button className="ml-1" onClick={() => setSemesterFilter([])}>
+              Overlapping my stay
+              <button className="ml-1" onClick={() => setOverlapOnly(false)}>
                 <X className="h-3 w-3" />
               </button>
             </div>
           )}
+          {seasonFilter.length > 0 && (
+            <div className="inline-flex items-center text-xs bg-erasmatch-coral/10 text-erasmatch-coral py-1 px-2 rounded-full">
+              {seasonFilter.length} season{seasonFilter.length > 1 ? 's' : ''}
+              <button className="ml-1" onClick={() => setSeasonFilter([])}>
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          )}
+
           {personalityTagsFilter.length > 0 && (
             <div className="inline-flex items-center text-xs bg-erasmatch-blue/10 text-erasmatch-blue py-1 px-2 rounded-full">
               {personalityTagsFilter.length} personality tag{personalityTagsFilter.length > 1 ? 's' : ''}
