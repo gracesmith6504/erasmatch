@@ -300,31 +300,48 @@ const StudentFilters = ({
         </div>
       </div>
 
-      {/* Semester Filter */}
-      <div className="mt-6">
-        <div className="flex items-center text-sm font-medium mb-3 text-foreground">
-          <Plane className="mr-2 h-4 w-4 text-muted-foreground" />
-          <span>Filter by Semester</span>
+      {/* Overlap with my stay */}
+      {myWindowLabel && (
+        <div className="mt-6 flex items-center justify-between gap-3 rounded-xl border border-border bg-secondary/30 px-4 py-3">
+          <div className="flex items-start gap-2 min-w-0">
+            <CalendarRange className="h-4 w-4 mt-0.5 text-muted-foreground shrink-0" />
+            <div className="min-w-0">
+              <div className="text-sm font-medium text-foreground">Overlapping with my stay</div>
+              <div className="text-xs text-muted-foreground truncate">Your dates: {myWindowLabel}</div>
+            </div>
+          </div>
+          <Switch checked={overlapOnly} onCheckedChange={setOverlapOnly} />
         </div>
-        <div className="flex flex-wrap gap-2">
-          {SEMESTER_OPTIONS.map((semester) => {
-            const isSelected = semesterFilter.includes(semester);
-            return (
-              <Badge
-                key={semester}
-                variant={isSelected ? "default" : "outline"}
-                className={`cursor-pointer transition-all ${
-                  isSelected ? "bg-erasmatch-coral/10 text-erasmatch-coral" : "hover:bg-secondary"
-                }`}
-                onClick={() => handleSemesterToggle(semester)}
-              >
-                {semester}
-                {isSelected && <X className="h-3 w-3 ml-1" />}
-              </Badge>
-            );
-          })}
+      )}
+
+      {/* Arriving Season Filter */}
+      {seasonOptions.length > 0 && (
+        <div className="mt-6">
+          <div className="flex items-center text-sm font-medium mb-3 text-foreground">
+            <Plane className="mr-2 h-4 w-4 text-muted-foreground" />
+            <span>Arriving Season</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {seasonOptions.map((season) => {
+              const isSelected = seasonFilter.includes(season);
+              return (
+                <Badge
+                  key={season}
+                  variant={isSelected ? "default" : "outline"}
+                  className={`cursor-pointer transition-all ${
+                    isSelected ? "bg-erasmatch-coral/10 text-erasmatch-coral" : "hover:bg-secondary"
+                  }`}
+                  onClick={() => handleSeasonToggle(season)}
+                >
+                  {season}
+                  {isSelected && <X className="h-3 w-3 ml-1" />}
+                </Badge>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
+
 
       {/* Personality Tags Filter */}
       <div className="mt-6">
