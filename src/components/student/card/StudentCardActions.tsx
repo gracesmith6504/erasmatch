@@ -66,6 +66,7 @@ const StudentCardActions: React.FC<StudentCardActionsProps> = ({
         studentAvatarUrl={studentAvatarUrl}
         studentCity={studentCity}
         studentSemester={studentSemester}
+        studentLastActiveAt={studentLastActiveAt}
         sharedCity={sharedCity}
         sharedUniversity={sharedUniversity}
         initialNote={initialNote}
