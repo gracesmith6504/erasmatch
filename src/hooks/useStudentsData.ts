@@ -15,6 +15,8 @@ import {
 interface InitialFilters {
   city?: string;
   university?: string;
+  season?: string;
+  overlap?: boolean;
 }
 
 export const useStudentsData = (initialProfiles: Profile[], currentUserId: string | null, initialFilters?: InitialFilters) => {
@@ -22,8 +24,12 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
   const [universityFilter, setUniversityFilter] = useState(initialFilters?.university || "");
   const [cityFilter, setCityFilter] = useState(initialFilters?.city || "");
   const [personalityTagsFilter, setPersonalityTagsFilter] = useState<string[]>([]);
-  const [seasonFilter, setSeasonFilter] = useState<string[]>([]);
-  const [overlapOnly, setOverlapOnly] = useState(false);
+  const [seasonFilter, setSeasonFilter] = useState<string[]>(
+    initialFilters?.season
+      ? initialFilters.season.split(",").map(s => decodeURIComponent(s.trim())).filter(Boolean)
+      : []
+  );
+  const [overlapOnly, setOverlapOnly] = useState(initialFilters?.overlap || false);
 
   const [universityCityMap, setUniversityCityMap] = useState<Record<string, string>>({});
   const [universityCountryMap, setUniversityCountryMap] = useState<Record<string, string>>({});
