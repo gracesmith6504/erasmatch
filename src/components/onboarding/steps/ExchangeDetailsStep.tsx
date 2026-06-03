@@ -2,7 +2,7 @@ import { useState } from "react";
 import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar, Plane } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { DateField } from "@/components/ui/DateField";
 import { formatSemester } from "@/lib/semesterParsing";
 
 type ExchangeDetailsStepProps = {
@@ -29,6 +29,15 @@ export const ExchangeDetailsStep = ({
     new Date(departureDate) > new Date(arrivalDate);
 
   const previewText = datesValid ? formatSemester(arrivalDate, departureDate) : "";
+
+  const handleArrivalChange = (iso: string | null) => {
+    const next = iso || "";
+    setArrivalDate(next);
+    // Clear departure if it's now invalid
+    if (departureDate && next && new Date(departureDate) <= new Date(next)) {
+      setDepartureDate("");
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,33 +71,24 @@ export const ExchangeDetailsStep = ({
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="bg-card rounded-xl p-4 shadow-sm border border-border space-y-1">
-            <p className="text-xs font-medium text-muted-foreground mb-1.5 ml-0.5 flex items-center gap-1">
-              <Plane className="h-3 w-3" />
-              When do you arrive?
-            </p>
-            <Input
-              type="date"
-              value={arrivalDate}
-              onChange={(e) => setArrivalDate(e.target.value)}
-              className="bg-background"
-            />
-          </div>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <DateField
+            value={arrivalDate || null}
+            onChange={handleArrivalChange}
+            label="When do you arrive?"
+            icon={Plane}
+            placeholder="Pick your arrival date"
+          />
 
-          <div className="bg-card rounded-xl p-4 shadow-sm border border-border space-y-1">
-            <p className="text-xs font-medium text-muted-foreground mb-1.5 ml-0.5 flex items-center gap-1">
-              <Calendar className="h-3 w-3" />
-              When do you leave?
-            </p>
-            <Input
-              type="date"
-              value={departureDate}
-              min={arrivalDate || undefined}
-              onChange={(e) => setDepartureDate(e.target.value)}
-              className="bg-background"
-            />
-          </div>
+          <DateField
+            value={departureDate || null}
+            onChange={(iso) => setDepartureDate(iso || "")}
+            label="When do you leave?"
+            icon={Calendar}
+            placeholder="Pick your departure date"
+            minDate={arrivalDate ? new Date(arrivalDate) : undefined}
+            disabled={!arrivalDate}
+          />
 
           {previewText && (
             <div className="bg-secondary/50 rounded-xl px-4 py-3 text-sm text-foreground text-center animate-fade-in">
