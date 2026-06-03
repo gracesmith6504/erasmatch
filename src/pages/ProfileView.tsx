@@ -202,6 +202,9 @@ const ProfileView = ({ currentUserId }: ProfileViewProps) => {
           onOpenChange={setConnectOpen}
           studentId={id}
           studentName={profile.name || "Student"}
+          studentAvatarUrl={profile.avatar_url}
+          studentCity={universityCity || profile.city}
+          studentSemester={profile.semester}
           sharedCity={sharedCity}
           sharedUniversity={sharedUniversity}
         />
