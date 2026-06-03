@@ -17,14 +17,6 @@ export const useProfileForm = () => {
     let file = e.target.files?.[0];
     if (!file) return;
 
-// Compress + resize
-    const options = {
-    maxSizeMB: 1,
-    maxWidthOrHeight: 1024,
-    useWebWorker: true,
-  };
-
-
     // Check file size (limit to 5MB)
     if (file.size > 5 * 1024 * 1024) {
       setUploadStatus({
@@ -39,20 +31,27 @@ export const useProfileForm = () => {
     try {
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) throw new Error("User not authenticated");
-      
+
+      // Compress + resize to ~512px WebP so we can serve originals directly
+      // (no paid Supabase image transformations).
+      const { compressAvatar } = await import("@/lib/avatar");
+      file = await compressAvatar(file);
+
       const userId = userData.user.id;
       const fileExt = file.name.split('.').pop();
       const fileName = `${userId}/${uuidv4()}.${fileExt}`;
-      
+
       // Upload file to Supabase Storage
       const { error: uploadError, data } = await supabase.storage
         .from('avatars')
         .upload(fileName, file, {
           cacheControl: '3600',
-          upsert: false
+          upsert: false,
+          contentType: file.type,
         });
 
       if (uploadError) throw uploadError;
+
 
       // Get the public URL
       const { data: publicUrlData } = supabase.storage
