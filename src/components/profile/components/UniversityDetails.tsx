@@ -84,12 +84,13 @@ export const UniversityDetails = ({
   };
 
   const handleArrivalChange = (val: string) => {
-    emitDates(val, departureDate);
-  };
-
-  const handleDepartureChange = (val: string) => {
-    setDepartureDate(val);
-    emitDates(arrivalDate, val);
+    // Clear departure if it becomes invalid
+    if (departureDate && val && new Date(departureDate) <= new Date(val)) {
+      setDepartureDate("");
+      emitDates(val, "");
+    } else {
+      emitDates(val, departureDate);
+    }
   };
 
   const previewText =
