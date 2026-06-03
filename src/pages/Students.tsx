@@ -35,11 +35,14 @@ const Students = ({ currentUserId }: StudentsProps) => {
     setCityFilter,
     personalityTagsFilter,
     setPersonalityTagsFilter,
-    semesterFilter,
-    setSemesterFilter,
+    seasonFilter,
+    setSeasonFilter,
+    overlapOnly,
+    setOverlapOnly,
+    myWindowLabel,
     uniqueUniversities,
     uniqueCities,
-    uniqueSemesters,
+    seasonOptions,
     filteredProfiles,
     featuredProfiles,
     universityCityMap,
@@ -50,6 +53,7 @@ const Students = ({ currentUserId }: StudentsProps) => {
     city: urlCity,
     university: urlUniversity,
   });
+
 
   const [activeTab, setActiveTab] = useState<"list" | "cities">("list");
   const [peopleDismissed] = useState(false);
