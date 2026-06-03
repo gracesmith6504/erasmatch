@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { School, MapPin, X, User, ChevronDown, ChevronUp, Search, Plane, SlidersHorizontal } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { School, MapPin, X, User, ChevronDown, ChevronUp, Search, Plane, SlidersHorizontal, CalendarRange } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PERSONALITY_TAGS } from "@/components/profile/constants";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -14,7 +15,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-const SEMESTER_OPTIONS = ["Spring 2025", "Fall 2025", "Spring 2026", "Full Academic Year 2025–26", "Fall 2026", "Spring 2027", "Full Academic Year 2026–27"];
 
 interface StudentFiltersProps {
   universityFilter: string;
