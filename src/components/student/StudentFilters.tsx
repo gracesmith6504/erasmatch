@@ -23,11 +23,14 @@ interface StudentFiltersProps {
   setCityFilter: (value: string) => void;
   personalityTagsFilter: string[];
   setPersonalityTagsFilter: (tags: string[]) => void;
-  semesterFilter: string[];
-  setSemesterFilter: (tags: string[]) => void;
+  seasonFilter: string[];
+  setSeasonFilter: (tags: string[]) => void;
+  overlapOnly: boolean;
+  setOverlapOnly: (v: boolean) => void;
+  myWindowLabel: string | null;
   uniqueUniversities: string[];
   uniqueCities: string[];
-  uniqueSemesters: string[];
+  seasonOptions: string[];
   resetFilters: () => void;
 }
 
@@ -38,13 +41,17 @@ const StudentFilters = ({
   setCityFilter,
   personalityTagsFilter,
   setPersonalityTagsFilter,
-  semesterFilter,
-  setSemesterFilter,
+  seasonFilter,
+  setSeasonFilter,
+  overlapOnly,
+  setOverlapOnly,
+  myWindowLabel,
   uniqueUniversities,
   uniqueCities,
-  uniqueSemesters,
+  seasonOptions,
   resetFilters,
 }: StudentFiltersProps) => {
+
   const isMobile = useIsMobile();
   const [showAllTags, setShowAllTags] = useState(false);
   const [uniSearch, setUniSearch] = useState("");
