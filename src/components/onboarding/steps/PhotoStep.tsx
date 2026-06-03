@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Camera, Upload } from "lucide-react";
+import { Camera, Upload, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
@@ -17,7 +17,8 @@ type PhotoStepProps = {
 export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) => {
   const { currentUserProfile } = useAuth();
   const [avatarUrl, setAvatarUrl] = useState<string | null>(currentUserProfile?.avatar_url || null);
-  const [uploading, setUploading] = useState(false);
+  const [uploadPhase, setUploadPhase] = useState<"idle" | "compressing" | "uploading">("idle");
+  const uploading = uploadPhase !== "idle";
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [featuredProfiles, setFeaturedProfiles] = useState<{ avatar_url: string; first_name: string }[]>([]);
 
@@ -47,7 +48,7 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
       return;
     }
 
-    setUploading(true);
+    setUploadPhase("compressing");
 
     try {
       const { data: userData } = await supabase.auth.getUser();
@@ -57,6 +58,8 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
       // paid Supabase image transformations on the read path.
       const { compressAvatar } = await import("@/lib/avatar");
       const compressed = await compressAvatar(file);
+
+      setUploadPhase("uploading");
 
       const userId = userData.user.id;
       const fileExt = compressed.name.split(".").pop();
@@ -86,7 +89,7 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
       console.error("Error uploading avatar:", error);
       toast.error(error.message || "Failed to upload image");
     } finally {
-      setUploading(false);
+      setUploadPhase("idle");
     }
   };
 
@@ -98,16 +101,25 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
           Students with a photo get <strong>5x more connections</strong>
         </p>
 
-        <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+        <div
+          className={`relative group ${uploading ? "pointer-events-none" : "cursor-pointer"}`}
+          onClick={() => !uploading && fileInputRef.current?.click()}
+        >
           <Avatar className="w-32 h-32 text-3xl font-bold border-4 border-card shadow-md ring-2 ring-border">
             <AvatarImage src={avatarUrl || undefined} alt={name} className="object-cover" />
             <AvatarFallback className="bg-secondary text-foreground text-3xl font-bold">
               {getInitials(name)}
             </AvatarFallback>
           </Avatar>
-          <div className="absolute inset-0 flex items-center justify-center rounded-full bg-foreground/0 group-hover:bg-foreground/40 transition-all duration-200">
-            <Camera className="h-8 w-8 text-card opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-          </div>
+          {uploading ? (
+            <div className="absolute inset-0 flex items-center justify-center rounded-full bg-foreground/50 backdrop-blur-[2px]">
+              <Loader2 className="h-8 w-8 text-card animate-spin" />
+            </div>
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center rounded-full bg-foreground/0 group-hover:bg-foreground/40 transition-all duration-200">
+              <Camera className="h-8 w-8 text-card opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+            </div>
+          )}
         </div>
 
         {/* Social proof */}
@@ -140,8 +152,8 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
         >
           {uploading ? (
             <span className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded-full border-2 border-primary-foreground border-t-transparent animate-spin" />
-              Uploading...
+              <Loader2 className="h-4 w-4 animate-spin" />
+              {uploadPhase === "compressing" ? "Optimizing photo…" : "Uploading…"}
             </span>
           ) : (
             <span className="flex items-center gap-2">
