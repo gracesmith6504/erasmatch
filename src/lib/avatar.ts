@@ -1,19 +1,35 @@
-// Append Supabase storage image transform params so we serve appropriately
-// sized avatars instead of full-resolution originals (which are typically
-// ~100-200 KB JPEGs). Transformed thumbnails are ~5-15 KB.
-// Pass the rendered CSS pixel size — we automatically request 2× for retina.
+// Avatars are compressed/resized at upload time (see compressAvatar) so we
+// can serve the original files directly from Supabase Storage without
+// hitting the paid `/render/image/` transformation endpoint.
+//
+// This helper is kept as a no-op pass-through so existing callers continue
+// to work — they no longer trigger billable image transformations.
 export function transformAvatarUrl(
   url: string | null | undefined,
-  cssPixelSize: number,
+  _cssPixelSize?: number,
 ): string | undefined {
   if (!url) return undefined;
-  // Only transform Supabase storage URLs; leave external URLs untouched.
-  const storagePath = "/storage/v1/object/public/";
-  const renderPath = "/storage/v1/render/image/public/";
-  if (url.includes(renderPath)) return url;
-  if (!url.includes(storagePath)) return url;
-  const size = Math.round(cssPixelSize * 2);
-  const [baseUrl] = url.split("?");
-  const renderUrl = baseUrl.replace(storagePath, renderPath);
-  return `${renderUrl}?width=${size}&height=${size}&resize=cover&quality=75`;
+  return url;
+}
+
+import imageCompression from "browser-image-compression";
+
+// Compress + resize an uploaded avatar to keep storage small and avoid the
+// need for runtime image transformations. Targets ~50–80 KB WebP at 512px.
+export async function compressAvatar(file: File): Promise<File> {
+  try {
+    const compressed = await imageCompression(file, {
+      maxSizeMB: 0.2,
+      maxWidthOrHeight: 512,
+      useWebWorker: true,
+      fileType: "image/webp",
+      initialQuality: 0.82,
+    });
+    // Ensure the file has a sensible name + extension for the storage path.
+    const newName = file.name.replace(/\.[^.]+$/, "") + ".webp";
+    return new File([compressed], newName, { type: "image/webp" });
+  } catch (err) {
+    console.warn("Avatar compression failed, uploading original", err);
+    return file;
+  }
 }
