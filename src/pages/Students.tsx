@@ -182,11 +182,15 @@ const Students = ({ currentUserId }: StudentsProps) => {
                 setCityFilter={setCityFilter}
                 personalityTagsFilter={personalityTagsFilter}
                 setPersonalityTagsFilter={setPersonalityTagsFilter}
-                semesterFilter={semesterFilter}
-                setSemesterFilter={setSemesterFilter}
+                seasonFilter={seasonFilter}
+                setSeasonFilter={setSeasonFilter}
+                overlapOnly={overlapOnly}
+                setOverlapOnly={setOverlapOnly}
+                myWindowLabel={myWindowLabel}
                 uniqueUniversities={uniqueUniversities}
                 uniqueCities={uniqueCities}
-                uniqueSemesters={uniqueSemesters}
+                seasonOptions={seasonOptions}
+
                 resetFilters={resetFilters}
               />
 
