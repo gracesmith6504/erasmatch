@@ -15,7 +15,13 @@ import {
   CommandList,
 } from "@/components/ui/command";
 
-type UniRow = { id: number; name: string; city: string | null; country: string | null };
+type UniRow = { id: number; name: string; city: string | null; country: string | null; score?: number };
+
+// Score tiers from search_universities RPC:
+// name exact 1000 / prefix 700 / substring 400; alias exact 1000 / prefix 600 / substring 300.
+// >= 600 means the RPC found a confident canonical match (including via alias), so we
+// should NOT offer "Add as new university" — that's what creates duplicate shadow rows.
+const CONFIDENT_MATCH_SCORE = 600;
 
 const INTERNSHIP_SENTINEL = "Internship/Work";
 
@@ -79,7 +85,11 @@ export const DestinationUniversityStep = ({
   const hasExactMatch = (() => {
     if (!uniSearch.trim()) return true;
     const q = normalizeString(uniSearch);
-    return searchedUniversities.some((u) => normalizeString(u.name) === q);
+    if (searchedUniversities.some((u) => normalizeString(u.name) === q)) return true;
+    // Trust the RPC's alias/trigram resolution: if the top hit scored high enough,
+    // it's already the canonical row the user meant — suppress the "Add" CTA.
+    const top = searchedUniversities[0];
+    return !!top && (top.score ?? 0) >= CONFIDENT_MATCH_SCORE;
   })();
 
   const showAddOption = uniSearch.trim().length > 1 && !hasExactMatch && !isAdding;
