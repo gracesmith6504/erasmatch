@@ -53,13 +53,19 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) throw new Error("User not authenticated");
 
+      // Compress + resize to ~512px WebP to keep storage small and avoid
+      // paid Supabase image transformations on the read path.
+      const { compressAvatar } = await import("@/lib/avatar");
+      const compressed = await compressAvatar(file);
+
       const userId = userData.user.id;
-      const fileExt = file.name.split(".").pop();
+      const fileExt = compressed.name.split(".").pop();
       const fileName = `${userId}/${uuidv4()}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
         .from("avatars")
-        .upload(fileName, file, { cacheControl: "3600", upsert: false });
+        .upload(fileName, compressed, { cacheControl: "3600", upsert: false, contentType: compressed.type });
+
 
       if (uploadError) throw uploadError;
 
