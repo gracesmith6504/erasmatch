@@ -498,6 +498,7 @@ export type Database = {
       }
       is_blocked: { Args: { user_a: string; user_b: string }; Returns: boolean }
       join_group_by_slug: { Args: never; Returns: undefined }
+      normalize_text: { Args: { t: string }; Returns: string }
       search_universities: {
         Args: { _city?: string; _limit?: number; _q: string }
         Returns: {
@@ -511,6 +512,7 @@ export type Database = {
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
       slugify: { Args: { input: string }; Returns: string }
+      unaccent: { Args: { "": string }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
