@@ -27,6 +27,8 @@ const Students = ({ currentUserId }: StudentsProps) => {
   const urlParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
   const urlCity = urlParams.get("city") || undefined;
   const urlUniversity = urlParams.get("university") || undefined;
+  const urlSeason = urlParams.get("season") || undefined;
+  const urlOverlap = urlParams.get("overlap") === "1";
 
   const {
     universityFilter,
@@ -52,6 +54,8 @@ const Students = ({ currentUserId }: StudentsProps) => {
   } = useStudentsData(profiles, currentUserId, {
     city: urlCity,
     university: urlUniversity,
+    season: urlSeason,
+    overlap: urlOverlap,
   });
 
 
