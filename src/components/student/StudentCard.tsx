@@ -140,8 +140,10 @@ const StudentCard = ({ profile, isFeatured = false, universityCity = null, prior
         <StudentCardActions
           studentId={profile.id}
           studentName={profile.name || "Student"}
-          studentCity={profile.city}
+          studentCity={universityCity || profile.city}
           studentUniversity={profile.university}
+          studentAvatarUrl={profile.avatar_url}
+          studentSemester={profile.semester}
         />
       </CardFooter>
     </Card>
