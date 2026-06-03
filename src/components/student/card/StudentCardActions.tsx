@@ -22,6 +22,7 @@ const StudentCardActions: React.FC<StudentCardActionsProps> = ({
   studentUniversity,
   studentAvatarUrl,
   studentSemester,
+  studentLastActiveAt,
   initialNote,
 }) => {
   const { currentUserProfile } = useAuth();
