@@ -10,7 +10,7 @@ type AboutMeSectionProps = {
 export const AboutMeSection = ({ bio, handleChange }: AboutMeSectionProps) => {
   return (
     <div>
-      <Label htmlFor="bio" className="block text-sm font-medium text-gray-700">
+      <Label htmlFor="bio" className="block text-sm font-medium text-foreground mb-1.5">
         About Me
       </Label>
       <Textarea
@@ -20,7 +20,6 @@ export const AboutMeSection = ({ bio, handleChange }: AboutMeSectionProps) => {
         onChange={handleChange}
         placeholder="Tell others about yourself, your interests, and what you're looking forward to in your Erasmus experience"
         rows={4}
-        className="mt-1"
       />
     </div>
   );
