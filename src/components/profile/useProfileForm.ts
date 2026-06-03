@@ -7,9 +7,14 @@ import { v4 as uuidv4 } from "uuid";
 
 export const useProfileForm = () => {
   const context = useProfileContext();
-  const [uploadStatus, setUploadStatus] = useState({
+  const [uploadStatus, setUploadStatus] = useState<{
+    phase: "idle" | "compressing" | "uploading";
+    uploading: boolean;
+    error: string | null;
+  }>({
+    phase: "idle",
     uploading: false,
-    error: null as string | null,
+    error: null,
   });
   const [avatarUrl, setAvatarUrl] = useState<string | null>(context.form.avatar_url);
 
@@ -20,13 +25,14 @@ export const useProfileForm = () => {
     // Check file size (limit to 5MB)
     if (file.size > 5 * 1024 * 1024) {
       setUploadStatus({
+        phase: "idle",
         uploading: false,
-        error: "File too large. Maximum size is 5MB."
+        error: "File too large. Maximum size is 5MB.",
       });
       return;
     }
 
-    setUploadStatus({ uploading: true, error: null });
+    setUploadStatus({ phase: "compressing", uploading: true, error: null });
 
     try {
       const { data: userData } = await supabase.auth.getUser();
@@ -36,6 +42,8 @@ export const useProfileForm = () => {
       // (no paid Supabase image transformations).
       const { compressAvatar } = await import("@/lib/avatar");
       file = await compressAvatar(file);
+
+      setUploadStatus({ phase: "uploading", uploading: true, error: null });
 
       const userId = userData.user.id;
       const fileExt = file.name.split('.').pop();
@@ -66,11 +74,15 @@ export const useProfileForm = () => {
     } catch (error: any) {
       console.error("Error uploading avatar:", error);
       setUploadStatus({
+        phase: "idle",
         uploading: false,
-        error: error.message || "Failed to upload image"
+        error: error.message || "Failed to upload image",
       });
+      return;
     } finally {
-      setUploadStatus((prev) => ({ ...prev, uploading: false }));
+      setUploadStatus((prev) =>
+        prev.error ? prev : { phase: "idle", uploading: false, error: null }
+      );
     }
   };
 
