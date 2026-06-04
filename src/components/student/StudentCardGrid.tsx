@@ -1,31 +1,36 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Users, UserPlus, ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
 import { Profile } from "@/types";
 import StudentCard from "./StudentCard";
-import { 
-  Pagination, 
-  PaginationContent, 
+import {
+  Pagination,
+  PaginationContent,
   PaginationItem
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLocation } from "react-router-dom";
+import InviteFriendModal from "@/components/share/InviteFriendModal";
 
 interface StudentCardGridProps {
   filteredProfiles: Profile[];
   resetFilters: () => void;
   featuredProfiles?: Profile[];
   universityCityMap?: Record<string, string>;
+  hasActiveFilters?: boolean;
+  hasSeasonFilter?: boolean;
+  inviteRefCode?: string | null;
 }
 
 const ITEMS_PER_PAGE = 20; // Reduced from 40 to 20 for better performance
 const PAGINATION_STATE_KEY = "studentGridPaginationState";
 
-const StudentCardGrid = ({ filteredProfiles, resetFilters, featuredProfiles = [], universityCityMap = {} }: StudentCardGridProps) => {
+const StudentCardGrid = ({ filteredProfiles, resetFilters, featuredProfiles = [], universityCityMap = {}, hasActiveFilters = false, hasSeasonFilter = false, inviteRefCode = null }: StudentCardGridProps) => {
   const location = useLocation();
   const [currentPage, setCurrentPage] = useState(1);
+  const [inviteOpen, setInviteOpen] = useState(false);
   const isMobile = useIsMobile();
 
   // Process profiles to remove featured profiles from the main list to avoid duplication
@@ -126,23 +131,46 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters, featuredProfiles = []
       </div>
 
       {filteredProfiles.length === 0 ? (
-        <div className="text-center py-12 md:py-16 bg-white rounded-xl shadow-sm border border-gray-100">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 text-gray-500 mb-4">
-            <Search className="h-8 w-8" />
+        <div className="text-center py-12 md:py-16 bg-card rounded-2xl shadow-soft border border-border/60">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-secondary text-foreground mb-4">
+            {hasActiveFilters ? <Users className="h-8 w-8" /> : <UserPlus className="h-8 w-8" />}
           </div>
-          <h2 className="text-xl font-medium text-gray-900 mb-2">No students found</h2>
-          <p className="text-gray-600 mb-5 md:mb-6 px-4">Try adjusting your filters or search term</p>
-          <Button className="button-hover py-2.5 md:py-2" onClick={resetFilters}>
-            Reset Filters
-          </Button>
+          <h2 className="text-xl font-display font-semibold text-foreground mb-2">
+            {hasSeasonFilter
+              ? "No students match your selected semesters yet"
+              : hasActiveFilters
+                ? "No students match your current filters"
+                : "No students here yet"}
+          </h2>
+          <p className="text-muted-foreground mb-6 px-4 max-w-md mx-auto text-sm sm:text-base">
+            {hasSeasonFilter
+              ? "Try removing an Upcoming Squad or Ask an Alumnus filter, or invite a friend to fill the gap."
+              : hasActiveFilters
+                ? "Try clearing a filter or two, or invite a friend who fits the bill."
+                : "Be the first to invite your crew and start the conversation."}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center items-stretch sm:items-center px-4">
+            {hasActiveFilters && (
+              <Button variant="outline" onClick={resetFilters} className="gap-1.5">
+                <RotateCcw className="h-4 w-4" />
+                Reset filters
+              </Button>
+            )}
+            {inviteRefCode && (
+              <Button onClick={() => setInviteOpen(true)} className="gap-1.5">
+                <UserPlus className="h-4 w-4" />
+                Invite a friend
+              </Button>
+            )}
+          </div>
         </div>
       ) : (
         <>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-8">
             {currentProfiles.map((profile, i) => (
-              <StudentCard 
-                key={profile.id} 
-                profile={profile} 
+              <StudentCard
+                key={profile.id}
+                profile={profile}
                 isFeatured={currentPage === 1 && featuredProfiles.some(fp => fp.id === profile.id)}
                 universityCity={profile.university ? universityCityMap[profile.university] || null : null}
                 priority={i < 3}
@@ -184,6 +212,14 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters, featuredProfiles = []
             </PaginationContent>
           </Pagination>
         </>
+      )}
+
+      {inviteRefCode && (
+        <InviteFriendModal
+          open={inviteOpen}
+          onOpenChange={setInviteOpen}
+          refCode={inviteRefCode}
+        />
       )}
     </div>
   );
