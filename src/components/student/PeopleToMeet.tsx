@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Profile } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
 import { X, ArrowRight } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import ConnectModal from "@/components/student/ConnectModal";
 import StudentCard from "@/components/student/StudentCard";
@@ -11,6 +11,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { recordProfileView } from "@/hooks/useProfileViewers";
 import { compareRecommendation, scoreRecommendation } from "@/lib/studentOrdering";
 import { transformAvatarUrl } from "@/lib/avatar";
+import GradientAvatar from "@/components/ui/GradientAvatar";
 
 interface PeopleToMeetProps {
   profiles: Profile[];
