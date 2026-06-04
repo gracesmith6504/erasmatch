@@ -216,7 +216,9 @@ export const OnboardingFlow = () => {
     return (
       <CityPayoff
         city={currentUserProfile?.city ?? null}
+        university={currentUserProfile?.university ?? null}
         userId={currentUserProfile?.id ?? ""}
+        refCode={currentUserProfile?.ref_code ?? null}
         onComplete={handleCityPayoffComplete}
       />
     );
