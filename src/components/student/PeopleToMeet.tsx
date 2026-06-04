@@ -36,7 +36,7 @@ const RecommendationAvatar = ({ profile, index }: { profile: Profile; index: num
     : "?";
 
   return (
-    <Avatar className="h-16 w-16 bg-secondary ring-1 ring-transparent group-hover:ring-border transition-all">
+    <Avatar className="h-16 w-16 ring-1 ring-transparent group-hover:ring-border transition-all">
       {avatarSrc ? (
         <img
           key={avatarSrc}
@@ -55,9 +55,7 @@ const RecommendationAvatar = ({ profile, index }: { profile: Profile; index: num
           }}
         />
       ) : (
-        <AvatarFallback className="bg-secondary text-foreground text-sm">
-          {initials}
-        </AvatarFallback>
+        <GradientAvatar id={profile.id} name={profile.name} size={64} />
       )}
     </Avatar>
   );
