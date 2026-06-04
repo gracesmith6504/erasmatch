@@ -31,6 +31,8 @@ const StudentCard = ({ profile, isFeatured = false, universityCity = null, prior
   const visibleLookingFor = lookingFor.slice(0, 3);
 
   const isNew = new Date().getTime() - new Date(profile.created_at).getTime() < 21 * 24 * 60 * 60 * 1000;
+  const isAlumnus = isPastSemester(profile.semester);
+  const displayCity = universityCity || profile.city || "City not specified";
 
   const handleCardOpen = async () => {
     await recordProfileView(profile.id);
@@ -50,11 +52,21 @@ const StudentCard = ({ profile, isFeatured = false, universityCity = null, prior
       tabIndex={0}
       onClick={handleCardOpen}
       onKeyDown={handleCardKey}
-      className="overflow-hidden border-border hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group min-h-[280px] flex flex-col relative cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      className={cn(
+        "overflow-hidden border-border hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group min-h-[280px] flex flex-col relative cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+        "border-l-4",
+        isAlumnus ? "border-l-amber-400" : "border-l-erasmatch-coral/70"
+      )}
     >
-      {isNew && (
+      {isNew && !isAlumnus && (
         <span className="absolute top-2 right-2 z-10 bg-green-500 text-white text-[12px] font-medium px-2 py-0.5 rounded-full">
           Just joined ✨
+        </span>
+      )}
+      {isAlumnus && (
+        <span className="absolute top-2 right-2 z-10 inline-flex items-center gap-1 bg-amber-100 text-amber-900 dark:bg-amber-500/15 dark:text-amber-300 text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full">
+          <GraduationCap className="h-3 w-3" />
+          Alumnus
         </span>
       )}
       <CardContent className="pt-5 pb-3 flex-1 flex flex-col">
@@ -75,24 +87,37 @@ const StudentCard = ({ profile, isFeatured = false, universityCity = null, prior
           </div>
         </div>
 
-        {/* Info rows */}
+        {/* Hero destination row */}
+        <div className="flex items-center gap-2 mb-2">
+          <MapPin className="h-4 w-4 shrink-0 text-erasmatch-coral fill-erasmatch-coral/20" />
+          <span className="font-display font-semibold text-base text-foreground truncate">
+            {displayCity}
+          </span>
+        </div>
+
+        {/* Secondary info rows */}
         <div className="space-y-2">
           <div className="flex items-center text-sm text-muted-foreground">
             <Home className="h-4 w-4 mr-2 shrink-0 text-primary/60" />
             <span className="truncate">{profile.home_university || "Home university not specified"}</span>
           </div>
           <div className="flex items-center text-sm text-muted-foreground">
-            <MapPin className="h-4 w-4 mr-2 shrink-0 text-primary/60" />
-            <span className="truncate">{universityCity || profile.city || "City not specified"}</span>
-          </div>
-          <div className="flex items-center text-sm text-muted-foreground">
-            <CalendarClock className="h-4 w-4 mr-2 shrink-0 text-primary/60" />
+            {isAlumnus ? (
+              <GraduationCap className="h-4 w-4 mr-2 shrink-0 text-amber-500" />
+            ) : (
+              <CalendarClock className="h-4 w-4 mr-2 shrink-0 text-primary/60" />
+            )}
             <span className="truncate">{profile.semester || "Semester not specified"}</span>
           </div>
-          {profile.arrival_date && (
+          {profile.arrival_date && !isAlumnus && (
             <div className="flex items-center text-sm text-muted-foreground">
               <span className="mr-2 shrink-0">✈️</span>
               <span className="truncate">Arriving {format(new Date(profile.arrival_date), "d MMM")}</span>
+            </div>
+          )}
+          {isAlumnus && (
+            <div className="text-xs text-amber-700 dark:text-amber-300 font-medium">
+              Ask about life in {displayCity}
             </div>
           )}
         </div>
