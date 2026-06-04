@@ -233,11 +233,14 @@ const Students = ({ currentUserId }: StudentsProps) => {
                 resetFilters={resetFilters}
               />
 
-              <StudentCardGrid 
-                filteredProfiles={sortedProfiles} 
+              <StudentCardGrid
+                filteredProfiles={sortedProfiles}
                 resetFilters={resetFilters}
                 featuredProfiles={featuredProfiles}
                 universityCityMap={universityCityMap}
+                hasActiveFilters={Boolean(universityFilter) || Boolean(cityFilter) || personalityTagsFilter.length > 0 || seasonFilter.length > 0 || overlapOnly}
+                hasSeasonFilter={seasonFilter.length > 0}
+                inviteRefCode={currentProfile?.ref_code ?? null}
               />
             </TabsContent>
             
