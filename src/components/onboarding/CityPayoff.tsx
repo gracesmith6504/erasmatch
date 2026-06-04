@@ -161,16 +161,22 @@ export const CityPayoff = ({ city, university, userId, refCode, onComplete }: Ci
     const n = result.count;
     const s = n !== 1 ? "s" : "";
     switch (result.tier) {
-      case "university":
-        return `${n} student${s} also heading to ${result.label} 🎓`;
-      case "city":
-        return `${n} student${s} already going to ${result.label} 🎉`;
+      case "destination": {
+        if (result.matchType === "uni+city" && result.university && result.city) {
+          return `${n} student${s} heading to ${result.university} & ${result.city} 🎓`;
+        }
+        if (result.matchType === "uni" && result.university) {
+          return `${n} student${s} also at ${result.university} 🎓`;
+        }
+        return `${n} student${s} already going to ${result.city} 🎉`;
+      }
       case "country":
-        return `${n} student${s} heading to ${result.label} this year 🌍`;
+        return `${n} student${s} heading to ${result.country} this year 🌍`;
       case "first":
         return `You're a trailblazer 🚀`;
     }
   })();
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
