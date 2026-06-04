@@ -538,7 +538,7 @@ const StudentFilters = ({
 
   // Desktop: show filters inline as before
   return (
-    <div className="bg-card shadow-soft rounded-2xl p-6 mb-8 border border-border">
+    <div className="bg-card/80 backdrop-blur shadow-soft rounded-2xl p-4 sm:p-5 mb-8 border border-border/70">
       {filterContent}
     </div>
   );
