@@ -88,6 +88,23 @@ export const seasonLabel = (s: { season: Season; year: number }) =>
 export const rangesOverlap = (a: SemesterWindow, b: SemesterWindow): boolean =>
   a.start <= b.end && b.start <= a.end;
 
+/** True if the semester window has fully ended (alumnus). */
+export const isPastSemester = (raw: string | null | undefined): boolean => {
+  const w = parseSemester(raw);
+  if (!w) return false;
+  return w.end.getTime() < Date.now();
+};
+
+/** True if a season chip label like "Autumn 2025" refers to a past season. */
+export const isPastSeasonLabel = (label: string): boolean => {
+  const m = label.match(/^(Autumn|Spring)\s+(\d{4})$/);
+  if (!m) return false;
+  const year = Number(m[2]);
+  // Autumn YYYY ends ~Jan(YYYY+1); Spring YYYY ends ~Jun(YYYY)
+  const end = m[1] === "Autumn" ? new Date(year + 1, 1, 0) : new Date(year, 6, 0);
+  return end.getTime() < Date.now();
+};
+
 /** Build chronologically sorted season chip options from a list of semester strings. */
 export const buildSeasonOptions = (semesters: (string | null | undefined)[]): string[] => {
   const seen = new Map<string, { season: Season; year: number }>();

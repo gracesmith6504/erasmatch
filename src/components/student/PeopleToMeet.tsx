@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Profile } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
 import { X, ArrowRight } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import ConnectModal from "@/components/student/ConnectModal";
 import StudentCard from "@/components/student/StudentCard";
@@ -11,6 +11,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { recordProfileView } from "@/hooks/useProfileViewers";
 import { compareRecommendation, scoreRecommendation } from "@/lib/studentOrdering";
 import { transformAvatarUrl } from "@/lib/avatar";
+import GradientAvatar from "@/components/ui/GradientAvatar";
 
 interface PeopleToMeetProps {
   profiles: Profile[];
@@ -35,7 +36,7 @@ const RecommendationAvatar = ({ profile, index }: { profile: Profile; index: num
     : "?";
 
   return (
-    <Avatar className="h-16 w-16 bg-secondary ring-1 ring-transparent group-hover:ring-border transition-all">
+    <Avatar className="h-16 w-16 ring-1 ring-transparent group-hover:ring-border transition-all">
       {avatarSrc ? (
         <img
           key={avatarSrc}
@@ -54,9 +55,7 @@ const RecommendationAvatar = ({ profile, index }: { profile: Profile; index: num
           }}
         />
       ) : (
-        <AvatarFallback className="bg-secondary text-foreground text-sm">
-          {initials}
-        </AvatarFallback>
+        <GradientAvatar id={profile.id} name={profile.name} size={64} />
       )}
     </Avatar>
   );

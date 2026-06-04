@@ -3,9 +3,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { School, MapPin, X, User, ChevronDown, ChevronUp, Search, Plane, SlidersHorizontal, CalendarRange } from "lucide-react";
+import { School, MapPin, X, User, ChevronDown, ChevronUp, Search, SlidersHorizontal, CalendarRange, GraduationCap, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PERSONALITY_TAGS } from "@/components/profile/constants";
+import { isPastSeasonLabel } from "@/lib/semesterParsing";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Sheet,
@@ -61,6 +62,7 @@ const StudentFilters = ({
   const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
   const cityRef = useRef<HTMLDivElement>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [advancedOpen, setAdvancedOpen] = useState(false);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -162,9 +164,7 @@ const StudentFilters = ({
     return colors[index];
   };
 
-  const defaultVisibleTags = ["looking-to-meet", "weekend-trips", "clubbing"];
-  const priorityTagsData = PERSONALITY_TAGS.filter(tag => defaultVisibleTags.includes(tag.value));
-  const otherTagsData = PERSONALITY_TAGS.filter(tag => !defaultVisibleTags.includes(tag.value));
+  // Personality tags rendered as a single group inside the Advanced Filters dropdown.
 
   const filterContent = (
     <>
@@ -314,77 +314,113 @@ const StudentFilters = ({
         </div>
       )}
 
-      {/* Arriving Season Filter */}
-      {seasonOptions.length > 0 && (
-        <div className="mt-6">
-          <div className="flex items-center text-sm font-medium mb-3 text-foreground">
-            <Plane className="mr-2 h-4 w-4 text-muted-foreground" />
-            <span>Arriving Season</span>
+      {/* Arriving Season Filter — split Upcoming vs Alumni */}
+      {seasonOptions.length > 0 && (() => {
+        const upcoming = seasonOptions.filter((s) => !isPastSeasonLabel(s));
+        const past = seasonOptions.filter((s) => isPastSeasonLabel(s));
+        const renderChip = (season: string, variant: "upcoming" | "alumni") => {
+          const isSelected = seasonFilter.includes(season);
+          const selectedClass =
+            variant === "alumni"
+              ? "bg-amber-100 text-amber-900 border-amber-200 dark:bg-amber-500/15 dark:text-amber-300"
+              : "bg-erasmatch-coral/10 text-erasmatch-coral border-erasmatch-coral/30";
+          return (
+            <Badge
+              key={season}
+              variant={isSelected ? "default" : "outline"}
+              className={`cursor-pointer transition-all ${isSelected ? selectedClass : "hover:bg-secondary"}`}
+              onClick={() => handleSeasonToggle(season)}
+            >
+              {variant === "alumni" && <GraduationCap className="h-3 w-3 mr-1" />}
+              {season}
+              {isSelected && <X className="h-3 w-3 ml-1" />}
+            </Badge>
+          );
+        };
+        return (
+          <div className="mt-5 space-y-4">
+            {upcoming.length > 0 && (
+              <div>
+                <div className="flex items-center text-sm font-medium mb-2 text-foreground">
+                  <Users className="mr-2 h-4 w-4 text-erasmatch-coral" />
+                  <span>Upcoming Squads</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {upcoming.map((s) => renderChip(s, "upcoming"))}
+                </div>
+              </div>
+            )}
+            {past.length > 0 && (
+              <div>
+                <div className="flex items-center text-sm font-medium mb-1 text-foreground">
+                  <GraduationCap className="mr-2 h-4 w-4 text-amber-500" />
+                  <span>Ask an Alumnus</span>
+                  <span className="ml-2 text-[11px] uppercase tracking-wide text-muted-foreground font-normal">past terms</span>
+                </div>
+                <p className="text-xs text-muted-foreground mb-2">
+                  Students who already finished their exchange — perfect for advice.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {past.map((s) => renderChip(s, "alumni"))}
+                </div>
+              </div>
+            )}
           </div>
-          <div className="flex flex-wrap gap-2">
-            {seasonOptions.map((season) => {
-              const isSelected = seasonFilter.includes(season);
-              return (
-                <Badge
-                  key={season}
-                  variant={isSelected ? "default" : "outline"}
-                  className={`cursor-pointer transition-all ${
-                    isSelected ? "bg-erasmatch-coral/10 text-erasmatch-coral" : "hover:bg-secondary"
-                  }`}
-                  onClick={() => handleSeasonToggle(season)}
-                >
-                  {season}
-                  {isSelected && <X className="h-3 w-3 ml-1" />}
-                </Badge>
-              );
-            })}
-          </div>
-        </div>
-      )}
+        );
+      })()}
 
 
-      {/* Personality Tags Filter */}
-      <div className="mt-6">
-        <div className="flex items-center text-sm font-medium mb-3 text-foreground">
-          <User className="mr-2 h-4 w-4 text-muted-foreground" />
-          <span>Filter by Personality Tags</span>
-        </div>
-        
-        <div className="flex flex-wrap gap-2">
-          {priorityTagsData.map((tag) => {
-            const isSelected = personalityTagsFilter.includes(tag.value);
-            return (
-              <Badge
-                key={tag.value}
-                variant={isSelected ? "default" : "outline"}
-                className={`cursor-pointer transition-all ${
-                  isSelected ? getTagColor(tag.value) : "hover:bg-secondary"
-                }`}
-                onClick={() => handleTagToggle(tag.value)}
-              >
-                {tag.icon} {tag.label}
-                {isSelected && <X className="h-3 w-3 ml-1" />}
-              </Badge>
-            );
-          })}
-          
-          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-            {otherTagsData.map((tag) => {
-              const isSelected = personalityTagsFilter.includes(tag.value);
-              return (
-                <Badge
-                  key={tag.value}
-                  variant={isSelected ? "default" : "outline"}
-                  className={`cursor-pointer transition-all ${
-                    isSelected ? getTagColor(tag.value) : "hover:bg-secondary"
-                  }`}
-                  onClick={() => handleTagToggle(tag.value)}
-                >
-                  {tag.icon} {tag.label}
-                  {isSelected && <X className="h-3 w-3 ml-1" />}
-                </Badge>
-              );
-            })}
+      {/* Advanced filters (collapsible) */}
+      <div className="mt-5 border-t border-border/60 pt-4">
+        <button
+          type="button"
+          onClick={() => setAdvancedOpen((v) => !v)}
+          className="w-full flex items-center justify-between text-sm font-medium text-foreground hover:text-foreground/80 transition-colors"
+        >
+          <span className="flex items-center gap-2">
+            <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
+            Advanced filters
+            {personalityTagsFilter.length > 0 && (
+              <span className="inline-flex items-center justify-center text-[11px] font-semibold bg-erasmatch-blue/10 text-erasmatch-blue rounded-full px-2 py-0.5">
+                {personalityTagsFilter.length} selected
+              </span>
+            )}
+          </span>
+          {advancedOpen ? (
+            <ChevronUp className="h-4 w-4 text-muted-foreground" />
+          ) : (
+            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          )}
+        </button>
+
+        <div
+          className={`grid transition-all duration-300 ease-out ${
+            advancedOpen ? "grid-rows-[1fr] opacity-100 mt-4" : "grid-rows-[0fr] opacity-0"
+          }`}
+        >
+          <div className="overflow-hidden">
+            <div className="flex items-center text-sm font-medium mb-3 text-foreground">
+              <User className="mr-2 h-4 w-4 text-muted-foreground" />
+              <span>Personality Tags</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {PERSONALITY_TAGS.map((tag) => {
+                const isSelected = personalityTagsFilter.includes(tag.value);
+                return (
+                  <Badge
+                    key={tag.value}
+                    variant={isSelected ? "default" : "outline"}
+                    className={`cursor-pointer transition-all ${
+                      isSelected ? getTagColor(tag.value) : "hover:bg-secondary"
+                    }`}
+                    onClick={() => handleTagToggle(tag.value)}
+                  >
+                    {tag.icon} {tag.label}
+                    {isSelected && <X className="h-3 w-3 ml-1" />}
+                  </Badge>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
@@ -502,7 +538,7 @@ const StudentFilters = ({
 
   // Desktop: show filters inline as before
   return (
-    <div className="bg-card shadow-soft rounded-2xl p-6 mb-8 border border-border">
+    <div className="bg-card/80 backdrop-blur shadow-soft rounded-2xl p-4 sm:p-5 mb-8 border border-border/70">
       {filterContent}
     </div>
   );
