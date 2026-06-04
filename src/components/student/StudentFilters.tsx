@@ -164,9 +164,7 @@ const StudentFilters = ({
     return colors[index];
   };
 
-  const defaultVisibleTags = ["looking-to-meet", "weekend-trips", "clubbing"];
-  const priorityTagsData = PERSONALITY_TAGS.filter(tag => defaultVisibleTags.includes(tag.value));
-  const otherTagsData = PERSONALITY_TAGS.filter(tag => !defaultVisibleTags.includes(tag.value));
+  // Personality tags rendered as a single group inside the Advanced Filters dropdown.
 
   const filterContent = (
     <>
