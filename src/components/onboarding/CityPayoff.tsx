@@ -211,7 +211,7 @@ export const CityPayoff = ({ city, university, userId, refCode, onComplete }: Ci
         ) : (
           <>
             <p className="text-muted-foreground">
-              You're one of the first heading to {result.label || "your destination"}. Bring your crew and start your Erasmus chat early.
+              You're one of the first heading to {result.city || result.university || "your destination"}. Bring your crew and start your Erasmus chat early.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 mt-2 w-full sm:w-auto">
               {refCode && (
