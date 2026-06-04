@@ -5,12 +5,14 @@ import { Profile } from "@/types";
 import StudentAvatar from "./card/StudentAvatar";
 import StudentCardActions from "./card/StudentCardActions";
 import CountryFlag from "./card/CountryFlag";
-import { Home, MapPin, CalendarClock } from "lucide-react";
+import { Home, MapPin, CalendarClock, GraduationCap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getTagInfo } from "@/components/profile/constants";
 import { LOOKING_FOR_OPTIONS } from "@/components/profile/components/LookingForSection";
 import { format } from "date-fns";
 import { recordProfileView } from "@/hooks/useProfileViewers";
+import { isPastSemester } from "@/lib/semesterParsing";
+import { cn } from "@/lib/utils";
 
 interface StudentCardProps {
   profile: Profile;
