@@ -62,6 +62,7 @@ const StudentFilters = ({
   const [cityDropdownOpen, setCityDropdownOpen] = useState(false);
   const cityRef = useRef<HTMLDivElement>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [advancedOpen, setAdvancedOpen] = useState(false);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
