@@ -213,6 +213,14 @@ const StudentCardGrid = ({ filteredProfiles, resetFilters, featuredProfiles = []
           </Pagination>
         </>
       )}
+
+      {inviteRefCode && (
+        <InviteFriendModal
+          open={inviteOpen}
+          onOpenChange={setInviteOpen}
+          refCode={inviteRefCode}
+        />
+      )}
     </div>
   );
 };
