@@ -20,36 +20,18 @@ interface CityProfile {
   avatar_url: string | null;
 }
 
-type Tier = "university" | "city" | "country" | "first";
+type Tier = "destination" | "country" | "first";
+type MatchType = "uni+city" | "uni" | "city" | null;
 
 interface TierResult {
   tier: Tier;
   count: number;
   profiles: CityProfile[];
-  label: string | null; // university / city / country name
+  university: string | null;
+  city: string | null;
+  country: string | null;
+  matchType: MatchType;
 }
-
-const fetchTier = async (
-  filter: { column: "university" | "city"; value: string } | { column: "university"; values: string[] },
-  userId: string
-): Promise<{ count: number; profiles: CityProfile[] }> => {
-  const base = supabase
-    .from("profiles")
-    .select("id, name, avatar_url", { count: "exact" })
-    .is("deleted_at", null)
-    .neq("id", userId);
-
-  const query =
-    "values" in filter
-      ? base.in(filter.column, filter.values)
-      : base.eq(filter.column, filter.value);
-
-  const { data, count } = await query
-    .order("avatar_url", { ascending: false, nullsFirst: false })
-    .limit(3);
-
-  return { count: count ?? 0, profiles: data ?? [] };
-};
 
 export const CityPayoff = ({ city, university, userId, refCode, onComplete }: CityPayoffProps) => {
   const [result, setResult] = useState<TierResult | null>(null);
@@ -58,25 +40,47 @@ export const CityPayoff = ({ city, university, userId, refCode, onComplete }: Ci
 
   useEffect(() => {
     const resolve = async () => {
-      // Tier 1: same destination university
-      if (university) {
-        const r = await fetchTier({ column: "university", value: university }, userId);
-        if (r.count > 0) {
-          setResult({ tier: "university", count: r.count, profiles: r.profiles, label: university });
+      // Tier 1: destination (university OR city) — combined
+      const orFilters: string[] = [];
+      if (university) orFilters.push(`university.eq."${university}"`);
+      if (city) orFilters.push(`city.eq."${city}"`);
+
+      if (orFilters.length > 0) {
+        const { data, count } = await supabase
+          .from("profiles")
+          .select("id, name, avatar_url, university, city", { count: "exact" })
+          .is("deleted_at", null)
+          .neq("id", userId)
+          .or(orFilters.join(","))
+          .order("avatar_url", { ascending: false, nullsFirst: false })
+          .limit(50);
+
+        if ((count ?? 0) > 0 && data && data.length > 0) {
+          const uniMatches = data.filter((p) => university && p.university === university);
+          const cityMatches = data.filter(
+            (p) => city && p.city === city && !(university && p.university === university)
+          );
+          const ordered = [...uniMatches, ...cityMatches].slice(0, 3);
+
+          const hasUni = uniMatches.length > 0;
+          const hasCity = data.some((p) => city && p.city === city);
+          const matchType: MatchType =
+            hasUni && hasCity ? "uni+city" : hasUni ? "uni" : "city";
+
+          setResult({
+            tier: "destination",
+            count: count ?? 0,
+            profiles: ordered,
+            university,
+            city,
+            country: null,
+            matchType,
+          });
           return;
         }
       }
 
-      // Tier 2: same city
-      if (city) {
-        const r = await fetchTier({ column: "city", value: city }, userId);
-        if (r.count > 0) {
-          setResult({ tier: "city", count: r.count, profiles: r.profiles, label: city });
-          return;
-        }
-      }
-
-      // Tier 3: same country (resolve via universities table)
+      // Tier 2: same country (resolve via universities table)
       if (university) {
         const { data: uniRow } = await supabase
           .from("universities")
@@ -93,17 +97,41 @@ export const CityPayoff = ({ city, university, userId, refCode, onComplete }: Ci
 
           const names = (sameCountryUnis ?? []).map((u) => u.name).filter(Boolean) as string[];
           if (names.length > 0) {
-            const r = await fetchTier({ column: "university", values: names }, userId);
-            if (r.count > 0) {
-              setResult({ tier: "country", count: r.count, profiles: r.profiles, label: country });
+            const { data, count } = await supabase
+              .from("profiles")
+              .select("id, name, avatar_url, university, city", { count: "exact" })
+              .is("deleted_at", null)
+              .neq("id", userId)
+              .in("university", names)
+              .order("avatar_url", { ascending: false, nullsFirst: false })
+              .limit(3);
+
+            if ((count ?? 0) > 0) {
+              setResult({
+                tier: "country",
+                count: count ?? 0,
+                profiles: data ?? [],
+                university,
+                city,
+                country,
+                matchType: null,
+              });
               return;
             }
           }
         }
       }
 
-      // Tier 4: first mover
-      setResult({ tier: "first", count: 0, profiles: [], label: city ?? university ?? null });
+      // Tier 3: first mover
+      setResult({
+        tier: "first",
+        count: 0,
+        profiles: [],
+        university,
+        city,
+        country: null,
+        matchType: null,
+      });
     };
 
     resolve();
@@ -114,8 +142,8 @@ export const CityPayoff = ({ city, university, userId, refCode, onComplete }: Ci
     window.posthog?.capture("city_payoff_shown", {
       tier: result.tier,
       peer_count: result.count,
+      match_type: result.matchType,
     });
-    // Auto-advance only for social-proof tiers
     if (result.tier !== "first") {
       timerRef.current = setTimeout(onComplete, 6000);
     }
@@ -133,16 +161,22 @@ export const CityPayoff = ({ city, university, userId, refCode, onComplete }: Ci
     const n = result.count;
     const s = n !== 1 ? "s" : "";
     switch (result.tier) {
-      case "university":
-        return `${n} student${s} also heading to ${result.label} 🎓`;
-      case "city":
-        return `${n} student${s} already going to ${result.label} 🎉`;
+      case "destination": {
+        if (result.matchType === "uni+city" && result.university && result.city) {
+          return `${n} student${s} heading to ${result.university} & ${result.city} 🎓`;
+        }
+        if (result.matchType === "uni" && result.university) {
+          return `${n} student${s} also at ${result.university} 🎓`;
+        }
+        return `${n} student${s} already going to ${result.city} 🎉`;
+      }
       case "country":
-        return `${n} student${s} heading to ${result.label} this year 🌍`;
+        return `${n} student${s} heading to ${result.country} this year 🌍`;
       case "first":
         return `You're a trailblazer 🚀`;
     }
   })();
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
@@ -177,7 +211,7 @@ export const CityPayoff = ({ city, university, userId, refCode, onComplete }: Ci
         ) : (
           <>
             <p className="text-muted-foreground">
-              You're one of the first heading to {result.label || "your destination"}. Bring your crew and start your Erasmus chat early.
+              You're one of the first heading to {result.city || result.university || "your destination"}. Bring your crew and start your Erasmus chat early.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 mt-2 w-full sm:w-auto">
               {refCode && (
