@@ -1,31 +1,36 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Users, UserPlus, ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
 import { Profile } from "@/types";
 import StudentCard from "./StudentCard";
-import { 
-  Pagination, 
-  PaginationContent, 
+import {
+  Pagination,
+  PaginationContent,
   PaginationItem
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLocation } from "react-router-dom";
+import InviteFriendModal from "@/components/share/InviteFriendModal";
 
 interface StudentCardGridProps {
   filteredProfiles: Profile[];
   resetFilters: () => void;
   featuredProfiles?: Profile[];
   universityCityMap?: Record<string, string>;
+  hasActiveFilters?: boolean;
+  hasSeasonFilter?: boolean;
+  inviteRefCode?: string | null;
 }
 
 const ITEMS_PER_PAGE = 20; // Reduced from 40 to 20 for better performance
 const PAGINATION_STATE_KEY = "studentGridPaginationState";
 
-const StudentCardGrid = ({ filteredProfiles, resetFilters, featuredProfiles = [], universityCityMap = {} }: StudentCardGridProps) => {
+const StudentCardGrid = ({ filteredProfiles, resetFilters, featuredProfiles = [], universityCityMap = {}, hasActiveFilters = false, hasSeasonFilter = false, inviteRefCode = null }: StudentCardGridProps) => {
   const location = useLocation();
   const [currentPage, setCurrentPage] = useState(1);
+  const [inviteOpen, setInviteOpen] = useState(false);
   const isMobile = useIsMobile();
 
   // Process profiles to remove featured profiles from the main list to avoid duplication
