@@ -193,6 +193,7 @@ const ProfileView = ({ currentUserId }: ProfileViewProps) => {
             profile={profile} 
             universityCity={universityCity} 
             isLoadingCity={isLoadingCity} 
+            isOwnProfile={isOwnProfile}
           />
         </div>
       </div>
