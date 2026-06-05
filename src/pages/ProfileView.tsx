@@ -199,9 +199,7 @@ const ProfileView = ({ currentUserId }: ProfileViewProps) => {
 
       {profile && id && (() => {
         const city = universityCity || profile.city;
-        const isAlumnus = (() => {
-          try { return require("@/lib/semesterParsing").isPastSemester(profile.semester); } catch { return false; }
-        })();
+        const isAlumnus = isPastSemester(profile.semester);
         return (
           <ConnectModal
             open={connectOpen}
