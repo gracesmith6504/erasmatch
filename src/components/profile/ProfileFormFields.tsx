@@ -41,6 +41,18 @@ export function ProfileFormFields() {
         </div>
       </div>
 
+      {/* About Me — moved above Academic Details to boost completion */}
+      <section className="space-y-2">
+        <h3 className="text-base font-display font-semibold text-foreground">✍️ About You</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          A 1-sentence intro goes a long way — profiles with a bio get noticeably more connects.
+        </p>
+        <AboutMeSection
+          bio={form.bio}
+          handleChange={handleChange}
+        />
+      </section>
+
       {/* University & Academic Details */}
       <section className="space-y-2">
         <h3 className="text-base font-display font-semibold text-foreground">🎓 Academic Details</h3>
@@ -51,16 +63,6 @@ export function ProfileFormFields() {
           handleSelectChange={handleSelectChange}
           handleUniversityChange={handleUniversityChange}
           handleHomeUniversityChange={handleHomeUniversityChange}
-        />
-      </section>
-
-      {/* About Me */}
-      <section className="space-y-2">
-        <h3 className="text-base font-display font-semibold text-foreground">✍️ About You</h3>
-        <p className="text-sm text-muted-foreground mb-4">Let other students get to know you.</p>
-        <AboutMeSection
-          bio={form.bio}
-          handleChange={handleChange}
         />
       </section>
 

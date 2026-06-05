@@ -3,6 +3,13 @@ import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
 import ConnectModal from "@/components/student/ConnectModal";
 import { useAuth } from "@/contexts/AuthContext";
+import { isPastSemester } from "@/lib/semesterParsing";
+
+function buildAlumniNote(city?: string | null, university?: string | null) {
+  if (city) return `Hey! Saw you went to ${city} — any tips?`;
+  if (university) return `Hey! Saw you studied at ${university} — any tips?`;
+  return `Hey! Saw you've already done your Erasmus — any tips?`;
+}
 
 interface StudentCardActionsProps {
   studentId: string;
@@ -69,7 +76,7 @@ const StudentCardActions: React.FC<StudentCardActionsProps> = ({
         studentLastActiveAt={studentLastActiveAt}
         sharedCity={sharedCity}
         sharedUniversity={sharedUniversity}
-        initialNote={initialNote}
+        initialNote={initialNote ?? (isPastSemester(studentSemester) ? buildAlumniNote(studentCity, studentUniversity) : undefined)}
       />
     </>
   );
