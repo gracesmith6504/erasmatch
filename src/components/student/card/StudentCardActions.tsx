@@ -76,7 +76,7 @@ const StudentCardActions: React.FC<StudentCardActionsProps> = ({
         studentLastActiveAt={studentLastActiveAt}
         sharedCity={sharedCity}
         sharedUniversity={sharedUniversity}
-        initialNote={initialNote}
+        initialNote={initialNote ?? (isPastSemester(studentSemester) ? buildAlumniNote(studentCity, studentUniversity) : undefined)}
       />
     </>
   );
