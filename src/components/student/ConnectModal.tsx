@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Dialog,
@@ -50,6 +50,10 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const [note, setNote] = useState(initialNote ?? "");
+
+  useEffect(() => {
+    if (open) setNote(initialNote ?? "");
+  }, [open, studentId, initialNote]);
   const [sending, setSending] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const sendMessage = useSendMessage();
