@@ -196,20 +196,27 @@ const ProfileView = ({ currentUserId }: ProfileViewProps) => {
         </div>
       </div>
 
-      {profile && id && (
-        <ConnectModal
-          open={connectOpen}
-          onOpenChange={setConnectOpen}
-          studentId={id}
-          studentName={profile.name || "Student"}
-          studentAvatarUrl={profile.avatar_url}
-          studentCity={universityCity || profile.city}
-          studentSemester={profile.semester}
-          studentLastActiveAt={profile.last_active_at}
-          sharedCity={sharedCity}
-          sharedUniversity={sharedUniversity}
-        />
-      )}
+      {profile && id && (() => {
+        const city = universityCity || profile.city;
+        const isAlumnus = (() => {
+          try { return require("@/lib/semesterParsing").isPastSemester(profile.semester); } catch { return false; }
+        })();
+        return (
+          <ConnectModal
+            open={connectOpen}
+            onOpenChange={setConnectOpen}
+            studentId={id}
+            studentName={profile.name || "Student"}
+            studentAvatarUrl={profile.avatar_url}
+            studentCity={city}
+            studentSemester={profile.semester}
+            studentLastActiveAt={profile.last_active_at}
+            sharedCity={sharedCity}
+            sharedUniversity={sharedUniversity}
+            initialNote={isAlumnus ? (city ? `Hey! Saw you went to ${city} — any tips?` : profile.university ? `Hey! Saw you studied at ${profile.university} — any tips?` : `Hey! Saw you've already done your Erasmus — any tips?`) : undefined}
+          />
+        );
+      })()}
 
       <BlockUserDialog
         isOpen={showBlockDialog}
