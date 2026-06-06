@@ -218,6 +218,17 @@ export const OnboardingFlow = () => {
     );
   }
 
+  if (showInviteCrew) {
+    return (
+      <InviteCrewStep
+        homeUniversity={currentUserProfile?.home_university ?? null}
+        city={currentUserProfile?.city ?? null}
+        refCode={currentUserProfile?.ref_code ?? null}
+        onComplete={handleInviteCrewComplete}
+      />
+    );
+  }
+
   if (showCityPayoff) {
     return (
       <CityPayoff
