@@ -211,19 +211,11 @@ export const CityPayoff = ({ city, university, userId, refCode, onComplete }: Ci
         ) : (
           <>
             <p className="text-muted-foreground">
-              You're one of the first heading to {result.city || result.university || "your destination"}. Bring your crew and start your Erasmus chat early.
+              You're one of the first heading to {result.city || result.university || "your destination"}. Bring your crew along.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 mt-2 w-full sm:w-auto">
-              {refCode && (
-                <Button size="lg" onClick={() => setInviteOpen(true)}>
-                  <UserPlus className="mr-2 h-4 w-4" />
-                  Invite a friend
-                </Button>
-              )}
-              <Button size="lg" variant="outline" onClick={onComplete}>
-                Explore students <ArrowRight className="ml-1 h-4 w-4" />
-              </Button>
-            </div>
+            <Button size="lg" onClick={onComplete} className="mt-2">
+              Continue <ArrowRight className="ml-1 h-4 w-4" />
+            </Button>
           </>
         )}
       </motion.div>
