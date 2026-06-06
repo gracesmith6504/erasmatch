@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigation } from "./useNavigation";
+import { InviteButton } from "@/components/share/InviteButton";
 
 interface MobileNavProps {
   isOpen: boolean;
@@ -56,6 +57,7 @@ export const MobileNav = ({
                 Profile
               </div>
             </Link>
+            <InviteButton variant="menu" />
             <button
               onClick={onLogout}
               type="button"
