@@ -111,6 +111,7 @@ export const DateField = ({
             return false;
           }}
           initialFocus
+          fixedWeeks
           className={cn("p-3 pointer-events-auto")}
         />
       </PopoverContent>
