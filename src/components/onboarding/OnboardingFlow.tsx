@@ -11,6 +11,7 @@ import { InterestsStep } from "./steps/InterestsStep";
 import { PhotoStep } from "./steps/PhotoStep";
 import { CompletionCelebration } from "./CompletionCelebration";
 import { CityPayoff } from "./CityPayoff";
+import { InviteCrewStep } from "./InviteCrewStep";
 import { toast } from "sonner";
 import { generateUniqueRefCode } from "@/utils/refCodeGenerator";
 import { supabase } from "@/integrations/supabase/client";
@@ -40,6 +41,7 @@ export const OnboardingFlow = () => {
   const [direction, setDirection] = useState(1);
   const [showCelebration, setShowCelebration] = useState(false);
   const [showCityPayoff, setShowCityPayoff] = useState(false);
+  const [showInviteCrew, setShowInviteCrew] = useState(false);
   const [showWelcomeBack, setShowWelcomeBack] = useState(() => (currentUserProfile?.onboarding_step ?? 0) > 0);
   const completingRef = useRef(false);
   const totalSteps = 6;
@@ -78,10 +80,10 @@ export const OnboardingFlow = () => {
   useEffect(() => {
     // Only redirect if onboarding was already complete on mount (returning user).
     // Don't redirect during the completion sequence (celebration → city payoff).
-    if (currentUserProfile?.onboarding_complete && !completingRef.current && !showCelebration && !showCityPayoff) {
+    if (currentUserProfile?.onboarding_complete && !completingRef.current && !showCelebration && !showCityPayoff && !showInviteCrew) {
       navigate("/students");
     }
-  }, [currentUserProfile, navigate, showCelebration, showCityPayoff]);
+  }, [currentUserProfile, navigate, showCelebration, showCityPayoff, showInviteCrew]);
 
   const handleUpdateProfile = async (data: any) => {
     try {
@@ -170,6 +172,10 @@ export const OnboardingFlow = () => {
   }, []);
 
   const handleCityPayoffComplete = useCallback(() => {
+    setShowInviteCrew(true);
+  }, []);
+
+  const handleInviteCrewComplete = useCallback(() => {
     navigate("/students?from=onboarding");
   }, [navigate]);
 
@@ -209,6 +215,17 @@ export const OnboardingFlow = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
       </div>
+    );
+  }
+
+  if (showInviteCrew) {
+    return (
+      <InviteCrewStep
+        homeUniversity={currentUserProfile?.home_university ?? null}
+        city={currentUserProfile?.city ?? null}
+        refCode={currentUserProfile?.ref_code ?? null}
+        onComplete={handleInviteCrewComplete}
+      />
     );
   }
 
