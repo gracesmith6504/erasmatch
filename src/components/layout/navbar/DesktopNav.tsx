@@ -5,6 +5,7 @@ import { NotificationBell } from "./NotificationBell";
 import { useNavigation } from "./useNavigation";
 import { NavigationLink } from "./NavigationLink";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { InviteButton } from "@/components/share/InviteButton";
 
 interface DesktopNavProps {
   isAuthenticated: boolean;
@@ -68,6 +69,7 @@ export const DesktopNav = ({ isAuthenticated, isActive, onLogout }: DesktopNavPr
             <ShieldCheck className="w-5 h-5" />
           </Link>
         )}
+        <InviteButton variant="icon" />
         <NotificationBell />
         <Link
           to="/profile"
