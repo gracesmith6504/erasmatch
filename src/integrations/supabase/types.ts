@@ -498,6 +498,10 @@ export type Database = {
       }
       is_blocked: { Args: { user_a: string; user_b: string }; Returns: boolean }
       join_group_by_slug: { Args: never; Returns: undefined }
+      mark_thread_read: {
+        Args: { p_partner_id: string; p_user_id: string }
+        Returns: undefined
+      }
       normalize_text: { Args: { t: string }; Returns: string }
       search_universities: {
         Args: { _city?: string; _limit?: number; _q: string }
