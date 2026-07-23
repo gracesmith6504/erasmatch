@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Profile } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
+import { useUniversitiesCache } from "@/hooks/useUniversitiesCache";
 import { X, ArrowRight } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -74,19 +75,14 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
     staleTime: 60_000,
   });
 
-  const { data: uniCountryMap = {}, isLoading: countriesLoading } = useQuery({
-    queryKey: ["university-country-map"],
-    queryFn: async () => {
-      const { data } = await supabase.from("universities").select("name, country");
-      if (!data) return {};
-      const map: Record<string, string> = {};
-      data.forEach((u) => {
-        if (u.name && u.country) map[u.name] = u.country;
-      });
-      return map;
-    },
-    staleTime: 300_000,
-  });
+  const { universities, loading: countriesLoading } = useUniversitiesCache();
+  const uniCountryMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const u of universities) {
+      if (u.name && u.country) map[u.name] = u.country;
+    }
+    return map;
+  }, [universities]);
 
   const { scored, destinationName, destinationKind } = useMemo(() => {
     const myCity = currentProfile.city;

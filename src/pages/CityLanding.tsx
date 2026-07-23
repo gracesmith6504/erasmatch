@@ -68,7 +68,7 @@ const CityLanding = () => {
                   {avatars.map((url, i) => (
                     <img
                       key={i}
-                      src={`${url}?width=72&height=72&resize=cover`}
+                      src={url}
                       alt=""
                       className="w-9 h-9 rounded-full border-2 border-background object-cover"
                       style={{ marginLeft: i === 0 ? 0 : -8 }}

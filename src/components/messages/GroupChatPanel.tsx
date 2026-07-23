@@ -1,7 +1,8 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile, GroupMessage } from "@/types";
+import { useConversationReactions } from "@/hooks/useReactions";
 import { toast } from "sonner";
 import { GroupParticipantsInfo } from "./GroupParticipantsInfo";
 import { GroupChatMessageList } from "./GroupChatMessageList";
@@ -106,6 +107,13 @@ export const GroupChatPanel = ({
     };
   }, [canonicalName, currentUserId, resolverReady, resolver]);
 
+  const messageIds = useMemo(() => messages.map((m) => m.id), [messages]);
+  const { summariesByMessage, toggleReaction } = useConversationReactions(
+    messageIds,
+    "group",
+    currentUserId
+  );
+
   const handleSendMessage = async (message: string) => {
     setIsSending(true);
     try {
@@ -158,10 +166,12 @@ export const GroupChatPanel = ({
       </div>
       
       <div className="flex-1 overflow-y-auto p-4 flex flex-col bg-gray-50">
-        <GroupChatMessageList 
+        <GroupChatMessageList
           messages={messages}
           profiles={profiles}
           currentUserId={currentUserId}
+          reactionsByMessage={summariesByMessage}
+          onToggleReaction={toggleReaction}
         />
       </div>
       

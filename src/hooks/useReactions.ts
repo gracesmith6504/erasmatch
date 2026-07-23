@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export type Reaction = {
@@ -14,34 +14,39 @@ export type ReactionSummary = {
   emoji: string;
   count: number;
   userIds: string[];
-  reacted: boolean; // whether the current user has reacted with this emoji
+  reacted: boolean;
 };
 
-export function useReactions(messageId: string, messageType: "direct" | "group" | "city", currentUserId: string | null) {
+export function useConversationReactions(
+  messageIds: string[],
+  messageType: "direct" | "group" | "city",
+  currentUserId: string | null
+) {
   const [reactions, setReactions] = useState<Reaction[]>([]);
 
   const fetchReactions = useCallback(async () => {
+    if (messageIds.length === 0) return;
+
     const { data, error } = await supabase
       .from("message_reactions")
       .select("*")
-      .eq("message_id", messageId)
+      .in("message_id", messageIds)
       .eq("message_type", messageType);
 
     if (!error && data) setReactions(data as Reaction[]);
-  }, [messageId, messageType]);
+  }, [messageIds.join(","), messageType]);
 
   useEffect(() => {
     fetchReactions();
 
     const channel = supabase
-      .channel(`reactions-${messageId}`)
+      .channel(`reactions-${messageType}-${messageIds[0] ?? "empty"}`)
       .on(
         "postgres_changes",
         {
           event: "*",
           schema: "public",
           table: "message_reactions",
-          filter: `message_id=eq.${messageId}`,
         },
         () => fetchReactions()
       )
@@ -50,43 +55,54 @@ export function useReactions(messageId: string, messageType: "direct" | "group" 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [messageId, fetchReactions]);
+  }, [fetchReactions]);
 
-  const summaries: ReactionSummary[] = reactions.reduce<ReactionSummary[]>((acc, r) => {
-    const existing = acc.find((s) => s.emoji === r.emoji);
-    if (existing) {
-      existing.count++;
-      existing.userIds.push(r.user_id);
-      if (r.user_id === currentUserId) existing.reacted = true;
-    } else {
-      acc.push({
-        emoji: r.emoji,
-        count: 1,
-        userIds: [r.user_id],
-        reacted: r.user_id === currentUserId,
-      });
+  const summariesByMessage = useMemo(() => {
+    const map = new Map<string, ReactionSummary[]>();
+
+    for (const r of reactions) {
+      if (!map.has(r.message_id)) map.set(r.message_id, []);
+      const summaries = map.get(r.message_id)!;
+
+      const existing = summaries.find((s) => s.emoji === r.emoji);
+      if (existing) {
+        existing.count++;
+        existing.userIds.push(r.user_id);
+        if (r.user_id === currentUserId) existing.reacted = true;
+      } else {
+        summaries.push({
+          emoji: r.emoji,
+          count: 1,
+          userIds: [r.user_id],
+          reacted: r.user_id === currentUserId,
+        });
+      }
     }
-    return acc;
-  }, []);
 
-  const toggleReaction = async (emoji: string) => {
-    if (!currentUserId) return;
+    return map;
+  }, [reactions, currentUserId]);
 
-    const existing = reactions.find(
-      (r) => r.emoji === emoji && r.user_id === currentUserId
-    );
+  const toggleReaction = useCallback(
+    async (messageId: string, emoji: string) => {
+      if (!currentUserId) return;
 
-    if (existing) {
-      await supabase.from("message_reactions").delete().eq("id", existing.id);
-    } else {
-      await supabase.from("message_reactions").insert({
-        message_id: messageId,
-        message_type: messageType,
-        user_id: currentUserId,
-        emoji,
-      });
-    }
-  };
+      const existing = reactions.find(
+        (r) => r.message_id === messageId && r.emoji === emoji && r.user_id === currentUserId
+      );
 
-  return { summaries, toggleReaction };
+      if (existing) {
+        await supabase.from("message_reactions").delete().eq("id", existing.id);
+      } else {
+        await supabase.from("message_reactions").insert({
+          message_id: messageId,
+          message_type: messageType,
+          user_id: currentUserId,
+          emoji,
+        });
+      }
+    },
+    [currentUserId, reactions, messageType]
+  );
+
+  return { summariesByMessage, toggleReaction };
 }

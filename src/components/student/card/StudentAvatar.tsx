@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { differenceInDays } from "date-fns";
-import { transformAvatarUrl } from "@/lib/avatar";
 
 interface StudentAvatarProps {
   avatarUrl: string | null;
@@ -12,12 +11,8 @@ interface StudentAvatarProps {
 }
 
 const StudentAvatar = ({ avatarUrl, name, className = "", lastActiveAt, priority = false }: StudentAvatarProps) => {
-  const fallbackSrc = avatarUrl || undefined;
-  const [avatarSrc, setAvatarSrc] = useState(() => transformAvatarUrl(avatarUrl, 72));
-
-  useEffect(() => {
-    setAvatarSrc(transformAvatarUrl(avatarUrl, 72));
-  }, [avatarUrl]);
+  const [imgError, setImgError] = useState(false);
+  const avatarSrc = imgError ? undefined : (avatarUrl || undefined);
 
   const getInitials = (name: string | null) => {
     if (!name) return "?";
@@ -40,13 +35,7 @@ const StudentAvatar = ({ avatarUrl, name, className = "", lastActiveAt, priority
             loading={priority ? "eager" : "lazy"}
             fetchPriority={priority ? "high" : "auto"}
             decoding="async"
-            onError={() => {
-              if (fallbackSrc && avatarSrc !== fallbackSrc) {
-                setAvatarSrc(fallbackSrc);
-              } else {
-                setAvatarSrc(undefined);
-              }
-            }}
+            onError={() => setImgError(true)}
           />
         ) : (
           <AvatarFallback className="text-lg bg-secondary text-foreground">

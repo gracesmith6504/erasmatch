@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
 import { MessageReactions } from "./MessageReactions";
+import { ReactionSummary } from "@/hooks/useReactions";
 
 interface GroupChatMessageProps {
   content: string;
@@ -14,6 +15,8 @@ interface GroupChatMessageProps {
   messageId?: string;
   messageType?: "group" | "city";
   currentUserId?: string;
+  reactions?: ReactionSummary[];
+  onToggleReaction?: (emoji: string) => void;
 }
 
 export const GroupChatMessage = ({
@@ -25,6 +28,8 @@ export const GroupChatMessage = ({
   messageId,
   messageType = "group",
   currentUserId,
+  reactions = [],
+  onToggleReaction,
 }: GroupChatMessageProps) => {
   const getInitials = (name: string | null) => {
     if (!name) return "?";
@@ -35,7 +40,7 @@ export const GroupChatMessage = ({
       .toUpperCase()
       .substring(0, 2);
   };
-  
+
   const formatMessageDate = (dateString: string) => {
     const date = new Date(dateString);
     return format(date, "MMM d, h:mm a");
@@ -47,21 +52,21 @@ export const GroupChatMessage = ({
         {!isCurrentUser && (
           <Link to={`/profile/${senderId}`}>
             <Avatar className="h-8 w-8 mr-2 hover:ring-2 hover:ring-primary/30 transition">
-              <AvatarImage src={senderProfile?.avatar_url ? `${senderProfile.avatar_url}?width=64&height=64&resize=cover&quality=75` : undefined} loading="lazy" decoding="async" />
+              <AvatarImage src={senderProfile?.avatar_url || undefined} loading="lazy" decoding="async" />
               <AvatarFallback className="bg-muted">
                 {getInitials(senderProfile?.name)}
               </AvatarFallback>
             </Avatar>
           </Link>
         )}
-        
+
         <div className={`flex flex-col ${isCurrentUser ? "items-end" : "items-start"}`}>
           {!isCurrentUser && (
             <div className="text-xs text-muted-foreground mb-1 ml-1">
               {senderProfile?.name || "Unknown user"}
             </div>
           )}
-          
+
           <div
             className={`rounded-lg px-4 py-2 ${
               isCurrentUser
@@ -79,11 +84,10 @@ export const GroupChatMessage = ({
             </div>
           </div>
 
-          {messageId && (
+          {messageId && onToggleReaction && (
             <MessageReactions
-              messageId={messageId}
-              messageType={messageType}
-              currentUserId={currentUserId || null}
+              summaries={reactions}
+              onToggleReaction={onToggleReaction}
               isCurrentUser={isCurrentUser}
             />
           )}

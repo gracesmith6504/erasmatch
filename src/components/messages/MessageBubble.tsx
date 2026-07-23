@@ -2,6 +2,7 @@ import React from 'react';
 import { format } from 'date-fns';
 import { CheckCheck, Check } from 'lucide-react';
 import { MessageReactions } from './MessageReactions';
+import { ReactionSummary } from '@/hooks/useReactions';
 
 interface MessageBubbleProps {
   content: string;
@@ -12,17 +13,21 @@ interface MessageBubbleProps {
   isFirstInGroup?: boolean;
   messageId?: string;
   currentUserId?: string;
+  reactions?: ReactionSummary[];
+  onToggleReaction?: (emoji: string) => void;
 }
 
-const MessageBubble: React.FC<MessageBubbleProps> = ({ 
-  content, 
-  timestamp, 
+const MessageBubble: React.FC<MessageBubbleProps> = ({
+  content,
+  timestamp,
   isCurrentUser,
   isRead = false,
   showTimestamp = true,
   isFirstInGroup = true,
   messageId,
   currentUserId,
+  reactions = [],
+  onToggleReaction,
 }) => {
   const formatMessageTime = (dateString: string) => {
     try {
@@ -65,11 +70,10 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
             )}
           </div>
         )}
-        {messageId && (
+        {messageId && onToggleReaction && (
           <MessageReactions
-            messageId={messageId}
-            messageType="direct"
-            currentUserId={currentUserId || null}
+            summaries={reactions}
+            onToggleReaction={onToggleReaction}
             isCurrentUser={isCurrentUser}
           />
         )}

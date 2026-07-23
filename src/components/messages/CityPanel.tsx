@@ -1,7 +1,8 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile, CityMessage } from "@/types";
+import { useConversationReactions } from "@/hooks/useReactions";
 import { toast } from "sonner";
 import { createNotification } from "@/utils/notifications";
 import { CityParticipantsInfo } from "./CityParticipantsInfo";
@@ -94,6 +95,13 @@ export const CityPanel = ({
     };
   }, [cityName, currentUserId]);
   
+  const messageIds = useMemo(() => messages.map((m) => m.id), [messages]);
+  const { summariesByMessage, toggleReaction } = useConversationReactions(
+    messageIds,
+    "city",
+    currentUserId
+  );
+
   const handleSendMessage = async (message: string) => {
     setIsSending(true);
     try {
@@ -182,10 +190,12 @@ export const CityPanel = ({
       </div>
       
       <div className="flex-1 overflow-y-auto p-3 sm:p-4 flex flex-col bg-gray-50">
-        <CityMessageList 
+        <CityMessageList
           messages={messages}
           profiles={profiles}
           currentUserId={currentUserId}
+          reactionsByMessage={summariesByMessage}
+          onToggleReaction={toggleReaction}
         />
       </div>
       

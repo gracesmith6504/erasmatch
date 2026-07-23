@@ -31,7 +31,6 @@ export function createMessageHandler(
   onPromptUsed: () => void
 ) {
   return async (receiverId: string, content: string) => {
-    // Send the message (DataContext.handleSendMessage already handles email notification)
     await onSendMessage(receiverId, content);
 
     // Update UI state

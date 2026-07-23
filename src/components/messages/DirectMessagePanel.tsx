@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { Message, Profile, ChatThread } from "@/types";
 import { MessageHeader } from "./MessageHeader";
 import { DirectMessageList } from "./DirectMessageList";
@@ -8,6 +8,7 @@ import { useRealTimeMessages } from "./hooks/useRealTimeMessages";
 import MessageEmptyState from "./MessageEmptyState";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { markMessagesAsRead } from "@/hooks/useUnreadMessageCount";
+import { useConversationReactions } from "@/hooks/useReactions";
 
 interface DirectMessagePanelProps {
   thread: ChatThread;
@@ -50,6 +51,13 @@ export const DirectMessagePanel = ({
     partnerId: thread.partner.id,
     scrollToBottom
   });
+
+  const messageIds = useMemo(() => localMessages.map((m) => m.id), [localMessages]);
+  const { summariesByMessage, toggleReaction } = useConversationReactions(
+    messageIds,
+    "direct",
+    currentUserId
+  );
 
   useEffect(() => {
     setShowSuggestedPrompts(localMessages.length === 0);
@@ -121,9 +129,11 @@ export const DirectMessagePanel = ({
       {localMessages.length === 0 ? (
         <MessageEmptyState />
       ) : (
-        <DirectMessageList 
+        <DirectMessageList
           messages={localMessages}
           currentUserId={currentUserId}
+          reactionsByMessage={summariesByMessage}
+          onToggleReaction={toggleReaction}
         />
       )}
       <div ref={messagesEndRef} />

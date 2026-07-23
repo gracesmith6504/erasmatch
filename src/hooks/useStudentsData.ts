@@ -1,8 +1,8 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { Profile } from "@/types";
-import { supabase } from "@/integrations/supabase/client";
 import { useBlockedUsers } from "@/hooks/useBlockedUsers";
+import { useUniversitiesCache } from "@/hooks/useUniversitiesCache";
 import {
   parseSemester,
   getArrivalSeason,
@@ -31,42 +31,30 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
   );
   const [overlapOnly, setOverlapOnly] = useState(initialFilters?.overlap || false);
 
-  const [universityCityMap, setUniversityCityMap] = useState<Record<string, string>>({});
-  const [universityCountryMap, setUniversityCountryMap] = useState<Record<string, string>>({});
+  const { universities, loading: uniLoading } = useUniversitiesCache();
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchUniversityData = async () => {
-      try {
-        const { data } = await supabase
-          .from('universities')
-          .select('name, city, country');
+  const universityCityMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const uni of universities) {
+      if (uni.name && uni.city) map[uni.name] = uni.city;
+    }
+    return map;
+  }, [universities]);
 
-        const cityMap: Record<string, string> = {};
-        const countryMap: Record<string, string> = {};
-        if (data) {
-          for (const uni of data) {
-            if (uni.name && uni.city) cityMap[uni.name] = uni.city;
-            if (uni.name && uni.country) countryMap[uni.name] = uni.country;
-          }
-        }
-        setUniversityCityMap(cityMap);
-        setUniversityCountryMap(countryMap);
-      } catch (error) {
-        console.error('Error fetching university data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUniversityData();
-  }, []);
+  const universityCountryMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const uni of universities) {
+      if (uni.name && uni.country) map[uni.name] = uni.country;
+    }
+    return map;
+  }, [universities]);
 
   useEffect(() => {
-    if (initialProfiles.length > 0) {
+    if (initialProfiles.length > 0 && !uniLoading) {
       setLoading(false);
     }
-  }, [initialProfiles]);
+  }, [initialProfiles, uniLoading]);
 
   useEffect(() => {
     setUniversityFilter(initialFilters?.university || "");

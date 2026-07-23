@@ -1,35 +1,31 @@
 import React, { useState } from "react";
-import { useReactions, ReactionSummary } from "@/hooks/useReactions";
+import { ReactionSummary } from "@/hooks/useReactions";
 import { SmilePlus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const QUICK_EMOJIS = ["👍", "❤️", "😂", "😢", "😮", "🔥", "👏"];
 
 interface MessageReactionsProps {
-  messageId: string;
-  messageType: "direct" | "group" | "city";
-  currentUserId: string | null;
+  summaries: ReactionSummary[];
+  onToggleReaction: (emoji: string) => void;
   isCurrentUser: boolean;
 }
 
 export const MessageReactions: React.FC<MessageReactionsProps> = ({
-  messageId,
-  messageType,
-  currentUserId,
+  summaries,
+  onToggleReaction,
   isCurrentUser,
 }) => {
-  const { summaries, toggleReaction } = useReactions(messageId, messageType, currentUserId);
   const [showPicker, setShowPicker] = useState(false);
 
   return (
     <div className={cn("flex flex-col gap-1", isCurrentUser ? "items-end" : "items-start")}>
-      {/* Reaction display */}
       {summaries.length > 0 && (
         <div className="flex flex-wrap gap-1">
           {summaries.map((s) => (
             <button
               key={s.emoji}
-              onClick={() => toggleReaction(s.emoji)}
+              onClick={() => onToggleReaction(s.emoji)}
               className={cn(
                 "inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-xs border transition-colors",
                 s.reacted
@@ -44,7 +40,6 @@ export const MessageReactions: React.FC<MessageReactionsProps> = ({
         </div>
       )}
 
-      {/* Reaction picker trigger & picker */}
       <div className="relative">
         <button
           onClick={() => setShowPicker(!showPicker)}
@@ -67,7 +62,7 @@ export const MessageReactions: React.FC<MessageReactionsProps> = ({
                 <button
                   key={emoji}
                   onClick={() => {
-                    toggleReaction(emoji);
+                    onToggleReaction(emoji);
                     setShowPicker(false);
                   }}
                   className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-accent transition-colors text-base"

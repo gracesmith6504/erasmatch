@@ -32,7 +32,6 @@ const AdminUniversities = lazy(() => import("@/pages/AdminUniversities"));
 const CityLanding = lazy(() => import("@/pages/CityLanding"));
 
 import { useAuth } from "@/contexts/AuthContext";
-import { useData } from "@/contexts/DataContext";
 
 const RouteFallback = () => (
   <div className="flex items-center justify-center min-h-screen bg-background">
@@ -41,8 +40,7 @@ const RouteFallback = () => (
 );
 
 const AppRoutes = () => {
-  const { isAuthenticated, currentUserId, currentUserProfile, handleLogin } = useAuth();
-  const { updateProfile, fetchProfile } = useData();
+  const { isAuthenticated, currentUserId, currentUserProfile, handleLogin, handleProfileUpdate, refreshProfile } = useAuth();
 
   return (
     <Suspense fallback={<RouteFallback />}>
@@ -90,8 +88,8 @@ const AppRoutes = () => {
             <ProtectedRoute>
               <ProfileProvider 
                 profile={currentUserProfile} 
-                onProfileUpdate={updateProfile}
-                fetchProfile={fetchProfile}
+                onProfileUpdate={handleProfileUpdate}
+                fetchProfile={refreshProfile}
               >
                 <Profile />
               </ProfileProvider>
@@ -114,8 +112,8 @@ const AppRoutes = () => {
             <ProtectedRoute>
               <ProfileProvider 
                 profile={currentUserProfile} 
-                onProfileUpdate={updateProfile}
-                fetchProfile={fetchProfile}
+                onProfileUpdate={handleProfileUpdate}
+                fetchProfile={refreshProfile}
               >
                 <Groups />
               </ProfileProvider>

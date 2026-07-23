@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -150,11 +150,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
   }, [navigate, handleAuthChange]);
 
-  const handleLogin = (email: string) => {
+  const handleLogin = useCallback((email: string) => {
     setCurrentUserEmail(email);
-  };
+  }, []);
 
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     try {
       await supabase.auth.signOut();
       window.posthog?.reset();
@@ -163,27 +163,27 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       console.error('Error signing out:', error);
       toast.error("Failed to log out. Please try again.");
     }
-  };
+  }, [navigate]);
 
-  const handleProfileUpdate = async (updatedProfile: Partial<Profile>) => {
+  const handleProfileUpdate = useCallback(async (updatedProfile: Partial<Profile>) => {
     if (!currentUserId) return Promise.resolve();
 
     try {
       const success = await updateUserProfile(currentUserId, updatedProfile);
-      
+
       if (success) {
         const freshProfile = await fetchUserProfile(currentUserId);
         if (freshProfile) {
           setCurrentUserProfile(freshProfile);
         }
       }
-      
+
       return Promise.resolve();
     } catch (error) {
       console.error('Error updating profile:', error);
       return Promise.reject(error);
     }
-  };
+  }, [currentUserId]);
 
   /** Re-fetches the current user's profile from the database. */
   const refreshProfile = useCallback(async () => {
@@ -194,20 +194,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, [currentUserId]);
 
+  const value = useMemo(() => ({
+    isAuthenticated,
+    currentUserId,
+    currentUserEmail,
+    currentUserProfile,
+    loading,
+    handleLogin,
+    handleLogout,
+    handleProfileUpdate,
+    refreshProfile,
+  }), [isAuthenticated, currentUserId, currentUserEmail, currentUserProfile, loading, handleLogin, handleLogout, handleProfileUpdate, refreshProfile]);
+
   return (
-    <AuthContext.Provider
-      value={{
-        isAuthenticated,
-        currentUserId,
-        currentUserEmail,
-        currentUserProfile,
-        loading,
-        handleLogin,
-        handleLogout,
-        handleProfileUpdate,
-        refreshProfile
-      }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

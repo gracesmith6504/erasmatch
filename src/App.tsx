@@ -10,7 +10,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Layout from "./components/layout/Layout";
 import AppRoutes from "./components/routing/AppRoutes";
 import { AuthProvider } from "./contexts/auth";
-import { DataProvider } from "./contexts/DataContext";
+
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,11 +31,9 @@ const App = () => {
           <Toaster />
           <Sonner />
           <AuthProvider>
-            <DataProvider>
-              <Layout>
-                <AppRoutes />
-              </Layout>
-            </DataProvider>
+            <Layout>
+              <AppRoutes />
+            </Layout>
           </AuthProvider>
         </TooltipProvider>
       </QueryClientProvider>

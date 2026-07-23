@@ -61,7 +61,7 @@ export const ParticipantsDialog = ({
                   <Avatar className="h-12 w-12 sm:h-11 sm:w-11">
                     {participant.avatar_url && (
                       <AvatarImage
-                        src={`${participant.avatar_url}?width=96&height=96&resize=cover&quality=75`}
+                        src={participant.avatar_url}
                         loading="lazy"
                         decoding="async"
                       />
