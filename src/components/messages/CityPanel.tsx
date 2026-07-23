@@ -50,14 +50,15 @@ export const CityPanel = ({
           .from("city_messages")
           .select("*")
           .eq("city_name", cityName)
-          .order("created_at", { ascending: true });
-          
+          .order("created_at", { ascending: false })
+          .limit(200);
+
         if (error) {
           throw error;
         }
-        
+
         if (data) {
-          setMessages(data as CityMessage[]);
+          setMessages((data as CityMessage[]).reverse());
           
           const userMessages = data.filter(msg => msg.sender_id === currentUserId);
           setHasSentMessage(userMessages.length > 0);
@@ -161,7 +162,6 @@ export const CityPanel = ({
   };
 
   const handleSuggestionUsed = () => {
-    console.log("Suggestion was used in city chat");
   };
   
   return (

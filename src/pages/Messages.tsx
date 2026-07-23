@@ -25,7 +25,6 @@ const Messages = ({ currentUserId }: MessagesProps) => {
     const userParam = searchParams.get('user');
     
     if (userParam) {
-      console.log("URL parameter 'user' found:", userParam);
       setInitialSelectedUser(userParam);
     } else {
       setInitialSelectedUser(null);

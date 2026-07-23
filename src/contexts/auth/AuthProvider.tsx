@@ -84,8 +84,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             }
           }
         } else {
-          console.log("No profile found, creating new profile for user:", session.user.id);
-          
           const userData = session.user.user_metadata || {};
           const defaultName = userData.name || userData.full_name || null;
           
@@ -136,7 +134,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log("Auth state changed:", event, session?.user?.id);
         if (event === "PASSWORD_RECOVERY") {
           navigate("/reset-password");
           return;

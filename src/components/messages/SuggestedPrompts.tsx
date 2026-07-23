@@ -74,7 +74,6 @@ export const SuggestedPrompts: React.FC<SuggestedPromptsProps> = ({
 
   // Handle prompt selection with any necessary cleanup
   const handleSelectPrompt = (prompt: string) => {
-    console.log("Prompt selected:", prompt);
     onSelectPrompt(prompt);
   };
 

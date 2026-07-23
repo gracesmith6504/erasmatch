@@ -23,8 +23,6 @@ export function useUniversitiesData() {
         
         if (cachedUniversities.length > 0) {
           // Use our cache for basic universities data
-          console.log("Using cached universities data as base");
-          
           // Then, fetch student counts from profiles table
           const { data: profilesData, error: profilesError } = await supabase
             .from('profiles')

@@ -19,7 +19,8 @@ export function useDirectMessages(currentUserId: string | null) {
         .from("messages")
         .select("id, sender_id, receiver_id, content, created_at, read_by")
         .or(`sender_id.eq.${currentUserId},receiver_id.eq.${currentUserId}`)
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .limit(200);
 
       if (error) throw error;
       return (data ?? []) as Message[];

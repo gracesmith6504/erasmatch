@@ -48,7 +48,7 @@ const PrivacyPolicy = () => {
             <li>Message content (stored securely and associated with your profile)</li>
             <li>Activity data (e.g. last active time)</li>
             <li>Consent records (when and how you agreed to this policy)</li>
-            <li>We do not currently use cookies or tracking technologies</li>
+            <li>Anonymized usage analytics (see Cookies & Analytics section below)</li>
           </ul>
         </section>
 

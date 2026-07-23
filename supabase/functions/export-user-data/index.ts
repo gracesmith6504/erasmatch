@@ -3,7 +3,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': 'https://www.erasmatch.com',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
@@ -140,38 +140,46 @@ serve(async (req) => {
   }
 })
 
+function escapeCSVField(value: unknown): string {
+  if (value === null || value === undefined) return '""'
+  let str = String(value)
+  if (/^[=+\-@\t\r]/.test(str)) {
+    str = "'" + str
+  }
+  str = str.replace(/"/g, '""')
+  return `"${str}"`
+}
+
 function convertToCSV(userData: any): string {
   const lines: string[] = []
-  
-  // Profile data
+
   lines.push('PROFILE DATA')
   lines.push('Field,Value')
   const profile = userData.profile
   Object.keys(profile).forEach(key => {
-    const value = profile[key]
-    lines.push(`${key},"${value || ''}"`)
+    lines.push(`${escapeCSVField(key)},${escapeCSVField(profile[key])}`)
   })
-  
+
   lines.push('')
   lines.push('DIRECT MESSAGES')
   lines.push('Date,Sender ID,Receiver ID,Content')
   userData.directMessages.forEach((msg: any) => {
-    lines.push(`${msg.created_at},"${msg.sender_id}","${msg.receiver_id}","${msg.content || ''}"`)
+    lines.push(`${escapeCSVField(msg.created_at)},${escapeCSVField(msg.sender_id)},${escapeCSVField(msg.receiver_id)},${escapeCSVField(msg.content)}`)
   })
-  
+
   lines.push('')
   lines.push('CITY MESSAGES')
   lines.push('Date,City,Content')
   userData.cityMessages.forEach((msg: any) => {
-    lines.push(`${msg.created_at},"${msg.city_name}","${msg.content || ''}"`)
+    lines.push(`${escapeCSVField(msg.created_at)},${escapeCSVField(msg.city_name)},${escapeCSVField(msg.content)}`)
   })
-  
+
   lines.push('')
   lines.push('GROUP MESSAGES')
   lines.push('Date,University,Content')
   userData.groupMessages.forEach((msg: any) => {
-    lines.push(`${msg.created_at},"${msg.university_name}","${msg.content || ''}"`)
+    lines.push(`${escapeCSVField(msg.created_at)},${escapeCSVField(msg.university_name)},${escapeCSVField(msg.content)}`)
   })
-  
+
   return lines.join('\n')
 }

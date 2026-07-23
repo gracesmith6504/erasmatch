@@ -26,7 +26,6 @@ export const MessagesTabs = ({
   }, []);
 
   const handleTabChange = (value: string) => {
-    console.log("Tab changed to:", value);
     setActiveTab(value as "direct" | "groups" | "cities");
   };
 

@@ -15,7 +15,8 @@ export function useProfiles(enabled = true) {
         .select(
           "id, name, avatar_url, university, city, personality_tags, bio, home_university, semester, course, looking_for, ref_code, arrival_date, last_active_at, featured, created_at"
         )
-        .is("deleted_at", null);
+        .is("deleted_at", null)
+        .limit(2000);
 
       if (error) throw error;
 

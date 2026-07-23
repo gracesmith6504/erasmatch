@@ -58,14 +58,15 @@ export const GroupChatPanel = ({
           .from("group_messages")
           .select("*")
           .in("university_name", allNames)
-          .order("created_at", { ascending: true });
+          .order("created_at", { ascending: false })
+          .limit(200);
 
         if (error) {
           throw error;
         }
 
         if (data) {
-          setMessages(data as GroupMessage[]);
+          setMessages((data as GroupMessage[]).reverse());
 
           const userMessages = data.filter(msg => msg.sender_id === currentUserId);
           setHasSentMessage(userMessages.length > 0);
@@ -137,7 +138,6 @@ export const GroupChatPanel = ({
   };
 
   const handleSuggestionUsed = () => {
-    console.log("Suggestion was used in university chat");
   };
   
   return (

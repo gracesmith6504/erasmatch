@@ -85,27 +85,11 @@ export function useMessageState(
     if (!currentUserId) return;
 
     try {
-      // Find unread messages from this partner to the current user
-      const unreadMessages = messages.filter(
-        m => m.sender_id === partnerId && 
-             m.receiver_id === currentUserId && 
-             (!m.read_by || !m.read_by.includes(currentUserId))
-      );
-
-      // Batch update these messages to mark as read
-      if (unreadMessages.length > 0) {
-        const updatePromises = unreadMessages.map(msg => 
-          supabase
-            .from('messages')
-            .update({ 
-              // Fix for array_append
-              read_by: [...(msg.read_by || []), currentUserId]
-            })
-            .eq('id', msg.id)
-        );
-
-        await Promise.all(updatePromises);
-      }
+      const { error } = await supabase.rpc("mark_thread_read", {
+        p_partner_id: partnerId,
+        p_user_id: currentUserId,
+      });
+      if (error) throw error;
     } catch (error) {
       console.error('Error marking messages as read:', error);
     }

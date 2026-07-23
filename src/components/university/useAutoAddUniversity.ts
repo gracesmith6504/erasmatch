@@ -43,7 +43,6 @@ export async function autoAddUniversity(name: string, city?: string): Promise<vo
     if (error) {
       console.error("Failed to auto-add university:", error);
     } else {
-      console.log("Auto-added university:", trimmed, city ? `(${city})` : "");
       clearUniversitiesCache();
     }
   } catch (err) {

@@ -18,7 +18,6 @@ export const getInitials = (name: string | null): string => {
  * Handles prompt selection - reset state
  */
 export const handlePromptUsed = (): void => {
-  console.log("Prompt was used - will reset state after message is sent");
 };
 
 /**
