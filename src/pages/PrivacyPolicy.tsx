@@ -60,6 +60,7 @@ const PrivacyPolicy = () => {
             <li>Improve and personalize your experience</li>
             <li>Communicate with you about updates and service-related matters</li>
             <li>Ensure the reliability and safety of the platform</li>
+            <li>Moderate content and respond to reports of abuse or policy violations</li>
             <li>Prevent misuse, fraud, or security breaches</li>
             <li>Comply with legal obligations</li>
           </ul>
@@ -123,9 +124,20 @@ const PrivacyPolicy = () => {
         </section>
 
         <section className="mb-8">
+          <h2 className="text-lg md:text-xl font-medium text-gray-800 mb-3">Messages & Content</h2>
+          <ul className="list-disc pl-5 text-sm md:text-base text-gray-600 space-y-2">
+            <li><strong>Direct messages</strong> are private and only visible to the sender and receiver.</li>
+            <li><strong>Group and city chats</strong> are visible to all registered users in that group or city.</li>
+            <li><strong>Forum posts and comments</strong> are visible to all registered users.</li>
+            <li>Platform administrators may access message content and user-generated content for the purposes of safety, moderation, and responding to reports of abuse or policy violations.</li>
+            <li>Content is only reviewed when there is a legitimate reason, such as a user report, safety concern, or investigation of a policy violation.</li>
+          </ul>
+        </section>
+
+        <section className="mb-8">
           <h2 className="text-lg md:text-xl font-medium text-gray-800 mb-3">Data Security</h2>
           <p className="text-sm md:text-base text-gray-600 mb-4">
-            We implement appropriate technical and organizational measures to protect your personal data against unauthorized access, alteration, disclosure, or destruction. This includes encryption in transit and at rest, access controls, and regular security assessments.
+            We implement appropriate technical and organizational measures to protect your personal data against unauthorized access, alteration, disclosure, or destruction. This includes encryption in transit and at rest, database-level access controls that restrict data visibility to authorized users, and regular security assessments.
           </p>
         </section>
 
@@ -148,7 +160,7 @@ const PrivacyPolicy = () => {
         </section>
 
         <div className="text-center mt-10 text-sm text-gray-500">
-          <p>Last updated: May 30, 2025</p>
+          <p>Last updated: July 23, 2026</p>
         </div>
       </div>
     </div>

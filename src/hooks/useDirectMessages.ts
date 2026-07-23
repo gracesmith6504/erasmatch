@@ -35,7 +35,7 @@ export function useDirectMessages(currentUserId: string | null) {
       .channel("direct-messages-list")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "messages" },
+        { event: "*", schema: "public", table: "messages", filter: `receiver_id=eq.${currentUserId}` },
         () => {
           queryClient.invalidateQueries({ queryKey: ["direct-messages", currentUserId] });
         }

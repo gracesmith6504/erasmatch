@@ -36,7 +36,7 @@ export function useUnreadMessageCount(currentUserId: string | null) {
       .channel("unread-messages-count")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "messages" },
+        { event: "*", schema: "public", table: "messages", filter: `receiver_id=eq.${currentUserId}` },
         () => fetchCount()
       )
       .subscribe();
