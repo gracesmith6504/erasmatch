@@ -68,7 +68,7 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
 
       const { error: uploadError } = await supabase.storage
         .from("avatars")
-        .upload(fileName, compressed, { cacheControl: "3600", upsert: false, contentType: compressed.type });
+        .upload(fileName, compressed, { cacheControl: "31536000", upsert: false, contentType: compressed.type });
 
 
       if (uploadError) throw uploadError;

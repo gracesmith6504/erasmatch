@@ -72,8 +72,9 @@ export const HeroSection = ({ handleFindStudents }: HeroSectionProps) => {
                       loading="eager"
                       fetchPriority="high"
                       decoding="async"
-                      className="w-9 h-9 rounded-full border-2 border-background object-cover"
+                      className="w-9 h-9 rounded-full border-2 border-background object-cover opacity-0 transition-opacity duration-300"
                       style={{ marginLeft: i === 0 ? 0 : -8 }}
+                      onLoad={(e) => { e.currentTarget.classList.remove("opacity-0"); }}
                     />
                   ))}
                 </div>
