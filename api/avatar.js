@@ -1,20 +1,20 @@
-export default async function handler(req, res) {
-  const { path } = req.query;
-  if (!path) return res.status(400).send("Missing path");
+export const config = { runtime: "edge" };
 
-  if (!/^[\w\-./]+$/.test(path)) return res.status(400).send("Invalid path");
+export default async function handler(req) {
+  const url = new URL(req.url);
+  const path = url.searchParams.get("path");
+  if (!path || !/^[\w\-./]+$/.test(path)) {
+    return new Response("Invalid path", { status: 400 });
+  }
 
-  const url = `https://ceoflcktscennfmmdrvp.supabase.co/storage/v1/object/public/avatars/${path}`;
-  const response = await fetch(url);
-  if (!response.ok) return res.status(response.status).end();
+  const supabaseUrl = `https://ceoflcktscennfmmdrvp.supabase.co/storage/v1/object/public/avatars/${path}`;
+  const response = await fetch(supabaseUrl);
+  if (!response.ok) return new Response(null, { status: response.status });
 
-  const buffer = Buffer.from(await response.arrayBuffer());
-  const contentType = response.headers.get("content-type") || "image/webp";
-
-  res.setHeader("Content-Type", contentType);
-  res.setHeader(
-    "Cache-Control",
-    "public, s-maxage=31536000, max-age=86400, immutable"
-  );
-  res.send(buffer);
+  return new Response(response.body, {
+    headers: {
+      "Content-Type": response.headers.get("content-type") || "image/webp",
+      "Cache-Control": "public, s-maxage=31536000, max-age=86400, immutable",
+    },
+  });
 }
