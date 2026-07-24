@@ -16,7 +16,7 @@ const About = () => {
           "@type": "Organization",
           name: "ErasMatch",
           url: "https://erasmatch.com/",
-          logo: "https://ceoflcktscennfmmdrvp.supabase.co/storage/v1/object/public/public-assets/erasmatch_favicon_64x64.png",
+          logo: "https://erasmatch.com/erasmatch_favicon_64x64.png",
           description: "A community that connects Erasmus students before they arrive in their host city.",
         }}
       />
