@@ -18,7 +18,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { transformAvatarUrl } from "@/lib/avatar";
 import { cn } from "@/lib/utils";
 
-const MAX_CHARS = 100;
+const MAX_CHARS = 300;
 
 interface ConnectModalProps {
   open: boolean;

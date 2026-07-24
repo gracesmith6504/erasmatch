@@ -50,7 +50,7 @@ const Messages = ({ currentUserId }: MessagesProps) => {
   const activeProfiles = profiles.filter(profile => !profile.deleted_at);
 
   return (
-    <div className="h-full overflow-hidden w-full inset-0 pt-16 pb-0 flex flex-col">
+    <div className="h-full min-h-0 overflow-hidden w-full inset-0 pb-0 flex flex-col">
       <MessagesContainer
         messages={activeMessages}
         profiles={activeProfiles}

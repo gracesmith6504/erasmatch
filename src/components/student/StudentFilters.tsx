@@ -300,76 +300,6 @@ const StudentFilters = ({
         </div>
       </div>
 
-      {/* Overlap with my stay */}
-      {myWindowLabel && (
-        <div className="mt-6 flex items-center justify-between gap-3 rounded-xl border border-border bg-secondary/30 px-4 py-3">
-          <div className="flex items-start gap-2 min-w-0">
-            <CalendarRange className="h-4 w-4 mt-0.5 text-muted-foreground shrink-0" />
-            <div className="min-w-0">
-              <div className="text-sm font-medium text-foreground">Overlapping with my stay</div>
-              <div className="text-xs text-muted-foreground truncate">Your dates: {myWindowLabel}</div>
-            </div>
-          </div>
-          <Switch checked={overlapOnly} onCheckedChange={setOverlapOnly} />
-        </div>
-      )}
-
-      {/* Arriving Season Filter — split Upcoming vs Alumni */}
-      {seasonOptions.length > 0 && (() => {
-        const upcoming = seasonOptions.filter((s) => !isPastSeasonLabel(s));
-        const past = seasonOptions.filter((s) => isPastSeasonLabel(s));
-        const renderChip = (season: string, variant: "upcoming" | "alumni") => {
-          const isSelected = seasonFilter.includes(season);
-          const selectedClass =
-            variant === "alumni"
-              ? "bg-amber-100 text-amber-900 border-amber-200 dark:bg-amber-500/15 dark:text-amber-300"
-              : "bg-erasmatch-coral/10 text-erasmatch-coral border-erasmatch-coral/30";
-          return (
-            <Badge
-              key={season}
-              variant={isSelected ? "default" : "outline"}
-              className={`cursor-pointer transition-all ${isSelected ? selectedClass : "hover:bg-secondary"}`}
-              onClick={() => handleSeasonToggle(season)}
-            >
-              {variant === "alumni" && <GraduationCap className="h-3 w-3 mr-1" />}
-              {season}
-              {isSelected && <X className="h-3 w-3 ml-1" />}
-            </Badge>
-          );
-        };
-        return (
-          <div className="mt-5 space-y-4">
-            {upcoming.length > 0 && (
-              <div>
-                <div className="flex items-center text-sm font-medium mb-2 text-foreground">
-                  <Users className="mr-2 h-4 w-4 text-erasmatch-coral" />
-                  <span>Upcoming Squads</span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {upcoming.map((s) => renderChip(s, "upcoming"))}
-                </div>
-              </div>
-            )}
-            {past.length > 0 && (
-              <div>
-                <div className="flex items-center text-sm font-medium mb-1 text-foreground">
-                  <GraduationCap className="mr-2 h-4 w-4 text-amber-500" />
-                  <span>Ask an Alumnus</span>
-                  <span className="ml-2 text-[11px] uppercase tracking-wide text-muted-foreground font-normal">past terms</span>
-                </div>
-                <p className="text-xs text-muted-foreground mb-2">
-                  Students who already finished their exchange — perfect for advice.
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {past.map((s) => renderChip(s, "alumni"))}
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      })()}
-
-
       {/* Advanced filters (collapsible) */}
       <div className="mt-5 border-t border-border/60 pt-4">
         <button
@@ -380,9 +310,9 @@ const StudentFilters = ({
           <span className="flex items-center gap-2">
             <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
             Advanced filters
-            {personalityTagsFilter.length > 0 && (
+            {(personalityTagsFilter.length > 0 || seasonFilter.length > 0 || overlapOnly) && (
               <span className="inline-flex items-center justify-center text-[11px] font-semibold bg-erasmatch-blue/10 text-erasmatch-blue rounded-full px-2 py-0.5">
-                {personalityTagsFilter.length} selected
+                {personalityTagsFilter.length + seasonFilter.length + (overlapOnly ? 1 : 0)} selected
               </span>
             )}
           </span>
@@ -398,7 +328,73 @@ const StudentFilters = ({
             advancedOpen ? "grid-rows-[1fr] opacity-100 mt-4" : "grid-rows-[0fr] opacity-0"
           }`}
         >
-          <div className="overflow-hidden">
+          <div className="overflow-hidden space-y-5">
+            {/* Overlap with my stay */}
+            {myWindowLabel && (
+              <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-secondary/30 px-4 py-3">
+                <div className="flex items-start gap-2 min-w-0">
+                  <CalendarRange className="h-4 w-4 mt-0.5 text-muted-foreground shrink-0" />
+                  <div className="min-w-0">
+                    <div className="text-sm font-medium text-foreground">Overlapping with my stay</div>
+                    <div className="text-xs text-muted-foreground truncate">Your dates: {myWindowLabel}</div>
+                  </div>
+                </div>
+                <Switch checked={overlapOnly} onCheckedChange={setOverlapOnly} />
+              </div>
+            )}
+
+            {/* Semester filter */}
+            {seasonOptions.length > 0 && (() => {
+              const upcoming = seasonOptions.filter((s) => !isPastSeasonLabel(s));
+              const past = seasonOptions.filter((s) => isPastSeasonLabel(s));
+              const renderChip = (season: string, variant: "upcoming" | "alumni") => {
+                const isSelected = seasonFilter.includes(season);
+                const selectedClass =
+                  variant === "alumni"
+                    ? "bg-amber-100 text-amber-900 border-amber-200 dark:bg-amber-500/15 dark:text-amber-300"
+                    : "bg-erasmatch-coral/10 text-erasmatch-coral border-erasmatch-coral/30";
+                return (
+                  <Badge
+                    key={season}
+                    variant={isSelected ? "default" : "outline"}
+                    className={`cursor-pointer transition-all ${isSelected ? selectedClass : "hover:bg-secondary"}`}
+                    onClick={() => handleSeasonToggle(season)}
+                  >
+                    {variant === "alumni" && <GraduationCap className="h-3 w-3 mr-1" />}
+                    {season}
+                    {isSelected && <X className="h-3 w-3 ml-1" />}
+                  </Badge>
+                );
+              };
+              return (
+                <div className="space-y-4">
+                  {upcoming.length > 0 && (
+                    <div>
+                      <div className="flex items-center text-sm font-medium mb-2 text-foreground">
+                        <Users className="mr-2 h-4 w-4 text-erasmatch-coral" />
+                        <span>Going soon</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {upcoming.map((s) => renderChip(s, "upcoming"))}
+                      </div>
+                    </div>
+                  )}
+                  {past.length > 0 && (
+                    <div>
+                      <div className="flex items-center text-sm font-medium mb-1 text-foreground">
+                        <GraduationCap className="mr-2 h-4 w-4 text-amber-500" />
+                        <span>Already been</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {past.map((s) => renderChip(s, "alumni"))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
+            {/* Personality Tags */}
             <div className="flex items-center text-sm font-medium mb-3 text-foreground">
               <User className="mr-2 h-4 w-4 text-muted-foreground" />
               <span>Personality Tags</span>
