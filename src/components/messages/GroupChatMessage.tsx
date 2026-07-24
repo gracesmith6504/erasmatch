@@ -1,6 +1,7 @@
 
 import { Profile } from "@/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { transformAvatarUrl } from "@/lib/avatar";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
 import { MessageReactions } from "./MessageReactions";
@@ -52,7 +53,7 @@ export const GroupChatMessage = ({
         {!isCurrentUser && (
           <Link to={`/profile/${senderId}`}>
             <Avatar className="h-8 w-8 mr-2 hover:ring-2 hover:ring-primary/30 transition">
-              <AvatarImage src={senderProfile?.avatar_url || undefined} loading="lazy" decoding="async" />
+              <AvatarImage src={transformAvatarUrl(senderProfile?.avatar_url)} loading="lazy" decoding="async" />
               <AvatarFallback className="bg-muted">
                 {getInitials(senderProfile?.name)}
               </AvatarFallback>

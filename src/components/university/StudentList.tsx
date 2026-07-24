@@ -4,6 +4,7 @@ import { Profile } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { transformAvatarUrl } from "@/lib/avatar";
 import { School, MapPin, CalendarClock } from "lucide-react";
 import { getTagInfo, getTagBgColor } from "@/components/profile/constants";
 
@@ -74,7 +75,7 @@ const StudentList = ({ students }: StudentListProps) => {
             <Avatar className="h-16 w-16 border-2 border-white shadow-sm">
               {student.avatar_url ? (
                 <AvatarImage 
-                  src={student.avatar_url || undefined}
+                  src={transformAvatarUrl(student.avatar_url)}
                   loading="lazy" // Add lazy loading for avatars
                 />
               ) : null}

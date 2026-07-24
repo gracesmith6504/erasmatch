@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Profile } from "@/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { transformAvatarUrl } from "@/lib/avatar";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -61,7 +62,7 @@ export const ParticipantsDialog = ({
                   <Avatar className="h-12 w-12 sm:h-11 sm:w-11">
                     {participant.avatar_url && (
                       <AvatarImage
-                        src={participant.avatar_url}
+                        src={transformAvatarUrl(participant.avatar_url)}
                         loading="lazy"
                         decoding="async"
                       />

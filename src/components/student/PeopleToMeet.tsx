@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useUniversitiesCache } from "@/hooks/useUniversitiesCache";
 import { X, ArrowRight } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { transformAvatarUrl } from "@/lib/avatar";
 import { Button } from "@/components/ui/button";
 import ConnectModal from "@/components/student/ConnectModal";
 import StudentCard from "@/components/student/StudentCard";
@@ -28,7 +29,7 @@ const RecommendationAvatar = ({ profile, index }: { profile: Profile; index: num
   return (
     <Avatar className="h-16 w-16 ring-1 ring-transparent group-hover:ring-border transition-all">
       <AvatarImage
-        src={profile.avatar_url ?? undefined}
+        src={transformAvatarUrl(profile.avatar_url)}
         alt={profile.name || "Student profile photo"}
         className="object-cover"
         loading={priority ? "eager" : "lazy"}

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { transformAvatarUrl } from "@/lib/avatar";
 import { Camera, Upload, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
@@ -127,7 +128,7 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
           <div className="flex -space-x-2">
             {featuredProfiles.map((p, i) => (
               <Avatar key={i} className="w-7 h-7 border-2 border-card">
-                <AvatarImage src={p.avatar_url} alt={p.first_name} className="object-cover" />
+                <AvatarImage src={transformAvatarUrl(p.avatar_url)} alt={p.first_name} className="object-cover" />
                 <AvatarFallback className="text-[10px] bg-muted">{p.first_name?.[0]}</AvatarFallback>
               </Avatar>
             ))}

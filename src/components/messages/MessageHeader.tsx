@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { transformAvatarUrl } from "@/lib/avatar";
 import { Profile } from "@/types";
 import { Link } from "react-router-dom";
 import { ArrowLeft, MoreVertical, Ban } from "lucide-react";
@@ -69,7 +70,7 @@ export const MessageHeader = ({ isMobile, onBack, profile, onUserBlocked }: Mess
             {profile.id && (
               <Link to={`/profile/${profile.id}`} className="hover:opacity-80 transition-opacity">
                 <Avatar className="h-10 w-10 cursor-pointer hover:ring-2 hover:ring-primary/30 transition-all">
-                  <AvatarImage src={profile.avatar_url || undefined} alt={profile.name || "User"} decoding="async" />
+                  <AvatarImage src={transformAvatarUrl(profile.avatar_url)} alt={profile.name || "User"} decoding="async" />
                   <AvatarFallback className="bg-muted text-muted-foreground">
                     {getInitials(profile.name)}
                   </AvatarFallback>

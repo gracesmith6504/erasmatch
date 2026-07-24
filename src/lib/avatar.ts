@@ -9,6 +9,8 @@ export function transformAvatarUrl(
   _cssPixelSize?: number,
 ): string | undefined {
   if (!url) return undefined;
+  const match = url.match(/\/storage\/v1\/object\/public\/avatars\/(.+)$/);
+  if (match) return `/api/avatar?path=${encodeURIComponent(match[1])}`;
   return url;
 }
 

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { differenceInDays } from "date-fns";
+import { transformAvatarUrl } from "@/lib/avatar";
 
 interface StudentAvatarProps {
   avatarUrl: string | null;
@@ -12,7 +13,7 @@ interface StudentAvatarProps {
 
 const StudentAvatar = ({ avatarUrl, name, className = "", lastActiveAt, priority = false }: StudentAvatarProps) => {
   const [imgError, setImgError] = useState(false);
-  const avatarSrc = imgError ? undefined : (avatarUrl || undefined);
+  const avatarSrc = imgError ? undefined : transformAvatarUrl(avatarUrl);
 
   const getInitials = (name: string | null) => {
     if (!name) return "?";

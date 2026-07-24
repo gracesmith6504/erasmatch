@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { transformAvatarUrl } from "@/lib/avatar";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight, UserPlus } from "lucide-react";
@@ -196,7 +197,7 @@ export const CityPayoff = ({ city, university, userId, refCode, onComplete }: Ci
               <div className="flex -space-x-3">
                 {result.profiles.map((p) => (
                   <Avatar key={p.id} className="h-16 w-16 border-4 border-background shadow-md">
-                    {p.avatar_url ? <AvatarImage src={p.avatar_url} /> : null}
+                    {p.avatar_url ? <AvatarImage src={transformAvatarUrl(p.avatar_url)} /> : null}
                     <AvatarFallback className="bg-secondary text-foreground text-sm">
                       {getInitials(p.name)}
                     </AvatarFallback>

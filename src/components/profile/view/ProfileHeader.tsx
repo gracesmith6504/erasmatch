@@ -2,6 +2,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { transformAvatarUrl } from "@/lib/avatar";
 import { Profile } from "@/types";
 import { Upload } from "lucide-react";
 import { useAuth } from "@/contexts/auth";
@@ -45,7 +46,7 @@ export const ProfileHeader = ({ profile, isOwnProfile }: ProfileHeaderProps) => 
   return (
     <div className="text-center px-4 pt-5 pb-4 sm:pt-6 sm:pb-5 bg-secondary/50 rounded-b-2xl">
       <Avatar className="w-20 h-20 sm:w-24 sm:h-24 rounded-full mx-auto text-xl font-bold bg-primary/10 text-primary flex items-center justify-center ring-4 ring-background">
-        <AvatarImage src={profile.avatar_url || undefined} alt={profile.name || "Profile"} decoding="async" />
+        <AvatarImage src={transformAvatarUrl(profile.avatar_url)} alt={profile.name || "Profile"} decoding="async" />
         <AvatarFallback>
           {getInitials(profile.name)}
         </AvatarFallback>

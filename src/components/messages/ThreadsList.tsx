@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { ChatThread, Profile } from "@/types";
 import { format, isToday, isYesterday, differenceInDays } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { transformAvatarUrl } from "@/lib/avatar";
 import { Button } from "@/components/ui/button";
 
 interface ThreadsListProps {
@@ -63,7 +64,7 @@ export const ThreadsList = ({
             {/* Avatar with online indicator */}
             <div className="relative shrink-0">
               <Avatar className="h-12 w-12">
-                <AvatarImage src={thread.partner.avatar_url || undefined} loading="lazy" decoding="async" />
+                <AvatarImage src={transformAvatarUrl(thread.partner.avatar_url)} loading="lazy" decoding="async" />
                 <AvatarFallback className="bg-muted text-muted-foreground text-sm font-medium">
                   {getInitials(thread.partner.name)}
                 </AvatarFallback>
