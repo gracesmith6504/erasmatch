@@ -14,6 +14,7 @@ import { useOnboardingBanner } from "@/hooks/useOnboardingBanner";
 import PeopleToMeet from "@/components/student/PeopleToMeet";
 import { compareFiltered, compareDefault } from "@/lib/studentOrdering";
 import { SEO } from "@/components/SEO";
+import { useAuth } from "@/contexts/auth/useAuth";
 
 type StudentsProps = {
   currentUserId: string | null;
@@ -25,7 +26,8 @@ const Students = ({ currentUserId }: StudentsProps) => {
 
   // Read URL query params for initial filters
   const urlParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
-  const urlCity = urlParams.get("city") || undefined;
+  const { currentUserProfile } = useAuth();
+  const urlCity = urlParams.get("city") || currentUserProfile?.city || undefined;
   const urlUniversity = urlParams.get("university") || undefined;
   const urlSeason = urlParams.get("season") || undefined;
   const urlOverlap = urlParams.get("overlap") === "1";
