@@ -107,10 +107,12 @@ export const isPastSeasonLabel = (label: string): boolean => {
 
 /** Build chronologically sorted season chip options from a list of semester strings. */
 export const buildSeasonOptions = (semesters: (string | null | undefined)[]): string[] => {
+  const currentYear = new Date().getFullYear();
   const seen = new Map<string, { season: Season; year: number }>();
   for (const s of semesters) {
     const info = getArrivalSeason(s);
     if (!info) continue;
+    if (info.year > currentYear + 3 || info.year < currentYear - 5) continue;
     const key = seasonLabel(info);
     if (!seen.has(key)) seen.set(key, info);
   }

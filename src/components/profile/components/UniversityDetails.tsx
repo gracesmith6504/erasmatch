@@ -157,6 +157,8 @@ export const UniversityDetails = ({
             label="Arrival date"
             icon={Plane}
             placeholder="Select arrival date"
+            minDate={new Date(new Date().getFullYear() - 1, 0, 1)}
+            maxDate={new Date(new Date().getFullYear() + 4, 11, 31)}
             inputStyle="input"
           />
         </div>
@@ -174,6 +176,7 @@ export const UniversityDetails = ({
             icon={Calendar}
             placeholder="Select departure date"
             minDate={arrivalDate ? new Date(arrivalDate) : undefined}
+            maxDate={new Date(new Date().getFullYear() + 4, 11, 31)}
             disabled={!arrivalDate}
             inputStyle="input"
           />

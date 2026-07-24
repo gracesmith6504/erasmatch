@@ -78,6 +78,8 @@ export const ExchangeDetailsStep = ({
             label="When do you arrive?"
             icon={Plane}
             placeholder="Pick your arrival date"
+            minDate={new Date(new Date().getFullYear() - 1, 0, 1)}
+            maxDate={new Date(new Date().getFullYear() + 4, 11, 31)}
           />
 
           <DateField
@@ -87,6 +89,7 @@ export const ExchangeDetailsStep = ({
             icon={Calendar}
             placeholder="Pick your departure date"
             minDate={arrivalDate ? new Date(arrivalDate) : undefined}
+            maxDate={new Date(new Date().getFullYear() + 4, 11, 31)}
             disabled={!arrivalDate}
           />
 
