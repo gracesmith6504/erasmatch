@@ -63,7 +63,7 @@ export const HeroSection = ({ handleFindStudents }: HeroSectionProps) => {
               >
                 <div className="flex items-center">
                   {featuredAvatars.map((url, i) => (
-                    <img
+                    <motion.img
                       key={i}
                       src={transformAvatarUrl(url, 36)}
                       alt=""
@@ -72,9 +72,11 @@ export const HeroSection = ({ handleFindStudents }: HeroSectionProps) => {
                       loading="eager"
                       fetchPriority="high"
                       decoding="async"
-                      className="w-9 h-9 rounded-full border-2 border-background object-cover opacity-0 transition-opacity duration-300"
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.5 + i * 0.07, duration: 0.35 }}
+                      className="w-9 h-9 rounded-full border-2 border-background object-cover"
                       style={{ marginLeft: i === 0 ? 0 : -8 }}
-                      onLoad={(e) => { e.currentTarget.classList.remove("opacity-0"); }}
                     />
                   ))}
                 </div>
