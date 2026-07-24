@@ -54,7 +54,7 @@ const Layout = ({ children }: LayoutProps) => {
   }
 
   return (
-    <div className={`flex flex-col min-h-screen bg-background overflow-x-hidden w-full max-w-full ${isMessagesPage ? 'overflow-hidden' : ''}`}>
+    <div className={`flex flex-col ${isMessagesPage ? 'h-screen overflow-hidden' : 'min-h-screen'} bg-background overflow-x-hidden w-full max-w-full`}>
       <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogoutClick} />
 
       <main className={`flex-1 pt-16 w-full max-w-full overflow-x-hidden ${!isMessagesPage ? 'pb-20 md:pb-8' : 'overflow-hidden min-h-0'}`}>

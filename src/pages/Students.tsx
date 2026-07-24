@@ -70,7 +70,9 @@ const Students = ({ currentUserId }: StudentsProps) => {
   const [showFullRecommendations, setShowFullRecommendations] = useState(fromOnboarding);
   const handleShowAll = () => {
     setShowFullRecommendations(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => {
+      document.getElementById("student-grid")?.scrollIntoView({ behavior: "smooth" });
+    }, 50);
   };
   const currentProfile = profiles.find(p => p.id === currentUserId);
   const showPeopleToMeet = !!currentProfile && !!currentUserId && (

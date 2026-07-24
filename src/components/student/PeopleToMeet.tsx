@@ -8,7 +8,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import ConnectModal from "@/components/student/ConnectModal";
 import StudentCard from "@/components/student/StudentCard";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { recordProfileView } from "@/hooks/useProfileViewers";
 import { compareRecommendation, scoreRecommendation } from "@/lib/studentOrdering";
 import GradientAvatar from "@/components/ui/GradientAvatar";
@@ -50,6 +50,7 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
   onShowAll,
 }) => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [dismissed, setDismissed] = useState(() => localStorage.getItem(STORAGE_KEY) === "true");
   const [connectTarget, setConnectTarget] = useState<{
     id: string;
@@ -149,18 +150,6 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
     localStorage.setItem(STORAGE_KEY, "true");
   };
 
-  // Build smart View all link based on what the section is actually showing.
-  // Filter only by destination city — never pre-apply the user's own university,
-  // since "View all" should show everyone going there, not narrow further.
-  const viewAllHref = (() => {
-    const params = new URLSearchParams();
-    if (destinationKind === "city") {
-      params.set("city", destinationName);
-    }
-    const qs = params.toString();
-    return qs ? `/students?${qs}` : "/students";
-  })();
-
   const viewAllLabel = `See everyone going to ${destinationName}`;
 
   return (
@@ -237,15 +226,21 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
         {!effectiveFullPage && (
           <div className="mt-4 flex justify-end">
             <Button
-              asChild
               variant="ghost"
               size="sm"
               className="h-9 px-3 text-sm font-medium text-foreground hover:bg-secondary"
+              onClick={() => {
+                if (destinationKind === "city") {
+                  setSearchParams((prev) => {
+                    prev.set("city", destinationName);
+                    return prev;
+                  });
+                }
+                document.getElementById("student-grid")?.scrollIntoView({ behavior: "smooth" });
+              }}
             >
-              <Link to={viewAllHref}>
-                {viewAllLabel}
-                <ArrowRight className="ml-1 h-4 w-4" />
-              </Link>
+              {viewAllLabel}
+              <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
           </div>
         )}
