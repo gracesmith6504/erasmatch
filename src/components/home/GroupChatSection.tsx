@@ -25,7 +25,7 @@ export const GroupChatSection = ({ handleFindStudents }: GroupChatSectionProps) 
               <span className="text-erasmatch-green">alone.</span>
             </h2>
             <p className="text-muted-foreground text-base sm:text-lg leading-relaxed mb-6 sm:mb-8">
-              Join your university and city group chat the moment you sign up. Ask about housing, courses, nightlife or just say hi. Your Erasmus crew is waiting.
+              The moment you sign up, you're in the group chat for your city. Ask about housing, share tips, and find the people arriving the same week as you.
             </p>
             <Button 
               size="lg" 
@@ -69,25 +69,25 @@ export const GroupChatSection = ({ handleFindStudents }: GroupChatSectionProps) 
                   <div>
                     <p className="text-[10px] text-muted-foreground mb-1">Anna</p>
                     <div className="bg-secondary rounded-xl rounded-tl-sm px-3 py-2">
-                      <p className="text-xs text-foreground">Does anyone know good co-working spots near Marquês? ☕</p>
+                      <p className="text-xs text-foreground">Does anyone have tips for finding a room near UPF? Budget is max €500/month 🏠</p>
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex gap-2.5 justify-end">
                   <div>
                     <div className="bg-foreground rounded-xl rounded-tr-sm px-3 py-2">
-                      <p className="text-xs text-background">Try Second Home! It's amazing 🌿</p>
+                      <p className="text-xs text-background">Check idealista and the WhatsApp group! I found mine there</p>
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex gap-2.5">
                   <div className="h-7 w-7 rounded-full bg-erasmatch-coral/10 flex-shrink-0 flex items-center justify-center text-[10px]">🇮🇹</div>
                   <div>
                     <p className="text-[10px] text-muted-foreground mb-1">Luca</p>
                     <div className="bg-secondary rounded-xl rounded-tl-sm px-3 py-2">
-                      <p className="text-xs text-foreground">Who's up for surfing this weekend? 🏄‍♂️</p>
+                      <p className="text-xs text-foreground">Who else is arriving the first week of September? Let's plan something 🙌</p>
                     </div>
                   </div>
                 </div>

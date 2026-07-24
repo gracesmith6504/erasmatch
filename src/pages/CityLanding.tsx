@@ -28,14 +28,25 @@ const CityLanding = () => {
         title={`Erasmus in ${cityInfo.name} ${new Date().getFullYear()} — Meet Students | ErasMatch`}
         description={description}
         path={`/erasmus/${cityInfo.slug}`}
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "CollectionPage",
-          name: `Erasmus students in ${cityInfo.name}`,
-          description,
-          url: `https://erasmatch.com/erasmus/${cityInfo.slug}`,
-          about: { "@type": "Place", name: cityInfo.name, address: { "@type": "PostalAddress", addressCountry: cityInfo.country } },
-        }}
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            name: `Erasmus students in ${cityInfo.name}`,
+            description,
+            url: `https://erasmatch.com/erasmus/${cityInfo.slug}`,
+            about: { "@type": "Place", name: cityInfo.name, address: { "@type": "PostalAddress", addressCountry: cityInfo.country } },
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: cityInfo.faqs.map((faq) => ({
+              "@type": "Question",
+              name: faq.question,
+              acceptedAnswer: { "@type": "Answer", text: faq.answer },
+            })),
+          },
+        ]}
       />
 
       {/* Hero — clean light design */}

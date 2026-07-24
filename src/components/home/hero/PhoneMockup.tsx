@@ -30,10 +30,10 @@ const toastActions = [
 ];
 
 const chatMessages = [
-  { name: "Mia", message: "Anyone arriving Sept 1? Looking for people to explore with!", isRight: false },
-  { name: "Lucas", message: "Yes! I land on Aug 31. Let's meet up 🙌", isRight: true },
-  { name: "Sofia", message: "Already found a flat near campus, happy to help!", isRight: false },
-  { name: "Erik", message: "Count me in! What area are you guys looking at?", isRight: false },
+  { name: "Mia", message: "Anyone have tips for finding a room near campus? 🏠", isRight: false },
+  { name: "Lucas", message: "Try the Facebook housing group, that's how I found mine!", isRight: true },
+  { name: "Sofia", message: "Who else is arriving the first week of Sept? Let's explore together 🗺️", isRight: false },
+  { name: "Erik", message: "Count me in! What area are you guys staying in?", isRight: false },
 ];
 
 const memberAvatars = ["M", "L", "S", "E", "C"];

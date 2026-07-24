@@ -2,27 +2,27 @@ import { motion } from "framer-motion";
 
 const stories = [
   {
-    quote: "I connected with 3 students before arriving in Amsterdam. We travelled together every weekend and became inseparable.",
-    name: "Julia Dubois",
-    flag: "🇫🇷",
-    university: "University of Amsterdam",
-    initials: "JD",
+    quote: "I found a flatmate for my apartment in Lisbon before I even booked my flight. We ended up living together the whole semester.",
+    name: "Emma K.",
+    flag: "🇩🇪",
+    university: "University of Lisbon",
+    initials: "EK",
     gradient: "from-erasmatch-blue/20 to-erasmatch-purple/20",
   },
   {
-    quote: "I was nervous about going to Prague alone, but I already had a roommate through ErasMatch before arriving. Game changer!",
-    name: "Marco Sanchez",
-    flag: "🇪🇸",
-    university: "Charles University Prague",
-    initials: "MS",
+    quote: "I messaged an alumni who'd been at my exact university. She told me which neighbourhood to avoid and which landlords were legit. Saved me so much stress.",
+    name: "Tomas R.",
+    flag: "🇨🇿",
+    university: "UPF Barcelona",
+    initials: "TR",
     gradient: "from-erasmatch-green/20 to-erasmatch-blue/20",
   },
   {
-    quote: "The city chat for Berlin was so active! I got amazing tips about housing and courses. It really helped me prepare.",
-    name: "Lena Kowalski",
-    flag: "🇵🇱",
-    university: "Humboldt University Berlin",
-    initials: "LK",
+    quote: "I was panicking about going to Budapest alone. Turns out 8 other people from my country were going too. We met up the first day.",
+    name: "Sarah L.",
+    flag: "🇮🇪",
+    university: "Corvinus University Budapest",
+    initials: "SL",
     gradient: "from-erasmatch-coral/20 to-erasmatch-orange/20",
   },
 ];
@@ -40,7 +40,7 @@ export const StudentStoriesSection = () => {
         >
           <p className="text-xs sm:text-sm font-medium tracking-widest uppercase text-erasmatch-green mb-3">Student stories</p>
           <h2 className="text-2xl sm:text-4xl font-display font-bold text-foreground">
-            Real experiences from the <span className="text-erasmatch-green">community.</span>
+            What students say after <span className="text-erasmatch-green">their exchange.</span>
           </h2>
         </motion.div>
 

@@ -3,21 +3,21 @@ import { motion } from "framer-motion";
 const reasons = [
   {
     number: "01",
-    title: "Find your exact people",
+    title: "Find your future flatmate",
     description:
-      "Filter by destination university, host city and semester to find students going to the same place at the same time.",
+      "See who's heading to your city the same semester. Most students find their flatmate or travel buddy within a day of signing up.",
   },
   {
     number: "02",
-    title: "Group chats that create themselves",
+    title: "Get real answers, not Google results",
     description:
-      "The moment you sign up, you're added to the group chats for your host city and your destination university.",
+      "Ask alumni who actually lived there about housing, transport, and neighbourhoods — the stuff you can't find in a guide.",
   },
   {
     number: "03",
-    title: "Advice from those who've been there",
+    title: "Know people before you land",
     description:
-      "Message students who already did Erasmus at your destination — directly, one-to-one.",
+      "Swap Instagrams, plan your first week, and arrive with friends instead of strangers. Your Erasmus starts before the plane takes off.",
   },
 ];
 
@@ -52,9 +52,9 @@ export const FeaturesSection = () => {
             Why ErasMatch
           </p>
           <h2 className="text-2xl sm:text-4xl font-display font-bold text-foreground text-balance">
-            Not just where you're going.
+            The things you actually
             <br className="hidden sm:block" />
-            <span className="text-erasmatch-green"> Who you're going with.</span>
+            <span className="text-erasmatch-green"> stress about before Erasmus.</span>
           </h2>
         </motion.div>
 

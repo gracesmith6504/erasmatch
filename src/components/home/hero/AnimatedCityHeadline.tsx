@@ -39,7 +39,7 @@ export const AnimatedCityHeadline = () => {
       </span>
     </h1>
     <p className="text-base sm:text-lg text-muted-foreground mt-3 sm:mt-4 max-w-md leading-relaxed">
-      Connect with students heading to the same place &ndash; or those who've already been.
+      Going on Erasmus and don't know anyone yet? Find the students who'll be there when you are.
     </p>
     </>
   );
