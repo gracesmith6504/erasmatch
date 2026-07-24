@@ -69,7 +69,8 @@ export const HeroSection = ({ handleFindStudents }: HeroSectionProps) => {
                       alt=""
                       width={36}
                       height={36}
-                      loading="lazy"
+                      loading="eager"
+                      fetchPriority="high"
                       decoding="async"
                       className="w-9 h-9 rounded-full border-2 border-background object-cover"
                       style={{ marginLeft: i === 0 ? 0 : -8 }}

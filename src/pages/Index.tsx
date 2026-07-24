@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { HeroSection } from "@/components/home/HeroSection";
@@ -17,6 +18,13 @@ const Index = () => {
   const [searchParams] = useSearchParams();
   const refCode = searchParams.get("ref");
 
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      import("@/pages/Students");
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const refParam = refCode ? `&ref=${refCode}` : "";
 
