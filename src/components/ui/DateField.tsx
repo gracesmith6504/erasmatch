@@ -91,6 +91,15 @@ export const DateField = ({
       </button>
     );
 
+  const now = new Date();
+  const fromYear = minDate ? minDate.getFullYear() : now.getFullYear() - 1;
+  const toYear = maxDate ? maxDate.getFullYear() : now.getFullYear() + 4;
+
+  const smartDefault =
+    selected ??
+    (minDate && minDate > now ? minDate : undefined) ??
+    new Date(now.getFullYear(), now.getMonth() + 3, 1);
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>{trigger}</PopoverTrigger>
@@ -104,7 +113,10 @@ export const DateField = ({
               setOpen(false);
             }
           }}
-          defaultMonth={selected ?? minDate ?? new Date()}
+          defaultMonth={smartDefault}
+          captionLayout="dropdown"
+          fromYear={fromYear}
+          toYear={toYear}
           disabled={(d) => {
             if (minDate && d < minDate) return true;
             if (maxDate && d > maxDate) return true;

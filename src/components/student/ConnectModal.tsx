@@ -65,6 +65,14 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
       ? `We're both going to ${sharedUniversity}! 👋`
       : "Hey! Saw we're both doing Erasmus — let's connect 👋";
 
+  const quickReplies = (() => {
+    const chips: string[] = ["hey 👋"];
+    if (sharedCity) chips.unshift(`Also heading to ${sharedCity} soon! 👋`);
+    else if (sharedUniversity) chips.unshift(`We're both going to ${sharedUniversity}! 👋`);
+    chips.push("Hey! Saw we're both doing Erasmus — let's connect 👋");
+    return chips.slice(0, 3);
+  })();
+
   const handleSend = async () => {
     if (!note.trim() || sending) return;
     setSending(true);
@@ -197,6 +205,20 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
 
           {/* Composer */}
           <div className="px-5 sm:px-6 pb-4 pt-1">
+            {!note.trim() && (
+              <div className="flex flex-wrap gap-1.5 mb-2.5">
+                {quickReplies.map((chip) => (
+                  <button
+                    key={chip}
+                    type="button"
+                    onClick={() => setNote(chip)}
+                    className="text-xs px-3 py-1.5 rounded-full border border-border bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
+                  >
+                    {chip}
+                  </button>
+                ))}
+              </div>
+            )}
             <label className="sr-only" htmlFor="connect-note">
               Your message
             </label>
