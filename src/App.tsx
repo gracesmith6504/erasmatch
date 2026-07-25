@@ -10,6 +10,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Layout from "./components/layout/Layout";
 import AppRoutes from "./components/routing/AppRoutes";
 import { AuthProvider } from "./contexts/auth";
+import { Analytics } from "@vercel/analytics/react";
 
 
 const queryClient = new QueryClient({
@@ -28,6 +29,7 @@ const App = () => {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
+          <Analytics />
           <Toaster />
           <Sonner />
           <AuthProvider>
