@@ -5,27 +5,22 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Profile } from "@/types";
 
-/** Fetches a user profile by ID. Returns null if not found. */
+/** Fetches a user profile by ID. Returns null if not found. Throws on database/network errors. */
 export const fetchUserProfile = async (userId: string): Promise<Profile | null> => {
-  try {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('id, name, avatar_url, bio, city, university, home_university, course, semester, personality_tags, created_at, deleted_at, last_active_at, ref_code, invited_by, onboarding_complete, featured, privacy_consent_at, email_notifications, arrival_date, looking_for, onboarding_step')
-      .eq('id', userId)
-      .maybeSingle();
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id, name, avatar_url, bio, city, university, home_university, course, semester, personality_tags, created_at, deleted_at, last_active_at, ref_code, invited_by, onboarding_complete, featured, privacy_consent_at, email_notifications, arrival_date, looking_for, onboarding_step')
+    .eq('id', userId)
+    .maybeSingle();
 
-    if (error) throw error;
-    return data as unknown as Profile;
-  } catch (error) {
-    console.error('Error fetching user profile:', error);
-    return null;
-  }
+  if (error) throw error;
+  return data as unknown as Profile;
 };
 
-/** Creates a new profile for a freshly registered user. Uses upsert for idempotency. */
+/** Creates a new profile for a freshly registered user. Uses insert (not upsert) to never overwrite existing data. */
 export const createUserProfile = async (
-  userId: string, 
-  email: string, 
+  userId: string,
+  email: string,
   defaultName: string | null,
   options?: { invitedBy?: string | null }
 ): Promise<Profile | null> => {
@@ -49,17 +44,20 @@ export const createUserProfile = async (
     invited_by: options?.invitedBy || null,
     privacy_consent_at: new Date().toISOString(),
   };
-  
+
   try {
     const { error } = await supabase
       .from('profiles')
-      .upsert(newProfile);
-      
+      .insert(newProfile);
+
     if (error) throw error;
-    
-    // Fetch the full profile from DB to ensure completeness
+
     return await fetchUserProfile(userId);
-  } catch (error) {
+  } catch (error: any) {
+    if (error?.code === '23505') {
+      console.warn("createUserProfile: profile already exists for", userId);
+      throw error;
+    }
     console.error("Error creating profile:", error);
     return null;
   }

@@ -47,66 +47,82 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       localStorage.setItem('userId', session.user.id);
       setCurrentUserEmail(session.user.email);
 
+      let profileData: Profile | null = null;
       try {
-        const profileData = await fetchUserProfile(session.user.id);
+        profileData = await fetchUserProfile(session.user.id);
+      } catch (fetchError) {
+        console.error('Failed to fetch profile (will retry on next auth event):', fetchError);
+        return;
+      }
 
-        if (profileData) {
-          if (profileData.deleted_at) {
-            sessionStorage.removeItem("accountDeletionInProgress");
-            await supabase.auth.signOut({ scope: "local" }).catch(() => undefined);
-            clearLocalAuthStorage();
-            setIsAuthenticated(false);
-            setCurrentUserId(null);
-            setCurrentUserEmail(null);
-            setCurrentUserProfile(null);
+      if (profileData) {
+        if (profileData.deleted_at) {
+          sessionStorage.removeItem("accountDeletionInProgress");
+          await supabase.auth.signOut({ scope: "local" }).catch(() => undefined);
+          clearLocalAuthStorage();
+          setIsAuthenticated(false);
+          setCurrentUserId(null);
+          setCurrentUserEmail(null);
+          setCurrentUserProfile(null);
 
-            if (!window.location.pathname.includes('/auth')) {
-              navigate("/auth?mode=signup", { replace: true });
-            }
-            return;
+          if (!window.location.pathname.includes('/auth')) {
+            navigate("/auth?mode=signup", { replace: true });
           }
+          return;
+        }
 
-          setCurrentUserProfile(profileData);
+        setCurrentUserProfile(profileData);
 
-          window.posthog?.identify(profileData.id, {
-            email: session.user.email,
-            name: profileData.name,
-            city: profileData.city,
-            university: profileData.university,
-            semester: profileData.semester,
-            has_avatar: !!profileData.avatar_url,
-            home_university: profileData.home_university,
-          });
-          
-          if (!profileData.onboarding_complete) {
-            if (!window.location.pathname.includes('/onboarding') && !window.location.pathname.includes('/auth')) {
-              navigate("/onboarding", { replace: true });
-            }
+        window.posthog?.identify(profileData.id, {
+          email: session.user.email,
+          name: profileData.name,
+          city: profileData.city,
+          university: profileData.university,
+          semester: profileData.semester,
+          has_avatar: !!profileData.avatar_url,
+          home_university: profileData.home_university,
+        });
+
+        if (!profileData.onboarding_complete) {
+          if (!window.location.pathname.includes('/onboarding') && !window.location.pathname.includes('/auth')) {
+            navigate("/onboarding", { replace: true });
           }
-        } else {
-          const userData = session.user.user_metadata || {};
-          const defaultName = userData.name || userData.full_name || null;
-          
-          const pendingRef = sessionStorage.getItem("pendingRefCode");
-          if (pendingRef) sessionStorage.removeItem("pendingRefCode");
-          
+        }
+      } else {
+        const userData = session.user.user_metadata || {};
+        const defaultName = userData.name || userData.full_name || null;
+
+        const pendingRef = sessionStorage.getItem("pendingRefCode");
+        if (pendingRef) sessionStorage.removeItem("pendingRefCode");
+
+        try {
           const newProfile = await createUserProfile(
-            session.user.id, 
-            session.user.email, 
+            session.user.id,
+            session.user.email,
             defaultName,
             { invitedBy: pendingRef }
           );
-          
+
           if (newProfile) {
             setCurrentUserProfile(newProfile);
-            
+
             if (!window.location.pathname.includes('/onboarding') && !window.location.pathname.includes('/auth')) {
               navigate("/onboarding", { replace: true });
             }
           }
+        } catch (createError: any) {
+          if (createError?.code === '23505') {
+            console.warn('Profile exists despite fetch returning null — retrying fetch');
+            try {
+              const existing = await fetchUserProfile(session.user.id);
+              if (existing) setCurrentUserProfile(existing);
+            } catch (retryError) {
+              console.error('Retry fetch also failed:', retryError);
+            }
+          } else {
+            console.error('Error creating profile:', createError);
+          }
         }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
       }
     } else {
       setIsAuthenticated(false);
@@ -185,9 +201,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   /** Re-fetches the current user's profile from the database. */
   const refreshProfile = useCallback(async () => {
     if (!currentUserId) return;
-    const freshProfile = await fetchUserProfile(currentUserId);
-    if (freshProfile) {
-      setCurrentUserProfile(freshProfile);
+    try {
+      const freshProfile = await fetchUserProfile(currentUserId);
+      if (freshProfile) {
+        setCurrentUserProfile(freshProfile);
+      }
+    } catch (error) {
+      console.error('Error refreshing profile:', error);
     }
   }, [currentUserId]);
 
