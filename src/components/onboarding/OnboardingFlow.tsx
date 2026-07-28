@@ -179,7 +179,7 @@ export const OnboardingFlow = () => {
     navigate("/students?from=onboarding");
   }, [navigate]);
 
-  const goToNextStep = () => {
+  const goToNextStep = async () => {
     if (currentStep < stepNames.length) {
       const dwellMs = Date.now() - stepEnteredAtRef.current;
       const extras: Record<string, unknown> = { step: currentStep, step_name: stepNames[currentStep], dwell_ms: dwellMs };
@@ -197,7 +197,12 @@ export const OnboardingFlow = () => {
     if (currentStep < totalSteps - 1) {
       const nextStep = currentStep + 1;
       setCurrentStep(nextStep);
-      handleUpdateProfile({ onboarding_step: nextStep });
+      try {
+        await handleUpdateProfile({ onboarding_step: nextStep });
+      } catch {
+        // Bookmark failed — user can still continue, they'll just
+        // restart from an earlier step if they leave and come back.
+      }
     } else {
       handleCompleteOnboarding();
     }

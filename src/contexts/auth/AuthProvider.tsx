@@ -184,14 +184,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const success = await updateUserProfile(currentUserId, updatedProfile);
 
-      if (success) {
-        const freshProfile = await fetchUserProfile(currentUserId);
-        if (freshProfile) {
-          setCurrentUserProfile(freshProfile);
-        }
+      if (!success) {
+        throw new Error('Failed to save profile changes');
       }
 
-      return Promise.resolve();
+      const freshProfile = await fetchUserProfile(currentUserId);
+      if (freshProfile) {
+        setCurrentUserProfile(freshProfile);
+      }
     } catch (error) {
       console.error('Error updating profile:', error);
       return Promise.reject(error);
