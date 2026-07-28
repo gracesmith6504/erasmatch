@@ -103,7 +103,7 @@ export const DateField = ({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>{trigger}</PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
+      <PopoverContent className="w-auto p-0" align="center" sideOffset={8}>
         <Calendar
           mode="single"
           selected={selected}
@@ -124,7 +124,7 @@ export const DateField = ({
           }}
           initialFocus
           fixedWeeks
-          className={cn("p-3 pointer-events-auto")}
+          className={cn("p-4 pointer-events-auto")}
         />
       </PopoverContent>
     </Popover>
