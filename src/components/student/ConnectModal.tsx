@@ -32,6 +32,7 @@ interface ConnectModalProps {
   sharedCity?: string | null;
   sharedUniversity?: string | null;
   initialNote?: string;
+  onSent?: () => void;
 }
 
 const ConnectModal: React.FC<ConnectModalProps> = ({
@@ -46,6 +47,7 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
   sharedCity,
   sharedUniversity,
   initialNote,
+  onSent,
 }) => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
@@ -66,9 +68,9 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
       : "Hey! Saw we're both doing Erasmus — let's connect 👋";
 
   const quickReplies = (() => {
-    const chips: string[] = ["hey 👋"];
-    if (sharedCity) chips.unshift(`Also heading to ${sharedCity} soon! 👋`);
-    else if (sharedUniversity) chips.unshift(`We're both going to ${sharedUniversity}! 👋`);
+    const chips: string[] = [];
+    if (sharedCity) chips.push(`Also heading to ${sharedCity} soon! 👋`);
+    if (sharedUniversity) chips.push(`We're both going to ${sharedUniversity}! 👋`);
     chips.push("Hey! Saw we're both doing Erasmus — let's connect 👋");
     return chips.slice(0, 3);
   })();
@@ -79,6 +81,7 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
     try {
       await sendMessage(studentId, note.trim());
       window.posthog?.capture("say_hi_sent");
+      onSent?.();
       toast({ title: "Message sent!", description: `Your note is on its way to ${studentName.split(" ")[0]}.` });
       setNote("");
 

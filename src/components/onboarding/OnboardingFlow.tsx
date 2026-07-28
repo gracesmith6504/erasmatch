@@ -10,8 +10,7 @@ import { ExchangeDetailsStep } from "./steps/ExchangeDetailsStep";
 import { InterestsStep } from "./steps/InterestsStep";
 import { PhotoStep } from "./steps/PhotoStep";
 import { CompletionCelebration } from "./CompletionCelebration";
-import { CityPayoff } from "./CityPayoff";
-import { InviteCrewStep } from "./InviteCrewStep";
+import { MatchReveal } from "./MatchReveal";
 import { toast } from "sonner";
 import { generateUniqueRefCode } from "@/utils/refCodeGenerator";
 import { supabase } from "@/integrations/supabase/client";
@@ -40,8 +39,7 @@ export const OnboardingFlow = () => {
   const [currentStep, setCurrentStep] = useState(currentUserProfile?.onboarding_step ?? 0);
   const [direction, setDirection] = useState(1);
   const [showCelebration, setShowCelebration] = useState(false);
-  const [showCityPayoff, setShowCityPayoff] = useState(false);
-  const [showInviteCrew, setShowInviteCrew] = useState(false);
+  const [showMatchReveal, setShowMatchReveal] = useState(false);
   const [showWelcomeBack, setShowWelcomeBack] = useState(() => (currentUserProfile?.onboarding_step ?? 0) > 0);
   const completingRef = useRef(false);
   const totalSteps = 6;
@@ -79,11 +77,11 @@ export const OnboardingFlow = () => {
 
   useEffect(() => {
     // Only redirect if onboarding was already complete on mount (returning user).
-    // Don't redirect during the completion sequence (celebration → city payoff).
-    if (currentUserProfile?.onboarding_complete && !completingRef.current && !showCelebration && !showCityPayoff && !showInviteCrew) {
+    // Don't redirect during the completion sequence (celebration → match reveal).
+    if (currentUserProfile?.onboarding_complete && !completingRef.current && !showCelebration && !showMatchReveal) {
       navigate("/students");
     }
-  }, [currentUserProfile, navigate, showCelebration, showCityPayoff, showInviteCrew]);
+  }, [currentUserProfile, navigate, showCelebration, showMatchReveal]);
 
   const handleUpdateProfile = async (data: any) => {
     try {
@@ -168,16 +166,17 @@ export const OnboardingFlow = () => {
   };
 
   const handleCelebrationComplete = useCallback(() => {
-    setShowCityPayoff(true);
+    setShowMatchReveal(true);
   }, []);
 
-  const handleCityPayoffComplete = useCallback(() => {
-    setShowInviteCrew(true);
-  }, []);
-
-  const handleInviteCrewComplete = useCallback(() => {
+  const handleMatchRevealComplete = useCallback(() => {
     navigate("/students?from=onboarding");
   }, [navigate]);
+
+  const handleBrowseAll = useCallback(() => {
+    const city = currentUserProfile?.city;
+    navigate(city ? `/students?city=${encodeURIComponent(city)}&from=onboarding` : "/students?from=onboarding");
+  }, [navigate, currentUserProfile?.city]);
 
   const goToNextStep = async () => {
     if (currentStep < stepNames.length) {
@@ -223,25 +222,12 @@ export const OnboardingFlow = () => {
     );
   }
 
-  if (showInviteCrew) {
+  if (showMatchReveal) {
     return (
-      <InviteCrewStep
-        homeUniversity={currentUserProfile?.home_university ?? null}
-        city={currentUserProfile?.city ?? null}
-        refCode={currentUserProfile?.ref_code ?? null}
-        onComplete={handleInviteCrewComplete}
-      />
-    );
-  }
-
-  if (showCityPayoff) {
-    return (
-      <CityPayoff
-        city={currentUserProfile?.city ?? null}
-        university={currentUserProfile?.university ?? null}
-        userId={currentUserProfile?.id ?? ""}
-        refCode={currentUserProfile?.ref_code ?? null}
-        onComplete={handleCityPayoffComplete}
+      <MatchReveal
+        currentProfile={currentUserProfile}
+        onComplete={handleMatchRevealComplete}
+        onBrowseAll={handleBrowseAll}
       />
     );
   }

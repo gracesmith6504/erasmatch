@@ -10,11 +10,19 @@ export const RECOMMENDATION_WEIGHTS = {
   sameUniversity: 8,
   sameSemester: 6,
   sharedTag: 3,
+  arrivalWithin7Days: 6,
+  arrivalWithin14Days: 3,
 };
 
 // ---- Helpers ----
 const RECENT_MS = RECENT_WINDOW_DAYS * 24 * 60 * 60 * 1000;
 const ts = (v: string | null | undefined) => (v ? new Date(v).getTime() : 0);
+
+// Absolute days between two arrival dates, or null if either is missing.
+export const daysBetween = (a?: string | null, b?: string | null): number | null => {
+  if (!a || !b) return null;
+  return Math.abs(new Date(a).getTime() - new Date(b).getTime()) / (1000 * 60 * 60 * 24);
+};
 
 export const hasPhoto = (p: Profile) => Boolean(p.avatar_url);
 
@@ -33,6 +41,13 @@ export const scoreRecommendation = (p: Profile, me: Profile) => {
   if (me.university && p.university === me.university) score += RECOMMENDATION_WEIGHTS.sameUniversity;
   if (me.semester && p.semester === me.semester) score += RECOMMENDATION_WEIGHTS.sameSemester;
   score += myTags.filter((t) => pTags.includes(t)).length * RECOMMENDATION_WEIGHTS.sharedTag;
+
+  const arrivalGapDays = daysBetween(me.arrival_date, p.arrival_date);
+  if (arrivalGapDays !== null) {
+    if (arrivalGapDays <= 7) score += RECOMMENDATION_WEIGHTS.arrivalWithin7Days;
+    else if (arrivalGapDays <= 14) score += RECOMMENDATION_WEIGHTS.arrivalWithin14Days;
+  }
+
   return score;
 };
 
