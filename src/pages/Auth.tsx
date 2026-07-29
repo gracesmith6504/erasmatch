@@ -1,4 +1,4 @@
-import { useState, FormEvent, useEffect, useMemo } from "react";
+import { useState, FormEvent, useEffect, useMemo, useRef } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,18 @@ import { PostSignupPrompt } from "@/components/share/PostSignupPrompt";
 
 import { GoogleAuthHandler } from "@/components/auth/GoogleAuthHandler";
 import { SEO } from "@/components/SEO";
+
+const AUTH_TIMEOUT_MS = 12_000;
+const TIMEOUT_MESSAGE = "Taking too long — check your connection and try again.";
+
+function withTimeout<T>(promise: Promise<T>): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(TIMEOUT_MESSAGE)), AUTH_TIMEOUT_MS),
+    ),
+  ]);
+}
 
 type AuthProps = {
   onLogin: (email: string) => void;
@@ -60,30 +72,41 @@ const Auth = ({ onLogin }: AuthProps) => {
     setSearchParams(newParams);
   };
 
+  const googleTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+
   const handleGoogleAuth = async () => {
     setGoogleLoading(true);
-    
-    // Store referral and return info in sessionStorage before redirect
-    // (Google strips custom queryParams on callback)
+
     if (refCode) sessionStorage.setItem("pendingRefCode", refCode);
     if (returnTo) sessionStorage.setItem("pendingReturnTo", returnTo);
-    
+
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth?mode=google-callback`,
-        }
-      });
+      const { data, error } = await withTimeout(
+        supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: `${window.location.origin}/auth?mode=google-callback`,
+          }
+        }),
+      );
 
       if (error) throw error;
+
+      // signInWithOAuth resolves immediately with a redirect URL — if the
+      // browser hasn't navigated away within AUTH_TIMEOUT_MS the redirect
+      // itself is stalled (e.g. blocked by a firewall).
+      googleTimeoutRef.current = setTimeout(() => {
+        setGoogleLoading(false);
+        toast.error(TIMEOUT_MESSAGE);
+      }, AUTH_TIMEOUT_MS);
     } catch (error: any) {
       console.error("Google auth error:", error);
       toast.error(error.message || "Failed to sign in with Google");
-    } finally {
       setGoogleLoading(false);
     }
   };
+
+  useEffect(() => () => clearTimeout(googleTimeoutRef.current), []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -111,26 +134,24 @@ const Auth = ({ onLogin }: AuthProps) => {
 
     try {
       if (isSignUp) {
-        // Store referral info in sessionStorage so AuthProvider can use it
         const ref = searchParams.get("ref");
         if (ref) {
           sessionStorage.setItem("pendingRefCode", ref);
         }
 
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/onboarding`,
-          },
-        });
+        const { data, error } = await withTimeout(
+          supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              emailRedirectTo: `${window.location.origin}/onboarding`,
+            },
+          }),
+        );
 
         if (error) throw error;
 
         if (data.session) {
-          // Session is live; AuthProvider will create the profile and
-          // navigate to /onboarding. Navigate as a fallback in case
-          // onAuthStateChange hasn't propagated yet.
           onLogin(email);
           navigate("/onboarding", { replace: true });
           return;
@@ -138,16 +159,18 @@ const Auth = ({ onLogin }: AuthProps) => {
           toast.info("Please check your email to confirm your registration");
         }
       } else {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password
-        });
+        const { data, error } = await withTimeout(
+          supabase.auth.signInWithPassword({
+            email,
+            password,
+          }),
+        );
 
         if (error) throw error;
-        
+
         toast.success("Welcome back!");
         onLogin(email);
-        
+
         if (returnTo) {
           navigate(returnTo);
         } else {
@@ -311,9 +334,11 @@ const Auth = ({ onLogin }: AuthProps) => {
                       }
                       setLoading(true);
                       try {
-                        const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                          redirectTo: `${window.location.origin}/reset-password`,
-                        });
+                        const { error } = await withTimeout(
+                          supabase.auth.resetPasswordForEmail(email, {
+                            redirectTo: `${window.location.origin}/reset-password`,
+                          }),
+                        );
                         if (error) throw error;
                         toast.success("Password reset link sent! Check your email.");
                       } catch (error: any) {
