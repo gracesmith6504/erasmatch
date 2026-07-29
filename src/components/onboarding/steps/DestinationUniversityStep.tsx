@@ -17,16 +17,12 @@ import {
 
 type UniRow = { id: number; name: string; city: string | null; country: string | null; score?: number };
 
-// Score tiers from search_universities RPC:
-// name exact 1000 / prefix 700 / substring 400; alias exact 1000 / prefix 600 / substring 300.
-// >= 600 means the RPC found a confident canonical match (including via alias), so we
-// should NOT offer "Add as new university" — that's what creates duplicate shadow rows.
 const CONFIDENT_MATCH_SCORE = 600;
 
 const INTERNSHIP_SENTINEL = "Internship/Work";
 
 const normalizeString = (str: string) =>
-  str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+  str.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
 
 type DestinationUniversityStepProps = {
   initialValue: string;
@@ -56,6 +52,8 @@ export const DestinationUniversityStep = ({
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reqIdRef = useRef(0);
 
+  const trimmedCity = city.trim();
+
   useEffect(() => {
     if (isInternship) {
       setSearchedUniversities([]);
@@ -66,8 +64,8 @@ export const DestinationUniversityStep = ({
     debounceRef.current = setTimeout(async () => {
       const { data, error } = await (supabase as any).rpc("search_universities", {
         _q: uniSearch.trim(),
-        _limit: uniSearch.trim() ? 100 : 25,
-        _city: null,
+        _limit: uniSearch.trim() ? 100 : 50,
+        _city: trimmedCity || null,
       });
       if (myReq !== reqIdRef.current) return;
       if (error) {
@@ -80,14 +78,22 @@ export const DestinationUniversityStep = ({
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [uniSearch, isInternship]);
+  }, [uniSearch, trimmedCity, isInternship]);
+
+  // When the city changes, clear the selected university — it may not be
+  // in the new city. Keep it only if the user hasn't touched the city yet.
+  const prevCityRef = useRef(trimmedCity);
+  useEffect(() => {
+    if (prevCityRef.current && trimmedCity !== prevCityRef.current) {
+      setUniversity("");
+    }
+    prevCityRef.current = trimmedCity;
+  }, [trimmedCity]);
 
   const hasExactMatch = (() => {
     if (!uniSearch.trim()) return true;
     const q = normalizeString(uniSearch);
     if (searchedUniversities.some((u) => normalizeString(u.name) === q)) return true;
-    // Trust the RPC's alias/trigram resolution: if the top hit scored high enough,
-    // it's already the canonical row the user meant — suppress the "Add" CTA.
     const top = searchedUniversities[0];
     return !!top && (top.score ?? 0) >= CONFIDENT_MATCH_SCORE;
   })();
@@ -96,7 +102,7 @@ export const DestinationUniversityStep = ({
 
   const handleSelectUniversity = (uni: UniRow) => {
     setUniversity(uni.name);
-    if (uni.city) setCity(uni.city);
+    if (uni.city && !trimmedCity) setCity(uni.city);
     setUniOpen(false);
     setUniSearch("");
   };
@@ -122,12 +128,10 @@ export const DestinationUniversityStep = ({
 
   const switchToStudy = () => {
     setIsInternship(false);
-    setCity("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const trimmedCity = city.trim();
     if (!trimmedCity) return;
 
     setIsSubmitting(true);
@@ -143,8 +147,8 @@ export const DestinationUniversityStep = ({
   };
 
   const canSubmit = isInternship
-    ? city.trim().length > 0
-    : university.trim().length > 0 && city.trim().length > 0;
+    ? trimmedCity.length > 0
+    : university.trim().length > 0 && trimmedCity.length > 0;
 
   return (
     <OnboardingLayout currentStep={2} totalSteps={6} onBack={onBack}>
@@ -160,123 +164,109 @@ export const DestinationUniversityStep = ({
             </div>
           </div>
           <h1 className="text-2xl font-display font-bold mb-2 text-foreground">
-            {isInternship ? "Where are you based?" : "Where are you studying?"}
+            {isInternship ? "Where are you based?" : "Where are you headed?"}
           </h1>
           <p className="text-sm text-muted-foreground">
             {isInternship
               ? "Tell us the city for your internship or placement."
-              : "Find your host university, we'll handle the city automatically."}
+              : "Pick your destination city — we'll show universities there."}
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="bg-card rounded-xl p-4 shadow-sm border border-border space-y-4">
-            {!isInternship ? (
-              <>
-                <div>
-                  <p className="text-xs font-medium text-muted-foreground mb-1.5 ml-0.5 flex items-center gap-1">
-                    <School className="h-3 w-3" />
-                    Host university
-                  </p>
-                  <Popover open={uniOpen} onOpenChange={setUniOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        role="combobox"
-                        aria-expanded={uniOpen}
-                        className={cn(
-                          "w-full justify-between",
-                          !university && "text-muted-foreground"
-                        )}
-                      >
-                        <span className="truncate">
-                          {university || "Search your university..."}
-                        </span>
-                        <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
-                      <Command shouldFilter={false}>
-                        <CommandInput
-                          placeholder="Search universities..."
-                          value={uniSearch}
-                          onValueChange={setUniSearch}
-                          className="bg-background"
-                        />
-                        <CommandList className="max-h-[220px]">
-                          <CommandGroup>
-                            {searchedUniversities.map((uni) => (
-                              <CommandItem
-                                key={uni.id}
-                                value={uni.name}
-                                onSelect={() => handleSelectUniversity(uni)}
-                              >
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-4 w-4 shrink-0",
-                                    university === uni.name ? "opacity-100" : "opacity-0"
-                                  )}
-                                />
-                                <div className="flex flex-col">
-                                  <span>{uni.name}</span>
-                                  {uni.city && (
-                                    <span className="text-xs text-muted-foreground">
-                                      {uni.city}
-                                      {uni.country ? `, ${uni.country}` : ""}
-                                    </span>
-                                  )}
-                                </div>
-                              </CommandItem>
-                            ))}
-                            {showAddOption && (
-                              <CommandItem
-                                value={`custom-add-${uniSearch}`}
-                                onSelect={handleAddCustomUniversity}
-                                className="text-primary"
-                              >
-                                <Plus className="mr-2 h-4 w-4" />
-                                Add "{uniSearch.trim()}"
-                              </CommandItem>
-                            )}
-                            {isAdding && (
-                              <CommandItem value="adding-indicator" disabled className="text-muted-foreground">
-                                <Plus className="mr-2 h-4 w-4 animate-spin" />
-                                Adding...
-                              </CommandItem>
-                            )}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                </div>
+            {/* City — always first */}
+            <div>
+              <p className="text-xs font-medium text-muted-foreground mb-1.5 ml-0.5 flex items-center gap-1">
+                <MapPin className="h-3 w-3" />
+                {isInternship ? "City" : "Destination city"}
+              </p>
+              <CityAutocomplete
+                value={city}
+                onChange={setCity}
+                placeholder={isInternship ? "Where are you based? (e.g. Lisbon)" : "Where are you going? (e.g. Budapest)"}
+              />
+            </div>
 
-                {university && (
-                  <div className="animate-fade-in">
-                    <p className="text-xs font-medium text-muted-foreground mb-1.5 ml-0.5 flex items-center gap-1">
-                      <MapPin className="h-3 w-3" />
-                      City
-                    </p>
-                    <CityAutocomplete
-                      value={city}
-                      onChange={setCity}
-                      placeholder="Destination city"
-                    />
-                  </div>
-                )}
-              </>
-            ) : (
-              <div>
+            {/* University — shown after city is selected (study mode only) */}
+            {!isInternship && trimmedCity && (
+              <div className="animate-fade-in">
                 <p className="text-xs font-medium text-muted-foreground mb-1.5 ml-0.5 flex items-center gap-1">
-                  <MapPin className="h-3 w-3" />
-                  City
+                  <School className="h-3 w-3" />
+                  Host university
                 </p>
-                <CityAutocomplete
-                  value={city}
-                  onChange={setCity}
-                  placeholder="Where are you based? (e.g. Lisbon)"
-                />
+                <Popover open={uniOpen} onOpenChange={setUniOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={uniOpen}
+                      className={cn(
+                        "w-full justify-between",
+                        !university && "text-muted-foreground"
+                      )}
+                    >
+                      <span className="truncate">
+                        {university || "Search your university..."}
+                      </span>
+                      <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                    <Command shouldFilter={false}>
+                      <CommandInput
+                        placeholder="Search universities..."
+                        value={uniSearch}
+                        onValueChange={setUniSearch}
+                        className="bg-background"
+                      />
+                      <CommandList className="max-h-[320px]">
+                        <CommandGroup>
+                          {searchedUniversities.map((uni) => (
+                            <CommandItem
+                              key={uni.id}
+                              value={uni.name}
+                              onSelect={() => handleSelectUniversity(uni)}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4 shrink-0",
+                                  university === uni.name ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                              <div className="flex flex-col">
+                                <span>{uni.name}</span>
+                                {uni.city && (
+                                  <span className="text-xs text-muted-foreground">
+                                    {uni.city}
+                                    {uni.country ? `, ${uni.country}` : ""}
+                                  </span>
+                                )}
+                              </div>
+                            </CommandItem>
+                          ))}
+                          {showAddOption && (
+                            <CommandItem
+                              value={`custom-add-${uniSearch}`}
+                              onSelect={handleAddCustomUniversity}
+                              className="text-primary"
+                            >
+                              <Plus className="mr-2 h-4 w-4" />
+                              Add "{uniSearch.trim()}"
+                            </CommandItem>
+                          )}
+                          {isAdding && (
+                            <CommandItem value="adding-indicator" disabled className="text-muted-foreground">
+                              <Plus className="mr-2 h-4 w-4 animate-spin" />
+                              Adding...
+                            </CommandItem>
+                          )}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
             )}
           </div>
