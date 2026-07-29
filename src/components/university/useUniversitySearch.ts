@@ -141,7 +141,7 @@ export function useUniversitySearch(prioritizeIrish = false) {
     setIsSearchingApi(Boolean(query.trim()));
     debounceRef.current = setTimeout(() => {
       searchUniversities(query);
-    }, query.trim() ? 180 : 0);
+    }, query.trim() ? 100 : 0);
   }, [searchUniversities]);
 
   const sortUniversitiesByIrishFirst = (universities: University[]): University[] => {

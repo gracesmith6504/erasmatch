@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useRef } from "react";
-import { Check, ChevronsUpDown, Plus } from "lucide-react";
+import { Check, ChevronsUpDown, Plus, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
@@ -138,6 +138,13 @@ export function UniversityDropdown({
             className="bg-background"
           />
           <CommandList ref={scrollRef} className="max-h-[300px] overflow-y-auto">
+            {/* Searching indicator */}
+            {isSearchingApi && searchQuery.trim() && (
+              <div className="flex items-center justify-center gap-2 py-3 text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span className="text-xs">Searching...</span>
+              </div>
+            )}
             {/* Local DB results */}
             {hasLocalResults && (
               <CommandGroup heading={hasApiResults ? "From our database" : undefined}>

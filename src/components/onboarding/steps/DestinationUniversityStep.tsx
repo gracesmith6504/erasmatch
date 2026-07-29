@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, MapPin, School, Check, ChevronsUpDown, Plus, Briefcase } from "lucide-react";
+import { ArrowRight, MapPin, School, Check, ChevronsUpDown, Plus, Briefcase, Loader2 } from "lucide-react";
 import { CityAutocomplete } from "@/components/CityAutocomplete";
 import { supabase } from "@/integrations/supabase/client";
 import { autoAddUniversity } from "@/components/university/useAutoAddUniversity";
@@ -48,6 +48,7 @@ export const DestinationUniversityStep = ({
   const [uniOpen, setUniOpen] = useState(false);
   const [uniSearch, setUniSearch] = useState("");
   const [isAdding, setIsAdding] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const [searchedUniversities, setSearchedUniversities] = useState<UniRow[]>([]);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reqIdRef = useRef(0);
@@ -61,6 +62,7 @@ export const DestinationUniversityStep = ({
     }
     if (debounceRef.current) clearTimeout(debounceRef.current);
     const myReq = ++reqIdRef.current;
+    if (uniSearch.trim()) setIsSearching(true);
     debounceRef.current = setTimeout(async () => {
       const { data, error } = await (supabase as any).rpc("search_universities", {
         _q: uniSearch.trim(),
@@ -74,7 +76,8 @@ export const DestinationUniversityStep = ({
       } else {
         setSearchedUniversities((data ?? []) as UniRow[]);
       }
-    }, uniSearch.trim() ? 180 : 0);
+      setIsSearching(false);
+    }, uniSearch.trim() ? 100 : 0);
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
@@ -222,6 +225,12 @@ export const DestinationUniversityStep = ({
                         className="bg-background"
                       />
                       <CommandList className="max-h-[320px]">
+                        {isSearching && (
+                          <div className="flex items-center justify-center gap-2 py-3 text-muted-foreground">
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <span className="text-xs">Searching...</span>
+                          </div>
+                        )}
                         <CommandGroup>
                           {searchedUniversities.map((uni) => (
                             <CommandItem
