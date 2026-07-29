@@ -359,6 +359,7 @@ export type Database = {
           name: string
           overview: string | null
           popular_courses: string | null
+          popularity: number
           slug: string | null
           source: string
           updated_at: string
@@ -376,6 +377,7 @@ export type Database = {
           name: string
           overview?: string | null
           popular_courses?: string | null
+          popularity?: number
           slug?: string | null
           source?: string
           updated_at?: string
@@ -393,6 +395,7 @@ export type Database = {
           name?: string
           overview?: string | null
           popular_courses?: string | null
+          popularity?: number
           slug?: string | null
           source?: string
           updated_at?: string
@@ -504,7 +507,7 @@ export type Database = {
       }
       normalize_text: { Args: { t: string }; Returns: string }
       search_universities: {
-        Args: { _city?: string; _limit?: number; _q: string }
+        Args: { _city: string; _limit: number; _q: string }
         Returns: {
           city: string
           country: string
