@@ -27,7 +27,9 @@ const UniversityAutocomplete = ({
 
   const handleDropdownChange = async (universityName: string, isFromApi?: boolean) => {
     if (isFromApi) {
-      await autoAddUniversity(universityName);
+      const resolved = await autoAddUniversity(universityName);
+      onChange(resolved || universityName, isFromApi);
+      return;
     }
     onChange(universityName, isFromApi);
   };

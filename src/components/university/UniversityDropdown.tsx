@@ -69,8 +69,8 @@ export function UniversityDropdown({
     if (!trimmed || isAdding) return;
     setIsAdding(true);
     try {
-      await autoAddUniversity(trimmed);
-      onChange(trimmed);
+      const resolved = await autoAddUniversity(trimmed);
+      onChange(resolved || trimmed);
       setOpen(false);
       onSearchChange("");
     } finally {
@@ -137,7 +137,7 @@ export function UniversityDropdown({
             onValueChange={onSearchChange}
             className="bg-background"
           />
-          <CommandList ref={scrollRef} className="max-h-[300px] overflow-y-auto">
+          <CommandList ref={scrollRef} className="max-h-[320px] overflow-y-auto">
             {/* Searching indicator */}
             {isSearchingApi && searchQuery.trim() && (
               <div className="flex items-center justify-center gap-2 py-3 text-muted-foreground">

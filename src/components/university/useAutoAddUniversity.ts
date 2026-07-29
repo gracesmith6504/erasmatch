@@ -10,12 +10,11 @@ const CONFIDENT_MATCH_SCORE = 600;
  * acronym/translation (e.g. "IEP Bordeaux") resolves to the canonical row
  * instead of creating a duplicate. Falls back to a case-insensitive name check.
  */
-export async function autoAddUniversity(name: string, city?: string): Promise<void> {
+export async function autoAddUniversity(name: string, city?: string): Promise<string | null> {
   const trimmed = name.trim();
-  if (!trimmed) return;
+  if (!trimmed) return null;
 
   try {
-    // Alias / fuzzy resolver — kills duplicate shadow rows like "science Po Bordeaux".
     const { data: hits } = await (supabase as any).rpc("search_universities", {
       _q: trimmed,
       _limit: 1,
@@ -23,17 +22,16 @@ export async function autoAddUniversity(name: string, city?: string): Promise<vo
     });
     const top = (hits ?? [])[0] as { id: number; name: string; score: number } | undefined;
     if (top && (top.score ?? 0) >= CONFIDENT_MATCH_SCORE) {
-      return;
+      return top.name;
     }
 
-    // Belt-and-suspenders exact name check.
     const { data: existing } = await supabase
       .from("universities")
       .select("id")
       .ilike("name", trimmed)
       .limit(1);
 
-    if (existing && existing.length > 0) return;
+    if (existing && existing.length > 0) return null;
 
     const insertData: { name: string; city?: string } = { name: trimmed };
     if (city?.trim()) insertData.city = city.trim();
@@ -48,4 +46,5 @@ export async function autoAddUniversity(name: string, city?: string): Promise<vo
   } catch (err) {
     console.error("Error auto-adding university:", err);
   }
+  return null;
 }

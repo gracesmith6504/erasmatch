@@ -123,10 +123,9 @@ export function useUniversitySearch(prioritizeIrish = false) {
         searchHipoApi(trimmedQuery, sorted);
       } else {
         setApiFallbackResults([]);
+        setIsSearchingApi(false);
       }
     }
-
-    setIsSearchingApi(false);
     if (immediate) setIsLoading(false);
   }, [prioritizeIrish, searchHipoApi]);
 

@@ -17,6 +17,18 @@ import {
 
 type UniRow = { id: number; name: string; city: string | null; country: string | null; score?: number };
 
+type HipoUniversity = {
+  name: string;
+  country: string;
+  "state-province": string | null;
+  alpha_two_code: string;
+  domains: string[];
+  web_pages: string[];
+};
+
+const SUPABASE_PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID || "ceoflcktscennfmmdrvp";
+const HIPO_PROXY_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/functions/v1/university-search`;
+
 const CONFIDENT_MATCH_SCORE = 600;
 
 const INTERNSHIP_SENTINEL = "Internship/Work";
@@ -49,35 +61,73 @@ export const DestinationUniversityStep = ({
   const [uniSearch, setUniSearch] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [isSearchingApi, setIsSearchingApi] = useState(false);
   const [searchedUniversities, setSearchedUniversities] = useState<UniRow[]>([]);
+  const [apiFallbackResults, setApiFallbackResults] = useState<UniRow[]>([]);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reqIdRef = useRef(0);
+  const abortRef = useRef<AbortController | null>(null);
 
   const trimmedCity = city.trim();
 
   useEffect(() => {
     if (isInternship) {
       setSearchedUniversities([]);
+      setApiFallbackResults([]);
       return;
     }
     if (debounceRef.current) clearTimeout(debounceRef.current);
     const myReq = ++reqIdRef.current;
-    if (uniSearch.trim()) setIsSearching(true);
+    const trimmedSearch = uniSearch.trim();
+    if (trimmedSearch) setIsSearching(true);
     debounceRef.current = setTimeout(async () => {
       const { data, error } = await (supabase as any).rpc("search_universities", {
-        _q: uniSearch.trim(),
-        _limit: uniSearch.trim() ? 100 : 50,
+        _q: trimmedSearch,
+        _limit: trimmedSearch ? 100 : 50,
         _city: trimmedCity || null,
       });
       if (myReq !== reqIdRef.current) return;
       if (error) {
         console.error("search_universities error", error);
         setSearchedUniversities([]);
-      } else {
-        setSearchedUniversities((data ?? []) as UniRow[]);
+        setApiFallbackResults([]);
+        setIsSearching(false);
+        return;
       }
+      const results = (data ?? []) as UniRow[];
+      setSearchedUniversities(results);
       setIsSearching(false);
-    }, uniSearch.trim() ? 100 : 0);
+
+      if (trimmedSearch.length >= 3 && results.length < 3) {
+        if (abortRef.current) abortRef.current.abort();
+        const controller = new AbortController();
+        abortRef.current = controller;
+        setIsSearchingApi(true);
+        try {
+          const response = await fetch(
+            `${HIPO_PROXY_URL}?name=${encodeURIComponent(trimmedSearch)}`,
+            { signal: controller.signal }
+          );
+          if (myReq !== reqIdRef.current) return;
+          if (!response.ok) throw new Error("API request failed");
+          const apiData: HipoUniversity[] = await response.json();
+          const mapped: UniRow[] = apiData.slice(0, 10).map((item, index) => ({
+            id: -(index + 1),
+            name: item.name,
+            city: null,
+            country: item.country || null,
+          }));
+          const localNames = new Set(results.map(u => u.name.toLowerCase()));
+          setApiFallbackResults(mapped.filter(u => !localNames.has(u.name.toLowerCase())));
+        } catch (err: any) {
+          if (err.name !== "AbortError") setApiFallbackResults([]);
+        } finally {
+          setIsSearchingApi(false);
+        }
+      } else {
+        setApiFallbackResults([]);
+      }
+    }, trimmedSearch ? 100 : 0);
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
@@ -93,10 +143,17 @@ export const DestinationUniversityStep = ({
     prevCityRef.current = trimmedCity;
   }, [trimmedCity]);
 
+  useEffect(() => {
+    return () => {
+      if (abortRef.current) abortRef.current.abort();
+    };
+  }, []);
+
   const hasExactMatch = (() => {
     if (!uniSearch.trim()) return true;
     const q = normalizeString(uniSearch);
-    if (searchedUniversities.some((u) => normalizeString(u.name) === q)) return true;
+    const allResults = [...searchedUniversities, ...apiFallbackResults];
+    if (allResults.some((u) => normalizeString(u.name) === q)) return true;
     const top = searchedUniversities[0];
     return !!top && (top.score ?? 0) >= CONFIDENT_MATCH_SCORE;
   })();
@@ -110,13 +167,20 @@ export const DestinationUniversityStep = ({
     setUniSearch("");
   };
 
+  const handleSelectApiUniversity = async (uni: UniRow) => {
+    const resolved = await autoAddUniversity(uni.name, city || "");
+    setUniversity(resolved || uni.name);
+    setUniOpen(false);
+    setUniSearch("");
+  };
+
   const handleAddCustomUniversity = async () => {
     const trimmed = uniSearch.trim();
     if (!trimmed || isAdding) return;
     setIsAdding(true);
     try {
-      await autoAddUniversity(trimmed, city || "");
-      setUniversity(trimmed);
+      const resolved = await autoAddUniversity(trimmed, city || "");
+      setUniversity(resolved || trimmed);
       setUniOpen(false);
       setUniSearch("");
     } finally {
@@ -225,36 +289,64 @@ export const DestinationUniversityStep = ({
                         className="bg-background"
                       />
                       <CommandList className="max-h-[320px]">
-                        {isSearching && (
+                        {(isSearching || isSearchingApi) && (
                           <div className="flex items-center justify-center gap-2 py-3 text-muted-foreground">
                             <Loader2 className="h-4 w-4 animate-spin" />
                             <span className="text-xs">Searching...</span>
                           </div>
                         )}
+                        {searchedUniversities.length > 0 && (
+                          <CommandGroup heading={apiFallbackResults.length > 0 ? "From our database" : undefined}>
+                            {searchedUniversities.map((uni) => (
+                              <CommandItem
+                                key={uni.id}
+                                value={uni.name}
+                                onSelect={() => handleSelectUniversity(uni)}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4 shrink-0",
+                                    university === uni.name ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                <div className="flex flex-col">
+                                  <span>{uni.name}</span>
+                                  {uni.city && (
+                                    <span className="text-xs text-muted-foreground">
+                                      {uni.city}
+                                      {uni.country ? `, ${uni.country}` : ""}
+                                    </span>
+                                  )}
+                                </div>
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        )}
+                        {apiFallbackResults.length > 0 && (
+                          <CommandGroup heading="Found online">
+                            {apiFallbackResults.map((uni, index) => (
+                              <CommandItem
+                                key={`api-${index}`}
+                                value={`api-${uni.name}`}
+                                onSelect={() => handleSelectApiUniversity(uni)}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4 shrink-0",
+                                    university === uni.name ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                <div className="flex flex-col">
+                                  <span>{uni.name}</span>
+                                  {uni.country && (
+                                    <span className="text-xs text-muted-foreground">{uni.country}</span>
+                                  )}
+                                </div>
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        )}
                         <CommandGroup>
-                          {searchedUniversities.map((uni) => (
-                            <CommandItem
-                              key={uni.id}
-                              value={uni.name}
-                              onSelect={() => handleSelectUniversity(uni)}
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4 shrink-0",
-                                  university === uni.name ? "opacity-100" : "opacity-0"
-                                )}
-                              />
-                              <div className="flex flex-col">
-                                <span>{uni.name}</span>
-                                {uni.city && (
-                                  <span className="text-xs text-muted-foreground">
-                                    {uni.city}
-                                    {uni.country ? `, ${uni.country}` : ""}
-                                  </span>
-                                )}
-                              </div>
-                            </CommandItem>
-                          ))}
                           {showAddOption && (
                             <CommandItem
                               value={`custom-add-${uniSearch}`}
@@ -272,6 +364,13 @@ export const DestinationUniversityStep = ({
                             </CommandItem>
                           )}
                         </CommandGroup>
+                        {!searchedUniversities.length && !apiFallbackResults.length && !isSearching && !isSearchingApi && !showAddOption && !isAdding && uniSearch.trim().length > 0 && (
+                          <CommandGroup>
+                            <div className="p-4 text-center">
+                              <p className="text-sm text-muted-foreground">No university found</p>
+                            </div>
+                          </CommandGroup>
+                        )}
                       </CommandList>
                     </Command>
                   </PopoverContent>
