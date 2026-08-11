@@ -138,7 +138,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const fetchSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        handleAuthChange(session);
+        await handleAuthChange(session);
       } catch (error) {
         console.error("Error fetching session:", error);
       } finally {
