@@ -16,8 +16,8 @@ const About = () => {
           "@context": "https://schema.org",
           "@type": "Organization",
           name: "ErasMatch",
-          url: "https://erasmatch.com/",
-          logo: "https://erasmatch.com/erasmatch_favicon_64x64.png",
+          url: "https://www.erasmatch.com/",
+          logo: "https://www.erasmatch.com/erasmatch_favicon_64x64.png",
           description: "A community that connects Erasmus students before they arrive in their host city.",
         }}
       />

@@ -1,19 +1,5 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
 User-agent: *
 Allow: /
-
-# Block development and admin paths
 Disallow: /admin/
 Disallow: /.git/
 Disallow: /node_modules/
@@ -22,4 +8,4 @@ Disallow: /*.json$
 Disallow: /*.ts$
 Disallow: /*.tsx$
 
-Sitemap: https://erasmatch.com/sitemap.xml
+Sitemap: https://www.erasmatch.com/sitemap.xml

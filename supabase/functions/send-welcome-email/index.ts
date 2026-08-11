@@ -81,7 +81,7 @@ serve(async (req) => {
           </tr>
           <tr>
             <td align="center" style="padding:0 40px 32px 40px;">
-              <a href="https://erasmatch.com/profile" style="display:inline-block;background-color:#4F46E5;color:#ffffff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px;">Complete Your Profile →</a>
+              <a href="https://www.erasmatch.com/profile" style="display:inline-block;background-color:#4F46E5;color:#ffffff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px;">Complete Your Profile →</a>
             </td>
           </tr>
           <tr>
@@ -95,7 +95,7 @@ serve(async (req) => {
             <td style="padding:0 40px 32px 40px;border-top:1px solid #e5e7eb;">
               <p style="margin:16px 0 0 0;font-size:12px;color:#9CA3AF;text-align:center;">
                 You received this because you signed up for ErasMatch.
-                <a href="https://erasmatch.com/profile" style="color:#9CA3AF;">Manage email preferences</a>
+                <a href="https://www.erasmatch.com/profile" style="color:#9CA3AF;">Manage email preferences</a>
               </p>
             </td>
           </tr>

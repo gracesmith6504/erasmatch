@@ -11,7 +11,7 @@ import { MessageCircle, Copy, Check, GraduationCap, MapPin } from "lucide-react"
 
 type Target = "university" | "city";
 
-const REFERRAL_BASE = "https://erasmatch.com";
+const REFERRAL_BASE = "https://www.erasmatch.com";
 
 interface InviteCrewBodyProps {
   homeUniversity: string | null;

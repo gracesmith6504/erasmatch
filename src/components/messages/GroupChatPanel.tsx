@@ -162,7 +162,7 @@ export const GroupChatPanel = ({
         </div>
 
         <ShareButton city={canonicalName}
-                     link={`https://erasmatch.com`}/>
+                     link={`https://www.erasmatch.com`}/>
       </div>
       
       <div className="flex-1 overflow-y-auto p-4 flex flex-col bg-gray-50">

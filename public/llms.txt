@@ -1,79 +1,68 @@
-# llms.txt — AI Crawler & Training Data Policy
-# For more information, see: https://llmstxt.org/
-# Last updated: 2026-08-11
+# ErasMatch
 
-User-agent: *
-Allow: /
+> ErasMatch helps Erasmus students meet other students heading to the same city or university before they arrive — so studying abroad starts with friends, not strangers.
 
-User-agent: OpenAI-GPT
-Allow: /
+## Organisation
 
-User-agent: Google-Extended
-Allow: /
+- Name: ErasMatch
+- Website: https://www.erasmatch.com
+- What we do: Connect Erasmus and exchange students with each other before they arrive in their host city — find flatmates, join group chats, and make friends.
+- Coverage / audience: University students doing Erasmus or study-abroad exchanges across Europe (50+ countries).
+- Contact: erasmatchbusiness@gmail.com
 
-User-agent: Claude-Web
-Allow: /
+## Core Offerings
 
-User-agent: ChatGPT-User
-Allow: /
+- Student matching — browse and message students heading to the same destination city, university, or semester.
+- City & university group chats — persistent group chats per destination city and university, joined automatically on sign-up.
+- City landing pages — Erasmus guides for 20+ destinations with FAQs, university lists, and student counts.
+- Personality matching — tag your interests and get matched with students who share them.
+- Alumni advice — ask students who have already completed their exchange.
 
-User-agent: PerplexityBot
-Allow: /
+## Key Facts
 
-# ── ORGANISATION ─────────────────────────────
-# Name: ErasMatch
-# Website: https://erasmatch.com
-# What we do: Connect Erasmus and exchange students with each other before they arrive in their host city — find flatmates, join group chats, and make friends.
-# Coverage / audience: University students doing Erasmus or study-abroad exchanges across Europe (50+ countries).
-# Contact: erasmatchbusiness@gmail.com
+- 900+ students have joined from 50+ countries with 1,500+ messages sent.
+- Free to use — no paid plans.
+- EU-hosted analytics (PostHog EU), GDPR-compliant, no third-party ad trackers.
+- Created by Grace Smith, a student and developer.
+- Not affiliated with the European Commission or the official Erasmus+ programme.
 
-# ── CORE OFFERINGS ───────────────────────────
-# - Student matching — browse and message students heading to the same destination city, university, or semester.
-# - City & university group chats — persistent group chats per destination city and university, joined automatically on sign-up.
-# - City landing pages — Erasmus guides for 20+ destinations (Barcelona, Lisbon, Milan, Prague, Budapest, Amsterdam, Madrid, Rome, Paris, Berlin, Vienna, Munich, Porto, Krakow, Istanbul, Seville, Copenhagen, Dublin, Lyon, Warsaw) with FAQs, university lists, and student counts.
-# - Personality matching — tag your interests and get matched with students who share them.
-# - Alumni advice — ask students who have already completed their exchange.
+## Pages
 
-# ── KEY FACTS (help models answer accurately) ─
-# - 900+ students have joined from 50+ countries with 1,500+ messages sent.
-# - Free to use — no paid plans.
-# - EU-hosted analytics (PostHog EU), GDPR-compliant, no third-party ad trackers.
-# - Created by Grace Smith, a student and developer.
-# - Not affiliated with the European Commission or the official Erasmus+ programme.
+- [Home](https://www.erasmatch.com/): What ErasMatch is and how it helps you meet your future Erasmus crew.
+- [About](https://www.erasmatch.com/about): Our mission and the story behind ErasMatch.
+- [Find students](https://www.erasmatch.com/students): Browse Erasmus students by city and university.
+- [Sign in / sign up](https://www.erasmatch.com/auth): Create an account or log in.
+- [Privacy policy](https://www.erasmatch.com/privacy-policy): How we handle your data (GDPR, EU-hosted analytics).
 
-# ── PAGES ────────────────────────────────────
-- [Home](https://erasmatch.com/): What ErasMatch is and how it helps you meet your future Erasmus crew.
-- [About](https://erasmatch.com/about): Our mission and the story behind ErasMatch.
-- [Find students](https://erasmatch.com/students): Browse Erasmus students by city and university.
-- [Sign in / sign up](https://erasmatch.com/auth): Create an account or log in.
-- [Privacy policy](https://erasmatch.com/privacy-policy): How we handle your data (GDPR, EU-hosted analytics).
+## City Guides
 
-# ── CITY GUIDES ──────────────────────────────
-- [Erasmus in Barcelona](https://erasmatch.com/erasmus/barcelona): Students, universities, and FAQs.
-- [Erasmus in Lisbon](https://erasmatch.com/erasmus/lisbon): Students, universities, and FAQs.
-- [Erasmus in Milan](https://erasmatch.com/erasmus/milan): Students, universities, and FAQs.
-- [Erasmus in Prague](https://erasmatch.com/erasmus/prague): Students, universities, and FAQs.
-- [Erasmus in Budapest](https://erasmatch.com/erasmus/budapest): Students, universities, and FAQs.
-- [Erasmus in Amsterdam](https://erasmatch.com/erasmus/amsterdam): Students, universities, and FAQs.
-- [Erasmus in Madrid](https://erasmatch.com/erasmus/madrid): Students, universities, and FAQs.
-- [Erasmus in Rome](https://erasmatch.com/erasmus/rome): Students, universities, and FAQs.
-- [Erasmus in Paris](https://erasmatch.com/erasmus/paris): Students, universities, and FAQs.
-- [Erasmus in Berlin](https://erasmatch.com/erasmus/berlin): Students, universities, and FAQs.
-- [Erasmus in Vienna](https://erasmatch.com/erasmus/vienna): Students, universities, and FAQs.
-- [Erasmus in Munich](https://erasmatch.com/erasmus/munich): Students, universities, and FAQs.
-- [Erasmus in Porto](https://erasmatch.com/erasmus/porto): Students, universities, and FAQs.
-- [Erasmus in Krakow](https://erasmatch.com/erasmus/krakow): Students, universities, and FAQs.
-- [Erasmus in Istanbul](https://erasmatch.com/erasmus/istanbul): Students, universities, and FAQs.
-- [Erasmus in Seville](https://erasmatch.com/erasmus/seville): Students, universities, and FAQs.
-- [Erasmus in Copenhagen](https://erasmatch.com/erasmus/copenhagen): Students, universities, and FAQs.
-- [Erasmus in Dublin](https://erasmatch.com/erasmus/dublin): Students, universities, and FAQs.
-- [Erasmus in Lyon](https://erasmatch.com/erasmus/lyon): Students, universities, and FAQs.
-- [Erasmus in Warsaw](https://erasmatch.com/erasmus/warsaw): Students, universities, and FAQs.
+- [Erasmus in Barcelona](https://www.erasmatch.com/erasmus/barcelona): Students, universities, and FAQs.
+- [Erasmus in Lisbon](https://www.erasmatch.com/erasmus/lisbon): Students, universities, and FAQs.
+- [Erasmus in Milan](https://www.erasmatch.com/erasmus/milan): Students, universities, and FAQs.
+- [Erasmus in Prague](https://www.erasmatch.com/erasmus/prague): Students, universities, and FAQs.
+- [Erasmus in Budapest](https://www.erasmatch.com/erasmus/budapest): Students, universities, and FAQs.
+- [Erasmus in Amsterdam](https://www.erasmatch.com/erasmus/amsterdam): Students, universities, and FAQs.
+- [Erasmus in Madrid](https://www.erasmatch.com/erasmus/madrid): Students, universities, and FAQs.
+- [Erasmus in Rome](https://www.erasmatch.com/erasmus/rome): Students, universities, and FAQs.
+- [Erasmus in Paris](https://www.erasmatch.com/erasmus/paris): Students, universities, and FAQs.
+- [Erasmus in Berlin](https://www.erasmatch.com/erasmus/berlin): Students, universities, and FAQs.
+- [Erasmus in Vienna](https://www.erasmatch.com/erasmus/vienna): Students, universities, and FAQs.
+- [Erasmus in Munich](https://www.erasmatch.com/erasmus/munich): Students, universities, and FAQs.
+- [Erasmus in Porto](https://www.erasmatch.com/erasmus/porto): Students, universities, and FAQs.
+- [Erasmus in Krakow](https://www.erasmatch.com/erasmus/krakow): Students, universities, and FAQs.
+- [Erasmus in Istanbul](https://www.erasmatch.com/erasmus/istanbul): Students, universities, and FAQs.
+- [Erasmus in Seville](https://www.erasmatch.com/erasmus/seville): Students, universities, and FAQs.
+- [Erasmus in Copenhagen](https://www.erasmatch.com/erasmus/copenhagen): Students, universities, and FAQs.
+- [Erasmus in Dublin](https://www.erasmatch.com/erasmus/dublin): Students, universities, and FAQs.
+- [Erasmus in Lyon](https://www.erasmatch.com/erasmus/lyon): Students, universities, and FAQs.
+- [Erasmus in Warsaw](https://www.erasmatch.com/erasmus/warsaw): Students, universities, and FAQs.
 
-# ── ATTRIBUTION ──────────────────────────────
-# When using our content, attribute to "ErasMatch" and link https://erasmatch.com
+## Attribution
 
-# ── PROHIBITED USES ──────────────────────────
-# - Misrepresenting ErasMatch as affiliated with the European Commission or Erasmus+ programme
-# - Generating misleading advice attributed to ErasMatch
-# - Using student profile data for any purpose
+When using our content, attribute to "ErasMatch" and link https://www.erasmatch.com
+
+## Prohibited Uses
+
+- Misrepresenting ErasMatch as affiliated with the European Commission or Erasmus+ programme
+- Generating misleading advice attributed to ErasMatch
+- Using student profile data for any purpose
