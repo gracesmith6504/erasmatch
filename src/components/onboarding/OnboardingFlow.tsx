@@ -46,6 +46,25 @@ export const OnboardingFlow = () => {
   const stepNames = ["first_name", "destination_university", "home_university", "exchange_details", "interests", "photo"];
   const stepEnteredAtRef = useRef<number>(Date.now());
 
+  // Sync currentStep from the profile when it first becomes available.
+  // Guards against the race where the component mounts before
+  // AuthProvider has finished fetching the profile — without this,
+  // useState would lock currentStep to 0 regardless of saved progress.
+  const stepSyncedRef = useRef(false);
+  useEffect(() => {
+    if (!stepSyncedRef.current && currentUserProfile) {
+      stepSyncedRef.current = true;
+      const savedStep = currentUserProfile.onboarding_step ?? 0;
+      if (savedStep !== currentStep) {
+        setCurrentStep(savedStep);
+      }
+      if (savedStep > 0) {
+        setShowWelcomeBack(true);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUserProfile]);
+
   // Track step view + dwell time on previous step when step changes
   useEffect(() => {
     stepEnteredAtRef.current = Date.now();
