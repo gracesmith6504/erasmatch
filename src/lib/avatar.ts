@@ -29,7 +29,25 @@ export async function compressAvatar(file: File): Promise<File> {
     const newName = file.name.replace(/\.[^.]+$/, "") + ".webp";
     return new File([compressed], newName, { type: "image/webp" });
   } catch (err) {
-    console.warn("Avatar compression failed, uploading original", err);
-    return file;
+    console.warn("Avatar compression failed, trying Canvas fallback", err);
+    // Fallback: use Canvas to convert to JPEG (handles HEIC on Safari,
+    // odd formats, etc.) so we never upload an un-displayable original.
+    try {
+      const bitmap = await createImageBitmap(file);
+      const size = Math.min(512, bitmap.width, bitmap.height);
+      const scale = size / Math.max(bitmap.width, bitmap.height);
+      const w = Math.round(bitmap.width * scale);
+      const h = Math.round(bitmap.height * scale);
+      const canvas = new OffscreenCanvas(w, h);
+      const ctx = canvas.getContext("2d")!;
+      ctx.drawImage(bitmap, 0, 0, w, h);
+      bitmap.close();
+      const blob = await canvas.convertToBlob({ type: "image/jpeg", quality: 0.82 });
+      const newName = file.name.replace(/\.[^.]+$/, "") + ".jpg";
+      return new File([blob], newName, { type: "image/jpeg" });
+    } catch (fallbackErr) {
+      console.warn("Canvas fallback also failed, uploading original", fallbackErr);
+      return file;
+    }
   }
 }

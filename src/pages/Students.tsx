@@ -134,6 +134,40 @@ const Students = ({ currentUserId }: StudentsProps) => {
     }
   }, [overlapOnly]);
 
+  // Sync city filter to URL so user-chosen city persists across refresh
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (cityFilter && cityFilter !== "all-cities") {
+      if (params.get("city") !== cityFilter) {
+        params.set("city", cityFilter);
+        window.history.replaceState(null, "", `${window.location.pathname}?${params.toString()}`);
+      }
+    } else {
+      if (params.has("city")) {
+        params.delete("city");
+        const query = params.toString();
+        window.history.replaceState(null, "", query ? `${window.location.pathname}?${query}` : window.location.pathname);
+      }
+    }
+  }, [cityFilter]);
+
+  // Sync university filter to URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (universityFilter && universityFilter !== "all-universities") {
+      if (params.get("university") !== universityFilter) {
+        params.set("university", universityFilter);
+        window.history.replaceState(null, "", `${window.location.pathname}?${params.toString()}`);
+      }
+    } else {
+      if (params.has("university")) {
+        params.delete("university");
+        const query = params.toString();
+        window.history.replaceState(null, "", query ? `${window.location.pathname}?${query}` : window.location.pathname);
+      }
+    }
+  }, [universityFilter]);
+
   const getCompletionPercentage = useCallback((profile: Profile) => {
     const fields = [
       profile.name,

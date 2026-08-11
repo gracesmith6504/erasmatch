@@ -22,12 +22,12 @@ export const useProfileForm = () => {
     let file = e.target.files?.[0];
     if (!file) return;
 
-    // Check file size (limit to 5MB)
-    if (file.size > 5 * 1024 * 1024) {
+    // Check file size (generous limit — compression shrinks to ~200KB WebP)
+    if (file.size > 50 * 1024 * 1024) {
       setUploadStatus({
         phase: "idle",
         uploading: false,
-        error: "File too large. Maximum size is 5MB.",
+        error: "File too large. Please choose a photo under 50 MB.",
       });
       return;
     }

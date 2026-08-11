@@ -44,8 +44,8 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("File too large. Maximum size is 5MB.");
+    if (file.size > 50 * 1024 * 1024) {
+      toast.error("File too large. Please choose a photo under 50 MB.");
       return;
     }
 
