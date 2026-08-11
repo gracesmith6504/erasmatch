@@ -10,8 +10,6 @@ import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PostSignupPrompt } from "@/components/share/PostSignupPrompt";
-
 import { GoogleAuthHandler } from "@/components/auth/GoogleAuthHandler";
 import { SEO } from "@/components/SEO";
 
@@ -40,8 +38,6 @@ const Auth = ({ onLogin }: AuthProps) => {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showPostSignup, setShowPostSignup] = useState(false);
-  const [signupCity, setSignupCity] = useState<string | undefined>(undefined);
   const [privacyConsent, setPrivacyConsent] = useState(false);
   const [referrerProfile, setReferrerProfile] = useState<{name: string | null; avatar_url: string | null} | null>(null);
   
@@ -185,21 +181,8 @@ const Auth = ({ onLogin }: AuthProps) => {
     }
   };
 
-  const handleContinueAfterSignup = () => {
-    navigate("/profile");
-  };
-
   if (activeTab === "google-callback") {
     return <GoogleAuthHandler />;
-  }
-
-  if (showPostSignup) {
-    return (
-      <PostSignupPrompt 
-        city={signupCity}
-        onContinue={handleContinueAfterSignup}
-      />
-    );
   }
 
   return (

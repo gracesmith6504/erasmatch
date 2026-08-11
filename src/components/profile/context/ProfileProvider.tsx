@@ -9,15 +9,14 @@ import { ProfileContext } from "./ProfileContext";
 type ProfileProviderProps = {
   profile: ProfileType | null;
   onProfileUpdate: (profile: Partial<ProfileType>) => Promise<void>;
-  fetchProfile: () => Promise<void>;
+  fetchProfile?: () => Promise<void>;
   children: React.ReactNode;
 };
 
-export const ProfileProvider = ({ 
-  profile: initialProfile, 
-  onProfileUpdate, 
-  fetchProfile, 
-  children 
+export const ProfileProvider = ({
+  profile: initialProfile,
+  onProfileUpdate,
+  children
 }: ProfileProviderProps) => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<ProfileType | null>(initialProfile);
@@ -129,9 +128,6 @@ export const ProfileProvider = ({
           return acc;
         }, {})
       }));
-      
-      // Fetch the latest profile data to ensure everything is in sync
-      await fetchProfile();
       
     } catch (error: any) {
       console.error("Profile update error:", error);

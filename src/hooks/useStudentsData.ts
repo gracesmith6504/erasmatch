@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Profile } from "@/types";
 import { useBlockedUsers } from "@/hooks/useBlockedUsers";
 import { useUniversitiesCache } from "@/hooks/useUniversitiesCache";
@@ -56,10 +56,15 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     }
   }, [initialProfiles, uniLoading]);
 
+  const initialFiltersApplied = useRef(false);
   useEffect(() => {
-    setUniversityFilter(initialFilters?.university || "");
-    setCityFilter(initialFilters?.city || "");
-  }, [initialFilters?.university, initialFilters?.city]);
+    if (!initialFiltersApplied.current) {
+      initialFiltersApplied.current = true;
+      setCityFilter(initialFilters?.city || "");
+      setUniversityFilter(initialFilters?.university || "");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const uniqueUniversities = useMemo(() =>
     [...new Set(initialProfiles.map(p => p.university).filter(Boolean))]
