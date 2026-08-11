@@ -46,6 +46,7 @@ const Index = () => {
         title="ErasMatch — Connect with Erasmus Students Before You Arrive"
         description="Meet your future Erasmus crew before you fly. Find study buddies, join city group chats, and make friends for your exchange experience."
         path="/"
+        keywords="erasmus students, study abroad, exchange semester, find erasmus friends, erasmus group chat, erasmus flatmate, erasmus community, erasmus buddy"
       />
       <ReferralBanner />
 

@@ -11,6 +11,7 @@ const About = () => {
         title="About ErasMatch — Helping Erasmus students find their tribe"
         description="ErasMatch connects Erasmus students worldwide so studying abroad starts with friends, not strangers. Learn our mission and story."
         path="/about"
+        keywords="erasmatch about, erasmus student community, study abroad platform, erasmus mission, erasmus exchange support"
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "Organization",

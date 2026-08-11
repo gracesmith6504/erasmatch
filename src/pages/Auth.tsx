@@ -208,6 +208,7 @@ const Auth = ({ onLogin }: AuthProps) => {
         title="Sign in or sign up | ErasMatch"
         description="Join ErasMatch to meet other Erasmus students heading to your city. Free, takes a minute."
         path="/auth"
+        keywords="erasmatch sign up, erasmatch login, join erasmus community, erasmus student registration"
       />
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">

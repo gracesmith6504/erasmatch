@@ -186,6 +186,7 @@ const Students = ({ currentUserId }: StudentsProps) => {
         title="Find Erasmus Students by City & University | ErasMatch"
         description="Browse Erasmus students heading to your host city or university. Filter by destination, find your crew, and message before you arrive."
         path="/students"
+        keywords="find erasmus students, erasmus by city, erasmus by university, erasmus profiles, erasmus flatmate search, erasmus exchange students"
       />
       {showBanner && (
         <WelcomeBanner cityName={cityName} hasAvatar={hasAvatar} />

@@ -28,6 +28,7 @@ const CityLanding = () => {
         title={`Erasmus in ${cityInfo.name} ${new Date().getFullYear()} — Meet Students | ErasMatch`}
         description={description}
         path={`/erasmus/${cityInfo.slug}`}
+        keywords={`erasmus ${cityInfo.name.toLowerCase()}, study abroad ${cityInfo.name.toLowerCase()}, erasmus students ${cityInfo.name.toLowerCase()}, erasmus ${cityInfo.country.toLowerCase()}, universities ${cityInfo.name.toLowerCase()}, exchange semester ${cityInfo.name.toLowerCase()}`}
         jsonLd={[
           {
             "@context": "https://schema.org",

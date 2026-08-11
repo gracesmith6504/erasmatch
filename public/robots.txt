@@ -13,4 +13,13 @@ Allow: /
 User-agent: *
 Allow: /
 
+# Block development and admin paths
+Disallow: /admin/
+Disallow: /.git/
+Disallow: /node_modules/
+Disallow: /src/
+Disallow: /*.json$
+Disallow: /*.ts$
+Disallow: /*.tsx$
+
 Sitemap: https://erasmatch.com/sitemap.xml
