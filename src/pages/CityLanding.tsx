@@ -15,7 +15,7 @@ import { SEO } from "@/components/SEO";
 const CityLanding = () => {
   const { citySlug } = useParams<{ citySlug: string }>();
   const cityInfo = citySlug ? getCityBySlug(citySlug) : undefined;
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const { studentCount, universityCount, universities, avatars, loading } =
     useCityLandingData(cityInfo?.name ?? "");
 
@@ -23,7 +23,11 @@ const CityLanding = () => {
 
   const otherCities = cityLandingData.filter((c) => c.slug !== citySlug);
   const description = cityInfo.description.slice(0, 155);
-  const ctaLink = isAuthenticated
+  // Wait for auth to resolve before deciding the CTA destination —
+  // isAuthenticated starts false and loads async, so during loading
+  // we default to signup which is safe (auth page redirects logged-in users).
+  const authed = !authLoading && isAuthenticated;
+  const ctaLink = authed
     ? `/students?city=${encodeURIComponent(cityInfo.name)}`
     : "/auth?mode=signup";
 
@@ -107,7 +111,7 @@ const CityLanding = () => {
                 className="text-base px-8 py-6 bg-foreground text-primary-foreground hover:bg-foreground/90 rounded-full shadow-elevated"
               >
                 <Link to={ctaLink}>
-                  {isAuthenticated ? `See students in ${cityInfo.name}` : `Join students in ${cityInfo.name}`}
+                  {authed ? `See students in ${cityInfo.name}` : `Join students in ${cityInfo.name}`}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
@@ -193,7 +197,9 @@ const CityLanding = () => {
                 {universities.map((uni) => (
                   <Link
                     key={uni.name}
-                    to={ctaLink}
+                    to={authed
+                      ? `/students?city=${encodeURIComponent(cityInfo.name)}&university=${encodeURIComponent(uni.name)}`
+                      : "/auth?mode=signup"}
                     className="flex items-center justify-between p-4 bg-card rounded-lg border hover:border-accent/50 transition-colors group"
                   >
                     <div className="flex items-center gap-3">
@@ -272,7 +278,7 @@ const CityLanding = () => {
             className="bg-accent text-accent-foreground hover:bg-accent/90 text-base px-8 py-6 rounded-full"
           >
             <Link to={ctaLink}>
-              {isAuthenticated ? `Browse students in ${cityInfo.name}` : "Join ErasMatch — it's free"}
+              {authed ? `Browse students in ${cityInfo.name}` : "Join ErasMatch — it's free"}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </Button>

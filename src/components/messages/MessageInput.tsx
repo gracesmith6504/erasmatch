@@ -1,5 +1,5 @@
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -44,6 +44,11 @@ export const MessageInput = ({
     const maxHeight = lineHeight * 4;
     el.style.height = `${Math.min(el.scrollHeight, maxHeight)}px`;
   }, []);
+
+  // Resize textarea when value changes programmatically (prompt selection, clear after send)
+  useEffect(() => {
+    autoResize();
+  }, [newMessage, autoResize]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
