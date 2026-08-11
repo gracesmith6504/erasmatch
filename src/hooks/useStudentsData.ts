@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Profile } from "@/types";
 import { useBlockedUsers } from "@/hooks/useBlockedUsers";
 import { useUniversitiesCache } from "@/hooks/useUniversitiesCache";
@@ -56,10 +56,31 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     }
   }, [initialProfiles, uniLoading]);
 
+  // Track whether the user has manually changed filters — if so, don't
+  // overwrite with late-arriving initialFilters (e.g. async profile load).
+  const userHasChangedFilters = useRef(false);
+  const initialFiltersApplied = useRef(false);
+
   useEffect(() => {
-    setUniversityFilter(initialFilters?.university || "");
-    setCityFilter(initialFilters?.city || "");
-  }, [initialFilters?.university, initialFilters?.city]);
+    // Skip if user has already interacted with filters
+    if (userHasChangedFilters.current) return;
+
+    const city = initialFilters?.city || "";
+    const university = initialFilters?.university || "";
+
+    // On mount or when initialFilters first becomes available (async profile),
+    // apply them. Skip re-applying the same empty values.
+    if (!initialFiltersApplied.current && (city || university)) {
+      initialFiltersApplied.current = true;
+      setCityFilter(city);
+      setUniversityFilter(university);
+    } else if (!initialFiltersApplied.current && !city && !university) {
+      // Mark as applied even if both are empty (no profile yet) so that
+      // when profile loads we still get a chance to apply.
+      // Don't mark applied — leave it false so the next render with a
+      // real value can still apply.
+    }
+  }, [initialFilters?.city, initialFilters?.university]);
 
   const uniqueUniversities = useMemo(() =>
     [...new Set(initialProfiles.map(p => p.university).filter(Boolean))]
@@ -122,6 +143,16 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     [initialProfiles, currentUserId, blockedIds, universityFilter, cityFilter, personalityTagsFilter, seasonFilter, overlapOnly, currentUserWindow]
   );
 
+  const handleSetCityFilter = (value: string) => {
+    userHasChangedFilters.current = true;
+    setCityFilter(value);
+  };
+
+  const handleSetUniversityFilter = (value: string) => {
+    userHasChangedFilters.current = true;
+    setUniversityFilter(value);
+  };
+
   const resetFilters = () => {
     setUniversityFilter("");
     setCityFilter("");
@@ -132,9 +163,9 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
 
   return {
     universityFilter,
-    setUniversityFilter,
+    setUniversityFilter: handleSetUniversityFilter,
     cityFilter,
-    setCityFilter,
+    setCityFilter: handleSetCityFilter,
     personalityTagsFilter,
     setPersonalityTagsFilter,
     seasonFilter,

@@ -1,8 +1,8 @@
 
-import { useState } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { SuggestedPrompts } from "./SuggestedPrompts";
 import { Profile } from "@/types";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -34,7 +34,22 @@ export const MessageInput = ({
 }: MessageInputProps) => {
   const isMobile = useIsMobile();
   const remaining = MAX_LENGTH - newMessage.length;
-  
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const autoResize = useCallback(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    const lineHeight = parseInt(getComputedStyle(el).lineHeight) || 20;
+    const maxHeight = lineHeight * 4;
+    el.style.height = `${Math.min(el.scrollHeight, maxHeight)}px`;
+  }, []);
+
+  // Resize textarea when value changes programmatically (prompt selection, clear after send)
+  useEffect(() => {
+    autoResize();
+  }, [newMessage, autoResize]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newMessage.trim() && !isSending) {
@@ -42,6 +57,15 @@ export const MessageInput = ({
         await onSendMessage();
       } catch (error) {
         console.error("Error sending message:", error);
+      }
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      if (newMessage.trim() && !isSending) {
+        onSendMessage();
       }
     }
   };
@@ -61,12 +85,18 @@ export const MessageInput = ({
           selectedUser={selectedUser}
         />
       )}
-      <form onSubmit={handleSubmit} className="flex w-full space-x-2">
-        <Input
-          className="flex-1"
+      <form onSubmit={handleSubmit} className="flex w-full space-x-2 items-end">
+        <Textarea
+          ref={textareaRef}
+          className="flex-1 min-h-[40px] max-h-[120px] resize-none py-2"
           placeholder="Type a message..."
           value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value.slice(0, MAX_LENGTH))}
+          rows={1}
+          onChange={(e) => {
+            setNewMessage(e.target.value.slice(0, MAX_LENGTH));
+            autoResize();
+          }}
+          onKeyDown={handleKeyDown}
           maxLength={MAX_LENGTH}
           disabled={isSending}
         />

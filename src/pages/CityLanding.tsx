@@ -1,6 +1,7 @@
 import { useParams, Link, Navigate } from "react-router-dom";
 import { getCityBySlug, cityLandingData } from "@/data/cityLandingData";
 import { useCityLandingData } from "@/hooks/useCityLandingData";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import {
   Accordion,
@@ -14,6 +15,7 @@ import { SEO } from "@/components/SEO";
 const CityLanding = () => {
   const { citySlug } = useParams<{ citySlug: string }>();
   const cityInfo = citySlug ? getCityBySlug(citySlug) : undefined;
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const { studentCount, universityCount, universities, avatars, loading } =
     useCityLandingData(cityInfo?.name ?? "");
 
@@ -21,6 +23,13 @@ const CityLanding = () => {
 
   const otherCities = cityLandingData.filter((c) => c.slug !== citySlug);
   const description = cityInfo.description.slice(0, 155);
+  // Wait for auth to resolve before deciding the CTA destination —
+  // isAuthenticated starts false and loads async, so during loading
+  // we default to signup which is safe (auth page redirects logged-in users).
+  const authed = !authLoading && isAuthenticated;
+  const ctaLink = authed
+    ? `/students?city=${encodeURIComponent(cityInfo.name)}`
+    : "/auth?mode=signup";
 
   return (
     <div className="min-h-screen bg-background">
@@ -101,8 +110,8 @@ const CityLanding = () => {
                 size="lg"
                 className="text-base px-8 py-6 bg-foreground text-primary-foreground hover:bg-foreground/90 rounded-full shadow-elevated"
               >
-                <Link to="/auth?mode=signup">
-                  Join students in {cityInfo.name}
+                <Link to={ctaLink}>
+                  {authed ? `See students in ${cityInfo.name}` : `Join students in ${cityInfo.name}`}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
@@ -112,7 +121,7 @@ const CityLanding = () => {
                 variant="outline"
                 className="text-base px-8 py-6 rounded-full border-border"
               >
-                <Link to="/auth?mode=signup">See who's going</Link>
+                <Link to={ctaLink}>See who's going</Link>
               </Button>
             </div>
           </div>
@@ -180,13 +189,17 @@ const CityLanding = () => {
                 Universities in {cityInfo.name}
               </h2>
               <p className="text-muted-foreground mb-6">
-                Sign up to see students at each university and join their group chats.
+                {isAuthenticated
+                  ? "Browse students at each university and join their group chats."
+                  : "Sign up to see students at each university and join their group chats."}
               </p>
               <div className="grid gap-3">
                 {universities.map((uni) => (
                   <Link
                     key={uni.name}
-                    to="/auth?mode=signup"
+                    to={authed
+                      ? `/students?city=${encodeURIComponent(cityInfo.name)}&university=${encodeURIComponent(uni.name)}`
+                      : "/auth?mode=signup"}
                     className="flex items-center justify-between p-4 bg-card rounded-lg border hover:border-accent/50 transition-colors group"
                   >
                     <div className="flex items-center gap-3">
@@ -264,8 +277,8 @@ const CityLanding = () => {
             size="lg"
             className="bg-accent text-accent-foreground hover:bg-accent/90 text-base px-8 py-6 rounded-full"
           >
-            <Link to="/auth?mode=signup">
-              Join ErasMatch — it's free
+            <Link to={ctaLink}>
+              {authed ? `Browse students in ${cityInfo.name}` : "Join ErasMatch — it's free"}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </Button>

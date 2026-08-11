@@ -71,7 +71,7 @@ export const CityPanel = ({
     fetchMessages();
     
     const channel = supabase
-      .channel("city_messages_changes")
+      .channel(`city_messages_${cityName}`)
       .on(
         "postgres_changes",
         {

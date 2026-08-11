@@ -49,8 +49,6 @@ const Profile = () => {
     }
   };
 
-  const fetchProfile = async () => {};
-
   return (
     <>
     <div className="min-h-screen bg-background py-8">
@@ -147,7 +145,6 @@ const Profile = () => {
               <ProfileProvider
                 profile={currentUserProfile}
                 onProfileUpdate={handleProfileUpdate}
-                fetchProfile={fetchProfile}
               >
                 <ProfileForm />
               </ProfileProvider>

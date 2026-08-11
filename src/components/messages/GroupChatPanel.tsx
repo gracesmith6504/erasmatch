@@ -83,7 +83,7 @@ export const GroupChatPanel = ({
     // is sufficient. Historical messages under old names are loaded by the
     // initial fetch above.
     const channel = supabase
-      .channel("group_messages_changes")
+      .channel(`group_messages_${canonicalName}`)
       .on(
         "postgres_changes",
         {
