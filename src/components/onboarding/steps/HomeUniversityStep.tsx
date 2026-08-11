@@ -138,7 +138,7 @@ export const HomeUniversityStep = ({
         <div className="text-center">
           <div className="flex justify-center mb-4">
             <div className="bg-secondary rounded-full w-14 h-14 flex items-center justify-center">
-              <Home className="h-7 w-7 text-accent" />
+              <Home className="h-7 w-7 text-primary" />
             </div>
           </div>
           <h1 className="text-2xl font-display font-bold mb-2 text-foreground">
