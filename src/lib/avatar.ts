@@ -34,8 +34,7 @@ export async function compressAvatar(file: File): Promise<File> {
     // odd formats, etc.) so we never upload an un-displayable original.
     try {
       const bitmap = await createImageBitmap(file);
-      const size = Math.min(512, bitmap.width, bitmap.height);
-      const scale = size / Math.max(bitmap.width, bitmap.height);
+      const scale = Math.min(1, 512 / Math.max(bitmap.width, bitmap.height));
       const w = Math.round(bitmap.width * scale);
       const h = Math.round(bitmap.height * scale);
       const canvas = new OffscreenCanvas(w, h);
