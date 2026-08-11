@@ -16,9 +16,9 @@ export function PostSignupPrompt({ city, onContinue }: PostSignupPromptProps) {
   // Generate a link to share
   const generateShareLink = () => {
     if (city) {
-      return `https://erasmatch.com'}`;
+      return "https://www.erasmatch.com";
     }
-    return "https://erasmatch.com";
+    return "https://www.erasmatch.com";
   };
   
   return (

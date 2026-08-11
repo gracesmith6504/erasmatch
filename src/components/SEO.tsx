@@ -11,7 +11,7 @@ type SEOProps = {
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 };
 
-const SITE_URL = "https://erasmatch.com";
+const SITE_URL = "https://www.erasmatch.com";
 const DEFAULT_IMAGE = `${SITE_URL}/erasmatch-og-img.png`;
 
 /**

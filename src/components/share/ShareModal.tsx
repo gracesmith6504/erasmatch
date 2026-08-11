@@ -18,7 +18,7 @@ export function ShareModal({ isOpen, onClose, city, link }: ShareModalProps) {
   const { currentUserProfile } = useAuth();
   const [copied, setCopied] = useState(false);
 
-  const APP_URL = "https://erasmatch.com";
+  const APP_URL = "https://www.erasmatch.com";
   const referralLink = link; // Use the link prop directly
 
   const shareText = city 

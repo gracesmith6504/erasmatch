@@ -35,7 +35,7 @@ const CityLanding = () => {
             "@type": "CollectionPage",
             name: `Erasmus students in ${cityInfo.name}`,
             description,
-            url: `https://erasmatch.com/erasmus/${cityInfo.slug}`,
+            url: `https://www.erasmatch.com/erasmus/${cityInfo.slug}`,
             about: { "@type": "Place", name: cityInfo.name, address: { "@type": "PostalAddress", addressCountry: cityInfo.country } },
           },
           {

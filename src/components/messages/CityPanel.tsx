@@ -186,7 +186,7 @@ export const CityPanel = ({
         </div>
         
         <ShareButton city={cityName}
-                     link={`https://erasmatch.com/city/${encodeURIComponent(cityName)}`}/>
+                     link={`https://www.erasmatch.com/city/${encodeURIComponent(cityName)}`}/>
       </div>
       
       <div className="flex-1 overflow-y-auto p-3 sm:p-4 flex flex-col bg-gray-50">
