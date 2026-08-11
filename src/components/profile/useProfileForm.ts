@@ -23,11 +23,11 @@ export const useProfileForm = () => {
     if (!file) return;
 
     // Check file size (generous limit — compression shrinks to ~200KB WebP)
-    if (file.size > 20 * 1024 * 1024) {
+    if (file.size > 50 * 1024 * 1024) {
       setUploadStatus({
         phase: "idle",
         uploading: false,
-        error: "File too large. Please choose a photo under 20 MB.",
+        error: "File too large. Please choose a photo under 50 MB.",
       });
       return;
     }
