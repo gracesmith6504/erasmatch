@@ -117,7 +117,6 @@ export const OnboardingFlow = () => {
       // Guard: don't mark complete if essential fields are missing.
       const missing: { field: string; step: number; label: string }[] = [];
       if (!currentUserProfile?.name?.trim()) missing.push({ field: "name", step: 0, label: "your name" });
-      if (!currentUserProfile?.city?.trim()) missing.push({ field: "city", step: 1, label: "your destination city" });
       if (!currentUserProfile?.home_university?.trim()) missing.push({ field: "home_university", step: 2, label: "your home university" });
       if (!currentUserProfile?.semester?.trim()) missing.push({ field: "semester", step: 3, label: "your semester" });
       if (missing.length > 0) {
@@ -203,7 +202,7 @@ export const OnboardingFlow = () => {
       const extras: Record<string, unknown> = { step: currentStep, step_name: stepNames[currentStep], dwell_ms: dwellMs };
       switch (currentStep) {
         case 0: extras.filled = !!currentUserProfile?.name?.trim(); break;
-        case 1: extras.filled = !!(currentUserProfile?.university && currentUserProfile?.city); break;
+        case 1: extras.filled = !!(currentUserProfile?.university && currentUserProfile?.city); extras.skipped = !currentUserProfile?.city; break;
         case 2: extras.filled = !!currentUserProfile?.home_university; break;
         case 3: extras.filled = !!currentUserProfile?.semester; extras.had_arrival_date = !!currentUserProfile?.arrival_date; break;
         case 4: extras.tags_selected = currentUserProfile?.personality_tags?.length || 0; extras.skipped = !currentUserProfile?.personality_tags?.length; break;

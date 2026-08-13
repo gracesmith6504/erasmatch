@@ -308,6 +308,13 @@ export const DestinationUniversityStep = ({
             Next
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
+
+          <span
+            onClick={onNext}
+            className="block text-center text-[11px] text-muted-foreground/50 cursor-pointer select-none mt-2"
+          >
+            I don't know yet
+          </span>
         </form>
       </div>
     </OnboardingLayout>
