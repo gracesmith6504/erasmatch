@@ -54,6 +54,9 @@ export const UniversityDetails = ({
   useEffect(() => {
     if (form.departure_date) setDepartureDate(form.departure_date);
     else if (parsedSeed) setDepartureDate(toISO(parsedSeed.end));
+    // Neither source has a date — clear, or the field keeps showing a stale
+    // value after the parent form resets it to null.
+    else setDepartureDate("");
   }, [form.departure_date, parsedSeed]);
 
   const arrivalDate = form.arrival_date || (parsedSeed ? toISO(parsedSeed.start) : "");

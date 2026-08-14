@@ -40,20 +40,29 @@ export type OutboundParams = {
 
 const UTM_SOURCE = "erasmatch";
 
+/** Schemes allowed to reach an href. Anything else is treated as unsafe. */
+const SAFE_PROTOCOLS = new Set(["http:", "https:"]);
+
 /**
  * Appends UTM params to a partner URL without clobbering params the partner
  * already put there (affiliate refs frequently live in the query string).
+ *
+ * Returns null when the URL is unparseable or uses a non-web scheme. Both
+ * `javascript:` and `data:` parse cleanly through `new URL()`, so rejecting
+ * them has to happen here — the return value is spread straight into an href
+ * by `useOutboundLink`, and partner URLs are intended to become config-driven.
  */
-export const buildOutboundUrl = (params: OutboundParams): string => {
+export const buildOutboundUrl = (params: OutboundParams): string | null => {
   const { url, partner, placement, city, campaign } = params;
 
   let parsed: URL;
   try {
     parsed = new URL(url);
   } catch {
-    // Not an absolute URL — hand it back untouched rather than corrupting it.
-    return url;
+    return null;
   }
+
+  if (!SAFE_PROTOCOLS.has(parsed.protocol)) return null;
 
   const utms: Record<string, string> = {
     utm_source: UTM_SOURCE,
@@ -106,11 +115,18 @@ export const trackOutboundClick = (params: OutboundParams): void => {
  *                                  placement: "city_landing", city: "Granada" });
  *   <a {...link}>Get a data plan</a>
  */
-export const useOutboundLink = (params: OutboundParams) => ({
-  href: buildOutboundUrl(params),
-  target: "_blank" as const,
-  // noopener/noreferrer is the safe default; some affiliate programmes need the
-  // referrer to attribute, in which case drop "noreferrer" for that partner.
-  rel: "noopener noreferrer sponsored",
-  onClick: () => trackOutboundClick(params),
-});
+export const useOutboundLink = (params: OutboundParams) => {
+  const href = buildOutboundUrl(params);
+  return {
+    // An anchor without an href is inert, which is the right failure mode for
+    // a URL we have rejected as unsafe.
+    href: href ?? undefined,
+    target: "_blank" as const,
+    // noopener/noreferrer is the safe default; some affiliate programmes need
+    // the referrer to attribute, in which case drop "noreferrer" for that
+    // partner.
+    rel: "noopener noreferrer sponsored",
+    // A rejected URL never navigates, so it must not record a click either.
+    onClick: href ? () => trackOutboundClick(params) : undefined,
+  };
+};
