@@ -276,6 +276,7 @@ export type Database = {
           course: string | null
           created_at: string
           deleted_at: string | null
+          departure_date: string | null
           email: string | null
           email_notifications: boolean
           featured: boolean | null
@@ -301,6 +302,7 @@ export type Database = {
           course?: string | null
           created_at?: string
           deleted_at?: string | null
+          departure_date?: string | null
           email?: string | null
           email_notifications?: boolean
           featured?: boolean | null
@@ -326,6 +328,7 @@ export type Database = {
           course?: string | null
           created_at?: string
           deleted_at?: string | null
+          departure_date?: string | null
           email?: string | null
           email_notifications?: boolean
           featured?: boolean | null
