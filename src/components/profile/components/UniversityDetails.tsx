@@ -17,6 +17,7 @@ type UniversityDetailsProps = {
     city: string | null;
     semester: string | null;
     arrival_date: string | null;
+    departure_date: string | null;
   };
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSelectChange: (name: string, value: string | null) => void;
@@ -44,13 +45,16 @@ export const UniversityDetails = ({
   const [lastUniversity, setLastUniversity] = useState("");
 
   const parsedSeed = useMemo(() => parseSemester(form.semester), [form.semester]);
+  // Stored departure_date wins; the semester string is only a fallback seed for
+  // profiles created before departure_date was persisted.
   const [departureDate, setDepartureDate] = useState<string>(
-    parsedSeed ? toISO(parsedSeed.end) : ""
+    form.departure_date || (parsedSeed ? toISO(parsedSeed.end) : "")
   );
 
   useEffect(() => {
-    if (parsedSeed) setDepartureDate(toISO(parsedSeed.end));
-  }, [parsedSeed]);
+    if (form.departure_date) setDepartureDate(form.departure_date);
+    else if (parsedSeed) setDepartureDate(toISO(parsedSeed.end));
+  }, [form.departure_date, parsedSeed]);
 
   const arrivalDate = form.arrival_date || (parsedSeed ? toISO(parsedSeed.start) : "");
 
@@ -75,12 +79,14 @@ export const UniversityDetails = ({
   };
 
   const emitDates = (arrival: string, departure: string) => {
+    // departure_date carries a DB check constraint that it must post-date
+    // arrival_date, so only emit the pair once the range is coherent.
+    const validRange = Boolean(
+      arrival && departure && new Date(departure) > new Date(arrival)
+    );
     handleSelectChange("arrival_date", arrival || null);
-    if (arrival && departure && new Date(departure) > new Date(arrival)) {
-      handleSelectChange("semester", formatSemester(arrival, departure));
-    } else {
-      handleSelectChange("semester", null);
-    }
+    handleSelectChange("departure_date", validRange ? departure : null);
+    handleSelectChange("semester", validRange ? formatSemester(arrival, departure) : null);
   };
 
   const handleArrivalChange = (val: string) => {

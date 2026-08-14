@@ -8,6 +8,7 @@ import { formatSemester } from "@/lib/semesterParsing";
 type ExchangeDetailsStepProps = {
   initialSemester: string | null;
   initialArrivalDate: string | null;
+  initialDepartureDate: string | null;
   onNext: () => void;
   onBack: () => void;
   onUpdateProfile: (data: any) => Promise<boolean>;
@@ -15,12 +16,13 @@ type ExchangeDetailsStepProps = {
 
 export const ExchangeDetailsStep = ({
   initialArrivalDate,
+  initialDepartureDate,
   onNext,
   onBack,
   onUpdateProfile,
 }: ExchangeDetailsStepProps) => {
   const [arrivalDate, setArrivalDate] = useState(initialArrivalDate || "");
-  const [departureDate, setDepartureDate] = useState("");
+  const [departureDate, setDepartureDate] = useState(initialDepartureDate || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const datesValid =
@@ -46,6 +48,7 @@ export const ExchangeDetailsStep = ({
     try {
       const success = await onUpdateProfile({
         arrival_date: arrivalDate,
+        departure_date: departureDate,
         semester: formatSemester(arrivalDate, departureDate),
       });
       if (success) onNext();
