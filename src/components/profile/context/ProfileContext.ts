@@ -6,7 +6,9 @@ type ProfileFormState = {
   name: string;
   email: string;
   university: string;
-  semester: string;
+  // Nulled whenever the arrival/departure pair is incoherent, so the field is
+  // genuinely nullable despite being seeded with "".
+  semester: string | null;
   bio: string;
   avatar_url: string | null;
   home_university: string;
@@ -15,6 +17,7 @@ type ProfileFormState = {
   course: string;
   email_notifications: boolean;
   arrival_date: string | null;
+  departure_date: string | null;
   looking_for: string[];
 };
 

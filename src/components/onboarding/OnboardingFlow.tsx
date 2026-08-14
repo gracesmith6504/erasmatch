@@ -164,7 +164,7 @@ export const OnboardingFlow = () => {
           const { data, error } = await supabase
             .from("profiles")
             .select(
-              "id, name, avatar_url, university, city, personality_tags, bio, home_university, semester, course, looking_for, ref_code, arrival_date, last_active_at, featured"
+              "id, name, avatar_url, university, city, personality_tags, bio, home_university, semester, course, looking_for, ref_code, arrival_date, departure_date, last_active_at, featured"
             )
             .is("deleted_at", null);
           if (error) throw error;
@@ -288,6 +288,7 @@ export const OnboardingFlow = () => {
           <ExchangeDetailsStep
             initialSemester={currentUserProfile?.semester || ""}
             initialArrivalDate={currentUserProfile?.arrival_date || null}
+            initialDepartureDate={currentUserProfile?.departure_date || null}
             onNext={goToNextStep}
             onUpdateProfile={handleUpdateProfile}
             onBack={goToPreviousStep}

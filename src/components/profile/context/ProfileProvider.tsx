@@ -34,6 +34,7 @@ export const ProfileProvider = ({
     course: initialProfile?.course || "",
     email_notifications: initialProfile?.email_notifications !== false,
     arrival_date: initialProfile?.arrival_date || null,
+    departure_date: initialProfile?.departure_date || null,
     looking_for: initialProfile?.looking_for || [],
   });
   const [loading, setLoading] = useState(false);
@@ -55,6 +56,7 @@ export const ProfileProvider = ({
         course: initialProfile.course || "",
         email_notifications: initialProfile.email_notifications !== false,
         arrival_date: initialProfile.arrival_date || null,
+        departure_date: initialProfile.departure_date || null,
         looking_for: initialProfile.looking_for || [],
       });
       
@@ -159,6 +161,7 @@ export const ProfileProvider = ({
         course: form.course,
         email_notifications: form.email_notifications,
         arrival_date: form.arrival_date,
+        departure_date: form.departure_date,
         looking_for: form.looking_for,
       };
       
