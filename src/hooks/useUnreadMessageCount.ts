@@ -55,7 +55,6 @@ export function useUnreadMessageCount(currentUserId: string | null) {
 export async function markMessagesAsRead(currentUserId: string, partnerId: string) {
   const { error } = await supabase.rpc("mark_thread_read", {
     p_partner_id: partnerId,
-    p_user_id: currentUserId,
   });
 
   if (error) {

@@ -87,7 +87,6 @@ export function useMessageState(
     try {
       const { error } = await supabase.rpc("mark_thread_read", {
         p_partner_id: partnerId,
-        p_user_id: currentUserId,
       });
       if (error) throw error;
     } catch (error) {

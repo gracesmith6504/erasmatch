@@ -62,7 +62,8 @@ serve(async (req) => {
       .eq('id', senderId)
       .single()
 
-    const rawSenderName = senderProfile?.name || 'Someone'
+    // Strip CRLF to prevent email header injection in the subject line
+    const rawSenderName = (senderProfile?.name || 'Someone').replace(/[\r\n]/g, '')
     const senderName = escapeHtml(rawSenderName)
 
     // ── Look up receiver email and notification preference ──
