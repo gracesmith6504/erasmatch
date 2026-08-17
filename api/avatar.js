@@ -1,7 +1,8 @@
 export const config = { runtime: "edge" };
 
 // Map file extensions to safe image MIME types — nothing else is served.
-const IMAGE_TYPES = {
+// Null-prototype object so inherited keys like "constructor" can't match.
+const IMAGE_TYPES = Object.assign(Object.create(null), {
   webp: "image/webp",
   jpg: "image/jpeg",
   jpeg: "image/jpeg",
@@ -11,7 +12,7 @@ const IMAGE_TYPES = {
   avif: "image/avif",
   heic: "image/heic",
   heif: "image/heif",
-};
+});
 
 export default async function handler(req) {
   const url = new URL(req.url);
