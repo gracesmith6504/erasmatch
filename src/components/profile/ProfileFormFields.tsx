@@ -33,9 +33,8 @@ export function ProfileFormFields() {
         />
         
         <div className="mt-4">
-          <NameDisplay 
+          <NameDisplay
             name={form.name}
-            email={form.email}
             handleChange={handleChange}
           />
         </div>

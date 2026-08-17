@@ -4,14 +4,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Edit2, Check } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/contexts/auth";
 
 type NameDisplayProps = {
   name: string | null;
-  email: string | null;
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-export const NameDisplay = ({ name, email, handleChange }: NameDisplayProps) => {
+export const NameDisplay = ({ name, handleChange }: NameDisplayProps) => {
+  const { currentUserEmail } = useAuth();
   const isMobile = useIsMobile();
   const [isEditing, setIsEditing] = useState(false);
   
@@ -64,9 +65,9 @@ export const NameDisplay = ({ name, email, handleChange }: NameDisplayProps) => 
         </div>
       )}
       
-      {/* Only show email on user's own profile */}
+      {/* Only show email on user's own profile — sourced from auth session, not the DB */}
       <div className="text-sm text-center text-gray-500">
-        {email}
+        {currentUserEmail}
       </div>
     </div>
   );
