@@ -33,7 +33,14 @@ serve(async (req) => {
       })
     }
 
-    const firstName = record.name || "there"
+    const rawFirstName = record.name || "there"
+    // Escape HTML to prevent injection via profile name
+    const firstName = rawFirstName
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;')
 
     const emailResponse = await resend.emails.send({
       from: "ErasMatch <team@erasmatch.com>",

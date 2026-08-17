@@ -10,14 +10,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-interface EmailRequest {
-  senderName: string
-  senderAvatarUrl?: string | null
-  messageContent: string
-  receiverId: string
-  to?: string // deprecated: now looked up server-side
-}
-
 function escapeHtml(str: string): string {
   return str
     .replace(/&/g, '&amp;')
@@ -33,22 +25,47 @@ serve(async (req) => {
   }
 
   try {
-    const { senderName: rawSenderName, messageContent: rawMessageContent, receiverId }: EmailRequest = await req.json()
-    const senderName = escapeHtml(rawSenderName || '')
-    const messageContent = escapeHtml(rawMessageContent || '')
+    const { receiverId, messageId } = await req.json()
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
-    if (!receiverId) {
-      return new Response(JSON.stringify({ error: "receiverId is required" }), {
+    if (!receiverId || !messageId) {
+      return new Response(JSON.stringify({ error: "receiverId and messageId are required" }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
 
-    // Look up receiver email and notification preference server-side
+    // ── Authenticate sender from JWT ──
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+    const { data: { user } } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''))
+    if (!user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+    const senderId = user.id
+
+    // ── Look up sender name from database (never trust the client) ──
+    const { data: senderProfile } = await supabase
+      .from('profiles')
+      .select('name')
+      .eq('id', senderId)
+      .single()
+
+    const rawSenderName = senderProfile?.name || 'Someone'
+    const senderName = escapeHtml(rawSenderName)
+
+    // ── Look up receiver email and notification preference ──
     const { data: receiverProfile } = await supabase
       .from('profiles')
       .select('email, email_notifications')
@@ -69,16 +86,7 @@ serve(async (req) => {
       })
     }
 
-    // Get sender_id from the auth context (passed via body as receiverId pattern)
-    // We use the JWT to get the actual sender
-    const authHeader = req.headers.get('Authorization')
-    let senderId = 'unknown'
-    if (authHeader) {
-      const { data: { user } } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''))
-      if (user) senderId = user.id
-    }
-
-    // Rate limit: check if we already emailed this receiver from this sender in the last 15 minutes
+    // ── Rate limit: 1 email per sender→receiver pair every 15 minutes ──
     const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000).toISOString()
     const { data: recentLog } = await supabase
       .from('email_notification_log')
@@ -95,10 +103,29 @@ serve(async (req) => {
       })
     }
 
+    // ── Fetch the exact message by ID and verify the sender owns it ──
+    const { data: message } = await supabase
+      .from('messages')
+      .select('content')
+      .eq('id', messageId)
+      .eq('sender_id', senderId)
+      .eq('receiver_id', receiverId)
+      .single()
+
+    if (!message) {
+      return new Response(JSON.stringify({ error: "Message not found or sender mismatch" }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    const messageContent = escapeHtml(message.content || '')
+
+    // ── Send the email with server-verified data only ──
     const emailResponse = await resend.emails.send({
       from: "ErasMatch <team@erasmatch.com>",
       to: [to],
-      subject: `You have new messages from ${senderName} on ErasMatch`,
+      subject: `You have new messages from ${rawSenderName} on ErasMatch`,
       html: `
         <h2>You have a new message from ${senderName}</h2>
         <p style="margin: 16px 0; padding: 12px; background-color: #f5f5f5; border-radius: 4px;">
@@ -124,7 +151,7 @@ serve(async (req) => {
     console.error("Error sending email:", error)
     return new Response(
       JSON.stringify({ error: error.message }),
-      { 
+      {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
