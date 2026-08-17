@@ -23,7 +23,6 @@ export const ProfileProvider = ({
   const [initialUniversity, setInitialUniversity] = useState<string | null>(null);
   const [form, setForm] = useState({
     name: initialProfile?.name || "",
-    email: initialProfile?.email || "",
     university: initialProfile?.university || "",
     semester: initialProfile?.semester || "",
     bio: initialProfile?.bio || "",
@@ -45,7 +44,6 @@ export const ProfileProvider = ({
       setProfile(initialProfile);
       setForm({
         name: initialProfile.name || "",
-        email: initialProfile.email || "",
         university: initialProfile.university || "",
         semester: initialProfile.semester || "",
         bio: initialProfile.bio || "",

@@ -94,10 +94,15 @@ serve(async (req) => {
     }
 
     // Compile all user data
+    // Email is protected by column-level grants so it won't appear in the
+    // profiles query result. Include it from the auth session instead so the
+    // user's own export still contains their email address (GDPR portability).
+    const profileWithEmail = { ...(profile || {}), email: user.email }
+
     const userData = {
       exportDate: new Date().toISOString(),
       exportFormat: format,
-      profile: profile || {},
+      profile: profileWithEmail,
       directMessages: messages || [],
       cityMessages: cityMessages || [],
       groupMessages: groupMessages || [],

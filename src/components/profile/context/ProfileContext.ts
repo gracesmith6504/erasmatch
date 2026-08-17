@@ -4,7 +4,6 @@ import { Profile as ProfileType } from "@/types";
 
 type ProfileFormState = {
   name: string;
-  email: string;
   university: string;
   // Nulled whenever the arrival/departure pair is incoherent, so the field is
   // genuinely nullable despite being seeded with "".

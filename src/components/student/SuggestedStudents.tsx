@@ -28,7 +28,7 @@ const SuggestedStudents = ({ profiles, currentUserId, cityName, universityName, 
     const aAvatar = a.avatar_url ? 1 : 0;
     const bAvatar = b.avatar_url ? 1 : 0;
     if (bAvatar !== aAvatar) return bAvatar - aAvatar;
-    const fields = (p: Profile) => [p.name, p.email, p.university, p.avatar_url, p.bio, p.semester, p.home_university, p.city].filter(Boolean).length;
+    const fields = (p: Profile) => [p.name, p.university, p.avatar_url, p.bio, p.semester, p.home_university, p.city].filter(Boolean).length;
     return fields(b) - fields(a);
   });
 
