@@ -502,7 +502,7 @@ export type Database = {
         }
         Returns: boolean
       }
-      is_blocked: { Args: { user_a: string; user_b: string }; Returns: boolean }
+      is_blocked: { Args: { other_user: string }; Returns: boolean }
       join_group_by_slug: { Args: never; Returns: undefined }
       mark_thread_read: {
         Args: { p_partner_id: string }

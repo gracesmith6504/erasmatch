@@ -84,8 +84,7 @@ export const useBlockedUsers = () => {
       if (!currentUserId) return false;
       try {
         const { data, error } = await supabase.rpc("is_blocked", {
-          user_a: currentUserId,
-          user_b: otherUserId,
+          other_user: otherUserId,
         });
         if (error) throw error;
         return data || false;

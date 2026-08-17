@@ -19,8 +19,7 @@ export function useSendMessage() {
 
       // Check bidirectional block before sending
       const { data: blocked } = await supabase.rpc("is_blocked", {
-        user_a: currentUserId,
-        user_b: receiverId,
+        other_user: receiverId,
       });
       if (blocked) {
         throw new Error("Unable to send message to this user.");

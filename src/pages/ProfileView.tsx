@@ -66,7 +66,7 @@ const ProfileView = ({ currentUserId }: ProfileViewProps) => {
   // Check if the other user has blocked us (bidirectional)
   useEffect(() => {
     if (currentUserId && id && currentUserId !== id) {
-      supabase.rpc("is_blocked", { user_a: currentUserId, user_b: id })
+      supabase.rpc("is_blocked", { other_user: id })
         .then(({ data }) => setIsBlockedByOther(!!data));
     }
   }, [currentUserId, id]);
