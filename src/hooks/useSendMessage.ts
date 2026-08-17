@@ -51,14 +51,12 @@ export function useSendMessage() {
 
       if (senderError) throw senderError;
 
-      // Send email notification
+      // Send email notification — pass receiverId and messageId; the edge
+      // function looks up the sender name server-side from the JWT, and
+      // fetches the exact message by ID (verifying the caller is the sender)
+      // so nothing in the email can be spoofed.
       const response = await supabase.functions.invoke("send-message-notification", {
-        body: {
-          senderName: senderProfile?.name || "Someone",
-          senderAvatarUrl: senderProfile?.avatar_url || null,
-          messageContent: content,
-          receiverId,
-        },
+        body: { receiverId, messageId: messageData?.id },
       });
 
       if (response.error) {
