@@ -127,6 +127,18 @@ export const OnboardingFlow = () => {
         return;
       }
 
+      // Soft warning: nudge users who skipped destination back to fill it in.
+      // Not a hard block — "I don't know yet" is intentional — but city/university
+      // are key for matching, so give them one last chance.
+      if (!currentUserProfile?.city?.trim()) {
+        toast("You haven't picked a destination city yet — this helps others find you!", {
+          action: {
+            label: "Add it now",
+            onClick: () => { setDirection(-1); setCurrentStep(1); },
+          },
+        });
+      }
+
       window.posthog?.capture("onboarding_step_submitted", {
         step: 5,
         step_name: "photo",
@@ -138,6 +150,7 @@ export const OnboardingFlow = () => {
         university: currentUserProfile?.university,
         has_avatar: !!currentUserProfile?.avatar_url,
         tags_count: currentUserProfile?.personality_tags?.length || 0,
+        skipped_destination: !currentUserProfile?.city,
       });
 
       completingRef.current = true;

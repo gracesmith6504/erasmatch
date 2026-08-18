@@ -109,6 +109,35 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             if (!window.location.pathname.includes('/onboarding') && !window.location.pathname.includes('/auth')) {
               navigate("/onboarding", { replace: true });
             }
+          } else {
+            // createUserProfile returned null — insert failed silently.
+            // Retry once after a short delay; if it still fails, show a
+            // toast so the user knows something went wrong.
+            console.warn('Profile creation returned null — retrying in 1s');
+            await new Promise((r) => setTimeout(r, 1000));
+            try {
+              const retry = await createUserProfile(
+                session.user.id,
+                session.user.email!,
+                defaultName,
+                { invitedBy: pendingRef }
+              );
+              if (retry) {
+                setCurrentUserProfile(retry);
+                if (!window.location.pathname.includes('/onboarding') && !window.location.pathname.includes('/auth')) {
+                  navigate("/onboarding", { replace: true });
+                }
+              } else {
+                toast.error("Something went wrong setting up your profile. Please try signing out and back in.");
+              }
+            } catch (retryErr: any) {
+              if (retryErr?.code === '23505') {
+                const existing = await fetchUserProfile(session.user.id);
+                if (existing) setCurrentUserProfile(existing);
+              } else {
+                toast.error("Something went wrong setting up your profile. Please try signing out and back in.");
+              }
+            }
           }
         } catch (createError: any) {
           if (createError?.code === '23505') {
@@ -121,6 +150,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             }
           } else {
             console.error('Error creating profile:', createError);
+            toast.error("Something went wrong setting up your profile. Please try signing out and back in.");
           }
         }
       }

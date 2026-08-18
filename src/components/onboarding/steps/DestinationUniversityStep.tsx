@@ -310,7 +310,10 @@ export const DestinationUniversityStep = ({
           </Button>
 
           <span
-            onClick={onNext}
+            onClick={async () => {
+              await onUpdateProfile({ university: null, city: null });
+              onNext();
+            }}
             className="block text-center text-[11px] text-muted-foreground/50 cursor-pointer select-none mt-2"
           >
             I don't know yet
