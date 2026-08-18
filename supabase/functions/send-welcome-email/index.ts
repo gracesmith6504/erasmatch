@@ -163,7 +163,7 @@ serve(async (req) => {
           <tr>
             <td style="padding:0 36px 24px 36px;">
               <p style="margin:0;font-size:15px;line-height:1.5;color:#374151;">
-                See you there!<br>
+                Welcome aboard!<br>
                 <span style="color:#6B7280;">The ErasMatch team</span>
               </p>
             </td>
@@ -173,7 +173,7 @@ serve(async (req) => {
           <tr>
             <td style="padding:0 36px 28px 36px;">
               <p style="margin:0;font-size:14px;line-height:1.6;color:#6B7280;background-color:#f9fafb;padding:14px 16px;border-radius:10px;">
-                <strong>P.S.</strong> Got a question? Just reply to this email.
+                <strong>P.S.</strong> Got a question, found a bug, or have a feature idea? Just reply to this email.
               </p>
             </td>
           </tr>
