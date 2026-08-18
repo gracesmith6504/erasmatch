@@ -20,7 +20,7 @@
 
 ## Key Facts
 
-- 900+ students have joined from 50+ countries with 1,500+ messages sent.
+- 1,000+ students have joined from 50+ countries with 1,500+ messages sent.
 - Free to use — no paid plans.
 - EU-hosted analytics (PostHog EU), GDPR-compliant, no third-party ad trackers.
 - Created by Grace Smith, a student and developer.

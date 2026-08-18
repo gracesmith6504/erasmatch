@@ -31,6 +31,7 @@ export const HomeFooter = () => {
               <Link to="/about" className="text-muted-foreground hover:text-foreground transition-colors">About</Link>
               <Link to="/students" className="text-muted-foreground hover:text-foreground transition-colors">Students</Link>
               <Link to="/privacy-policy" className="text-muted-foreground hover:text-foreground transition-colors">Privacy</Link>
+              <Link to="/terms" className="text-muted-foreground hover:text-foreground transition-colors">Terms</Link>
             </div>
             <div className="flex flex-wrap justify-center md:justify-end gap-2">
               {TOP_CITIES.map((city) => (
