@@ -49,8 +49,8 @@ serve(async (req) => {
 
     // Dynamic copy based on whether we have a city
     const subject = hasCity
-      ? `You're heading to ${city}! 🎉`
-      : 'Welcome to ErasMatch 🎉'
+      ? `You're heading to ${city}!`
+      : 'Welcome to ErasMatch'
 
     const heroHeadline = hasCity
       ? `You're heading to ${city}!`
@@ -60,9 +60,7 @@ serve(async (req) => {
       ? `Welcome to ErasMatch - the easiest way to meet other Erasmus students heading to ${city}.`
       : 'Welcome to ErasMatch - the easiest way to meet other Erasmus students heading to your city.'
 
-    const bodyParagraph = hasCity
-      ? "Your first week abroad doesn't have to be figuring everything out alone. Have someone to go to the welcome week events with, find flatmates, and make friends before you even arrive."
-      : "Your first week abroad doesn't have to be figuring everything out alone. Have someone to go to the welcome week events with, find flatmates, and make friends before you even arrive."
+    const bodyParagraph = "Your first week abroad doesn't have to be figuring everything out alone. Have someone to go to the welcome week events with, find flatmates, and make friends before you even arrive."
 
     const bullet1 = hasCity
       ? `🔍 See who else is heading to ${city}`
@@ -98,15 +96,16 @@ serve(async (req) => {
       <td align="center">
         <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;">
 
-          <!-- Gradient header -->
+          <!-- Navy header with logo -->
           <tr>
-            <td style="background:linear-gradient(135deg, #3B82F6 0%, #22C55E 100%);padding:40px 40px 36px 40px;text-align:center;">
-              <h1 style="margin:0 0 4px 0;font-size:28px;font-weight:800;letter-spacing:-0.5px;">
-                <span style="color:#ffffff;">Eras</span><span style="color:#ffffff;">Match</span>
+            <td style="background-color:#1e293b;padding:36px 40px 32px 40px;text-align:center;">
+              <img src="https://www.erasmatch.com/favicon-192x192.png" alt="ErasMatch" width="56" height="56" style="display:block;margin:0 auto 16px auto;border-radius:12px;">
+              <h1 style="margin:0 0 4px 0;font-size:26px;font-weight:800;letter-spacing:-0.5px;">
+                <span style="color:#3B82F6;">Eras</span><span style="color:#22C55E;">Match</span>
               </h1>
-              <p style="margin:0;font-size:13px;color:rgba(255,255,255,0.8);letter-spacing:0.5px;">CONNECT BEFORE YOU GO</p>
-              <h2 style="margin:24px 0 0 0;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">
-                ${heroHeadline} 🎉
+              <p style="margin:0 0 20px 0;font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;text-transform:uppercase;">YOUR ERASMUS NETWORK</p>
+              <h2 style="margin:0;font-size:22px;font-weight:700;color:#ffffff;line-height:1.3;">
+                ${heroHeadline}
               </h2>
             </td>
           </tr>
@@ -132,7 +131,7 @@ serve(async (req) => {
               <p style="margin:0 0 12px 0;font-size:15px;font-weight:600;color:#111827;">Here's what to do next:</p>
               <table cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 28px 0;">
                 <tr>
-                  <td style="padding:10px 16px;font-size:15px;line-height:1.5;color:#374151;background-color:#f0f9ff;border-radius:8px;">
+                  <td style="padding:10px 16px;font-size:15px;line-height:1.5;color:#374151;background-color:#eff6ff;border-radius:8px;">
                     ${bullet1}
                   </td>
                 </tr>
@@ -144,7 +143,7 @@ serve(async (req) => {
                 </tr>
                 <tr><td style="height:8px;"></td></tr>
                 <tr>
-                  <td style="padding:10px 16px;font-size:15px;line-height:1.5;color:#374151;background-color:#faf5ff;border-radius:8px;">
+                  <td style="padding:10px 16px;font-size:15px;line-height:1.5;color:#374151;background-color:#f0f9ff;border-radius:8px;">
                     ${bullet3}
                   </td>
                 </tr>
@@ -156,7 +155,7 @@ serve(async (req) => {
           <tr>
             <td align="center" style="padding:0 36px 32px 36px;">
               <a href="${ctaUrl}" style="display:inline-block;background-color:#22C55E;color:#ffffff;padding:14px 36px;border-radius:50px;text-decoration:none;font-weight:700;font-size:16px;letter-spacing:0.2px;">
-                ${ctaText} →
+                ${ctaText} &rarr;
               </a>
             </td>
           </tr>
