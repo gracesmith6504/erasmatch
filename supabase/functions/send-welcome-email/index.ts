@@ -96,14 +96,13 @@ serve(async (req) => {
       <td align="center">
         <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;">
 
-          <!-- Navy header with logo -->
+          <!-- Navy header -->
           <tr>
-            <td style="background-color:#1e293b;padding:36px 40px 32px 40px;text-align:center;">
-              <img src="https://www.erasmatch.com/favicon-192x192.png" alt="ErasMatch" width="56" height="56" style="display:block;margin:0 auto 16px auto;border-radius:12px;">
-              <h1 style="margin:0 0 4px 0;font-size:26px;font-weight:800;letter-spacing:-0.5px;">
+            <td style="background-color:#1e293b;padding:40px 40px 36px 40px;text-align:center;">
+              <h1 style="margin:0 0 6px 0;font-size:30px;font-weight:800;letter-spacing:-0.5px;">
                 <span style="color:#3B82F6;">Eras</span><span style="color:#22C55E;">Match</span>
               </h1>
-              <p style="margin:0 0 20px 0;font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:1.5px;text-transform:uppercase;">YOUR ERASMUS NETWORK</p>
+              <p style="margin:0 0 24px 0;font-size:11px;color:rgba(255,255,255,0.45);letter-spacing:2px;text-transform:uppercase;">YOUR ERASMUS NETWORK</p>
               <h2 style="margin:0;font-size:22px;font-weight:700;color:#ffffff;line-height:1.3;">
                 ${heroHeadline}
               </h2>
