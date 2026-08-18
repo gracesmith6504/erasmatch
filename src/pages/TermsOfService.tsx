@@ -94,7 +94,6 @@ const TermsOfService = () => {
           <ul className="list-disc pl-5 text-sm md:text-base text-gray-600 space-y-2">
             <li><strong>Direct messages</strong> are private between the sender and the receiver.</li>
             <li><strong>Group and city chats</strong> are visible to all members of that group or city.</li>
-            <li><strong>Forum posts and comments</strong> are visible to all registered users.</li>
             <li>Platform administrators may access messages and user content for the purposes of safety, moderation, and responding to reports of abuse or policy violations.</li>
             <li>Content is only reviewed when there is a legitimate reason, such as a user report, safety concern, or investigation of a policy violation.</li>
           </ul>
@@ -154,7 +153,7 @@ const TermsOfService = () => {
             <li>Any unauthorized access to or alteration of your data</li>
           </ul>
           <p className="text-sm md:text-base text-gray-600 mt-2">
-            ErasMatch is a free platform run by a student developer. Our total liability for any claim related to the service shall not exceed the amount you have paid to us (which is zero, since ErasMatch is free).
+            ErasMatch is provided as a free service. Our total liability for any claim related to the service shall not exceed the amount you have paid to us.
           </p>
         </section>
 

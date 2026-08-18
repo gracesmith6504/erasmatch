@@ -147,7 +147,6 @@ const PrivacyPolicy = () => {
           <ul className="list-disc pl-5 text-sm md:text-base text-gray-600 space-y-2">
             <li><strong>Direct messages</strong> are private and only visible to the sender and receiver.</li>
             <li><strong>Group and city chats</strong> are visible to all registered users in that group or city.</li>
-            <li><strong>Forum posts and comments</strong> are visible to all registered users.</li>
             <li>Platform administrators may access message content and user-generated content for the purposes of safety, moderation, and responding to reports of abuse or policy violations.</li>
             <li>Content is only reviewed when there is a legitimate reason, such as a user report, safety concern, or investigation of a policy violation.</li>
           </ul>

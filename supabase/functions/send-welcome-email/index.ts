@@ -94,7 +94,7 @@ serve(async (req) => {
           <tr>
             <td style="padding:0 40px 32px 40px;">
               <p style="margin:0;font-size:14px;line-height:1.6;color:#6B7280;background-color:#f3f4f6;padding:16px;border-radius:8px;">
-                <strong>P.S.</strong> Got a question or suggestion? Just reply to this email — we read every message.
+                <strong>P.S.</strong> Got a question or suggestion? Just reply to this email.
               </p>
             </td>
           </tr>
