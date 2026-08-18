@@ -127,6 +127,13 @@ export const OnboardingFlow = () => {
         return;
       }
 
+      // Soft reminder: let users know they can add a destination later.
+      // Not a hard block — "I don't know yet" is intentional — but city/university
+      // are key for matching, so surface the reminder.
+      if (!currentUserProfile?.city?.trim()) {
+        toast("You can add your destination city later from your profile — it helps others find you!");
+      }
+
       window.posthog?.capture("onboarding_step_submitted", {
         step: 5,
         step_name: "photo",
@@ -138,6 +145,7 @@ export const OnboardingFlow = () => {
         university: currentUserProfile?.university,
         has_avatar: !!currentUserProfile?.avatar_url,
         tags_count: currentUserProfile?.personality_tags?.length || 0,
+        skipped_destination: !currentUserProfile?.city,
       });
 
       completingRef.current = true;

@@ -3,7 +3,7 @@ import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { PERSONALITY_TAG_GROUPS } from "@/components/profile/constants";
 import { Badge } from "@/components/ui/badge";
-import { Check, Sparkles } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 
 type InterestsStepProps = {
   initialValue: string[];
@@ -104,8 +104,8 @@ export const InterestsStep = ({
               className="w-full py-6 bg-primary hover:bg-primary/90 text-primary-foreground"
               disabled={isSubmitting}
             >
-              Complete Profile
-              <Sparkles className="ml-2 h-4 w-4" />
+              Next
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
         </form>
