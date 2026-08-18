@@ -52,20 +52,12 @@
     />
 
     <!-- Favicon and Apple Touch Icons -->
-    <link
-      rel="icon"
-      href="/erasmatch_favicon_64x64.png"
-      type="image/png"
-    />
-    <link
-      rel="icon"
-      href="/favicon_32x32.png"
-      type="image/png"
-    />
-    <link
-      rel="apple-touch-icon"
-      href="/apple-touch-icon_180x180.png"
-    />
+    <!-- Google requires a square icon that is a multiple of 48px (48/96/192) -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon-192x192.png" type="image/png" sizes="192x192" />
+    <link rel="icon" href="/favicon-96x96.png" type="image/png" sizes="96x96" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon_180x180.png" />
+
 
     <!-- Mobile Tab + PWA Meta -->
     <meta name="apple-mobile-web-app-title" content="ErasMatch" />

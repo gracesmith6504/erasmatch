@@ -504,10 +504,7 @@ export type Database = {
       }
       is_blocked: { Args: { other_user: string }; Returns: boolean }
       join_group_by_slug: { Args: never; Returns: undefined }
-      mark_thread_read: {
-        Args: { p_partner_id: string }
-        Returns: undefined
-      }
+      mark_thread_read: { Args: { p_partner_id: string }; Returns: undefined }
       normalize_text: { Args: { t: string }; Returns: string }
       search_universities: {
         Args: { _city: string; _limit: number; _q: string }
