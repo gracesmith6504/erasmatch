@@ -127,16 +127,11 @@ export const OnboardingFlow = () => {
         return;
       }
 
-      // Soft warning: nudge users who skipped destination back to fill it in.
+      // Soft reminder: let users know they can add a destination later.
       // Not a hard block — "I don't know yet" is intentional — but city/university
-      // are key for matching, so give them one last chance.
+      // are key for matching, so surface the reminder.
       if (!currentUserProfile?.city?.trim()) {
-        toast("You haven't picked a destination city yet — this helps others find you!", {
-          action: {
-            label: "Add it now",
-            onClick: () => { setDirection(-1); setCurrentStep(1); },
-          },
-        });
+        toast("You can add your destination city later from your profile — it helps others find you!");
       }
 
       window.posthog?.capture("onboarding_step_submitted", {

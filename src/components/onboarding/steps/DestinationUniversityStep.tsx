@@ -311,8 +311,8 @@ export const DestinationUniversityStep = ({
 
           <span
             onClick={async () => {
-              await onUpdateProfile({ university: null, city: null });
-              onNext();
+              const success = await onUpdateProfile({ university: null, city: null });
+              if (success) onNext();
             }}
             className="block text-center text-[11px] text-muted-foreground/50 cursor-pointer select-none mt-2"
           >

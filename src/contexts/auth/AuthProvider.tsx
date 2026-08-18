@@ -133,7 +133,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             } catch (retryErr: any) {
               if (retryErr?.code === '23505') {
                 const existing = await fetchUserProfile(session.user.id);
-                if (existing) setCurrentUserProfile(existing);
+                if (existing) {
+                  setCurrentUserProfile(existing);
+                  if (!existing.onboarding_complete && !window.location.pathname.includes('/onboarding') && !window.location.pathname.includes('/auth')) {
+                    navigate("/onboarding", { replace: true });
+                  }
+                }
               } else {
                 toast.error("Something went wrong setting up your profile. Please try signing out and back in.");
               }
@@ -144,7 +149,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             console.warn('Profile exists despite fetch returning null — retrying fetch');
             try {
               const existing = await fetchUserProfile(session.user.id);
-              if (existing) setCurrentUserProfile(existing);
+              if (existing) {
+                setCurrentUserProfile(existing);
+                if (!existing.onboarding_complete && !window.location.pathname.includes('/onboarding') && !window.location.pathname.includes('/auth')) {
+                  navigate("/onboarding", { replace: true });
+                }
+              }
             } catch (retryError) {
               console.error('Retry fetch also failed:', retryError);
             }
