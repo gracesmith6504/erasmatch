@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/accordion";
 import { GraduationCap, Users, ArrowRight, MapPin } from "lucide-react";
 import { SEO } from "@/components/SEO";
+import { ESimRecommendation } from "@/components/esim/ESimRecommendation";
 
 const CityLanding = () => {
   const { citySlug } = useParams<{ citySlug: string }>();
@@ -239,6 +240,9 @@ const CityLanding = () => {
           </Accordion>
         </div>
       </section>
+
+      {/* eSIM recommendation — Airalo affiliate */}
+      <ESimRecommendation country={cityInfo.country} city={cityInfo.name} />
 
       {/* Other cities — internal linking */}
       <section className="bg-muted/50 py-12 md:py-16">
