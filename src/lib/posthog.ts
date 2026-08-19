@@ -11,18 +11,19 @@
 const POSTHOG_KEY = "phc_mB4tLHsYfXfiNbQKSjMfLxZHvorupqX9P5FsBMD7nNvq";
 const POSTHOG_HOST = "https://eu.i.posthog.com";
 
-/** Hostnames where PostHog must NOT be loaded (preview / staging). */
-const BLOCKED_HOSTNAMES = ["lovableproject.com", "lovable.app"];
+/** Hostnames where PostHog is allowed to load (production only). */
+const ALLOWED_HOSTNAMES = ["www.erasmatch.com", "erasmatch.com"];
 
 let initialized = false;
 
 /**
- * Returns true when the current hostname belongs to a preview or staging
- * environment where analytics should be suppressed.
+ * Returns true only when the current hostname is a production environment
+ * where analytics should be active. All other hostnames (localhost, preview,
+ * staging) are implicitly blocked.
  */
-const isPreviewEnvironment = (): boolean =>
+const isProductionEnvironment = (): boolean =>
   typeof window !== "undefined" &&
-  BLOCKED_HOSTNAMES.some((h) => window.location.hostname.includes(h));
+  ALLOWED_HOSTNAMES.includes(window.location.hostname);
 
 /**
  * Dynamically loads the PostHog JS snippet and calls `posthog.init()`.
@@ -33,7 +34,7 @@ const isPreviewEnvironment = (): boolean =>
 export const initPostHog = (): void => {
   if (initialized) return;
   if (typeof window === "undefined") return;
-  if (isPreviewEnvironment()) return;
+  if (!isProductionEnvironment()) return;
 
   initialized = true;
 
