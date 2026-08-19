@@ -1,9 +1,11 @@
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { ChatThread, Profile } from "@/types";
-import { format, isToday, isYesterday, differenceInDays } from "date-fns";
+import { format, isToday, isYesterday, differenceInDays, differenceInMinutes } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { transformAvatarUrl } from "@/lib/avatar";
 import { Button } from "@/components/ui/button";
+import { Search, X } from "lucide-react";
 
 interface ThreadsListProps {
   threads: (ChatThread & { hasUnreadMessages?: boolean })[];
@@ -22,7 +24,7 @@ const formatMessageTime = (dateStr: string) => {
 
 const isOnline = (partner: ChatThread["partner"]) => {
   if (!partner.last_active_at) return false;
-  return differenceInDays(new Date(), new Date(partner.last_active_at)) <= 14;
+  return differenceInMinutes(new Date(), new Date(partner.last_active_at)) <= 5;
 };
 
 export const ThreadsList = ({
@@ -31,6 +33,16 @@ export const ThreadsList = ({
   onSelectThread,
   getInitials,
 }: ThreadsListProps) => {
+  const [search, setSearch] = useState("");
+
+  const filteredThreads = useMemo(() => {
+    if (!search.trim()) return threads;
+    const q = search.toLowerCase();
+    return threads.filter(
+      (t) => t.partner.name?.toLowerCase().includes(q)
+    );
+  }, [threads, search]);
+
   if (threads.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full p-8">
@@ -46,7 +58,37 @@ export const ThreadsList = ({
 
   return (
     <div className="flex flex-col">
-      {threads.map((thread) => {
+      {/* Search */}
+      {threads.length > 3 && (
+        <div className="px-3 py-2">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search conversations…"
+              className="w-full bg-muted/50 border border-border/60 rounded-full text-sm pl-8 pr-8 py-2 outline-none focus:border-primary/40 focus:bg-background transition-colors placeholder:text-muted-foreground text-foreground"
+            />
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 rounded-full hover:bg-muted"
+              >
+                <X className="h-3.5 w-3.5 text-muted-foreground" />
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {filteredThreads.length === 0 && search.trim() && (
+        <div className="px-4 py-8 text-center">
+          <p className="text-sm text-muted-foreground">No conversations found</p>
+        </div>
+      )}
+
+      {filteredThreads.map((thread) => {
         const isSelected = selectedThread?.partner.id === thread.partner.id;
         const unread = thread.hasUnreadMessages;
         const online = isOnline(thread.partner);

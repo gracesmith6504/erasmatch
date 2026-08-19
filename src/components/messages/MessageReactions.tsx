@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { ReactionSummary } from "@/hooks/useReactions";
 import { SmilePlus } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -17,9 +17,36 @@ export const MessageReactions: React.FC<MessageReactionsProps> = ({
   isCurrentUser,
 }) => {
   const [showPicker, setShowPicker] = useState(false);
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleTouchStart = useCallback(() => {
+    longPressTimer.current = setTimeout(() => {
+      setShowPicker(true);
+    }, 400);
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  }, []);
+
+  const handleTouchMove = useCallback(() => {
+    // Cancel long press if finger moves (prevents accidental activation while scrolling)
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  }, []);
 
   return (
-    <div className={cn("flex flex-col gap-1", isCurrentUser ? "items-end" : "items-start")}>
+    <div
+      className={cn("flex flex-col gap-1", isCurrentUser ? "items-end" : "items-start")}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onTouchMove={handleTouchMove}
+    >
       {summaries.length > 0 && (
         <div className="flex flex-wrap gap-1">
           {summaries.map((s) => (
@@ -43,7 +70,7 @@ export const MessageReactions: React.FC<MessageReactionsProps> = ({
       <div className="relative">
         <button
           onClick={() => setShowPicker(!showPicker)}
-          className="opacity-0 group-hover/msg:opacity-100 focus:opacity-100 transition-opacity p-1 rounded-full hover:bg-muted text-muted-foreground"
+          className="opacity-0 group-hover/msg:opacity-100 focus:opacity-100 transition-opacity p-1 rounded-full hover:bg-muted text-muted-foreground md:block"
           aria-label="Add reaction"
         >
           <SmilePlus className="h-3.5 w-3.5" />

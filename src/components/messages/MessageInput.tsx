@@ -1,11 +1,10 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Send } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { SuggestedPrompts } from "./SuggestedPrompts";
 import { Profile } from "@/types";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
 const MAX_LENGTH = 500;
 
@@ -35,6 +34,7 @@ export const MessageInput = ({
   const isMobile = useIsMobile();
   const remaining = MAX_LENGTH - newMessage.length;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const hasText = newMessage.trim().length > 0;
 
   const autoResize = useCallback(() => {
     const el = textareaRef.current;
@@ -52,7 +52,7 @@ export const MessageInput = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newMessage.trim() && !isSending) {
+    if (hasText && !isSending) {
       try {
         await onSendMessage();
       } catch (error) {
@@ -64,7 +64,7 @@ export const MessageInput = ({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      if (newMessage.trim() && !isSending) {
+      if (hasText && !isSending) {
         onSendMessage();
       }
     }
@@ -76,7 +76,7 @@ export const MessageInput = ({
   };
 
   return (
-    <div className="p-3 sm:p-4 border-t w-full z-50 bg-white">
+    <div className="p-2.5 sm:p-3 border-t border-border w-full z-50 bg-background">
       {showSuggestedPrompts && (
         <SuggestedPrompts
           onSelectPrompt={handleSelectPrompt}
@@ -85,27 +85,45 @@ export const MessageInput = ({
           selectedUser={selectedUser}
         />
       )}
-      <form onSubmit={handleSubmit} className="flex w-full space-x-2 items-end">
-        <Textarea
-          ref={textareaRef}
-          className="flex-1 min-h-[40px] max-h-[120px] resize-none py-2"
-          placeholder="Type a message..."
-          value={newMessage}
-          rows={1}
-          onChange={(e) => {
-            setNewMessage(e.target.value.slice(0, MAX_LENGTH));
-            autoResize();
-          }}
-          onKeyDown={handleKeyDown}
-          maxLength={MAX_LENGTH}
-          disabled={isSending}
-        />
-        <Button type="submit" disabled={!newMessage.trim() || isSending} className="flex-shrink-0">
+      <form onSubmit={handleSubmit} className="flex w-full items-end gap-2">
+        {/* Pill-shaped input container */}
+        <div className="flex-1 flex items-end bg-muted/50 rounded-3xl border border-border/60 focus-within:border-primary/40 focus-within:bg-background transition-colors px-4 py-1">
+          <textarea
+            ref={textareaRef}
+            className="flex-1 bg-transparent border-none outline-none resize-none text-[15px] leading-relaxed text-foreground placeholder:text-muted-foreground py-2 min-h-[36px] max-h-[120px]"
+            placeholder="Message..."
+            value={newMessage}
+            rows={1}
+            onChange={(e) => {
+              setNewMessage(e.target.value.slice(0, MAX_LENGTH));
+              autoResize();
+            }}
+            onKeyDown={handleKeyDown}
+            maxLength={MAX_LENGTH}
+            disabled={isSending}
+          />
+        </div>
+
+        {/* Circular send button — animates in when text is entered */}
+        <button
+          type="submit"
+          disabled={!hasText || isSending}
+          className={cn(
+            "shrink-0 flex items-center justify-center rounded-full w-9 h-9 transition-all duration-200",
+            hasText
+              ? "bg-primary text-primary-foreground scale-100 opacity-100 active:scale-90"
+              : "bg-muted text-muted-foreground scale-75 opacity-40 pointer-events-none"
+          )}
+          aria-label="Send message"
+        >
           <Send className="h-4 w-4" />
-        </Button>
+        </button>
       </form>
       {remaining <= 100 && (
-        <p className={`text-xs mt-1 text-right ${remaining <= 20 ? 'text-red-500' : 'text-amber-500'}`}>
+        <p className={cn(
+          "text-xs mt-1.5 text-right tabular-nums",
+          remaining <= 20 ? "text-destructive" : "text-amber-500 dark:text-amber-400"
+        )}>
           {newMessage.length}/{MAX_LENGTH}
         </p>
       )}

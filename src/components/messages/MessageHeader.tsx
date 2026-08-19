@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { BlockUserDialog } from "@/components/block/BlockUserDialog";
 import { useBlockedUsers } from "@/hooks/useBlockedUsers";
+import { differenceInMinutes, differenceInHours, differenceInDays, differenceInWeeks } from "date-fns";
 
 interface MessageHeaderProps {
   isMobile: boolean;
@@ -22,9 +23,26 @@ interface MessageHeaderProps {
   onUserBlocked?: () => void;
 }
 
+const getActivityStatus = (lastActiveAt?: string | null): { text: string; isOnline: boolean } => {
+  if (!lastActiveAt) return { text: "", isOnline: false };
+  const now = new Date();
+  const last = new Date(lastActiveAt);
+  const mins = differenceInMinutes(now, last);
+  if (mins < 5) return { text: "Active now", isOnline: true };
+  if (mins < 60) return { text: `Active ${mins}m ago`, isOnline: false };
+  const hrs = differenceInHours(now, last);
+  if (hrs < 24) return { text: `Active ${hrs}h ago`, isOnline: false };
+  const days = differenceInDays(now, last);
+  if (days < 7) return { text: `Active ${days}d ago`, isOnline: false };
+  const weeks = differenceInWeeks(now, last);
+  if (weeks < 4) return { text: `Active ${weeks}w ago`, isOnline: false };
+  return { text: "", isOnline: false };
+};
+
 export const MessageHeader = ({ isMobile, onBack, profile, onUserBlocked }: MessageHeaderProps) => {
   const [showBlockDialog, setShowBlockDialog] = useState(false);
   const { blockUser } = useBlockedUsers();
+  const activity = profile ? getActivityStatus(profile.last_active_at) : null;
 
   const getInitials = (name: string | null) => {
     if (!name) return "?";
@@ -77,13 +95,23 @@ export const MessageHeader = ({ isMobile, onBack, profile, onUserBlocked }: Mess
                 </Avatar>
               </Link>
             )}
-            <div className="font-medium flex-1">
-              {profile.id ? (
-                <Link to={`/profile/${profile.id}`} className="hover:underline transition-all">
-                  {profile.name}
-                </Link>
-              ) : (
-                <span>{profile.name}</span>
+            <div className="flex-1 min-w-0">
+              <div className="font-medium leading-tight">
+                {profile.id ? (
+                  <Link to={`/profile/${profile.id}`} className="hover:underline transition-all">
+                    {profile.name}
+                  </Link>
+                ) : (
+                  <span>{profile.name}</span>
+                )}
+              </div>
+              {activity?.text && (
+                <p className="text-[11px] text-muted-foreground leading-tight mt-0.5 flex items-center gap-1">
+                  {activity.isOnline && (
+                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-green-500 shrink-0" />
+                  )}
+                  {activity.text}
+                </p>
               )}
             </div>
             {profile.id && (

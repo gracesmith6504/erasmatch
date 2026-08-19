@@ -5,9 +5,10 @@ import { DesktopMessagesView } from "./DesktopMessagesView";
 import { useMessageState } from "@/hooks/useMessageState";
 import { useInitialUserSelection } from "@/hooks/useInitialUserSelection";
 import { createMessageHandler } from "./utils/messageUtils";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useBlockedUsers } from "@/hooks/useBlockedUsers";
+import { cn } from "@/lib/utils";
 
 interface MessagesContainerProps {
   messages: Message[];
@@ -85,27 +86,60 @@ export const MessagesContainer = ({
     setShowMobileThreadList(true);
   };
 
-  if (isMobile && showMobileThreadList) {
+  if (isMobile) {
     return (
-      <ScrollArea className="h-full w-full">
-        <MobileMessagesView
-          threads={filteredThreads}
-          selectedThread={selectedThread}
-          setSelectedThread={(thread) => {
-            setSelectedThread(thread);
-            setShowMobileThreadList(false);
-          }}
-          profiles={profiles}
-          currentUserProfile={currentUserProfile}
-        />
-      </ScrollArea>
+      <div className="h-full w-full overflow-hidden relative">
+        {/* Thread list panel */}
+        <div
+          className={cn(
+            "absolute inset-0 transition-transform duration-250 ease-out will-change-transform",
+            showMobileThreadList ? "translate-x-0" : "-translate-x-full"
+          )}
+        >
+          <ScrollArea className="h-full w-full">
+            <MobileMessagesView
+              threads={filteredThreads}
+              selectedThread={selectedThread}
+              setSelectedThread={(thread) => {
+                setSelectedThread(thread);
+                setShowMobileThreadList(false);
+              }}
+              profiles={profiles}
+              currentUserProfile={currentUserProfile}
+            />
+          </ScrollArea>
+        </div>
+
+        {/* Conversation panel */}
+        <div
+          className={cn(
+            "absolute inset-0 transition-transform duration-250 ease-out will-change-transform bg-background",
+            showMobileThreadList ? "translate-x-full" : "translate-x-0"
+          )}
+        >
+          <DesktopMessagesView
+            threads={filteredThreads}
+            selectedThread={selectedThread}
+            setSelectedThread={setSelectedThread}
+            profiles={profiles}
+            currentUserProfile={currentUserProfile}
+            threadMessages={threadMessages}
+            currentUserId={currentUserId}
+            isMobile={isMobile}
+            onSendMessage={handleSendMessage}
+            onPromptUsed={handlePromptUsed}
+            onBack={handleBackToThreadList}
+            onUserBlocked={handleUserBlocked}
+          />
+        </div>
+      </div>
     );
   }
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
-      {!isMobile && <h1 className="text-2xl font-display font-bold text-foreground px-4 py-6">Messages</h1>}
-      
+      <h1 className="text-2xl font-display font-bold text-foreground px-4 py-6">Messages</h1>
+
       <DesktopMessagesView
         threads={filteredThreads}
         selectedThread={selectedThread}
@@ -117,7 +151,6 @@ export const MessagesContainer = ({
         isMobile={isMobile}
         onSendMessage={handleSendMessage}
         onPromptUsed={handlePromptUsed}
-        onBack={isMobile ? handleBackToThreadList : undefined}
         onUserBlocked={handleUserBlocked}
       />
     </div>
