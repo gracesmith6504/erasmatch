@@ -90,7 +90,7 @@ export const MessageInput = ({
         <div className="flex-1 flex items-end bg-muted/50 rounded-3xl border border-border/60 focus-within:border-primary/40 focus-within:bg-background transition-colors px-4 py-1">
           <textarea
             ref={textareaRef}
-            className="flex-1 bg-transparent border-none outline-none resize-none text-[15px] leading-relaxed text-foreground placeholder:text-muted-foreground py-2 min-h-[36px] max-h-[120px]"
+            className="flex-1 bg-transparent border-none outline-none resize-none text-base leading-relaxed text-foreground placeholder:text-muted-foreground py-2 min-h-[36px] max-h-[120px]"
             placeholder="Message..."
             value={newMessage}
             rows={1}

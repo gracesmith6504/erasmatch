@@ -68,7 +68,7 @@ export const ThreadsList = ({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search conversations…"
-              className="w-full bg-muted/50 border border-border/60 rounded-full text-sm pl-8 pr-8 py-2 outline-none focus:border-primary/40 focus:bg-background transition-colors placeholder:text-muted-foreground text-foreground"
+              className="w-full bg-muted/50 border border-border/60 rounded-full text-base pl-8 pr-8 py-2 outline-none focus:border-primary/40 focus:bg-background transition-colors placeholder:text-muted-foreground text-foreground"
             />
             {search && (
               <button
