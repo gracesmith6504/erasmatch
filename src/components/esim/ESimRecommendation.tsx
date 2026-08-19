@@ -1,4 +1,5 @@
-import { Wifi } from "lucide-react";
+import { useState } from "react";
+import { Wifi, X } from "lucide-react";
 import { useOutboundLink, type OutboundPlacement } from "@/lib/analytics";
 
 /**
@@ -11,6 +12,8 @@ const AIRALO_TRACKING_URL =
 
 const PROMO_CODE = "NEWTOAIRALO15";
 
+const DISMISS_KEY = "esim-recommendation-dismissed";
+
 interface ESimRecommendationProps {
   /** The destination country, e.g. "Spain". */
   country: string;
@@ -18,13 +21,23 @@ interface ESimRecommendationProps {
   city: string;
   /** Where the component is rendered. Defaults to "city_landing". */
   placement?: OutboundPlacement;
+  /**
+   * "full" renders the card section used on city landing pages.
+   * "compact" renders a slim dismissible banner for the students page.
+   */
+  variant?: "full" | "compact";
 }
 
 export const ESimRecommendation = ({
   country,
   city,
   placement = "city_landing",
+  variant = "full",
 }: ESimRecommendationProps) => {
+  const [dismissed, setDismissed] = useState(
+    () => variant === "compact" && localStorage.getItem(DISMISS_KEY) === "true",
+  );
+
   const linkProps = useOutboundLink({
     partner: "airalo",
     url: AIRALO_TRACKING_URL,
@@ -32,6 +45,48 @@ export const ESimRecommendation = ({
     city,
     category: "esim",
   });
+
+  if (dismissed) return null;
+
+  if (variant === "compact") {
+    return (
+      <div className="mb-4 relative rounded-lg border border-border bg-card px-4 py-3 pr-10">
+        <a
+          {...linkProps}
+          className="group flex flex-wrap items-center gap-x-3 gap-y-1"
+        >
+          <Wifi className="h-4 w-4 text-accent flex-shrink-0" />
+          <span className="text-sm font-medium text-foreground">
+            Stay connected in {country}
+          </span>
+          <span className="text-sm text-muted-foreground hidden sm:inline">
+            Get an eSIM data plan before you arrive
+          </span>
+          <span className="inline-flex items-center rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent">
+            {PROMO_CODE} - 15% off
+          </span>
+          <span
+            aria-hidden="true"
+            className="text-accent text-sm transition-transform group-hover:translate-x-0.5"
+          >
+            →
+          </span>
+        </a>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            setDismissed(true);
+            localStorage.setItem(DISMISS_KEY, "true");
+          }}
+          className="absolute top-3 right-3 text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <X className="h-4 w-4" />
+          <span className="sr-only">Dismiss</span>
+        </button>
+      </div>
+    );
+  }
 
   return (
     <section className="container mx-auto px-4 py-12 md:py-16">
@@ -49,10 +104,8 @@ export const ESimRecommendation = ({
               <h3 className="text-lg font-semibold text-foreground mb-1">
                 Stay connected in {country}
               </h3>
-              <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                Skip roaming fees — get an eSIM data plan before you arrive.
-                Works with most phones from 2020 onwards, and you can set it up
-                before you leave home.
+              <p className="text-muted-foreground text-sm leading-relaxed mb-3">
+                Skip roaming fees and get an eSIM data plan before you arrive.
               </p>
 
               <div className="flex flex-wrap items-center gap-3">
@@ -62,7 +115,7 @@ export const ESimRecommendation = ({
                 </span>
 
                 <span className="inline-flex items-center rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
-                  {PROMO_CODE} — 15% off your first eSIM
+                  {PROMO_CODE} - 15% off your first eSIM
                 </span>
               </div>
             </div>
