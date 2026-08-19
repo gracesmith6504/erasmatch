@@ -24,15 +24,9 @@ serve(async (req) => {
   }
 
   try {
-    // Only allow calls from the service role (database webhook)
-    const authHeader = req.headers.get('Authorization')
-    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-    if (!authHeader || authHeader !== `Bearer ${serviceRoleKey}`) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      })
-    }
+    // Auth is handled by the Supabase gateway (verify_jwt: true).
+    // The database trigger sends a valid service-role JWT via the vault,
+    // which the gateway validates before the request reaches this function.
 
     const { record } = await req.json()
 
@@ -46,7 +40,7 @@ serve(async (req) => {
     const firstName = esc(record.name?.split(' ')[0] || 'there')
     const rawCity = String(record.city || '').trim()
     const city = esc(rawCity)
-    // Subject line needs the raw (unescaped) city — HTML entities like &amp;
+    // Subject line needs the raw (unescaped) city - HTML entities like &amp;
     // render literally in email subjects. Strip CR/LF to prevent header injection.
     const subjectCity = rawCity.replace(/[\r\n]+/g, ' ')
     const hasCity = rawCity.length > 0
