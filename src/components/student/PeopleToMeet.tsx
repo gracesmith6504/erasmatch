@@ -59,23 +59,31 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
     initialNote: string;
   } | null>(null);
 
-  const { data: messagedIds = [], isLoading: messagesLoading } = useQuery({
-    queryKey: ["messaged-users", currentUserId],
+  // Re-use the same cache key as useDirectMessages so we don't fire a duplicate query.
+  // The messages hook already fetches sender_id + receiver_id for the current user.
+  const { data: rawMessages = [], isLoading: messagesLoading } = useQuery({
+    queryKey: ["direct-messages", currentUserId],
     queryFn: async () => {
       const { data } = await supabase
         .from("messages")
-        .select("sender_id, receiver_id")
-        .or(`sender_id.eq.${currentUserId},receiver_id.eq.${currentUserId}`);
-      if (!data) return [];
-      const ids = new Set<string>();
-      data.forEach((m) => {
-        if (m.sender_id !== currentUserId) ids.add(m.sender_id);
-        if (m.receiver_id !== currentUserId) ids.add(m.receiver_id);
-      });
-      return Array.from(ids);
+        .select("id, sender_id, receiver_id, content, created_at, read_by")
+        .or(`sender_id.eq.${currentUserId},receiver_id.eq.${currentUserId}`)
+        .order("created_at", { ascending: false })
+        .limit(200);
+      return data ?? [];
     },
-    staleTime: 60_000,
+    enabled: !!currentUserId,
+    staleTime: 30_000,
   });
+
+  const messagedIds = useMemo(() => {
+    const ids = new Set<string>();
+    rawMessages.forEach((m: { sender_id: string; receiver_id: string }) => {
+      if (m.sender_id !== currentUserId) ids.add(m.sender_id);
+      if (m.receiver_id !== currentUserId) ids.add(m.receiver_id);
+    });
+    return Array.from(ids);
+  }, [rawMessages, currentUserId]);
 
   const { universities, loading: countriesLoading } = useUniversitiesCache();
   const uniCountryMap = useMemo(() => {

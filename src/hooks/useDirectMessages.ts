@@ -26,6 +26,7 @@ export function useDirectMessages(currentUserId: string | null) {
       return (data ?? []) as Message[];
     },
     enabled: !!currentUserId,
+    staleTime: 30_000, // 30s — realtime subscription handles new messages
   });
 
   // Subscribe to realtime changes and invalidate the cache

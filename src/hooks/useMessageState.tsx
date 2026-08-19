@@ -13,15 +13,22 @@ export function useMessageState(
   const [messagesSent, setMessagesSent] = useState(0); // Counter to trigger thread refresh
   const [refreshKey, setRefreshKey] = useState(0); // Key for forcing component refresh
 
-  // Get the current user's profile
-  const currentUserProfile = useMemo(() => {
-    return profiles.find(profile => profile.id === currentUserId) || null;
-  }, [profiles, currentUserId]);
+  // Build a Map<id, Profile> once — all lookups below are O(1)
+  const profileMap = useMemo(() => {
+    const map = new Map<string, Profile>();
+    for (const p of profiles) map.set(p.id, p);
+    return map;
+  }, [profiles]);
 
-  // Process messages into threads
+  // Get the current user's profile — O(1) via Map
+  const currentUserProfile = useMemo(() => {
+    return profileMap.get(currentUserId) ?? null;
+  }, [profileMap, currentUserId]);
+
+  // Process messages into threads — O(n) instead of O(n × m)
   const threads = useMemo(() => {
     if (!currentUserId) return [];
-    
+
     // Get all unique conversation partners
     const userIds = new Set<string>();
     messages.forEach(message => {
@@ -31,47 +38,47 @@ export function useMessageState(
         userIds.add(message.sender_id);
       }
     });
-    
+
     // Create threads with the last message for each conversation partner
     return Array.from(userIds).map(userId => {
-      const partner = profiles.find(p => p.id === userId);
+      const partner = profileMap.get(userId); // O(1)
       if (!partner) return null;
-      
+
       // Find messages between current user and this partner
       const threadMessages = messages.filter(
         m => (m.sender_id === currentUserId && m.receiver_id === userId) ||
              (m.receiver_id === currentUserId && m.sender_id === userId)
       );
-      
+
       // Sort by date and get the most recent
       const sortedMessages = [...threadMessages].sort(
         (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
-      
+
       const lastMsg = sortedMessages.length > 0 ? sortedMessages[0] : null;
-      
+
       // Transform Message to the format required by ChatThread
       const lastMessage = lastMsg ? {
         content: lastMsg.content,
         created_at: lastMsg.created_at,
-        sender_name: lastMsg.sender_id === currentUserId ? 
-          (currentUserProfile?.name || 'You') : 
+        sender_name: lastMsg.sender_id === currentUserId ?
+          (currentUserProfile?.name || 'You') :
           (partner.name || 'Unknown'),
         sender_id: lastMsg.sender_id,
         read_by: lastMsg.read_by
       } : null;
-      
+
       return {
         partner,
         lastMessage
       };
     }).filter(Boolean) as ChatThread[];
-  }, [currentUserId, messages, profiles, messagesSent, refreshKey, currentUserProfile]);
+  }, [currentUserId, messages, profileMap, messagesSent, refreshKey, currentUserProfile]);
 
   // Get messages for selected thread
   const threadMessages = useMemo(() => {
     if (!selectedThread) return [];
-    
+
     return messages
       .filter(
         m => (m.sender_id === currentUserId && m.receiver_id === selectedThread.partner.id) ||
@@ -105,9 +112,9 @@ export function useMessageState(
   const enhancedThreads = useMemo(() => {
     return threads.map(thread => ({
       ...thread,
-      hasUnreadMessages: thread.lastMessage ? 
-        (thread.lastMessage.sender_id !== currentUserId && 
-         (!thread.lastMessage.read_by || 
+      hasUnreadMessages: thread.lastMessage ?
+        (thread.lastMessage.sender_id !== currentUserId &&
+         (!thread.lastMessage.read_by ||
           !thread.lastMessage.read_by.includes(currentUserId)))
         : false
     }));

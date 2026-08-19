@@ -50,11 +50,12 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
     return map;
   }, [universities]);
 
+  // Render as soon as profiles arrive — university data fills in when ready
   useEffect(() => {
-    if (initialProfiles.length > 0 && !uniLoading) {
+    if (initialProfiles.length > 0) {
       setLoading(false);
     }
-  }, [initialProfiles, uniLoading]);
+  }, [initialProfiles]);
 
   // Track whether the user has manually changed filters — if so, don't
   // overwrite with late-arriving initialFilters (e.g. async profile load).
