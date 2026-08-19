@@ -44,12 +44,16 @@ serve(async (req) => {
     }
 
     const firstName = esc(record.name?.split(' ')[0] || 'there')
-    const city = esc(record.city || '')
-    const hasCity = Boolean(record.city)
+    const rawCity = String(record.city || '').trim()
+    const city = esc(rawCity)
+    // Subject line needs the raw (unescaped) city — HTML entities like &amp;
+    // render literally in email subjects. Strip CR/LF to prevent header injection.
+    const subjectCity = rawCity.replace(/[\r\n]+/g, ' ')
+    const hasCity = rawCity.length > 0
 
     // Dynamic copy based on whether we have a city
     const subject = hasCity
-      ? `You're heading to ${city}!`
+      ? `You're heading to ${subjectCity}!`
       : 'Welcome to ErasMatch'
 
     const heroHeadline = hasCity

@@ -79,6 +79,8 @@ const PrivacyPolicy = () => {
             <li>Supabase (for authentication, profile, and message storage) - GDPR compliant</li>
             <li>Resend (for sending email notifications) - GDPR compliant</li>
             <li>Vercel (for hosting and infrastructure) - GDPR compliant</li>
+            <li>PostHog (for product analytics, consent-gated) - EU-hosted, GDPR compliant</li>
+            <li>Impact.com (for affiliate link attribution) - GDPR compliant with Standard Contractual Clauses</li>
             <li>Legal authorities when required by law</li>
           </ul>
           <p className="text-sm md:text-base text-gray-600 mt-2">

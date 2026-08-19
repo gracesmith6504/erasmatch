@@ -46,6 +46,11 @@ export const usePlatformStats = () => {
             .select("id", { count: "exact", head: true }),
         ]);
 
+        // Bail on any query error so we never cache bad data
+        if (profilesRes.error) throw profilesRes.error;
+        if (countriesRes.error) throw countriesRes.error;
+        if (messagesRes.error) throw messagesRes.error;
+
         const studentCount = profilesRes.count ?? 0;
         const messageCount = messagesRes.count ?? 0;
 
