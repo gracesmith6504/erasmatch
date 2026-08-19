@@ -24,7 +24,7 @@ export function useMessagePartners(
       else if (m.receiver_id === currentUserId) ids.add(m.sender_id);
     }
     if (extraId) ids.add(extraId);
-    return Array.from(ids);
+    return Array.from(ids).sort();
   }, [messages, currentUserId, extraId]);
 
   return useQuery<Profile[]>({

@@ -1,8 +1,7 @@
 import React, { useState, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Profile } from "@/types";
-import { supabase } from "@/integrations/supabase/client";
 import { useUniversitiesCache } from "@/hooks/useUniversitiesCache";
+import { useDirectMessages } from "@/hooks/useDirectMessages";
 import { X, ArrowRight } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { transformAvatarUrl } from "@/lib/avatar";
@@ -59,22 +58,8 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
     initialNote: string;
   } | null>(null);
 
-  // Re-use the same cache key as useDirectMessages so we don't fire a duplicate query.
-  // The messages hook already fetches sender_id + receiver_id for the current user.
-  const { data: rawMessages = [], isLoading: messagesLoading } = useQuery({
-    queryKey: ["direct-messages", currentUserId],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("messages")
-        .select("id, sender_id, receiver_id, content, created_at, read_by")
-        .or(`sender_id.eq.${currentUserId},receiver_id.eq.${currentUserId}`)
-        .order("created_at", { ascending: false })
-        .limit(200);
-      return data ?? [];
-    },
-    enabled: !!currentUserId,
-    staleTime: 30_000,
-  });
+  // Re-use useDirectMessages so we share the cache and error handling
+  const { data: rawMessages = [], isLoading: messagesLoading } = useDirectMessages(currentUserId);
 
   const messagedIds = useMemo(() => {
     const ids = new Set<string>();
