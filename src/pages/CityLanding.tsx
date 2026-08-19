@@ -169,6 +169,9 @@ const CityLanding = () => {
         </div>
       </section>
 
+      {/* eSIM recommendation — Airalo affiliate */}
+      <ESimRecommendation country={cityInfo.country} city={cityInfo.name} />
+
       {/* About */}
       <section className="container mx-auto px-4 py-12 md:py-16">
         <div className="max-w-3xl mx-auto">
@@ -240,9 +243,6 @@ const CityLanding = () => {
           </Accordion>
         </div>
       </section>
-
-      {/* eSIM recommendation — Airalo affiliate */}
-      <ESimRecommendation country={cityInfo.country} city={cityInfo.name} />
 
       {/* Other cities — internal linking */}
       <section className="bg-muted/50 py-12 md:py-16">
