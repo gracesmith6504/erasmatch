@@ -10,9 +10,9 @@ export const MobileBottomNav = ({ isActive }: MobileBottomNavProps) => {
   const { navigationItems } = useNavigation();
   const location = useLocation();
 
-  // Hide bottom nav only when inside a conversation (messages page with a ?user= param),
-  // but keep it visible on the thread list view (/messages without params)
-  if (location.pathname === "/messages" && location.search) return null;
+  // Hide bottom nav on the messages page — the conversation view needs
+  // the full screen and the nav covers the text input otherwise
+  if (location.pathname === "/messages") return null;
 
   return (
     <div

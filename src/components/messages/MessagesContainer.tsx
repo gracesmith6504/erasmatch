@@ -92,9 +92,10 @@ export const MessagesContainer = ({
         {/* Thread list panel */}
         <div
           className={cn(
-            "absolute inset-0 transition-transform duration-250 ease-out will-change-transform",
+            "absolute inset-0 will-change-transform",
             showMobileThreadList ? "translate-x-0" : "-translate-x-full"
           )}
+          style={{ transition: "transform 300ms cubic-bezier(0.32, 0.72, 0, 1)" }}
         >
           <ScrollArea className="h-full w-full">
             <MobileMessagesView
@@ -113,9 +114,10 @@ export const MessagesContainer = ({
         {/* Conversation panel */}
         <div
           className={cn(
-            "absolute inset-0 transition-transform duration-250 ease-out will-change-transform bg-background",
+            "absolute inset-0 will-change-transform bg-background",
             showMobileThreadList ? "translate-x-full" : "translate-x-0"
           )}
+          style={{ transition: "transform 300ms cubic-bezier(0.32, 0.72, 0, 1)" }}
         >
           <DesktopMessagesView
             threads={filteredThreads}
