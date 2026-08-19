@@ -76,6 +76,8 @@ serve(async (req) => {
       ? `🏙️ Jump into the ${city} group chat`
       : '🏙️ Jump into your city group chat'
 
+    const bullet4 = '📶 Need data abroad? <a href="https://airalo.pxf.io/c/7373558/2071037/15608?utm_source=erasmatch&utm_medium=email&utm_campaign=airalo_welcome" style="color:#22C55E;text-decoration:underline;" target="_blank" rel="noopener noreferrer sponsored">Get an eSIM</a> before you fly - 15% off with NEWTOAIRALO15'
+
     const ctaText = hasCity
       ? `Find students in ${city}`
       : 'Find students near you'
@@ -148,6 +150,12 @@ serve(async (req) => {
                 <tr>
                   <td style="padding:10px 16px;font-size:15px;line-height:1.5;color:#374151;background-color:#f0f9ff;border-radius:8px;">
                     ${bullet3}
+                  </td>
+                </tr>
+                <tr><td style="height:8px;"></td></tr>
+                <tr>
+                  <td style="padding:10px 16px;font-size:15px;line-height:1.5;color:#374151;background-color:#faf5ff;border-radius:8px;">
+                    ${bullet4}
                   </td>
                 </tr>
               </table>

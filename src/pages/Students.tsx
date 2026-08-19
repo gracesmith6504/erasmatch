@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Users, MapPin } from "lucide-react";
 import { useLocation, Link } from "react-router-dom";
 import { WelcomeBanner } from "@/components/WelcomeBanner";
+import { ESimRecommendation } from "@/components/esim/ESimRecommendation";
 import { useOnboardingBanner } from "@/hooks/useOnboardingBanner";
 import PeopleToMeet from "@/components/student/PeopleToMeet";
 import { compareFiltered, compareDefault } from "@/lib/studentOrdering";
@@ -224,6 +225,15 @@ const Students = ({ currentUserId }: StudentsProps) => {
       />
       {showBanner && (
         <WelcomeBanner cityName={cityName} hasAvatar={hasAvatar} />
+      )}
+
+      {currentProfile?.university && universityCountryMap[currentProfile.university] && (
+        <ESimRecommendation
+          country={universityCountryMap[currentProfile.university]}
+          city={currentProfile.city || ""}
+          placement="students_page"
+          variant="compact"
+        />
       )}
 
       {showPeopleToMeet && currentProfile && currentUserId && (
