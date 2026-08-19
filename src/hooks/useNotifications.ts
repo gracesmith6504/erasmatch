@@ -63,7 +63,16 @@ export function useNotifications(currentUserId: string | null) {
     }));
 
     setNotifications(enriched);
-    setUnreadCount(enriched.filter((n) => !n.read).length);
+
+    // Collapse consecutive notifications from the same actor+type (most
+    // recent first) into one before counting unread — otherwise a burst of
+    // messages from one person inflates the badge past what the dropdown
+    // actually shows.
+    const deduped = enriched.filter((n, i, arr) => {
+      const key = `${n.actor_id}|${n.type}`;
+      return arr.findIndex((m) => `${m.actor_id}|${m.type}` === key) === i;
+    });
+    setUnreadCount(deduped.filter((n) => !n.read).length);
   }, [currentUserId]);
 
   const markAllAsRead = useCallback(async () => {
