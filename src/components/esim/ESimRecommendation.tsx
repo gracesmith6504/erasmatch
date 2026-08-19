@@ -46,7 +46,7 @@ export const ESimRecommendation = ({
     category: "esim",
   });
 
-  if (dismissed) return null;
+  if (dismissed || !country) return null;
 
   if (variant === "compact") {
     return (
