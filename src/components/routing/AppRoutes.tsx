@@ -27,6 +27,7 @@ const About = lazy(() => import("@/pages/About"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const Onboarding = lazy(() => import("@/pages/Onboarding"));
 const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy"));
+const TermsOfService = lazy(() => import("@/pages/TermsOfService"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 const AdminUniversities = lazy(() => import("@/pages/AdminUniversities"));
 const CityLanding = lazy(() => import("@/pages/CityLanding"));
@@ -58,6 +59,7 @@ const AppRoutes = () => {
         <Route path="/about" element={<About />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
         <Route 
           path="/students" 
           element={<Students currentUserId={currentUserId} />} 

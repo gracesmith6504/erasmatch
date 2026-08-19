@@ -79,6 +79,8 @@ const PrivacyPolicy = () => {
             <li>Supabase (for authentication, profile, and message storage) - GDPR compliant</li>
             <li>Resend (for sending email notifications) - GDPR compliant</li>
             <li>Vercel (for hosting and infrastructure) - GDPR compliant</li>
+            <li>PostHog (for product analytics, consent-gated) - EU-hosted, GDPR compliant</li>
+            <li>Impact.com (for affiliate link attribution) - GDPR compliant with Standard Contractual Clauses</li>
             <li>Legal authorities when required by law</li>
           </ul>
           <p className="text-sm md:text-base text-gray-600 mt-2">
@@ -96,8 +98,27 @@ const PrivacyPolicy = () => {
         <section className="mb-8">
           <h2 className="text-lg md:text-xl font-medium text-gray-800 mb-3">Cookies & Analytics</h2>
           <p className="text-sm md:text-base text-gray-600 mb-4">
-            ErasMatch uses PostHog for product analytics to understand how students use the platform and improve the experience. All analytics data is processed and stored on EU servers (eu.posthog.com) in compliance with GDPR. We do not use cookies for tracking. If you would like to opt out of analytics, please contact us at <a href="mailto:erasmatchbusiness@gmail.com" className="text-blue-600 hover:text-blue-800">erasmatchbusiness@gmail.com</a>.
+            ErasMatch uses PostHog for product analytics to understand how students use the platform and improve the experience. All analytics data is processed and stored on EU servers (eu.posthog.com) in compliance with GDPR.
           </p>
+          <p className="text-sm md:text-base text-gray-600 mb-4">
+            Analytics cookies are only set after you give consent via the cookie banner shown on your first visit. If you decline, no analytics cookies are placed and PostHog is not loaded. You can change your preference at any time by clearing your browser's local storage for this site or contacting us.
+          </p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-lg md:text-xl font-medium text-gray-800 mb-3">Third-Party Links & Affiliate Partners</h2>
+          <p className="text-sm md:text-base text-gray-600 mb-4">
+            ErasMatch may display links to third-party services that we believe are useful for Erasmus students, such as eSIM providers, travel insurance, or banking tools. Some of these links are affiliate links, which means ErasMatch may earn a commission if you make a purchase through them — at no extra cost to you.
+          </p>
+          <p className="text-sm md:text-base text-gray-600 mb-4">
+            When you click an affiliate or partner link, we record the click (partner name, placement location, and your destination city if applicable) via our analytics platform to measure engagement. The destination URL may include tracking parameters (such as UTM tags) so the partner can attribute the visit to ErasMatch.
+          </p>
+          <p className="text-sm md:text-base text-gray-600 mb-4">
+            Third-party services have their own privacy policies and terms of service. We encourage you to review them before making a purchase. ErasMatch is not responsible for the privacy practices or content of third-party sites.
+          </p>
+          <ul className="list-disc pl-5 text-sm md:text-base text-gray-600 space-y-2">
+            <li>Affiliate tracking is managed through Impact.com — <a href="https://impact.com/privacy-policy/" className="text-blue-600 hover:text-blue-800" target="_blank" rel="noopener noreferrer">Impact.com Privacy Policy</a></li>
+          </ul>
         </section>
 
         <section className="mb-8">
@@ -128,7 +149,6 @@ const PrivacyPolicy = () => {
           <ul className="list-disc pl-5 text-sm md:text-base text-gray-600 space-y-2">
             <li><strong>Direct messages</strong> are private and only visible to the sender and receiver.</li>
             <li><strong>Group and city chats</strong> are visible to all registered users in that group or city.</li>
-            <li><strong>Forum posts and comments</strong> are visible to all registered users.</li>
             <li>Platform administrators may access message content and user-generated content for the purposes of safety, moderation, and responding to reports of abuse or policy violations.</li>
             <li>Content is only reviewed when there is a legitimate reason, such as a user report, safety concern, or investigation of a policy violation.</li>
           </ul>
@@ -160,7 +180,7 @@ const PrivacyPolicy = () => {
         </section>
 
         <div className="text-center mt-10 text-sm text-gray-500">
-          <p>Last updated: July 23, 2026</p>
+          <p>Last updated: August 18, 2026</p>
         </div>
       </div>
     </div>

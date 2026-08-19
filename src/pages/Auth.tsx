@@ -372,13 +372,22 @@ const Auth = ({ onLogin }: AuthProps) => {
                 />
                 <Label htmlFor="privacy-consent" className="text-sm text-muted-foreground leading-relaxed">
                   I agree to the{" "}
-                  <Link 
-                    to="/privacy-policy" 
+                  <Link
+                    to="/privacy-policy"
                     className="text-erasmatch-green hover:text-erasmatch-green/80 underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     Privacy Policy
+                  </Link>
+                  {" "}and{" "}
+                  <Link
+                    to="/terms"
+                    className="text-erasmatch-green hover:text-erasmatch-green/80 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Terms of Service
                   </Link>
                 </Label>
               </div>

@@ -1,29 +1,24 @@
 import { motion } from "framer-motion";
+import { Users, MessageCircle, Home } from "lucide-react";
 
-const stories = [
+const highlights = [
   {
-    quote: "I found a flatmate for my apartment in Lisbon before I even booked my flight. We ended up living together the whole semester.",
-    name: "Emma K.",
-    flag: "🇩🇪",
-    university: "University of Lisbon",
-    initials: "EK",
-    gradient: "from-erasmatch-blue/20 to-erasmatch-purple/20",
+    icon: Users,
+    title: "Have someone to go to welcome week with",
+    description:
+      "Your first week doesn't have to be navigating campus alone. Find students heading to the same city and plan your welcome week together.",
   },
   {
-    quote: "I messaged an alumni who'd been at my exact university. She told me which neighbourhood to avoid and which landlords were legit. Saved me so much stress.",
-    name: "Tomas R.",
-    flag: "🇨🇿",
-    university: "UPF Barcelona",
-    initials: "TR",
-    gradient: "from-erasmatch-green/20 to-erasmatch-blue/20",
+    icon: MessageCircle,
+    title: "Ask people who've actually been there",
+    description:
+      "Get real advice about housing, transport, and student life from alumni and current students at your destination.",
   },
   {
-    quote: "I was panicking about going to Budapest alone. Turns out 8 other people from my country were going too. We met up the first day.",
-    name: "Sarah L.",
-    flag: "🇮🇪",
-    university: "Corvinus University Budapest",
-    initials: "SL",
-    gradient: "from-erasmatch-coral/20 to-erasmatch-orange/20",
+    icon: Home,
+    title: "Find a flatmate before you arrive",
+    description:
+      "Looking for a roommate? See who else needs a flat in your city the same semester and sort housing before you land.",
   },
 ];
 
@@ -31,42 +26,38 @@ export const StudentStoriesSection = () => {
   return (
     <section className="py-16 sm:py-24 bg-card">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
+        <motion.div
           className="text-center mb-10 sm:mb-16"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
         >
-          <p className="text-xs sm:text-sm font-medium tracking-widest uppercase text-erasmatch-green mb-3">Student stories</p>
+          <p className="text-xs sm:text-sm font-medium tracking-widest uppercase text-erasmatch-green mb-3">Your Erasmus starter pack</p>
           <h2 className="text-2xl sm:text-4xl font-display font-bold text-foreground">
-            What students say after <span className="text-erasmatch-green">their exchange.</span>
+            Everything you need <span className="text-erasmatch-green">before you go.</span>
           </h2>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-          {stories.map((story, index) => (
+          {highlights.map((item, index) => (
             <motion.div
-              key={story.name}
+              key={item.title}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ delay: index * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
               className="relative bg-background rounded-2xl p-5 sm:p-6 border border-border hover:shadow-card transition-all duration-300"
             >
-              <blockquote className="text-base sm:text-lg text-foreground leading-relaxed mb-5 sm:mb-6 font-display">
-                &ldquo;{story.quote}&rdquo;
-              </blockquote>
-
-              <div className="flex items-center gap-3 pt-4 border-t border-border">
-                <div className={`h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-gradient-to-br ${story.gradient} flex items-center justify-center text-xs sm:text-sm font-semibold text-foreground`}>
-                  {story.initials}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">{story.name} {story.flag}</p>
-                  <p className="text-xs text-muted-foreground">{story.university}</p>
-                </div>
+              <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-erasmatch-green/10 flex items-center justify-center mb-4">
+                <item.icon className="h-4 w-4 sm:h-5 sm:w-5 text-erasmatch-green" />
               </div>
+              <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">
+                {item.title}
+              </h3>
+              <p className="text-sm sm:text-[15px] text-muted-foreground leading-relaxed">
+                {item.description}
+              </p>
             </motion.div>
           ))}
         </div>

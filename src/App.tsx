@@ -11,6 +11,7 @@ import Layout from "./components/layout/Layout";
 import AppRoutes from "./components/routing/AppRoutes";
 import { AuthProvider } from "./contexts/auth";
 import { Analytics } from "@vercel/analytics/react";
+import CookieConsent from "./components/CookieConsent";
 
 
 const queryClient = new QueryClient({
@@ -36,6 +37,7 @@ const App = () => {
             <Layout>
               <AppRoutes />
             </Layout>
+            <CookieConsent />
           </AuthProvider>
         </TooltipProvider>
       </QueryClientProvider>

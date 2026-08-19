@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
+import { usePlatformStats, formatStatDisplay } from "@/hooks/usePlatformStats";
 
 type PhotoStepProps = {
   onNext: () => void;
@@ -17,6 +18,7 @@ type PhotoStepProps = {
 
 export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) => {
   const { currentUserProfile } = useAuth();
+  const { stats } = usePlatformStats();
   const [avatarUrl, setAvatarUrl] = useState<string | null>(currentUserProfile?.avatar_url || null);
   const [uploadPhase, setUploadPhase] = useState<"idle" | "compressing" | "uploading">("idle");
   const uploading = uploadPhase !== "idle";
@@ -134,7 +136,7 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
             ))}
           </div>
           <span className="text-xs text-muted-foreground">
-            Join 600+ students already on ErasMatch
+            Join {stats ? formatStatDisplay(stats.studentCount) : "1,000+"} students already on ErasMatch
           </span>
         </div>
 
