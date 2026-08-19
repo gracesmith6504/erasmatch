@@ -1,7 +1,6 @@
 import { useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { createNotification } from "@/utils/notifications";
 import { useAuth } from "@/contexts/AuthContext";
 
 /**
@@ -41,15 +40,6 @@ export function useSendMessage() {
         window.posthog.capture('direct_message_sent');
       }
 
-      // Fetch sender profile for notification text
-      const { data: senderProfile, error: senderError } = await supabase
-        .from("profiles")
-        .select("name, avatar_url")
-        .eq("id", currentUserId)
-        .single();
-
-      if (senderError) throw senderError;
-
       // Send email notification — pass receiverId and messageId; the edge
       // function looks up the sender name server-side from the JWT, and
       // fetches the exact message by ID (verifying the caller is the sender)
@@ -62,16 +52,9 @@ export function useSendMessage() {
         console.error("Error sending email notification:", response.error);
       }
 
-      // Create in-app notification
-      const senderName = senderProfile?.name || "Someone";
-      createNotification({
-        userId: receiverId,
-        type: "direct_message",
-        actorId: currentUserId,
-        referenceId: messageData?.id,
-        title: "New message",
-        body: `${senderName} sent you a message`,
-      });
+      // In-app notification is created automatically by a database trigger
+      // on the messages table (notify_on_direct_message), so no client-side
+      // insert is needed here.
 
       // Invalidate messages cache so any open Messages page updates
       queryClient.invalidateQueries({ queryKey: ["direct-messages", currentUserId] });
