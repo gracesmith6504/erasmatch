@@ -8,7 +8,6 @@ import { PhoneMockup } from "./hero/PhoneMockup";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { transformAvatarUrl } from "@/lib/avatar";
-import { usePlatformStats, formatStatDisplay } from "@/hooks/usePlatformStats";
 
 interface HeroSectionProps {
   handleFindStudents: () => void;
@@ -20,7 +19,6 @@ export const HeroSection = ({ handleFindStudents }: HeroSectionProps) => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [featuredAvatars, setFeaturedAvatars] = useState<string[]>([]);
-  const { stats, loading: statsLoading } = usePlatformStats();
 
   useEffect(() => {
     supabase.rpc("get_featured_activity_profiles").then(({ data }) => {
@@ -128,21 +126,21 @@ export const HeroSection = ({ handleFindStudents }: HeroSectionProps) => {
             >
               <div className="text-center sm:text-left">
                 <p className="text-xl sm:text-2xl font-bold text-foreground">
-                  {statsLoading ? "..." : stats ? formatStatDisplay(stats.studentCount) : "1,000+"}
+                  1,000+
                 </p>
                 <p className="text-xs text-muted-foreground">Students joined</p>
               </div>
               <div className="w-px h-8 bg-border" />
               <div className="text-center sm:text-left">
                 <p className="text-xl sm:text-2xl font-bold text-foreground">
-                  {statsLoading ? "..." : stats ? formatStatDisplay(stats.countryCount) : "50+"}
+                  50+
                 </p>
                 <p className="text-xs text-muted-foreground">Countries</p>
               </div>
               <div className="w-px h-8 bg-border" />
               <div className="text-center sm:text-left">
                 <p className="text-xl sm:text-2xl font-bold text-foreground">
-                  {statsLoading ? "..." : stats ? formatStatDisplay(stats.messageCount) : "1,000+"}
+                  1,500+
                 </p>
                 <p className="text-xs text-muted-foreground">Messages sent</p>
               </div>
