@@ -53,12 +53,18 @@ export const MessagesContainer = ({
     if (isMobile) setShowMobileThreadList(true);
   };
 
+  // When a thread is auto-selected (e.g. from ?user= URL param), slide to the conversation.
+  // Only trigger when selectedThread first appears while the thread list is still visible,
+  // to avoid re-triggering mid-transition or on every selectedThread change.
+  const prevSelectedRef = useRef<string | null>(null);
   useEffect(() => {
-    if (isMobile && selectedThread) {
+    const currentId = selectedThread?.partner?.id ?? null;
+    if (isMobile && currentId && currentId !== prevSelectedRef.current && showMobileThreadList) {
       setShowMobileThreadList(false);
     }
-  }, [selectedThread, isMobile]);
-  
+    prevSelectedRef.current = currentId;
+  }, [selectedThread, isMobile, showMobileThreadList]);
+
   useInitialUserSelection({
     initialSelectedUserId: initialSelectedUser,
     profiles,
@@ -91,11 +97,12 @@ export const MessagesContainer = ({
       <div className="h-full w-full overflow-hidden relative">
         {/* Thread list panel */}
         <div
-          className={cn(
-            "absolute inset-0 will-change-transform",
-            showMobileThreadList ? "translate-x-0" : "-translate-x-full"
-          )}
-          style={{ transition: "transform 300ms cubic-bezier(0.32, 0.72, 0, 1)" }}
+          className="absolute inset-0"
+          style={{
+            transform: showMobileThreadList ? "translateX(0)" : "translateX(-100%)",
+            transition: "transform 300ms cubic-bezier(0.32, 0.72, 0, 1)",
+            backfaceVisibility: "hidden",
+          }}
         >
           <ScrollArea className="h-full w-full">
             <MobileMessagesView
@@ -113,11 +120,12 @@ export const MessagesContainer = ({
 
         {/* Conversation panel */}
         <div
-          className={cn(
-            "absolute inset-0 will-change-transform bg-background",
-            showMobileThreadList ? "translate-x-full" : "translate-x-0"
-          )}
-          style={{ transition: "transform 300ms cubic-bezier(0.32, 0.72, 0, 1)" }}
+          className="absolute inset-0 bg-background"
+          style={{
+            transform: showMobileThreadList ? "translateX(100%)" : "translateX(0)",
+            transition: "transform 300ms cubic-bezier(0.32, 0.72, 0, 1)",
+            backfaceVisibility: "hidden",
+          }}
         >
           <DesktopMessagesView
             threads={filteredThreads}
