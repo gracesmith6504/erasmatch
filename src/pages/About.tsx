@@ -3,11 +3,9 @@ import { Users, MessageSquare, Globe, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SEO } from "@/components/SEO";
-import { usePlatformStats, formatStatDisplay } from "@/hooks/usePlatformStats";
 
 const About = () => {
-  const { stats } = usePlatformStats();
-  const studentLabel = stats ? formatStatDisplay(stats.studentCount) : "1,000+";
+  const studentLabel = "1,000+";
 
   return (
     <div className="min-h-screen bg-background">
