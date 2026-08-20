@@ -104,7 +104,6 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [featuredProfiles, setFeaturedProfiles] = useState<{ avatar_url: string; first_name: string }[]>([]);
   const [showSkip, setShowSkip] = useState(false);
-  const [cityPhotoStats, setCityPhotoStats] = useState<{ total: number; withPhoto: number } | null>(null);
 
   const name = currentUserProfile?.name || "";
   const city = currentUserProfile?.city || null;
@@ -120,25 +119,6 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
     };
     fetchFeatured();
   }, []);
-
-  // Fetch city-specific photo stats for personalized social proof
-  useEffect(() => {
-    if (!city) return;
-    const fetchCityStats = async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id, avatar_url", { count: "exact", head: false })
-        .eq("city", city)
-        .is("deleted_at", null)
-        .eq("onboarding_complete", true);
-
-      if (!error && data) {
-        const withPhoto = data.filter((p) => p.avatar_url).length;
-        setCityPhotoStats({ total: data.length, withPhoto });
-      }
-    };
-    fetchCityStats();
-  }, [city]);
 
   // Delay the skip option — gives the upload CTA time to work.
   // Research shows delayed skip increases upload rates by up to 50%.
@@ -197,17 +177,6 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
       setUploadPhase("idle");
     }
   };
-
-  // Build city-specific social proof message
-  const socialProofMessage = (() => {
-    if (cityPhotoStats && cityPhotoStats.total >= 3 && city) {
-      const pct = Math.round((cityPhotoStats.withPhoto / cityPhotoStats.total) * 100);
-      if (pct >= 40) {
-        return `${pct}% of students going to ${city} added a photo`;
-      }
-    }
-    return null;
-  })();
 
   const hasUploaded = !!avatarUrl;
 
@@ -279,7 +248,7 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
           </div>
         )}
 
-        {/* Social proof — city-specific when available */}
+        {/* Social proof */}
         <div className="flex flex-col items-center gap-2">
           <div className="flex items-center gap-2">
             <div className="flex -space-x-2">
@@ -291,7 +260,7 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
               ))}
             </div>
             <span className="text-xs text-muted-foreground">
-              {socialProofMessage || "Join 1,000+ students already on ErasMatch"}
+              Join 1,000+ students already on ErasMatch
             </span>
           </div>
         </div>
