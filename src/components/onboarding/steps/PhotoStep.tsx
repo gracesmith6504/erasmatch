@@ -3,7 +3,7 @@ import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { transformAvatarUrl } from "@/lib/avatar";
-import { Camera, Upload, Loader2, MapPin, Eye, EyeOff, Sparkles } from "lucide-react";
+import { Camera, Upload, Loader2, MapPin, EyeOff, Sparkles, ChevronUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
@@ -19,56 +19,55 @@ type PhotoStepProps = {
   onUpdateProfile: (data: ProfileUpdate) => Promise<boolean>;
 };
 
-// Mini preview of how the user's profile card appears to other students.
-// Shows a simplified version of the StudentCard — the "with photo" variant
-// looks vibrant and complete, the "without photo" variant looks muted.
-const ProfilePreview = ({
+// Shows a preview of the user's profile card as others see it.
+// Before upload: muted card with "your profile won't stand out" messaging.
+// After upload: vibrant card with their actual photo.
+const ProfileCard = ({
   name,
   city,
   avatarUrl,
   userId,
-  withPhoto,
 }: {
   name: string;
   city: string | null;
   avatarUrl: string | null;
   userId: string;
-  withPhoto: boolean;
 }) => {
   const firstName = name?.split(" ")[0] || "You";
+  const hasPhoto = !!avatarUrl;
 
   return (
     <div
-      className={`relative rounded-xl border px-4 py-3.5 w-full max-w-[200px] transition-all duration-500 ${
-        withPhoto
-          ? "border-primary/30 bg-card shadow-md scale-[1.03]"
-          : "border-border/50 bg-muted/30 opacity-60 scale-[0.97]"
+      className={`relative rounded-xl border px-4 py-3.5 w-full max-w-[240px] transition-all duration-500 ${
+        hasPhoto
+          ? "border-green-500/30 bg-card shadow-md"
+          : "border-border/50 bg-muted/40"
       }`}
     >
-      {/* Priority badge */}
+      {/* Status badge */}
       <div
         className={`absolute -top-2.5 left-1/2 -translate-x-1/2 text-[10px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap transition-all duration-500 ${
-          withPhoto
+          hasPhoto
             ? "bg-green-500/15 text-green-700 dark:text-green-400 border border-green-500/20"
-            : "bg-muted text-muted-foreground/50 border border-border/50"
+            : "bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20"
         }`}
       >
-        {withPhoto ? (
+        {hasPhoto ? (
           <span className="flex items-center gap-1">
-            <Eye className="h-3 w-3" />
+            <ChevronUp className="h-3 w-3" />
             Shown first
           </span>
         ) : (
           <span className="flex items-center gap-1">
             <EyeOff className="h-3 w-3" />
-            Hidden below
+            Won't stand out
           </span>
         )}
       </div>
 
       {/* Avatar + Name row */}
       <div className="flex items-center gap-2.5 mt-1">
-        {withPhoto && avatarUrl ? (
+        {hasPhoto ? (
           <Avatar className="h-11 w-11 ring-1 ring-border shadow-sm">
             <AvatarImage src={avatarUrl} alt={name} className="object-cover" />
             <AvatarFallback>
@@ -76,19 +75,14 @@ const ProfilePreview = ({
             </AvatarFallback>
           </Avatar>
         ) : (
-          <GradientAvatar
-            id={userId}
-            name={name}
-            size={44}
-            className={withPhoto ? "" : "opacity-50"}
-          />
+          <GradientAvatar id={userId} name={name} size={44} className="opacity-60" />
         )}
         <div className="min-w-0">
-          <p className={`font-bold text-sm truncate ${withPhoto ? "text-foreground" : "text-muted-foreground"}`}>
+          <p className={`font-bold text-sm truncate ${hasPhoto ? "text-foreground" : "text-muted-foreground"}`}>
             {firstName}
           </p>
           {city && (
-            <p className={`flex items-center gap-1 text-[11px] truncate ${withPhoto ? "text-muted-foreground" : "text-muted-foreground/50"}`}>
+            <p className={`flex items-center gap-1 text-[11px] truncate ${hasPhoto ? "text-muted-foreground" : "text-muted-foreground/50"}`}>
               <MapPin className="h-3 w-3 shrink-0" />
               {city}
             </p>
@@ -199,21 +193,13 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
           </p>
         </div>
 
-        {/* Profile preview comparison — shows what others see */}
-        <div className="flex items-center gap-3 w-full justify-center py-1">
-          <ProfilePreview
-            name={name}
-            city={city}
-            avatarUrl={null}
-            userId={userId}
-            withPhoto={false}
-          />
-          <ProfilePreview
+        {/* Profile preview — shows current state, transforms after upload */}
+        <div className="flex justify-center w-full py-1">
+          <ProfileCard
             name={name}
             city={city}
             avatarUrl={avatarUrl}
             userId={userId}
-            withPhoto={true}
           />
         </div>
 
