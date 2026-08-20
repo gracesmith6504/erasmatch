@@ -19,4 +19,17 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Split heavy vendor libraries into separate cacheable chunks
+          "vendor-react": ["react", "react-dom", "react-router-dom"],
+          "vendor-supabase": ["@supabase/supabase-js"],
+          "vendor-query": ["@tanstack/react-query"],
+          "vendor-ui": ["date-fns", "lucide-react"],
+        },
+      },
+    },
+  },
 }));

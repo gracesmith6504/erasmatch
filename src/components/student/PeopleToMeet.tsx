@@ -1,8 +1,7 @@
 import React, { useState, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Profile } from "@/types";
-import { supabase } from "@/integrations/supabase/client";
 import { useUniversitiesCache } from "@/hooks/useUniversitiesCache";
+import { useDirectMessages } from "@/hooks/useDirectMessages";
 import { X, ArrowRight } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { transformAvatarUrl } from "@/lib/avatar";
@@ -59,23 +58,17 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
     initialNote: string;
   } | null>(null);
 
-  const { data: messagedIds = [], isLoading: messagesLoading } = useQuery({
-    queryKey: ["messaged-users", currentUserId],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("messages")
-        .select("sender_id, receiver_id")
-        .or(`sender_id.eq.${currentUserId},receiver_id.eq.${currentUserId}`);
-      if (!data) return [];
-      const ids = new Set<string>();
-      data.forEach((m) => {
-        if (m.sender_id !== currentUserId) ids.add(m.sender_id);
-        if (m.receiver_id !== currentUserId) ids.add(m.receiver_id);
-      });
-      return Array.from(ids);
-    },
-    staleTime: 60_000,
-  });
+  // Re-use useDirectMessages so we share the cache and error handling
+  const { data: rawMessages = [], isLoading: messagesLoading } = useDirectMessages(currentUserId);
+
+  const messagedIds = useMemo(() => {
+    const ids = new Set<string>();
+    rawMessages.forEach((m: { sender_id: string; receiver_id: string }) => {
+      if (m.sender_id !== currentUserId) ids.add(m.sender_id);
+      if (m.receiver_id !== currentUserId) ids.add(m.receiver_id);
+    });
+    return Array.from(ids);
+  }, [rawMessages, currentUserId]);
 
   const { universities, loading: countriesLoading } = useUniversitiesCache();
   const uniCountryMap = useMemo(() => {

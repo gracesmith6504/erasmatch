@@ -26,20 +26,28 @@ export function useDirectMessages(currentUserId: string | null) {
       return (data ?? []) as Message[];
     },
     enabled: !!currentUserId,
+    staleTime: 30_000, // 30s — realtime subscription handles new messages
   });
 
   // Subscribe to realtime changes and invalidate the cache
   useEffect(() => {
     if (!currentUserId) return;
 
+    const invalidate = () => {
+      queryClient.invalidateQueries({ queryKey: ["direct-messages", currentUserId] });
+    };
+
     const channel = supabase
       .channel("direct-messages-list")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "messages", filter: `receiver_id=eq.${currentUserId}` },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ["direct-messages", currentUserId] });
-        }
+        invalidate
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "messages", filter: `sender_id=eq.${currentUserId}` },
+        invalidate
       )
       .subscribe();
 
