@@ -10,13 +10,27 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-function escapeHtml(str: string): string {
+function esc(str: string): string {
   return str
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;')
+}
+
+/** Truncate to a character limit, breaking at the last word boundary. */
+function truncate(text: string, limit: number): { preview: string; truncated: boolean } {
+  if (text.length <= limit) return { preview: text, truncated: false }
+  // Find the last space before the limit so we don't cut mid-word
+  const cut = text.lastIndexOf(' ', limit)
+  const end = cut > limit * 0.4 ? cut : limit // Fall back if no good break point
+  return { preview: text.slice(0, end), truncated: true }
+}
+
+/** First name only — "Grace Smith" → "Grace" */
+function firstName(fullName: string): string {
+  return fullName.split(' ')[0] || fullName
 }
 
 serve(async (req) => {
@@ -55,21 +69,25 @@ serve(async (req) => {
     }
     const senderId = user.id
 
-    // ── Look up sender name from database (never trust the client) ──
+    // ── Look up sender profile (name, avatar, city, course) ──
     const { data: senderProfile } = await supabase
       .from('profiles')
-      .select('name')
+      .select('name, avatar_url, city, course')
       .eq('id', senderId)
       .single()
 
-    // Strip CRLF to prevent email header injection in the subject line
     const rawSenderName = (senderProfile?.name || 'Someone').replace(/[\r\n]/g, '')
-    const senderName = escapeHtml(rawSenderName)
+    const senderFirst = firstName(rawSenderName)
+    const safeSenderName = esc(rawSenderName)
+    const safeSenderFirst = esc(senderFirst)
+    const senderCity = senderProfile?.city ?? null
+    const senderCourse = senderProfile?.course ?? null
+    const senderAvatar = senderProfile?.avatar_url ?? null
 
-    // ── Look up receiver email and notification preference ──
+    // ── Look up receiver email, notification preference, and name ──
     const { data: receiverProfile } = await supabase
       .from('profiles')
-      .select('email, email_notifications')
+      .select('email, email_notifications, name')
       .eq('id', receiverId)
       .single()
 
@@ -86,6 +104,8 @@ serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
+
+    const receiverFirst = firstName(receiverProfile.name || '')
 
     // ── Rate limit: 1 email per sender→receiver pair every 15 minutes ──
     const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000).toISOString()
@@ -120,20 +140,164 @@ serve(async (req) => {
       })
     }
 
-    const messageContent = escapeHtml(message.content || '')
+    // ── Truncate message to 60 chars to create curiosity gap ──
+    const rawContent = message.content || ''
+    const { preview, truncated } = truncate(rawContent, 60)
+    const safePreview = esc(preview)
+    const ellipsis = truncated ? '…' : ''
 
-    // ── Send the email with server-verified data only ──
+    // Subject line: personal, short — "Sarah sent you a message 💬"
+    // Strip CRLF to prevent header injection
+    const subject = `${senderFirst} sent you a message 💬`.replace(/[\r\n]+/g, ' ')
+
+    // Preheader: first words of the message for email client preview
+    const preheaderText = esc(rawContent.slice(0, 100).replace(/[\r\n]+/g, ' '))
+
+    // Build sender context line: "📍 Barcelona · 📚 Business Administration"
+    const contextParts: string[] = []
+    if (senderCity) contextParts.push(`📍 ${esc(senderCity)}`)
+    if (senderCourse) contextParts.push(`📚 ${esc(senderCourse)}`)
+    const contextLine = contextParts.join(' &nbsp;·&nbsp; ')
+
+    // Reply CTA URL with tracking
+    const replyUrl = 'https://www.erasmatch.com/messages?utm_source=erasmatch&utm_medium=email&utm_campaign=message_notification&utm_content=reply_cta'
+
+    // Avatar HTML — show sender's photo if available, otherwise a gradient initial
+    const initial = senderFirst.charAt(0).toUpperCase()
+    const avatarHtml = senderAvatar
+      ? `<img src="${esc(senderAvatar)}" alt="${safeSenderFirst}" width="56" height="56" style="width:56px;height:56px;border-radius:50%;object-fit:cover;display:block;" />`
+      : `<div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#22C55E);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#ffffff;"><!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" style="width:56px;height:56px;" arcsize="50%" fillcolor="#3B82F6"><v:textbox inset="0,0,0,0" style="mso-fit-shape-to-text:true"><center style="font-size:24px;font-weight:700;color:#ffffff;">${initial}</center></v:textbox></v:roundrect><![endif]--><!--[if !mso]><!--><table cellpadding="0" cellspacing="0" border="0" style="width:56px;height:56px;"><tr><td align="center" valign="middle" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#22C55E);font-size:24px;font-weight:700;color:#ffffff;">${initial}</td></tr></table><!--<![endif]--></div>`
+
+    // ── Send the redesigned email ──
     const emailResponse = await resend.emails.send({
       from: "ErasMatch <team@erasmatch.com>",
       to: [to],
-      subject: `You have new messages from ${rawSenderName} on ErasMatch`,
+      reply_to: "erasmatchbusiness@gmail.com",
+      subject,
+      headers: {
+        'X-Entity-Ref-ID': messageId,
+      },
+      tags: [
+        { name: 'email_type', value: 'message_notification' },
+        { name: 'sender_city', value: senderCity || 'unknown' },
+      ],
       html: `
-        <h2>You have a new message from ${senderName}</h2>
-        <p style="margin: 16px 0; padding: 12px; background-color: #f5f5f5; border-radius: 4px;">
-          ${messageContent}
-        </p>
-        <a href="https://www.erasmatch.com/messages" style="display:inline-block;background-color:#4F46E5;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;margin:16px 0;">Reply on ErasMatch →</a>
-        <p style="color:#9CA3AF;font-size:12px;margin-top:24px;">You received this because you have an ErasMatch account. <a href="https://www.erasmatch.com/profile" style="color:#9CA3AF;">Unsubscribe from email notifications</a></p>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--[if !mso]><!-->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!--<![endif]-->
+  <!-- Preheader text (hidden, shown in email client preview) -->
+  <span style="display:none;font-size:1px;color:#f4f5f7;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">${preheaderText}</span>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f5f7;padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background-color:#ffffff;border-radius:16px;overflow:hidden;">
+
+          <!-- Navy header — compact for notifications -->
+          <tr>
+            <td style="background-color:#1e293b;padding:24px 36px;text-align:center;">
+              <h1 style="margin:0;font-size:22px;font-weight:800;letter-spacing:-0.3px;">
+                <span style="color:#3B82F6;">Eras</span><span style="color:#22C55E;">Match</span>
+              </h1>
+            </td>
+          </tr>
+
+          <!-- Greeting -->
+          <tr>
+            <td style="padding:28px 36px 0 36px;">
+              <p style="margin:0;font-size:16px;line-height:1.5;color:#374151;">
+                ${receiverFirst ? `Hey ${esc(receiverFirst)}` : 'Hey'} 👋
+              </p>
+            </td>
+          </tr>
+
+          <!-- Sender card -->
+          <tr>
+            <td style="padding:20px 36px 0 36px;">
+              <table cellpadding="0" cellspacing="0" width="100%" style="background-color:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;">
+                <tr>
+                  <td style="padding:20px;">
+                    <table cellpadding="0" cellspacing="0" width="100%">
+                      <tr>
+                        <!-- Avatar -->
+                        <td width="56" valign="top" style="padding-right:16px;">
+                          ${avatarHtml}
+                        </td>
+                        <!-- Name + context -->
+                        <td valign="top">
+                          <p style="margin:0 0 2px 0;font-size:17px;font-weight:700;color:#111827;">
+                            ${safeSenderName}
+                          </p>
+                          ${contextLine ? `<p style="margin:0;font-size:13px;color:#6B7280;line-height:1.4;">${contextLine}</p>` : ''}
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Message bubble -->
+                    <table cellpadding="0" cellspacing="0" width="100%" style="margin-top:16px;">
+                      <tr>
+                        <td style="background-color:#ffffff;border-radius:12px;border:1px solid #e5e7eb;padding:14px 16px;">
+                          <p style="margin:0;font-size:15px;line-height:1.5;color:#374151;">
+                            "${safePreview}${ellipsis}"
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- CTA button -->
+          <tr>
+            <td align="center" style="padding:24px 36px 8px 36px;">
+              <a href="${replyUrl}" style="display:inline-block;background-color:#22C55E;color:#ffffff;padding:14px 36px;border-radius:50px;text-decoration:none;font-weight:700;font-size:16px;letter-spacing:0.2px;">
+                Reply to ${safeSenderFirst} &rarr;
+              </a>
+            </td>
+          </tr>
+
+          <!-- Gentle nudge -->
+          <tr>
+            <td align="center" style="padding:8px 36px 28px 36px;">
+              <p style="margin:0;font-size:13px;color:#9CA3AF;">
+                Don't leave them hanging — say hi back!
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:20px 36px 24px 36px;border-top:1px solid #e5e7eb;">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center">
+                    <p style="margin:0 0 6px 0;font-size:13px;font-weight:600;color:#9CA3AF;">
+                      <span style="color:#3B82F6;">Eras</span><span style="color:#22C55E;">Match</span>
+                    </p>
+                    <p style="margin:0;font-size:11px;color:#D1D5DB;">
+                      You received this because someone messaged you on ErasMatch.
+                      <a href="https://www.erasmatch.com/profile?utm_source=erasmatch&utm_medium=email&utm_campaign=message_notification&utm_content=email_prefs" style="color:#D1D5DB;text-decoration:underline;">Email preferences</a>
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
       `,
     })
 
