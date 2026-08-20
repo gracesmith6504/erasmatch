@@ -1,9 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+
+/** Module-level counter — survives component remounts and ErrorBoundary recovery. */
+let channelSeq = 0;
 
 export function useUnreadMessageCount(currentUserId: string | null) {
   const [count, setCount] = useState(0);
-  const channelRef = useRef(0);
 
   useEffect(() => {
     if (!currentUserId) {
@@ -11,14 +13,13 @@ export function useUnreadMessageCount(currentUserId: string | null) {
       return;
     }
 
-    // Unique channel name per effect invocation prevents the
-    // "cannot add callbacks after subscribe()" crash that occurs when
-    // React remounts faster than removeChannel finishes unsubscribing.
-    const channelName = `unread-messages-count-${currentUserId}-${++channelRef.current}`;
+    // Module-level counter ensures truly unique channel names even after
+    // ErrorBoundary remounts (which reset useRef to initial value).
+    const channelName = `unread-msg-count-${currentUserId}-${++channelSeq}`;
+
+    let cancelled = false;
 
     const fetchCount = async () => {
-      // Get messages where user is receiver and hasn't read them
-      // read_by can be null or an array not containing the user
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -33,22 +34,36 @@ export function useUnreadMessageCount(currentUserId: string | null) {
         console.error("Error fetching unread count:", error);
         return;
       }
-      if (unread !== null) setCount(unread);
+      if (!cancelled && unread !== null) setCount(unread);
     };
 
     fetchCount();
 
-    const channel = supabase
-      .channel(channelName)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "messages", filter: `receiver_id=eq.${currentUserId}` },
-        () => fetchCount()
-      )
-      .subscribe();
+    // Realtime subscription — wrapped in try-catch so a Supabase client
+    // error (e.g. "cannot add callbacks after subscribe()") degrades to
+    // polling instead of crashing the entire app via ErrorBoundary.
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    let pollTimer: ReturnType<typeof setInterval> | null = null;
+
+    try {
+      channel = supabase
+        .channel(channelName)
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "messages", filter: `receiver_id=eq.${currentUserId}` },
+          () => fetchCount()
+        )
+        .subscribe();
+    } catch (err) {
+      console.warn("Realtime subscription failed, falling back to polling:", err);
+      // Poll every 30s as fallback when realtime isn't available
+      pollTimer = setInterval(fetchCount, 30_000);
+    }
 
     return () => {
-      supabase.removeChannel(channel);
+      cancelled = true;
+      if (channel) supabase.removeChannel(channel);
+      if (pollTimer) clearInterval(pollTimer);
     };
   }, [currentUserId]);
 
