@@ -14,6 +14,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import type { ProfileUpdate } from "../types";
 
 type UniRow = { id: number; name: string; city: string | null; country: string | null; score?: number };
 
@@ -29,7 +30,7 @@ type DestinationUniversityStepProps = {
   initialCity?: string;
   onNext: () => void;
   onBack: () => void;
-  onUpdateProfile: (data: any) => Promise<boolean>;
+  onUpdateProfile: (data: ProfileUpdate) => Promise<boolean>;
 };
 
 export const DestinationUniversityStep = ({

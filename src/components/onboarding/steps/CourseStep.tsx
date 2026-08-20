@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, BookOpen } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import type { ProfileUpdate } from "../types";
 
 type CourseStepProps = {
   initialValue: string | null;
   onNext: () => void;
   onBack: () => void;
-  onUpdateProfile: (data: any) => Promise<boolean>;
+  onUpdateProfile: (data: ProfileUpdate) => Promise<boolean>;
 };
 
 export const CourseStep = ({

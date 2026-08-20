@@ -4,12 +4,13 @@ import { Button } from "@/components/ui/button";
 import { PERSONALITY_TAG_GROUPS } from "@/components/profile/constants";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Check } from "lucide-react";
+import type { ProfileUpdate } from "../types";
 
 type InterestsStepProps = {
   initialValue: string[];
   onComplete: () => void;
   onBack: () => void;
-  onUpdateProfile: (data: any) => Promise<boolean>;
+  onUpdateProfile: (data: ProfileUpdate) => Promise<boolean>;
 };
 
 export const InterestsStep = ({

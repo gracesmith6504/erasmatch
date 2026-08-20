@@ -9,9 +9,7 @@ import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import GradientAvatar from "@/components/ui/GradientAvatar";
-import type { Database } from "@/integrations/supabase/types";
-
-type ProfileUpdate = Partial<Database["public"]["Tables"]["profiles"]["Update"]>;
+import type { ProfileUpdate } from "../types";
 
 type PhotoStepProps = {
   onNext: () => void;
@@ -164,6 +162,12 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
       if (!success) throw new Error("Failed to save profile photo");
 
       setAvatarUrl(publicUrlData.publicUrl);
+
+      window.posthog?.capture("photo_step_uploaded", {
+        city: city ?? undefined,
+        file_size_kb: Math.round(compressed.size / 1024),
+      });
+
       toast.success("Photo uploaded!");
       setTimeout(() => onNext(), 600);
     } catch (error: any) {
@@ -286,7 +290,12 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
         {/* Delayed skip — fades in after 4 seconds */}
         <button
           type="button"
-          onClick={onNext}
+          onClick={() => {
+            window.posthog?.capture("photo_step_skipped", {
+              city: city ?? undefined,
+            });
+            onNext();
+          }}
           disabled={!showSkip}
           className={`text-[10px] text-muted-foreground/40 cursor-pointer select-none transition-opacity duration-700 bg-transparent border-none p-0 ${
             showSkip ? "opacity-100" : "opacity-0 pointer-events-none"

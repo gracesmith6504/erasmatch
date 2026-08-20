@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar, Plane } from "lucide-react";
 import { DateField } from "@/components/ui/DateField";
 import { formatSemester } from "@/lib/semesterParsing";
+import type { ProfileUpdate } from "../types";
 
 type ExchangeDetailsStepProps = {
   initialSemester: string | null;
@@ -11,7 +12,7 @@ type ExchangeDetailsStepProps = {
   initialDepartureDate: string | null;
   onNext: () => void;
   onBack: () => void;
-  onUpdateProfile: (data: any) => Promise<boolean>;
+  onUpdateProfile: (data: ProfileUpdate) => Promise<boolean>;
 };
 
 export const ExchangeDetailsStep = ({

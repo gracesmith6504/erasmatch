@@ -82,13 +82,20 @@ serve(async (req) => {
       ? `Find students in ${city}`
       : 'Find students near you'
 
-    const ctaUrl = 'https://www.erasmatch.com/students'
+    const ctaUrl = 'https://www.erasmatch.com/students?utm_source=erasmatch&utm_medium=email&utm_campaign=welcome'
 
     const emailResponse = await resend.emails.send({
       from: "ErasMatch <team@erasmatch.com>",
       to: [record.email],
       reply_to: "erasmatchbusiness@gmail.com",
       subject,
+      headers: {
+        'X-Entity-Ref-ID': record.id,
+      },
+      tags: [
+        { name: 'email_type', value: 'welcome' },
+        { name: 'city', value: rawCity || 'unknown' },
+      ],
       html: `
 <!DOCTYPE html>
 <html>
@@ -200,11 +207,11 @@ serve(async (req) => {
                       <span style="color:#3B82F6;">Eras</span><span style="color:#22C55E;">Match</span>
                     </p>
                     <p style="margin:0 0 4px 0;font-size:12px;color:#9CA3AF;">
-                      <a href="https://www.erasmatch.com" style="color:#9CA3AF;text-decoration:none;">erasmatch.com</a>
+                      <a href="https://www.erasmatch.com?utm_source=erasmatch&utm_medium=email&utm_campaign=welcome&utm_content=footer" style="color:#9CA3AF;text-decoration:none;">erasmatch.com</a>
                     </p>
                     <p style="margin:0;font-size:11px;color:#D1D5DB;">
                       You received this because you signed up for ErasMatch.
-                      <a href="https://www.erasmatch.com/profile" style="color:#D1D5DB;text-decoration:underline;">Email preferences</a>
+                      <a href="https://www.erasmatch.com/profile?utm_source=erasmatch&utm_medium=email&utm_campaign=welcome&utm_content=email_prefs" style="color:#D1D5DB;text-decoration:underline;">Email preferences</a>
                     </p>
                   </td>
                 </tr>

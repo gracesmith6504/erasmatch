@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SEMESTER_OPTIONS } from "@/components/profile/constants";
+import type { ProfileUpdate } from "../types";
 
 type SemesterStepProps = {
   initialValue: string | null;
   onNext: () => void;
   onBack: () => void;
-  onUpdateProfile: (data: any) => Promise<boolean>;
+  onUpdateProfile: (data: ProfileUpdate) => Promise<boolean>;
 };
 
 export const SemesterStep = ({
