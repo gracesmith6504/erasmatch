@@ -1,14 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export function useUnreadMessageCount(currentUserId: string | null) {
   const [count, setCount] = useState(0);
+  const channelRef = useRef(0);
 
   useEffect(() => {
     if (!currentUserId) {
       setCount(0);
       return;
     }
+
+    // Unique channel name per effect invocation prevents the
+    // "cannot add callbacks after subscribe()" crash that occurs when
+    // React remounts faster than removeChannel finishes unsubscribing.
+    const channelName = `unread-messages-count-${currentUserId}-${++channelRef.current}`;
 
     const fetchCount = async () => {
       // Get messages where user is receiver and hasn't read them
@@ -33,7 +39,7 @@ export function useUnreadMessageCount(currentUserId: string | null) {
     fetchCount();
 
     const channel = supabase
-      .channel("unread-messages-count")
+      .channel(channelName)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "messages", filter: `receiver_id=eq.${currentUserId}` },

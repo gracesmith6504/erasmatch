@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Message } from "@/types";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 /**
  * Lazily fetches direct messages for the current user.
@@ -9,6 +9,7 @@ import { useEffect } from "react";
  */
 export function useDirectMessages(currentUserId: string | null) {
   const queryClient = useQueryClient();
+  const channelRef = useRef(0);
 
   const query = useQuery<Message[]>({
     queryKey: ["direct-messages", currentUserId],
@@ -33,12 +34,16 @@ export function useDirectMessages(currentUserId: string | null) {
   useEffect(() => {
     if (!currentUserId) return;
 
+    // Unique channel name per effect invocation prevents the
+    // "cannot add callbacks after subscribe()" crash on fast remounts.
+    const channelName = `direct-messages-list-${currentUserId}-${++channelRef.current}`;
+
     const invalidate = () => {
       queryClient.invalidateQueries({ queryKey: ["direct-messages", currentUserId] });
     };
 
     const channel = supabase
-      .channel("direct-messages-list")
+      .channel(channelName)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "messages", filter: `receiver_id=eq.${currentUserId}` },

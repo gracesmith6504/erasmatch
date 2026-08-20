@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export interface Notification {
@@ -20,6 +20,7 @@ export interface Notification {
 export function useNotifications(currentUserId: string | null) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const channelRef = useRef(0);
 
   const fetchNotifications = useCallback(async () => {
     if (!currentUserId) return;
@@ -102,8 +103,12 @@ export function useNotifications(currentUserId: string | null) {
 
     fetchNotifications();
 
+    // Unique channel name per effect invocation prevents the
+    // "cannot add callbacks after subscribe()" crash on fast remounts.
+    const channelName = `notifications-realtime-${currentUserId}-${++channelRef.current}`;
+
     const channel = supabase
-      .channel("notifications-realtime")
+      .channel(channelName)
       .on(
         "postgres_changes",
         {
