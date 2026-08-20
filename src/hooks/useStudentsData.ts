@@ -2,7 +2,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { Profile } from "@/types";
 import { useBlockedUsers } from "@/hooks/useBlockedUsers";
-import { useUniversitiesCache } from "@/hooks/useUniversitiesCache";
+import { useProfileUniversities } from "@/hooks/useProfileUniversities";
 import {
   parseSemester,
   getArrivalSeason,
@@ -31,7 +31,9 @@ export const useStudentsData = (initialProfiles: Profile[], currentUserId: strin
   );
   const [overlapOnly, setOverlapOnly] = useState(initialFilters?.overlap || false);
 
-  const { universities, loading: uniLoading } = useUniversitiesCache();
+  // Only fetch the ~300 universities that profiles actually reference,
+  // instead of loading all 12,000+ rows via useUniversitiesCache.
+  const { data: universities = [] } = useProfileUniversities(initialProfiles);
   const [loading, setLoading] = useState(true);
 
   const universityCityMap = useMemo(() => {

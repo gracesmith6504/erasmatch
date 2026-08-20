@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from "react";
 import { Profile } from "@/types";
-import { useUniversitiesCache } from "@/hooks/useUniversitiesCache";
 import { useDirectMessages } from "@/hooks/useDirectMessages";
 import { X, ArrowRight } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -19,6 +18,8 @@ interface PeopleToMeetProps {
   currentProfile: Profile;
   fullPage?: boolean;
   onShowAll?: () => void;
+  /** Pre-built map from useStudentsData — avoids a second 12k-row university fetch. */
+  universityCountryMap?: Record<string, string>;
 }
 
 const STORAGE_KEY = "peopleToMeetDismissed";
@@ -48,6 +49,7 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
   currentProfile,
   fullPage = false,
   onShowAll,
+  universityCountryMap,
 }) => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -70,14 +72,9 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
     return Array.from(ids);
   }, [rawMessages, currentUserId]);
 
-  const { universities, loading: countriesLoading } = useUniversitiesCache();
-  const uniCountryMap = useMemo(() => {
-    const map: Record<string, string> = {};
-    for (const u of universities) {
-      if (u.name && u.country) map[u.name] = u.country;
-    }
-    return map;
-  }, [universities]);
+  // Use the pre-built map from the parent (useStudentsData) instead of
+  // independently fetching all 12k+ universities.
+  const uniCountryMap = universityCountryMap ?? {};
 
   const { scored, destinationName, destinationKind } = useMemo(() => {
     const myCity = currentProfile.city;
@@ -137,7 +134,7 @@ const PeopleToMeet: React.FC<PeopleToMeetProps> = ({
 
   const effectiveFullPage = fullPage && scored.length >= 4;
 
-  if (dismissed || messagesLoading || countriesLoading || scored.length === 0) return null;
+  if (dismissed || messagesLoading || scored.length === 0) return null;
 
   const handleDismiss = () => {
     setDismissed(true);

@@ -243,6 +243,7 @@ const Students = ({ currentUserId }: StudentsProps) => {
           currentProfile={currentProfile}
           fullPage={showFullRecommendations}
           onShowAll={handleShowAll}
+          universityCountryMap={universityCountryMap}
         />
       )}
       
