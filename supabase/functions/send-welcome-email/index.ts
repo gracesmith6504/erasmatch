@@ -24,11 +24,32 @@ serve(async (req) => {
   }
 
   try {
-    // Only allow calls from the service role (database webhook)
+    // Only allow calls from the service role (database webhook).
+    // Instead of comparing the full JWT string (which breaks if the env var
+    // drifts from the vault copy), decode the JWT payload and verify the role
+    // claim.  Supabase edge runtime has already validated the JWT signature
+    // when verify_jwt is true.
     const authHeader = req.headers.get('Authorization')
-    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-    if (!authHeader || authHeader !== `Bearer ${serviceRoleKey}`) {
+    if (!authHeader?.startsWith('Bearer ')) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+    try {
+      const token = authHeader.slice(7)
+      const payloadB64 = token.split('.')[1]
+      // base64url → base64
+      const b64 = payloadB64.replace(/-/g, '+').replace(/_/g, '/')
+      const payload = JSON.parse(atob(b64))
+      if (payload.role !== 'service_role') {
+        return new Response(JSON.stringify({ error: 'Forbidden: service_role required' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+    } catch {
+      return new Response(JSON.stringify({ error: 'Unauthorized: invalid token' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
