@@ -1,5 +1,8 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+
+/** Module-level counter — survives component remounts and ErrorBoundary recovery. */
+let channelSeq = 0;
 
 export interface Notification {
   id: string;
@@ -20,7 +23,6 @@ export interface Notification {
 export function useNotifications(currentUserId: string | null) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const channelRef = useRef(0);
 
   const fetchNotifications = useCallback(async () => {
     if (!currentUserId) return;
@@ -103,26 +105,30 @@ export function useNotifications(currentUserId: string | null) {
 
     fetchNotifications();
 
-    // Unique channel name per effect invocation prevents the
-    // "cannot add callbacks after subscribe()" crash on fast remounts.
-    const channelName = `notifications-realtime-${currentUserId}-${++channelRef.current}`;
+    const channelName = `notif-rt-${currentUserId}-${++channelSeq}`;
 
-    const channel = supabase
-      .channel(channelName)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "notifications",
-          filter: `user_id=eq.${currentUserId}`,
-        },
-        () => fetchNotifications()
-      )
-      .subscribe();
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+
+    try {
+      channel = supabase
+        .channel(channelName)
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "notifications",
+            filter: `user_id=eq.${currentUserId}`,
+          },
+          () => fetchNotifications()
+        )
+        .subscribe();
+    } catch (err) {
+      console.warn("Notifications realtime subscription failed:", err);
+    }
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) supabase.removeChannel(channel);
     };
   }, [currentUserId, fetchNotifications]);
 

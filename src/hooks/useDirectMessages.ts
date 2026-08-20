@@ -1,7 +1,10 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Message } from "@/types";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
+
+/** Module-level counter — survives component remounts and ErrorBoundary recovery. */
+let channelSeq = 0;
 
 /**
  * Lazily fetches direct messages for the current user.
@@ -9,7 +12,6 @@ import { useEffect, useRef } from "react";
  */
 export function useDirectMessages(currentUserId: string | null) {
   const queryClient = useQueryClient();
-  const channelRef = useRef(0);
 
   const query = useQuery<Message[]>({
     queryKey: ["direct-messages", currentUserId],
@@ -34,30 +36,34 @@ export function useDirectMessages(currentUserId: string | null) {
   useEffect(() => {
     if (!currentUserId) return;
 
-    // Unique channel name per effect invocation prevents the
-    // "cannot add callbacks after subscribe()" crash on fast remounts.
-    const channelName = `direct-messages-list-${currentUserId}-${++channelRef.current}`;
+    const channelName = `dm-list-${currentUserId}-${++channelSeq}`;
 
     const invalidate = () => {
       queryClient.invalidateQueries({ queryKey: ["direct-messages", currentUserId] });
     };
 
-    const channel = supabase
-      .channel(channelName)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "messages", filter: `receiver_id=eq.${currentUserId}` },
-        invalidate
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "messages", filter: `sender_id=eq.${currentUserId}` },
-        invalidate
-      )
-      .subscribe();
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+
+    try {
+      channel = supabase
+        .channel(channelName)
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "messages", filter: `receiver_id=eq.${currentUserId}` },
+          invalidate
+        )
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "messages", filter: `sender_id=eq.${currentUserId}` },
+          invalidate
+        )
+        .subscribe();
+    } catch (err) {
+      console.warn("DM realtime subscription failed:", err);
+    }
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) supabase.removeChannel(channel);
     };
   }, [currentUserId, queryClient]);
 
