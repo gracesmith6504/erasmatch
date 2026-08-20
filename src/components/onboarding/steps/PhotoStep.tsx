@@ -9,11 +9,14 @@ import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import GradientAvatar from "@/components/ui/GradientAvatar";
+import type { Database } from "@/integrations/supabase/types";
+
+type ProfileUpdate = Partial<Database["public"]["Tables"]["profiles"]["Update"]>;
 
 type PhotoStepProps = {
   onNext: () => void;
   onBack: () => void;
-  onUpdateProfile: (data: any) => Promise<boolean>;
+  onUpdateProfile: (data: ProfileUpdate) => Promise<boolean>;
 };
 
 // Mini preview of how the user's profile card appears to other students.
@@ -163,13 +166,12 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
 
       if (!publicUrlData.publicUrl) throw new Error("Failed to get public URL");
 
-      setAvatarUrl(publicUrlData.publicUrl);
-
       const success = await onUpdateProfile({ avatar_url: publicUrlData.publicUrl });
-      if (success) {
-        toast.success("Photo uploaded!");
-        setTimeout(() => onNext(), 600);
-      }
+      if (!success) throw new Error("Failed to save profile photo");
+
+      setAvatarUrl(publicUrlData.publicUrl);
+      toast.success("Photo uploaded!");
+      setTimeout(() => onNext(), 600);
     } catch (error: any) {
       console.error("Error uploading avatar:", error);
       toast.error(error.message || "Failed to upload image");
@@ -296,17 +298,16 @@ export const PhotoStep = ({ onNext, onBack, onUpdateProfile }: PhotoStepProps) =
         )}
 
         {/* Delayed skip — fades in after 4 seconds */}
-        <span
+        <button
+          type="button"
           onClick={onNext}
-          className={`text-[10px] text-muted-foreground/40 cursor-pointer select-none transition-opacity duration-700 ${
+          disabled={!showSkip}
+          className={`text-[10px] text-muted-foreground/40 cursor-pointer select-none transition-opacity duration-700 bg-transparent border-none p-0 ${
             showSkip ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
-          role="button"
-          tabIndex={showSkip ? 0 : -1}
-          onKeyDown={(e) => e.key === "Enter" && onNext()}
         >
           skip
-        </span>
+        </button>
       </div>
     </OnboardingLayout>
   );
