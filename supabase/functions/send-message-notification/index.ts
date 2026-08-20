@@ -257,19 +257,10 @@ serve(async (req) => {
 
           <!-- CTA button -->
           <tr>
-            <td align="center" style="padding:24px 36px 8px 36px;">
+            <td align="center" style="padding:24px 36px 28px 36px;">
               <a href="${replyUrl}" style="display:inline-block;background-color:#22C55E;color:#ffffff;padding:14px 36px;border-radius:50px;text-decoration:none;font-weight:700;font-size:16px;letter-spacing:0.2px;">
                 Reply to ${safeSenderFirst} &rarr;
               </a>
-            </td>
-          </tr>
-
-          <!-- Gentle nudge -->
-          <tr>
-            <td align="center" style="padding:8px 36px 28px 36px;">
-              <p style="margin:0;font-size:13px;color:#9CA3AF;">
-                Don't leave them hanging — say hi back!
-              </p>
             </td>
           </tr>
 
