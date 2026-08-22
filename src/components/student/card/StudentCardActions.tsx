@@ -4,6 +4,7 @@ import { UserPlus } from "lucide-react";
 import ConnectModal from "@/components/student/ConnectModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { isPastSemester } from "@/lib/semesterParsing";
+import type { Profile } from "@/types";
 
 function buildAlumniNote(city?: string | null, university?: string | null) {
   if (city) return `Hey! Saw you went to ${city} — any tips?`;
@@ -19,6 +20,8 @@ interface StudentCardActionsProps {
   studentAvatarUrl?: string | null;
   studentSemester?: string | null;
   studentLastActiveAt?: string | null;
+  /** Full student profile for contextual conversation starters. */
+  studentProfile?: Profile;
   initialNote?: string;
 }
 
@@ -30,6 +33,7 @@ const StudentCardActions: React.FC<StudentCardActionsProps> = ({
   studentAvatarUrl,
   studentSemester,
   studentLastActiveAt,
+  studentProfile,
   initialNote,
 }) => {
   const { currentUserProfile } = useAuth();
@@ -76,6 +80,7 @@ const StudentCardActions: React.FC<StudentCardActionsProps> = ({
         studentLastActiveAt={studentLastActiveAt}
         sharedCity={sharedCity}
         sharedUniversity={sharedUniversity}
+        studentProfile={studentProfile}
         initialNote={initialNote ?? (isPastSemester(studentSemester) ? buildAlumniNote(studentCity, studentUniversity) : undefined)}
       />
     </>

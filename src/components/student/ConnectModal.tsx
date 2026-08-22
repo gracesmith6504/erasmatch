@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Dialog,
@@ -17,8 +17,102 @@ import InviteFriendModal from "@/components/share/InviteFriendModal";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { transformAvatarUrl } from "@/lib/avatar";
 import { cn } from "@/lib/utils";
+import type { Profile } from "@/types";
 
 const MAX_CHARS = 300;
+
+/** Maximum number of quick-reply chips to display. */
+const MAX_CHIPS = 3;
+
+// ─── contextual quick-reply builder ─────────────────────────────────
+// Compares the current user's profile with the target student's profile
+// and returns up to MAX_CHIPS conversation starters, ordered from most
+// contextual to most generic. Shared fields make better openers because
+// they give the recipient something concrete to reply to.
+
+function buildContextualReplies(
+  me: Profile | null | undefined,
+  them: Partial<Profile> | null | undefined,
+  sharedCity: string | null | undefined,
+  sharedUniversity: string | null | undefined,
+): string[] {
+  const chips: string[] = [];
+
+  if (me && them) {
+    // 1. Same course — strongest academic connection
+    if (me.course && them.course && me.course === them.course) {
+      chips.push(`We're both studying ${me.course}! What modules are you picking?`);
+    }
+
+    // 2. Same home university — personal "small world" connection
+    if (
+      me.home_university &&
+      them.home_university &&
+      me.home_university === them.home_university
+    ) {
+      chips.push(`No way, I'm from ${me.home_university} too! Small world 😄`);
+    }
+
+    // 3. Arrival dates within 14 days — welcome-week buddy
+    if (me.arrival_date && them.arrival_date) {
+      const gap = Math.abs(
+        differenceInDays(new Date(me.arrival_date), new Date(them.arrival_date)),
+      );
+      if (gap <= 14) {
+        chips.push(
+          "Looks like we arrive around the same time, want to explore welcome week together? 🎉",
+        );
+      }
+    }
+
+    // 4. Both seeking flatmates in the same city
+    if (
+      sharedCity &&
+      me.looking_for?.includes("flatmate") &&
+      them.looking_for?.includes("flatmate")
+    ) {
+      chips.push(`Also looking for a place in ${sharedCity}, found anything yet?`);
+    }
+
+    // 5. Both seeking a travel buddy
+    if (
+      me.looking_for?.includes("travel-buddy") &&
+      them.looking_for?.includes("travel-buddy")
+    ) {
+      chips.push("Looking for a travel buddy too! Any trips planned yet? ✈️");
+    }
+  }
+
+  // 6. Shared destination city (existing)
+  if (sharedCity) {
+    chips.push(`Also heading to ${sharedCity} soon! 👋`);
+  }
+
+  // 7. Shared destination university (existing)
+  if (sharedUniversity) {
+    chips.push(`We're both going to ${sharedUniversity}! 👋`);
+  }
+
+  // 8. Welcome week — always a good icebreaker when few contextual matches
+  if (chips.length < MAX_CHIPS) {
+    chips.push(
+      "Going to any welcome week events? Would be great to know someone there! 🎉",
+    );
+  }
+
+  // 9. Generic fallback — always available as last resort
+  chips.push("Hey! Saw we're both doing Erasmus, would love to connect 👋");
+
+  // Deduplicate (shared-city chip might overlap with flatmate chip, etc.)
+  const seen = new Set<string>();
+  const unique = chips.filter((c) => {
+    if (seen.has(c)) return false;
+    seen.add(c);
+    return true;
+  });
+
+  return unique.slice(0, MAX_CHIPS);
+}
 
 interface ConnectModalProps {
   open: boolean;
@@ -31,6 +125,8 @@ interface ConnectModalProps {
   studentLastActiveAt?: string | null;
   sharedCity?: string | null;
   sharedUniversity?: string | null;
+  /** Partial profile of the target student for contextual conversation starters. */
+  studentProfile?: Partial<Profile> | null;
   initialNote?: string;
   onSent?: () => void;
 }
@@ -46,6 +142,7 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
   studentLastActiveAt,
   sharedCity,
   sharedUniversity,
+  studentProfile,
   initialNote,
   onSent,
 }) => {
@@ -61,19 +158,12 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
   const sendMessage = useSendMessage();
   const { currentUserId, currentUserProfile } = useAuth();
 
-  const placeholder = sharedCity
-    ? `Also heading to ${sharedCity} soon! 👋`
-    : sharedUniversity
-      ? `We're both going to ${sharedUniversity}! 👋`
-      : "Hey! Saw we're both doing Erasmus — let's connect 👋";
+  const quickReplies = useMemo(
+    () => buildContextualReplies(currentUserProfile, studentProfile, sharedCity, sharedUniversity),
+    [currentUserProfile, studentProfile, sharedCity, sharedUniversity],
+  );
 
-  const quickReplies = (() => {
-    const chips: string[] = [];
-    if (sharedCity) chips.push(`Also heading to ${sharedCity} soon! 👋`);
-    if (sharedUniversity) chips.push(`We're both going to ${sharedUniversity}! 👋`);
-    chips.push("Hey! Saw we're both doing Erasmus — let's connect 👋");
-    return chips.slice(0, 3);
-  })();
+  const placeholder = quickReplies[0] || "Hey! Saw we're both doing Erasmus, would love to connect 👋";
 
   const handleSend = async () => {
     if (!note.trim() || sending) return;
@@ -210,11 +300,17 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
           <div className="px-5 sm:px-6 pb-4 pt-1">
             {!note.trim() && (
               <div className="flex flex-wrap gap-1.5 mb-2.5">
-                {quickReplies.map((chip) => (
+                {quickReplies.map((chip, idx) => (
                   <button
                     key={chip}
                     type="button"
-                    onClick={() => setNote(chip)}
+                    onClick={() => {
+                      setNote(chip);
+                      window.posthog?.capture("quick_reply_chip_clicked", {
+                        chip_text: chip,
+                        chip_index: idx,
+                      });
+                    }}
                     className="text-xs px-3 py-1.5 rounded-full border border-border bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
                   >
                     {chip}

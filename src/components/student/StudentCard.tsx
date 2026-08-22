@@ -172,6 +172,7 @@ const StudentCard = ({ profile, isFeatured = false, universityCity = null, prior
           studentAvatarUrl={profile.avatar_url}
           studentSemester={profile.semester}
           studentLastActiveAt={profile.last_active_at}
+          studentProfile={profile}
         />
       </CardFooter>
     </Card>

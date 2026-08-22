@@ -213,6 +213,7 @@ const ProfileView = ({ currentUserId }: ProfileViewProps) => {
             studentLastActiveAt={profile.last_active_at}
             sharedCity={sharedCity}
             sharedUniversity={sharedUniversity}
+            studentProfile={profile}
             initialNote={isAlumnus ? (city ? `Hey! Saw you went to ${city} — any tips?` : profile.university ? `Hey! Saw you studied at ${profile.university} — any tips?` : `Hey! Saw you've already done your Erasmus — any tips?`) : undefined}
           />
         );

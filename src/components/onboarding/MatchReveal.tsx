@@ -219,6 +219,7 @@ export const MatchReveal = ({ currentProfile, onComplete, onBrowseAll }: MatchRe
           studentLastActiveAt={match.last_active_at}
           sharedCity={tier === "city" ? currentProfile.city : null}
           sharedUniversity={tier === "country" && match.university === currentProfile.university ? currentProfile.university : null}
+          studentProfile={match}
           initialNote={initialNote}
           onSent={() => window.posthog?.capture("match_reveal_message_sent", { tier })}
         />
