@@ -239,7 +239,7 @@ serve(async (req) => {
           // Strip CR/LF from subject to prevent header injection
           subject = `${rawSender.replace(/[\r\n]+/g, " ")} sent you a message`
           headline = `${safeSender} sent you a message`
-          bodyText = `You have an unread message from <strong>${safeSender}</strong> on ErasMatch. Don't leave them hanging &mdash; tap below to reply!`
+          bodyText = `You have an unread message from <strong>${safeSender}</strong> on ErasMatch. Don't leave them hanging, tap below to reply!`
           ctaLabel = "Read &amp; Reply"
         } else {
           subject = `You have ${count} unread messages on ErasMatch`
