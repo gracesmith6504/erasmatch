@@ -141,6 +141,13 @@ const Auth = ({ onLogin }: AuthProps) => {
             password,
             options: {
               emailRedirectTo: `${window.location.origin}/onboarding`,
+              // Read by the handle_new_user trigger, which creates the profile
+              // at signup. sessionStorage alone is lost when the confirmation
+              // link opens in a new tab. Consent is mandatory (checked above).
+              data: {
+                ref: ref || null,
+                privacy_consent: true,
+              },
             },
           }),
         );
