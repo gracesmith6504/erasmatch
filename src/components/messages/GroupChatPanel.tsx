@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile, GroupMessage } from "@/types";
 import { useConversationReactions } from "@/hooks/useReactions";
+import { uniqueChannelName, appendUniqueById } from "@/lib/realtimeChannel";
 import { toast } from "sonner";
 import { GroupParticipantsInfo } from "./GroupParticipantsInfo";
 import { GroupChatMessageList } from "./GroupChatMessageList";
@@ -71,8 +72,8 @@ export const GroupChatPanel = ({
           const userMessages = data.filter(msg => msg.sender_id === currentUserId);
           setHasSentMessage(userMessages.length > 0);
         }
-      } catch (error: any) {
-        console.error("Error fetching group messages:", error.message);
+      } catch (error) {
+        console.error("Error fetching group messages:", error instanceof Error ? error.message : error);
       }
     };
 
@@ -82,29 +83,34 @@ export const GroupChatPanel = ({
     // written under the canonical name (see handleSendMessage below), so this
     // is sufficient. Historical messages under old names are loaded by the
     // initial fetch above.
-    const channel = supabase
-      .channel(`group_messages_${canonicalName}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "group_messages",
-          filter: `university_name=eq.${canonicalName}`,
-        },
-        (payload) => {
-          const newMessage = payload.new as GroupMessage;
-          setMessages((prevMessages) => [...prevMessages, newMessage]);
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    try {
+      channel = supabase
+        .channel(uniqueChannelName(`group_messages_${canonicalName}`))
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "group_messages",
+            filter: `university_name=eq.${canonicalName}`,
+          },
+          (payload) => {
+            const newMessage = payload.new as GroupMessage;
+            setMessages((prevMessages) => appendUniqueById(prevMessages, newMessage));
 
-          if (newMessage.sender_id === currentUserId) {
-            setHasSentMessage(true);
+            if (newMessage.sender_id === currentUserId) {
+              setHasSentMessage(true);
+            }
           }
-        }
-      )
-      .subscribe();
+        )
+        .subscribe();
+    } catch (err) {
+      console.warn("Group chat realtime subscription failed:", err);
+    }
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) supabase.removeChannel(channel);
     };
   }, [canonicalName, currentUserId, resolverReady, resolver]);
 
@@ -129,9 +135,10 @@ export const GroupChatPanel = ({
       if (error) throw error;
       setHasSentMessage(true);
       
-    } catch (error: any) {
-      toast.error("Failed to send message: " + error.message);
+    } catch (error) {
+      toast.error("Failed to send message: " + (error instanceof Error ? error.message : "please try again"));
       console.error("Error sending group message:", error);
+      throw error; // lets the input keep the unsent text
     } finally {
       setIsSending(false);
     }

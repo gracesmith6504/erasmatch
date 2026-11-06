@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.112.3";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "https://www.erasmatch.com",
@@ -90,19 +90,30 @@ serve(async (req) => {
       },
     });
 
-    const { data: avatarFiles, error: avatarListError } = await adminClient.storage
-      .from("avatars")
-      .list(user.id, { limit: 100 });
+    // Collect every avatar file first (paginated), then remove. Listing and
+    // removing in the same loop would shift offsets and skip files.
+    const AVATAR_PAGE_SIZE = 100;
+    const avatarPaths: string[] = [];
+    for (let offset = 0; ; offset += AVATAR_PAGE_SIZE) {
+      const { data: avatarFiles, error: avatarListError } = await adminClient.storage
+        .from("avatars")
+        .list(user.id, { limit: AVATAR_PAGE_SIZE, offset });
 
-    if (avatarListError) {
-      throw new Error(`Failed to load avatar files: ${avatarListError.message}`);
+      if (avatarListError) {
+        throw new Error(`Failed to load avatar files: ${avatarListError.message}`);
+      }
+
+      const page = avatarFiles ?? [];
+      for (const file of page) {
+        avatarPaths.push(`${user.id}/${file.name}`);
+      }
+      if (page.length < AVATAR_PAGE_SIZE) break;
     }
 
-    if (avatarFiles.length > 0) {
-      const avatarPaths = avatarFiles.map((file) => `${user.id}/${file.name}`);
+    for (let i = 0; i < avatarPaths.length; i += AVATAR_PAGE_SIZE) {
       const { error: avatarRemoveError } = await adminClient.storage
         .from("avatars")
-        .remove(avatarPaths);
+        .remove(avatarPaths.slice(i, i + AVATAR_PAGE_SIZE));
 
       if (avatarRemoveError) {
         throw new Error(`Failed to remove avatar files: ${avatarRemoveError.message}`);
@@ -120,6 +131,17 @@ serve(async (req) => {
       deleteWhereMatchesEither(adminClient, "email_notification_log", `sender_id.eq.${user.id},receiver_id.eq.${user.id}`),
       deleteWhereEquals(adminClient, "user_roles", "user_id", user.id),
     ]);
+
+    // Keep anonymous click stats but detach them from the user, so the
+    // affiliate_clicks.user_id FK can never block profile/auth deletion.
+    const { error: clicksDetachError } = await adminClient
+      .from("affiliate_clicks")
+      .update({ user_id: null })
+      .eq("user_id", user.id);
+
+    if (clicksDetachError) {
+      throw new Error(`Failed to detach affiliate clicks: ${clicksDetachError.message}`);
+    }
 
     const { error: profileDeleteError } = await adminClient
       .from("profiles")

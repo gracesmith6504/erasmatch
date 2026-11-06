@@ -1,7 +1,17 @@
 project_id = "ceoflcktscennfmmdrvp"
 
+# verify_jwt = true: the gateway rejects forged/unsigned JWTs before the
+# function runs. The DB trigger sends the real service-role key, which is a
+# valid project JWT, so it still passes. The function ALSO verifies the token
+# itself (see authorizeServiceRole), so this is defence in depth.
 [functions.send-welcome-email]
-verify_jwt = false
+verify_jwt = true
 
 [functions.university-search]
+verify_jwt = false
+
+# Public redirect endpoint hit by plain browser link clicks (no Authorization
+# header). Must be false or the gateway 401s every affiliate click. The
+# function itself enforces partner + domain allowlists and input length caps.
+[functions.track-click]
 verify_jwt = false

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { University } from "@/components/university/types";
 import { useUniversitiesCache } from "@/hooks/useUniversitiesCache";
+import { fetchAll } from "@/lib/fetchAll";
 
 export function useUniversitiesData() {
   const { universities: cachedUniversities, loading: cacheLoading } = useUniversitiesCache();
@@ -24,18 +25,19 @@ export function useUniversitiesData() {
         if (cachedUniversities.length > 0) {
           // Use our cache for basic universities data
           // Then, fetch student counts from profiles table
-          const { data: profilesData, error: profilesError } = await supabase
-            .from('profiles')
-            .select('university')
-            .is('deleted_at', null);
-
-          if (profilesError) {
-            throw profilesError;
-          }
+          // Paged: PostgREST caps each response at 1000 rows.
+          const profilesData = await fetchAll((from, to) =>
+            supabase
+              .from('profiles')
+              .select('id, university')
+              .is('deleted_at', null)
+              .order('id')
+              .range(from, to)
+          );
 
           // Count students per university
           const studentCountMap = new Map<string, number>();
-          profilesData?.forEach(profile => {
+          profilesData.forEach(profile => {
             if (profile.university) {
               const count = studentCountMap.get(profile.university) || 0;
               studentCountMap.set(profile.university, count + 1);
@@ -43,17 +45,17 @@ export function useUniversitiesData() {
           });
 
           // Now fetch additional university details (only those we need)
-          const { data: uniDetails, error: uniError } = await supabase
-            .from('universities')
-            .select('id, overview, erasmus_tips, accommodation_info, popular_courses, image_url, links');
-
-          if (uniError) {
-            throw uniError;
-          }
+          const uniDetails = await fetchAll((from, to) =>
+            supabase
+              .from('universities')
+              .select('id, overview, erasmus_tips, accommodation_info, popular_courses, image_url, links')
+              .order('id')
+              .range(from, to)
+          );
 
           // Create a map for quick lookups
           const detailsMap = new Map();
-          uniDetails?.forEach(uni => detailsMap.set(uni.id, uni));
+          uniDetails.forEach(uni => detailsMap.set(uni.id, uni));
 
           // Combine university data with student counts and transform to correct type
           const universitiesWithCounts = cachedUniversities.map(uni => {

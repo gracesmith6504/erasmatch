@@ -11,6 +11,8 @@ import { markMessagesAsRead } from "@/hooks/useUnreadMessageCount";
 import { useConversationReactions } from "@/hooks/useReactions";
 import { ArrowDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { appendUniqueById } from "@/lib/realtimeChannel";
 
 interface DirectMessagePanelProps {
   thread: ChatThread;
@@ -19,7 +21,7 @@ interface DirectMessagePanelProps {
   currentUserProfile: Profile | null;
   isMobile: boolean;
   onBack?: () => void;
-  onSendMessage: (receiverId: string, content: string) => void;
+  onSendMessage: (receiverId: string, content: string) => Promise<Message | void>;
   onPromptUsed?: () => void;
   onUserBlocked?: () => void;
 }
@@ -52,7 +54,9 @@ export const DirectMessagePanel = ({
     messages,
     currentUserId,
     partnerId: thread.partner.id,
-    scrollToBottom: () => scrollToBottom(),
+    // Pass the stable callback directly: an inline arrow would change every
+    // render and make the realtime channel resubscribe on each keystroke.
+    scrollToBottom,
   });
 
   const messageIds = useMemo(() => localMessages.map((m) => m.id), [localMessages]);
@@ -87,25 +91,42 @@ export const DirectMessagePanel = ({
   const handleSendMessage = async () => {
     if (!thread || !newMessage.trim()) return;
 
+    const content = newMessage;
+    const tempId = `temp-${Date.now()}`;
+    const tempMessage: Message = {
+      id: tempId,
+      sender_id: currentUserId,
+      receiver_id: thread.partner.id,
+      content,
+      created_at: new Date().toISOString(),
+    };
+
     setIsSending(true);
+    setLocalMessages(prev => [...prev, tempMessage]);
+
     try {
-      const tempMessage: Message = {
-        id: `temp-${Date.now()}`,
-        sender_id: currentUserId,
-        receiver_id: thread.partner.id,
-        content: newMessage,
-        created_at: new Date().toISOString(),
-      };
-
-      setLocalMessages(prev => [...prev, tempMessage]);
-
-      await onSendMessage(thread.partner.id, newMessage);
+      const sent = await onSendMessage(thread.partner.id, content);
       setNewMessage("");
       setShowSuggestedPrompts(false);
+
+      // Swap the temp message for the real row. A cache refetch (or realtime
+      // invalidation) may already have added the real one, so dedupe by id.
+      setLocalMessages(prev => {
+        const withoutTemp = prev.filter(m => m.id !== tempId);
+        return sent ? appendUniqueById(withoutTemp, sent) : withoutTemp;
+      });
 
       scrollToBottom();
     } catch (error) {
       console.error("Error sending message:", error);
+      // Don't leave a message that was never sent looking sent; keep the
+      // typed text in the input so the user can retry.
+      setLocalMessages(prev => prev.filter(m => m.id !== tempId));
+      toast.error(
+        error instanceof Error && error.message
+          ? `Message not sent: ${error.message}`
+          : "Message not sent. Please try again."
+      );
     } finally {
       setIsSending(false);
     }

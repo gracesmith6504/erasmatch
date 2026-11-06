@@ -2,19 +2,21 @@ import { useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { Message } from "@/types";
 
 /**
  * Hook that returns a sendMessage function.
  * After sending, it invalidates the direct-messages cache so the
  * Messages page picks up the new message without a global re-fetch.
+ * Resolves with the inserted row; throws if the message was not sent.
  */
 export function useSendMessage() {
   const { currentUserId } = useAuth();
   const queryClient = useQueryClient();
 
   const sendMessage = useCallback(
-    async (receiverId: string, content: string) => {
-      if (!currentUserId) return;
+    async (receiverId: string, content: string): Promise<Message> => {
+      if (!currentUserId) throw new Error("You need to be signed in to send messages.");
 
       // Check bidirectional block before sending
       const { data: blocked } = await supabase.rpc("is_blocked", {
@@ -58,6 +60,8 @@ export function useSendMessage() {
 
       // Invalidate messages cache so any open Messages page updates
       queryClient.invalidateQueries({ queryKey: ["direct-messages", currentUserId] });
+
+      return messageData as Message;
     },
     [currentUserId, queryClient]
   );

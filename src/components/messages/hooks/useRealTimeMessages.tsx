@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Message } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
+import { uniqueChannelName, appendUniqueById } from "@/lib/realtimeChannel";
 
 interface UseRealTimeMessagesProps {
   messages: Message[];
@@ -28,28 +29,33 @@ export function useRealTimeMessages({
     if (!currentUserId || !partnerId) return;
 
     // Subscribe to new messages between current user and thread partner
-    const channel = supabase
-      .channel(`direct-messages-${currentUserId}-${partnerId}`)
-      .on('postgres_changes', 
-        { 
-          event: 'INSERT', 
-          schema: 'public', 
-          table: 'messages',
-          filter: `sender_id=eq.${partnerId}`,
-        }, 
-        (payload) => {
-          // Only add the message if it's for the current user
-          const newMessage = payload.new as Message;
-          if (newMessage.receiver_id === currentUserId) {
-            setLocalMessages(prevMessages => [...prevMessages, newMessage]);
-            scrollToBottom();
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    try {
+      channel = supabase
+        .channel(uniqueChannelName(`direct-messages-${currentUserId}-${partnerId}`))
+        .on('postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'messages',
+            filter: `sender_id=eq.${partnerId}`,
+          },
+          (payload) => {
+            // Only add the message if it's for the current user
+            const newMessage = payload.new as Message;
+            if (newMessage.receiver_id === currentUserId) {
+              setLocalMessages(prevMessages => appendUniqueById(prevMessages, newMessage));
+              scrollToBottom();
+            }
           }
-        }
-      )
-      .subscribe();
+        )
+        .subscribe();
+    } catch (err) {
+      console.warn("Thread realtime subscription failed:", err);
+    }
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) supabase.removeChannel(channel);
     };
   }, [currentUserId, partnerId, scrollToBottom]);
 

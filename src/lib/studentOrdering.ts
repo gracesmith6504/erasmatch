@@ -29,7 +29,7 @@ export const hasPhoto = (p: Profile) => Boolean(p.avatar_url);
 export const profileCompleteness = (p: Profile) => {
   const fields = [
     p.name, p.university, p.avatar_url, p.bio, p.semester,
-    p.home_university, p.city, p.country, p.interests,
+    p.home_university, p.city,
   ];
   return fields.filter(Boolean).length;
 };

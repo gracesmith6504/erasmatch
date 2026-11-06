@@ -48,13 +48,7 @@ const UniversityCard = ({ university }: UniversityCardProps) => {
         return;
       }
       
-      // Transform data to match Profile type with all required fields
-      const profilesWithRequiredFields = data?.map(profile => ({
-        ...profile,
-        // Ensure all required fields are present with default values if they don't exist
-        country: null,
-        interests: null
-      })) as unknown as Profile[];
+      const profilesWithRequiredFields = data as unknown as Profile[] | null;
       
       setStudents(profilesWithRequiredFields || []);
       setShowStudents(true);

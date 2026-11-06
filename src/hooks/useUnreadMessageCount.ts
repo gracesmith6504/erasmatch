@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { uniqueChannelName } from "@/lib/realtimeChannel";
 
-/** Module-level counter — survives component remounts and ErrorBoundary recovery. */
-let channelSeq = 0;
 
 export function useUnreadMessageCount(currentUserId: string | null) {
   const [count, setCount] = useState(0);
@@ -15,7 +14,7 @@ export function useUnreadMessageCount(currentUserId: string | null) {
 
     // Module-level counter ensures truly unique channel names even after
     // ErrorBoundary remounts (which reset useRef to initial value).
-    const channelName = `unread-msg-count-${currentUserId}-${++channelSeq}`;
+    const channelName = uniqueChannelName(`unread-msg-count-${currentUserId}`);
 
     let cancelled = false;
 

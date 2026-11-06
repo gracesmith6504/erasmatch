@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile, CityMessage } from "@/types";
 import { useConversationReactions } from "@/hooks/useReactions";
+import { uniqueChannelName, appendUniqueById } from "@/lib/realtimeChannel";
 import { toast } from "sonner";
 import { createNotification } from "@/utils/notifications";
 import { CityParticipantsInfo } from "./CityParticipantsInfo";
@@ -63,36 +64,41 @@ export const CityPanel = ({
           const userMessages = data.filter(msg => msg.sender_id === currentUserId);
           setHasSentMessage(userMessages.length > 0);
         }
-      } catch (error: any) {
-        console.error("Error fetching city messages:", error.message);
+      } catch (error) {
+        console.error("Error fetching city messages:", error instanceof Error ? error.message : error);
       }
     };
     
     fetchMessages();
     
-    const channel = supabase
-      .channel(`city_messages_${cityName}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "city_messages",
-          filter: `city_name=eq.${cityName}`,
-        },
-        (payload) => {
-          const newMessage = payload.new as CityMessage;
-          setMessages((prevMessages) => [...prevMessages, newMessage]);
-          
-          if (newMessage.sender_id === currentUserId) {
-            setHasSentMessage(true);
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    try {
+      channel = supabase
+        .channel(uniqueChannelName(`city_messages_${cityName}`))
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "city_messages",
+            filter: `city_name=eq.${cityName}`,
+          },
+          (payload) => {
+            const newMessage = payload.new as CityMessage;
+            setMessages((prevMessages) => appendUniqueById(prevMessages, newMessage));
+            
+            if (newMessage.sender_id === currentUserId) {
+              setHasSentMessage(true);
+            }
           }
-        }
-      )
-      .subscribe();
-      
+        )
+        .subscribe();
+    } catch (err) {
+      console.warn("City chat realtime subscription failed:", err);
+    }
+
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) supabase.removeChannel(channel);
     };
   }, [cityName, currentUserId]);
   
@@ -125,7 +131,7 @@ export const CityPanel = ({
             .eq("city_name", cityName)
             .neq("sender_id", currentUserId);
 
-          const uniqueMembers = [...new Set((existingMessages || []).map((m: any) => m.sender_id))];
+          const uniqueMembers = [...new Set((existingMessages || []).map((m) => m.sender_id))];
           
           if (uniqueMembers.length < 50) {
             const { data: senderProfile } = await supabase
@@ -153,9 +159,10 @@ export const CityPanel = ({
       
       setHasSentMessage(true);
       
-    } catch (error: any) {
-      toast.error("Failed to send message: " + error.message);
+    } catch (error) {
+      toast.error("Failed to send message: " + (error instanceof Error ? error.message : "please try again"));
       console.error("Error sending city message:", error);
+      throw error; // lets the input keep the unsent text
     } finally {
       setIsSending(false);
     }

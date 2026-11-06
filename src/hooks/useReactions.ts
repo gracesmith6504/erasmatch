@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { uniqueChannelName } from "@/lib/realtimeChannel";
 
 export type Reaction = {
   id: string;
@@ -39,21 +40,26 @@ export function useConversationReactions(
   useEffect(() => {
     fetchReactions();
 
-    const channel = supabase
-      .channel(`reactions-${messageType}-${messageIds[0] ?? "empty"}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "message_reactions",
-        },
-        () => fetchReactions()
-      )
-      .subscribe();
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    try {
+      channel = supabase
+        .channel(uniqueChannelName(`reactions-${messageType}-${messageIds[0] ?? "empty"}`))
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "message_reactions",
+          },
+          () => fetchReactions()
+        )
+        .subscribe();
+    } catch (err) {
+      console.warn("Reactions realtime subscription failed:", err);
+    }
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) supabase.removeChannel(channel);
     };
   }, [fetchReactions]);
 

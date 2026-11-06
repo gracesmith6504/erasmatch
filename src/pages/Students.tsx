@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Profile } from "@/types";
 import { useStudentsData } from "@/hooks/useStudentsData";
 import { useProfiles } from "@/hooks/useProfiles";
@@ -168,22 +168,6 @@ const Students = ({ currentUserId }: StudentsProps) => {
       }
     }
   }, [universityFilter]);
-
-  const getCompletionPercentage = useCallback((profile: Profile) => {
-    const fields = [
-      profile.name,
-      profile.university,
-      profile.avatar_url,
-      profile.bio,
-      profile.semester,
-      profile.home_university,
-      profile.city,
-      profile.country,
-      profile.interests
-    ];
-    const filled = fields.filter(Boolean).length;
-    return Math.round((filled / fields.length) * 100);
-  }, []);
 
   const isFilterActive = Boolean(universityFilter) || Boolean(cityFilter);
 
