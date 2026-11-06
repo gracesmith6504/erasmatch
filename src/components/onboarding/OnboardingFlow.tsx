@@ -150,12 +150,17 @@ export const OnboardingFlow = () => {
       });
 
       completingRef.current = true;
-      const refCode = await generateUniqueRefCode(currentUserProfile?.name || "");
-
-      await handleProfileUpdate({
+      // ref_code is normally assigned at signup (handle_new_user trigger or
+      // GoogleAuthHandler) and the DB rejects changing an existing one, so
+      // only generate one if the profile still lacks it.
+      const completionUpdate: { onboarding_complete: boolean; ref_code?: string } = {
         onboarding_complete: true,
-        ref_code: refCode,
-      });
+      };
+      if (!currentUserProfile?.ref_code) {
+        completionUpdate.ref_code = await generateUniqueRefCode(currentUserProfile?.name || "");
+      }
+
+      await handleProfileUpdate(completionUpdate);
 
       sessionStorage.setItem("justCompletedOnboarding", "true");
       localStorage.removeItem("welcomeBannerDismissed");
