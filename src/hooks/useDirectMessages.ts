@@ -1,10 +1,9 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { uniqueChannelName } from "@/lib/realtimeChannel";
 import { Message } from "@/types";
 import { useEffect } from "react";
 
-/** Module-level counter — survives component remounts and ErrorBoundary recovery. */
-let channelSeq = 0;
 
 /**
  * Lazily fetches direct messages for the current user.
@@ -36,7 +35,7 @@ export function useDirectMessages(currentUserId: string | null) {
   useEffect(() => {
     if (!currentUserId) return;
 
-    const channelName = `dm-list-${currentUserId}-${++channelSeq}`;
+    const channelName = uniqueChannelName(`dm-list-${currentUserId}`);
 
     const invalidate = () => {
       queryClient.invalidateQueries({ queryKey: ["direct-messages", currentUserId] });

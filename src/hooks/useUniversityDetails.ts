@@ -72,9 +72,6 @@ export function useUniversityDetails(universityId: string | undefined) {
         const studentsWithRequiredFields = studentsData.map(student => ({
           ...student,
           home_university: student.home_university || null,
-          // Add missing fields required by the Profile type
-          country: null,
-          interests: null
         })) as unknown as Profile[];
         
         setStudents(studentsWithRequiredFields);

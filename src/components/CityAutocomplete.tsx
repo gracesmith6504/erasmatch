@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { MapPin, ChevronsUpDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import { fetchAll } from "@/lib/fetchAll";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,20 +17,54 @@ import {
 // Module-level cache
 let citiesCache: string[] | null = null;
 
+function toSortedDistinct(cities: (string | null | undefined)[]): string[] {
+  const citySet = new Set<string>();
+  for (const c of cities) {
+    const trimmed = c?.trim();
+    if (trimmed) citySet.add(trimmed);
+  }
+  return Array.from(citySet).sort((a, b) => a.localeCompare(b));
+}
+
 async function fetchDistinctCities(): Promise<string[]> {
   if (citiesCache) return citiesCache;
 
-  // Get distinct cities from both profiles and universities tables
-  const [profilesRes, universitiesRes] = await Promise.all([
-    supabase.from("profiles").select("city").not("city", "is", null),
-    supabase.from("universities").select("city").not("city", "is", null),
-  ]);
-
-  const citySet = new Set<string>();
-  profilesRes.data?.forEach((r) => r.city && citySet.add(r.city));
-  universitiesRes.data?.forEach((r) => r.city && citySet.add(r.city));
-
-  citiesCache = Array.from(citySet).sort((a, b) => a.localeCompare(b));
+  try {
+    // Server-side distinct over universities + profiles. Still paged because
+    // PostgREST's row cap also applies to set-returning RPCs.
+    const rows = await fetchAll((from, to) =>
+      supabase.rpc("get_distinct_cities").range(from, to)
+    );
+    citiesCache = toSortedDistinct(rows);
+  } catch (err) {
+    // Fallback until the get_distinct_cities migration is applied: the old
+    // behaviour (profile cities + university cities), paged past the row cap.
+    // Not cached, so the RPC is retried next time.
+    console.warn("get_distinct_cities RPC failed, using fallback:", err);
+    const [profileRows, universityRows] = await Promise.all([
+      fetchAll((from, to) =>
+        supabase
+          .from("profiles")
+          .select("id, city")
+          .not("city", "is", null)
+          .is("deleted_at", null)
+          .order("id")
+          .range(from, to)
+      ),
+      fetchAll((from, to) =>
+        supabase
+          .from("universities")
+          .select("id, city")
+          .not("city", "is", null)
+          .order("id")
+          .range(from, to)
+      ),
+    ]);
+    return toSortedDistinct([
+      ...profileRows.map((r) => r.city),
+      ...universityRows.map((r) => r.city),
+    ]);
+  }
   return citiesCache;
 }
 
@@ -58,6 +93,7 @@ export function CityAutocomplete({
     setLoading(true);
     fetchDistinctCities()
       .then(setCities)
+      .catch((err) => console.error("Failed to load cities:", err))
       .finally(() => setLoading(false));
   }, []);
 

@@ -4,7 +4,6 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Profile } from "@/types";
 import StudentAvatar from "./card/StudentAvatar";
 import StudentCardActions from "./card/StudentCardActions";
-import CountryFlag from "./card/CountryFlag";
 import { Home, MapPin, CalendarClock, GraduationCap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getTagInfo } from "@/components/profile/constants";
@@ -82,7 +81,6 @@ const StudentCard = ({ profile, isFeatured = false, universityCity = null, prior
           <div className="min-w-0">
             <h3 className="text-xl font-bold text-foreground flex items-center gap-1.5 truncate">
               {profile.name || "Anonymous Student"}
-              {profile.country && <CountryFlag country={profile.country} />}
             </h3>
           </div>
         </div>

@@ -1,5 +1,5 @@
 
-import { Profile } from "@/types";
+import { Message, Profile } from "@/types";
 
 /**
  * Get initials from a name
@@ -24,17 +24,18 @@ export const handlePromptUsed = (): void => {
  * Handle sending a message with refresh handling
  */
 export function createMessageHandler(
-  onSendMessage: (receiverId: string, content: string) => Promise<void>,
+  onSendMessage: (receiverId: string, content: string) => Promise<Message | void>,
   setMessagesSent: React.Dispatch<React.SetStateAction<number>>,
   setRefreshKey: React.Dispatch<React.SetStateAction<number>>,
   onPromptUsed: () => void
 ) {
   return async (receiverId: string, content: string) => {
-    await onSendMessage(receiverId, content);
+    const sent = await onSendMessage(receiverId, content);
 
     // Update UI state
     setMessagesSent(prev => prev + 1);
     setRefreshKey(prev => prev + 1);
     onPromptUsed();
+    return sent;
   };
 }

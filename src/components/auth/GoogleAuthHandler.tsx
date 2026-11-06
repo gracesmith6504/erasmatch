@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import type { TablesUpdate } from "@/integrations/supabase/types";
 import { generateUniqueRefCode } from "@/utils/refCodeGenerator";
 
 export const GoogleAuthHandler = () => {
@@ -12,7 +13,7 @@ export const GoogleAuthHandler = () => {
       
       if (isNewGoogleUser) {
         const setupNewUser = async () => {
-          const updates: Record<string, any> = {};
+          const updates: TablesUpdate<'profiles'> = {};
 
           if (!currentUserProfile.privacy_consent_at) {
             updates.privacy_consent_at = new Date().toISOString();
