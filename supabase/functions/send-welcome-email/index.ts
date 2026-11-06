@@ -18,39 +18,112 @@ function esc(raw: string): string {
     .replace(/'/g, '&#39;')
 }
 
+/** Constant-time string comparison (no early exit on first mismatch). */
+function timingSafeEqual(a: string, b: string): boolean {
+  const enc = new TextEncoder()
+  const ab = enc.encode(a)
+  const bb = enc.encode(b)
+  const len = Math.max(ab.length, bb.length)
+  let diff = ab.length ^ bb.length
+  for (let i = 0; i < len; i++) {
+    diff |= (ab[i] ?? 0) ^ (bb[i] ?? 0)
+  }
+  return diff === 0
+}
+
+/** Decode a JWT payload WITHOUT verifying it. Only used as a cheap pre-filter. */
+function decodeJwtPayloadUnverified(token: string): Record<string, unknown> | null {
+  try {
+    const parts = token.split('.')
+    if (parts.length !== 3) return null
+    let b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/')
+    while (b64.length % 4 !== 0) b64 += '='
+    const payload = JSON.parse(atob(b64))
+    return payload && typeof payload === 'object' ? payload : null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Decide whether the bearer token is a genuine service-role credential.
+ *
+ * Why this exists: commit f0eab6e only base64-decoded the JWT and checked
+ * role === 'service_role'. With verify_jwt = false nothing ever checked the
+ * signature, so anyone could forge `x.eyJyb2xlIjoic2VydmljZV9yb2xlIn0.x` and
+ * send branded mail from team@erasmatch.com to any address.
+ *
+ * Edge functions are NOT given the project JWT secret (only SUPABASE_URL,
+ * SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_DB_URL are standard),
+ * and legacy HS256 keys are not published in the JWKS endpoint, so we cannot
+ * verify the HMAC locally. Instead, in order:
+ *
+ *   1. Fast path: constant-time compare against SUPABASE_SERVICE_ROLE_KEY.
+ *      This is the normal case (vault copy == env var).
+ *   2. Drift path (vault copy != env var string, e.g. a re-issued key):
+ *      the unverified role claim must say service_role, and then the token
+ *      must be ACCEPTED BY SUPABASE AUTH on an admin-only endpoint. GoTrue
+ *      verifies the signature with the project secret and requires the
+ *      service_role claim for /auth/v1/admin/*, so this is real signature
+ *      verification done server-side, independent of the function gateway.
+ *   3. Anything else (including network errors in step 2) is rejected.
+ *      There is deliberately no "accept the unverified payload" fallback.
+ *
+ * In addition config.toml sets verify_jwt = true for this function, so the
+ * gateway also rejects forged signatures before this code runs (defence in
+ * depth; the real service-role key is a valid project JWT so the trigger
+ * still passes). This code must not rely on that setting, because a deploy
+ * from the dashboard or with --no-verify-jwt silently turns it off.
+ */
+async function authorizeServiceRole(token: string): Promise<boolean> {
+  const envKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+  if (envKey && timingSafeEqual(token, envKey)) return true
+
+  const payload = decodeJwtPayloadUnverified(token)
+  if (!payload || payload.role !== 'service_role') return false
+
+  const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+  const anonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+  if (!supabaseUrl || !anonKey) return false
+
+  try {
+    const res = await fetch(`${supabaseUrl}/auth/v1/admin/users?page=1&per_page=1`, {
+      method: 'GET',
+      headers: {
+        apikey: anonKey,
+        Authorization: `Bearer ${token}`,
+      },
+      signal: AbortSignal.timeout(5000),
+    })
+    // Drain the body so the connection can be reused; we never inspect it.
+    await res.body?.cancel()
+    return res.status === 200
+  } catch (err) {
+    console.error('Service-role verification request failed:', err)
+    return false
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
   try {
-    // Only allow calls from the service role (database webhook).
-    // Instead of comparing the full JWT string (which breaks if the env var
-    // drifts from the vault copy), decode the JWT payload and verify the role
-    // claim.  Supabase edge runtime has already validated the JWT signature
-    // when verify_jwt is true.
-    const authHeader = req.headers.get('Authorization')
-    if (!authHeader?.startsWith('Bearer ')) {
+    // Only allow calls from the service role (the DB trigger
+    // trigger_send_welcome_email, which sends the service-role JWT read from
+    // vault via pg_net). See authorizeServiceRole() for the full reasoning.
+    const authHeader = req.headers.get('Authorization') ?? ''
+    if (!authHeader.startsWith('Bearer ') || authHeader.length <= 7) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
-    try {
-      const token = authHeader.slice(7)
-      const payloadB64 = token.split('.')[1]
-      // base64url → base64
-      const b64 = payloadB64.replace(/-/g, '+').replace(/_/g, '/')
-      const payload = JSON.parse(atob(b64))
-      if (payload.role !== 'service_role') {
-        return new Response(JSON.stringify({ error: 'Forbidden: service_role required' }), {
-          status: 403,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        })
-      }
-    } catch {
-      return new Response(JSON.stringify({ error: 'Unauthorized: invalid token' }), {
-        status: 401,
+    const authorized = await authorizeServiceRole(authHeader.slice(7).trim())
+    if (!authorized) {
+      return new Response(JSON.stringify({ error: 'Forbidden: service_role required' }), {
+        status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
