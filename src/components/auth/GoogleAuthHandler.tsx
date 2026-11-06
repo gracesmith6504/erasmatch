@@ -24,7 +24,12 @@ export const GoogleAuthHandler = () => {
 
           const pendingRef = sessionStorage.getItem("pendingRefCode");
           if (pendingRef) {
-            updates.invited_by = pendingRef;
+            // The DB only allows invited_by to be set once and never to the
+            // user's own ref_code; skipping here keeps the rest of the update
+            // (privacy consent, ref_code) from being rejected along with it.
+            if (!currentUserProfile.invited_by && pendingRef !== currentUserProfile.ref_code) {
+              updates.invited_by = pendingRef;
+            }
             sessionStorage.removeItem("pendingRefCode");
           }
 
