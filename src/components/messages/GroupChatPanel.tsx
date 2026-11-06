@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile, GroupMessage } from "@/types";
 import { useConversationReactions } from "@/hooks/useReactions";
+import { uniqueChannelName, appendUniqueById } from "@/lib/realtimeChannel";
 import { toast } from "sonner";
 import { GroupParticipantsInfo } from "./GroupParticipantsInfo";
 import { GroupChatMessageList } from "./GroupChatMessageList";
@@ -82,29 +83,34 @@ export const GroupChatPanel = ({
     // written under the canonical name (see handleSendMessage below), so this
     // is sufficient. Historical messages under old names are loaded by the
     // initial fetch above.
-    const channel = supabase
-      .channel(`group_messages_${canonicalName}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "group_messages",
-          filter: `university_name=eq.${canonicalName}`,
-        },
-        (payload) => {
-          const newMessage = payload.new as GroupMessage;
-          setMessages((prevMessages) => [...prevMessages, newMessage]);
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    try {
+      channel = supabase
+        .channel(uniqueChannelName(`group_messages_${canonicalName}`))
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "group_messages",
+            filter: `university_name=eq.${canonicalName}`,
+          },
+          (payload) => {
+            const newMessage = payload.new as GroupMessage;
+            setMessages((prevMessages) => appendUniqueById(prevMessages, newMessage));
 
-          if (newMessage.sender_id === currentUserId) {
-            setHasSentMessage(true);
+            if (newMessage.sender_id === currentUserId) {
+              setHasSentMessage(true);
+            }
           }
-        }
-      )
-      .subscribe();
+        )
+        .subscribe();
+    } catch (err) {
+      console.warn("Group chat realtime subscription failed:", err);
+    }
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) supabase.removeChannel(channel);
     };
   }, [canonicalName, currentUserId, resolverReady, resolver]);
 

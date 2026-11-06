@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { uniqueChannelName } from "@/lib/realtimeChannel";
 
-/** Module-level counter — survives component remounts and ErrorBoundary recovery. */
-let channelSeq = 0;
 
 export interface Notification {
   id: string;
@@ -105,7 +104,7 @@ export function useNotifications(currentUserId: string | null) {
 
     fetchNotifications();
 
-    const channelName = `notif-rt-${currentUserId}-${++channelSeq}`;
+    const channelName = uniqueChannelName(`notif-rt-${currentUserId}`);
 
     let channel: ReturnType<typeof supabase.channel> | null = null;
 

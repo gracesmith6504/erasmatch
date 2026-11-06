@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile, CityMessage } from "@/types";
 import { useConversationReactions } from "@/hooks/useReactions";
+import { uniqueChannelName, appendUniqueById } from "@/lib/realtimeChannel";
 import { toast } from "sonner";
 import { createNotification } from "@/utils/notifications";
 import { CityParticipantsInfo } from "./CityParticipantsInfo";
@@ -70,29 +71,34 @@ export const CityPanel = ({
     
     fetchMessages();
     
-    const channel = supabase
-      .channel(`city_messages_${cityName}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "city_messages",
-          filter: `city_name=eq.${cityName}`,
-        },
-        (payload) => {
-          const newMessage = payload.new as CityMessage;
-          setMessages((prevMessages) => [...prevMessages, newMessage]);
-          
-          if (newMessage.sender_id === currentUserId) {
-            setHasSentMessage(true);
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    try {
+      channel = supabase
+        .channel(uniqueChannelName(`city_messages_${cityName}`))
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "city_messages",
+            filter: `city_name=eq.${cityName}`,
+          },
+          (payload) => {
+            const newMessage = payload.new as CityMessage;
+            setMessages((prevMessages) => appendUniqueById(prevMessages, newMessage));
+            
+            if (newMessage.sender_id === currentUserId) {
+              setHasSentMessage(true);
+            }
           }
-        }
-      )
-      .subscribe();
-      
+        )
+        .subscribe();
+    } catch (err) {
+      console.warn("City chat realtime subscription failed:", err);
+    }
+
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) supabase.removeChannel(channel);
     };
   }, [cityName, currentUserId]);
   
