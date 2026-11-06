@@ -1,7 +1,8 @@
 /**
  * PostgREST returns at most `max-rows` rows per request (1000 by default on
  * Supabase), silently truncating anything beyond that. This helper pages
- * through a query with `.range()` until a short page comes back.
+ * through a query with `.range()` until an empty page comes back (so it
+ * still works if the server's row cap is lower than `pageSize`).
  *
  * The caller builds the query for a given range and MUST order it by a stable,
  * unique column (e.g. `.order("id")`), otherwise rows can be skipped or
@@ -21,12 +22,16 @@ export async function fetchAll<T>(
   pageSize = FETCH_ALL_PAGE_SIZE
 ): Promise<T[]> {
   const rows: T[] = [];
-  for (let from = 0; ; from += pageSize) {
+  let from = 0;
+  while (true) {
     const { data, error } = await buildPage(from, from + pageSize - 1);
     if (error) throw error;
     const page = data ?? [];
+    if (page.length === 0) break;
     rows.push(...page);
-    if (page.length < pageSize) break;
+    // Advance by rows actually returned, in case the server caps pages
+    // below pageSize.
+    from += page.length;
   }
   return rows;
 }

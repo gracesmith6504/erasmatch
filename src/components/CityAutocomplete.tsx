@@ -37,19 +37,33 @@ async function fetchDistinctCities(): Promise<string[]> {
     );
     citiesCache = toSortedDistinct(rows);
   } catch (err) {
-    // Fallback until the get_distinct_cities migration is applied:
-    // distinct cities from profiles only (universities is 12k+ rows).
-    console.warn("get_distinct_cities RPC failed, falling back to profiles:", err);
-    const rows = await fetchAll((from, to) =>
-      supabase
-        .from("profiles")
-        .select("id, city")
-        .not("city", "is", null)
-        .is("deleted_at", null)
-        .order("id")
-        .range(from, to)
-    );
-    citiesCache = toSortedDistinct(rows.map((r) => r.city));
+    // Fallback until the get_distinct_cities migration is applied: the old
+    // behaviour (profile cities + university cities), paged past the row cap.
+    // Not cached, so the RPC is retried next time.
+    console.warn("get_distinct_cities RPC failed, using fallback:", err);
+    const [profileRows, universityRows] = await Promise.all([
+      fetchAll((from, to) =>
+        supabase
+          .from("profiles")
+          .select("id, city")
+          .not("city", "is", null)
+          .is("deleted_at", null)
+          .order("id")
+          .range(from, to)
+      ),
+      fetchAll((from, to) =>
+        supabase
+          .from("universities")
+          .select("id, city")
+          .not("city", "is", null)
+          .order("id")
+          .range(from, to)
+      ),
+    ]);
+    return toSortedDistinct([
+      ...profileRows.map((r) => r.city),
+      ...universityRows.map((r) => r.city),
+    ]);
   }
   return citiesCache;
 }

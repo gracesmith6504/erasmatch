@@ -54,7 +54,9 @@ export const DirectMessagePanel = ({
     messages,
     currentUserId,
     partnerId: thread.partner.id,
-    scrollToBottom: () => scrollToBottom(),
+    // Pass the stable callback directly: an inline arrow would change every
+    // render and make the realtime channel resubscribe on each keystroke.
+    scrollToBottom,
   });
 
   const messageIds = useMemo(() => localMessages.map((m) => m.id), [localMessages]);
