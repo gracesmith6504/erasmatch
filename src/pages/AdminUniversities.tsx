@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Trash2, Save, Search, AlertTriangle, ShieldAlert } from "lucide-react";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { fetchAll } from "@/lib/fetchAll";
 
 type UniversityRow = {
   id: number;
@@ -40,22 +41,23 @@ const AdminUniversities = () => {
 
   const fetchUniversities = async () => {
     setLoading(true);
-    let query = supabase
-      .from("universities")
-      .select("id, name, city, country")
-      .order("name");
-
-    if (filter === "incomplete") {
-      query = query.or("city.is.null,country.is.null");
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
+    try {
+      // Paged: PostgREST caps each response at 1000 rows (12k+ universities).
+      const data = await fetchAll((from, to) => {
+        let query = supabase
+          .from("universities")
+          .select("id, name, city, country")
+          .order("name")
+          .order("id");
+        if (filter === "incomplete") {
+          query = query.or("city.is.null,country.is.null");
+        }
+        return query.range(from, to);
+      });
+      setUniversities(data);
+    } catch (error) {
       toast.error("Failed to load universities");
       console.error(error);
-    } else {
-      setUniversities(data || []);
     }
     setLoading(false);
   };

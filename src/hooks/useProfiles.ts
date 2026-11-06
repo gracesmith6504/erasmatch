@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile } from "@/types";
+import { fetchAll } from "@/lib/fetchAll";
 
 /**
  * Page-scoped hook to fetch all profiles. Uses React Query for caching
@@ -10,17 +11,19 @@ export function useProfiles(enabled = true) {
   return useQuery<Profile[]>({
     queryKey: ["profiles"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select(
-          "id, name, avatar_url, university, city, personality_tags, bio, home_university, semester, course, looking_for, ref_code, arrival_date, departure_date, last_active_at, featured, created_at"
-        )
-        .is("deleted_at", null)
-        .limit(2000);
+      // Paged: PostgREST caps each response at 1000 rows.
+      const data = await fetchAll((from, to) =>
+        supabase
+          .from("profiles")
+          .select(
+            "id, name, avatar_url, university, city, personality_tags, bio, home_university, semester, course, looking_for, ref_code, arrival_date, departure_date, last_active_at, featured, created_at"
+          )
+          .is("deleted_at", null)
+          .order("id")
+          .range(from, to)
+      );
 
-      if (error) throw error;
-
-      return (data ?? []).map((profile) => ({
+      return data.map((profile) => ({
         ...profile,
         country: null,
         interests: null,

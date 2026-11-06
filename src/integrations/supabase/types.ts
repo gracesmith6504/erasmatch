@@ -472,6 +472,7 @@ export type Database = {
           university_count: number
         }[]
       }
+      get_distinct_cities: { Args: never; Returns: string[] }
       get_featured_activity_profiles: {
         Args: never
         Returns: {

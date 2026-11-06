@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { generateUniqueRefCode } from "@/utils/refCodeGenerator";
 import { supabase } from "@/integrations/supabase/client";
 import { Profile } from "@/types";
+import { fetchAll } from "@/lib/fetchAll";
 
 
 const slideVariants = {
@@ -169,14 +170,18 @@ export const OnboardingFlow = () => {
       queryClient.prefetchQuery({
         queryKey: ["profiles"],
         queryFn: async () => {
-          const { data, error } = await supabase
-            .from("profiles")
-            .select(
-              "id, name, avatar_url, university, city, personality_tags, bio, home_university, semester, course, looking_for, ref_code, arrival_date, departure_date, last_active_at, featured"
-            )
-            .is("deleted_at", null);
-          if (error) throw error;
-          return (data ?? []).map((profile) => ({
+          // Same query as useProfiles (shares its cache key), paged past the 1000-row cap.
+          const data = await fetchAll((from, to) =>
+            supabase
+              .from("profiles")
+              .select(
+                "id, name, avatar_url, university, city, personality_tags, bio, home_university, semester, course, looking_for, ref_code, arrival_date, departure_date, last_active_at, featured, created_at"
+              )
+              .is("deleted_at", null)
+              .order("id")
+              .range(from, to)
+          );
+          return data.map((profile) => ({
             ...profile,
             country: null,
             interests: null,
