@@ -49,10 +49,17 @@ serve(async (req) => {
       )
     }
 
-    // Fetch user profile data
+    // Fetch user profile data. Explicit column list: clients have no SELECT
+    // grant on profiles.email, so select('*') would fail with permission denied.
+    // Email is added below from the auth user object instead.
     const { data: profile, error: profileError } = await supabaseClient
       .from('profiles')
-      .select('*')
+      .select(
+        'id, name, avatar_url, bio, city, university, home_university, course, semester, ' +
+        'personality_tags, looking_for, arrival_date, departure_date, created_at, deleted_at, ' +
+        'last_active_at, ref_code, invited_by, onboarding_complete, onboarding_step, featured, ' +
+        'privacy_consent_at, email_notifications'
+      )
       .eq('id', userId)
       .single()
 
