@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.112.3"
 
 /**
  * Server-side affiliate click tracker.
@@ -14,6 +14,18 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
  */
 
 const UTM_SOURCE = "erasmatch"
+
+/** Length caps so a public endpoint can't stuff huge strings into the table. */
+const MAX_FIELD_LEN = 200
+const MAX_URL_LEN = 2000
+
+/** Trim + truncate an optional query param; empty becomes undefined. */
+function cap(value: string | null, max = MAX_FIELD_LEN): string | undefined {
+  if (value == null) return undefined
+  const trimmed = value.trim()
+  if (!trimmed) return undefined
+  return trimmed.slice(0, max)
+}
 
 const SAFE_PROTOCOLS = new Set(["http:", "https:"])
 
@@ -69,16 +81,23 @@ serve(async (req) => {
   }
 
   const params = new URL(req.url).searchParams
-  const partner = params.get("partner")
-  const url = params.get("url")
-  const placement = params.get("placement") ?? "unknown"
-  const city = params.get("city") ?? undefined
-  const category = params.get("category") ?? undefined
-  const campaign = params.get("campaign") ?? undefined
+  const partner = cap(params.get("partner"))
+  const rawUrl = params.get("url")
+  const placement = cap(params.get("placement")) ?? "unknown"
+  const city = cap(params.get("city"))
+  const category = cap(params.get("category"))
+  const campaign = cap(params.get("campaign"))
 
-  if (!partner || !url) {
+  if (!partner || !rawUrl) {
     return new Response("Missing partner or url", { status: 400 })
   }
+
+  // Reject (rather than truncate) over-long URLs: truncating would change the
+  // redirect target.
+  if (rawUrl.length > MAX_URL_LEN) {
+    return new Response("URL too long", { status: 400 })
+  }
+  const url = rawUrl
 
   if (!ALLOWED_PARTNERS.has(partner)) {
     return new Response("Unknown partner", { status: 400 })
@@ -95,23 +114,16 @@ serve(async (req) => {
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     const supabase = createClient(supabaseUrl, serviceKey)
 
-    // Extract user ID from auth header if present (optional)
+    // Attribute the click to a user ONLY via a verified bearer token.
+    // There is intentionally no `uid` query param: it let anyone attribute
+    // clicks to arbitrary user IDs. Normal browser link clicks send no
+    // Authorization header, so these rows are anonymous (user_id = null).
     let userId: string | null = null
     const authHeader = req.headers.get("Authorization")
     if (authHeader?.startsWith("Bearer ")) {
       const token = authHeader.slice(7)
       const { data: { user } } = await supabase.auth.getUser(token)
       userId = user?.id ?? null
-    }
-
-    // Also check for user ID from cookie-based auth (anon key in query)
-    // For simplicity, we accept user_id as a query param from trusted client code
-    const paramUserId = params.get("uid")
-    if (!userId && paramUserId) {
-      // Validate it's a UUID format
-      if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(paramUserId)) {
-        userId = paramUserId
-      }
     }
 
     await supabase.from("affiliate_clicks").insert({
