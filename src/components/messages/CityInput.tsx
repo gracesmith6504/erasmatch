@@ -41,29 +41,32 @@ export const CityInput = ({
     autoResize();
   }, [newMessage, autoResize]);
 
+  // Only clear the input once the send succeeded, so a failed send keeps the
+  // typed text for a retry (the panel shows the error toast).
+  const send = async () => {
+    if (!newMessage.trim() || isSending) return;
+    const text = newMessage;
+    try {
+      await onSendMessage(text);
+    } catch {
+      return;
+    }
+    setNewMessage((current) => (current === text ? "" : current));
+    if (showPrompts) {
+      setShowPrompts(false);
+      onSuggestionUsed();
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (newMessage.trim()) {
-      onSendMessage(newMessage);
-      setNewMessage("");
-      if (showPrompts) {
-        setShowPrompts(false);
-        onSuggestionUsed();
-      }
-    }
+    send();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      if (newMessage.trim()) {
-        onSendMessage(newMessage);
-        setNewMessage("");
-        if (showPrompts) {
-          setShowPrompts(false);
-          onSuggestionUsed();
-        }
-      }
+      send();
     }
   };
 

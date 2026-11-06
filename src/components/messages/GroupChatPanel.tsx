@@ -138,6 +138,7 @@ export const GroupChatPanel = ({
     } catch (error: any) {
       toast.error("Failed to send message: " + error.message);
       console.error("Error sending group message:", error);
+      throw error; // lets the input keep the unsent text
     } finally {
       setIsSending(false);
     }

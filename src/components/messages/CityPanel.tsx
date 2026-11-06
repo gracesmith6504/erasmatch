@@ -162,6 +162,7 @@ export const CityPanel = ({
     } catch (error: any) {
       toast.error("Failed to send message: " + error.message);
       console.error("Error sending city message:", error);
+      throw error; // lets the input keep the unsent text
     } finally {
       setIsSending(false);
     }

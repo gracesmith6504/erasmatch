@@ -1,4 +1,4 @@
-import { Profile, ChatThread } from "@/types";
+import { Message, Profile, ChatThread } from "@/types";
 import { DirectMessagePanel } from "./DirectMessagePanel";
 import { ThreadsList } from "./ThreadsList";
 import { getInitials } from "./utils/messageUtils";
@@ -13,7 +13,7 @@ interface DesktopMessagesViewProps {
   threadMessages: any[];
   currentUserId: string;
   isMobile: boolean;
-  onSendMessage: (receiverId: string, content: string) => Promise<void>;
+  onSendMessage: (receiverId: string, content: string) => Promise<Message | void>;
   onPromptUsed?: () => void;
   onBack?: () => void;
   onUserBlocked?: () => void;
