@@ -64,8 +64,8 @@ export const CityPanel = ({
           const userMessages = data.filter(msg => msg.sender_id === currentUserId);
           setHasSentMessage(userMessages.length > 0);
         }
-      } catch (error: any) {
-        console.error("Error fetching city messages:", error.message);
+      } catch (error) {
+        console.error("Error fetching city messages:", error instanceof Error ? error.message : error);
       }
     };
     
@@ -131,7 +131,7 @@ export const CityPanel = ({
             .eq("city_name", cityName)
             .neq("sender_id", currentUserId);
 
-          const uniqueMembers = [...new Set((existingMessages || []).map((m: any) => m.sender_id))];
+          const uniqueMembers = [...new Set((existingMessages || []).map((m) => m.sender_id))];
           
           if (uniqueMembers.length < 50) {
             const { data: senderProfile } = await supabase
@@ -159,8 +159,8 @@ export const CityPanel = ({
       
       setHasSentMessage(true);
       
-    } catch (error: any) {
-      toast.error("Failed to send message: " + error.message);
+    } catch (error) {
+      toast.error("Failed to send message: " + (error instanceof Error ? error.message : "please try again"));
       console.error("Error sending city message:", error);
       throw error; // lets the input keep the unsent text
     } finally {
