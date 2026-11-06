@@ -31,9 +31,11 @@ LANGUAGE plpgsql
 SET search_path = public
 AS $$
 DECLARE
-  avatar_prefix text :=
-    'https://ceoflcktscennfmmdrvp.supabase.co/storage/v1/object/public/avatars/'
-    || NEW.id::text || '/';
+  -- Own folder, single plain file name: no query strings, %-encoding or
+  -- subpaths.
+  avatar_pattern text :=
+    '^https://ceoflcktscennfmmdrvp\.supabase\.co/storage/v1/object/public/avatars/'
+    || NEW.id::text || '/[A-Za-z0-9._-]+$';
   violation text := NULL;
 BEGIN
   IF auth.role() IS DISTINCT FROM 'authenticated' THEN
@@ -47,8 +49,7 @@ BEGIN
           AND lower(NEW.email) IS DISTINCT FROM lower(auth.jwt() ->> 'email') THEN
       violation := 'email must match your account email';
     ELSIF NEW.avatar_url IS NOT NULL
-          AND (left(NEW.avatar_url, length(avatar_prefix)) <> avatar_prefix
-               OR position('..' IN NEW.avatar_url) > 0) THEN
+          AND NEW.avatar_url !~ avatar_pattern THEN
       violation := 'avatar_url must point to your own uploaded avatar';
     ELSIF NEW.invited_by IS NOT NULL AND NEW.invited_by = NEW.ref_code THEN
       violation := 'invited_by cannot be your own ref_code';
@@ -78,12 +79,14 @@ BEGIN
           AND OLD.invited_by IS NOT NULL THEN
       violation := 'invited_by can only be set once';
     ELSIF NEW.invited_by IS DISTINCT FROM OLD.invited_by
+          AND OLD.onboarding_complete IS TRUE THEN
+      violation := 'invited_by can only be set during signup';
+    ELSIF NEW.invited_by IS DISTINCT FROM OLD.invited_by
           AND NEW.invited_by = NEW.ref_code THEN
       violation := 'invited_by cannot be your own ref_code';
     ELSIF NEW.avatar_url IS DISTINCT FROM OLD.avatar_url
           AND NEW.avatar_url IS NOT NULL
-          AND (left(NEW.avatar_url, length(avatar_prefix)) <> avatar_prefix
-               OR position('..' IN NEW.avatar_url) > 0) THEN
+          AND NEW.avatar_url !~ avatar_pattern THEN
       violation := 'avatar_url must point to your own uploaded avatar';
     END IF;
   END IF;
@@ -105,3 +108,27 @@ CREATE TRIGGER enforce_profile_protected_columns
   BEFORE INSERT OR UPDATE ON public.profiles
   FOR EACH ROW
   EXECUTE FUNCTION public.enforce_profile_protected_columns();
+
+-- Users never delete their own profile row from the client (account deletion
+-- goes through the delete-account function with the service role). Without
+-- this, delete + re-insert would reset the "set once" columns above and
+-- onboarding_complete, re-triggering welcome emails.
+DROP POLICY IF EXISTS "Users can delete own profile" ON public.profiles;
+REVOKE DELETE ON public.profiles FROM authenticated, anon;
+
+-- Enforce ref_code uniqueness in the database (the trigger checks above run
+-- under RLS and can't see soft-deleted rows). Skipped with a notice if
+-- duplicates already exist, so the migration never fails on old data.
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT ref_code FROM public.profiles
+    WHERE ref_code IS NOT NULL
+    GROUP BY ref_code HAVING count(*) > 1
+  ) THEN
+    RAISE NOTICE 'Duplicate ref_code values exist; unique index NOT created. Resolve them and re-run.';
+  ELSE
+    CREATE UNIQUE INDEX IF NOT EXISTS profiles_ref_code_key
+      ON public.profiles (ref_code) WHERE ref_code IS NOT NULL;
+  END IF;
+END $$;
