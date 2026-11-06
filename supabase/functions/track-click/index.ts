@@ -57,7 +57,8 @@ function buildRedirectUrl(
 
   // Verify domain is in the partner's allowlist
   const allowed = ALLOWED_DOMAINS[partner]
-  if (allowed && !allowed.includes(parsed.hostname)) return null
+  // Fail closed: a partner with no domain allowlist must never redirect
+  if (!allowed || !allowed.includes(parsed.hostname)) return null
 
   // Append UTM params without clobbering existing ones
   const utms: Record<string, string> = {
@@ -126,7 +127,7 @@ serve(async (req) => {
       userId = user?.id ?? null
     }
 
-    await supabase.from("affiliate_clicks").insert({
+    const { error: insertError } = await supabase.from("affiliate_clicks").insert({
       user_id: userId,
       partner,
       placement,
@@ -135,6 +136,7 @@ serve(async (req) => {
       campaign: campaign ?? null,
       destination_url: url,
     })
+    if (insertError) console.error("Failed to insert affiliate click:", insertError)
   } catch (err) {
     // Log but don't block — the redirect is more important than the tracking
     console.error("Failed to log affiliate click:", err)
