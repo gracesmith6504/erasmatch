@@ -183,8 +183,6 @@ export const OnboardingFlow = () => {
           );
           return data.map((profile) => ({
             ...profile,
-            country: null,
-            interests: null,
             personality_tags: profile.personality_tags || [],
           })) as Profile[];
         },

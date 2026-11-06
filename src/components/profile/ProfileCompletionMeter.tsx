@@ -26,7 +26,8 @@ const ProfileCompletionMeter: React.FC<ProfileCompletionMeterProps> = ({ profile
       profile.arrival_date
     ];
     
-    const filledFields = fields.filter(Boolean).length;
+    // Empty arrays (e.g. personality_tags defaults to []) don't count as filled.
+    const filledFields = fields.filter((f) => (Array.isArray(f) ? f.length > 0 : Boolean(f))).length;
     return Math.round((filledFields / fields.length) * 100);
   };
   
@@ -44,7 +45,7 @@ const ProfileCompletionMeter: React.FC<ProfileCompletionMeterProps> = ({ profile
     if (!profile.avatar_url) return 'Upload a profile photo';
     if (!profile.bio) return 'Add your bio';
     if (!profile.university) return 'Set your exchange university';
-    if (!profile.interests) return 'Add your interests';
+    if (!profile.personality_tags?.length) return 'Add your interests';
     return 'Your profile looks great!';
   };
   

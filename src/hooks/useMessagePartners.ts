@@ -43,8 +43,6 @@ export function useMessagePartners(
 
       return (data ?? []).map((p) => ({
         ...p,
-        country: null,
-        interests: null,
         personality_tags: p.personality_tags || [],
       })) as Profile[];
     },
